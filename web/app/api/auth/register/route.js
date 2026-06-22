@@ -12,9 +12,19 @@ async function forwardAuth(path, formData) {
   });
 }
 
+function normalizeAuthCookie(apiCookie) {
+  if (!apiCookie) return null;
+  const withoutPath = apiCookie
+    .split(';')
+    .map((part) => part.trim())
+    .filter((part) => !/^path=/i.test(part));
+  return [...withoutPath, 'Path=/'].join('; ');
+}
+
 function redirectTo(path, apiCookie) {
   const headers = new Headers({ location: appPath(path) });
-  if (apiCookie) headers.append('set-cookie', apiCookie);
+  const normalizedCookie = normalizeAuthCookie(apiCookie);
+  if (normalizedCookie) headers.append('set-cookie', normalizedCookie);
   return new Response(null, { status: 303, headers });
 }
 

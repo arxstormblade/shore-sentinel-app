@@ -61,6 +61,7 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
   const [scanBusy, setScanBusy] = useState(false);
   const [saveBusy, setSaveBusy] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
+  const [adminCanManage, setAdminCanManage] = useState(Boolean(canManage));
   const [draft, setDraft] = useState(() => ({
     hostname: machine.name ?? '',
     fqdn: machine.fqdn ?? '',
@@ -75,6 +76,29 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
     setRuns(ensureArray(initialRuns));
     setActiveRunId(ensureArray(initialRuns).find((run) => !FINAL_STATUSES.has(run.status))?.id ?? ensureArray(initialRuns)[0]?.id ?? null);
   }, [initialRuns]);
+
+  useEffect(() => {
+    setAdminCanManage(Boolean(canManage));
+  }, [canManage]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const refreshCurrentUser = async () => {
+      try {
+        const response = await fetch(`${apiBase}/auth/me`, { cache: 'no-store' });
+        if (!response.ok) return;
+        const user = await response.json();
+        const roles = Array.isArray(user?.roles) ? user.roles.map((role) => String(role).toLowerCase()) : [];
+        if (!cancelled) setAdminCanManage(roles.includes('admin'));
+      } catch {
+        // leave server-provided permission state unchanged
+      }
+    };
+    refreshCurrentUser();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     setDraft({
@@ -262,7 +286,7 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
         </article>
       </section>
 
-      {canManage ? (
+      {adminCanManage ? (
         <section className="panel auth-form">
           <h2>Admin machine settings</h2>
           <form onSubmit={saveMachine}>
@@ -314,7 +338,7 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
         </section>
       ) : null}
 
-      {canManage ? (
+      {adminCanManage ? (
         <section className="panel danger-zone">
           <h2>Admin danger zone</h2>
           <p>Delete this managed machine and its related scan history. This cannot be undone.</p>

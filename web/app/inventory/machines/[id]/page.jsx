@@ -5,8 +5,7 @@ import { MachineDetailClient } from '@/components/machine-detail-client';
 const serverApiBase = () => (process.env.INTERNAL_API_URL || process.env.API_URL || 'http://api:4000').replace(/\/$/, '');
 
 export const dynamic = 'force-dynamic';
-
-export function generateStaticParams() { return []; }
+export const revalidate = 0;
 
 async function loadTarget(id) {
   try {
