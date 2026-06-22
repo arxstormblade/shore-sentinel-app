@@ -1,0 +1,12 @@
+import { ARTIFACT_KIND } from '@shore-sentinel/shared';
+
+export const FEATURE_AREAS = ['central_dashboard','inventory_managed_machines','environments_grouping','run_one_time_audit','managed_machine_schedules','scan_jobs_live_progress','reports_artifacts','import_export_reports','comparison_analytics','remediation_workflows','knowledgebase','logs_page','alert_rules','email_templates','smtp_settings','retention_policy','role_configuration','system_health_release_status'] as const;
+export const ROLE_MATRIX: Record<string, Record<string, string[]>> = {
+  admin: Object.fromEntries(FEATURE_AREAS.map((feature) => [feature, ['read', 'add', 'edit', 'delete']])),
+  operator: {central_dashboard:['read'],inventory_managed_machines:['read','add','edit'],environments_grouping:['read','add','edit'],run_one_time_audit:['read','add'],managed_machine_schedules:['read','add','edit'],scan_jobs_live_progress:['read','add','edit'],reports_artifacts:['read','add','edit'],import_export_reports:['read','add'],comparison_analytics:['read'],remediation_workflows:['read','add','edit'],knowledgebase:['read','add','edit'],logs_page:['read'],alert_rules:['read','edit'],email_templates:['read','edit'],smtp_settings:[],retention_policy:['read'],role_configuration:[],system_health_release_status:['read']},
+  analyst: {central_dashboard:['read'],inventory_managed_machines:['read'],environments_grouping:['read'],run_one_time_audit:['read','add'],managed_machine_schedules:['read'],scan_jobs_live_progress:['read','add'],reports_artifacts:['read'],import_export_reports:['read'],comparison_analytics:['read'],remediation_workflows:['read','add','edit'],knowledgebase:['read','add','edit'],logs_page:['read'],alert_rules:['read'],email_templates:['read'],smtp_settings:[],retention_policy:['read'],role_configuration:[],system_health_release_status:['read']},
+  viewer: {central_dashboard:['read'],inventory_managed_machines:['read'],environments_grouping:['read'],run_one_time_audit:[],managed_machine_schedules:['read'],scan_jobs_live_progress:['read'],reports_artifacts:['read'],import_export_reports:['read'],comparison_analytics:['read'],remediation_workflows:['read'],knowledgebase:['read'],logs_page:['read'],alert_rules:[],email_templates:[],smtp_settings:[],retention_policy:[],role_configuration:[],system_health_release_status:['read']},
+};
+export const DEFAULT_TENANT_SLUG = 'shore360';
+export const ALLOWED_ARTIFACT_TYPES = ['json', 'markdown', 'sarif', 'pdf', ...Object.values(ARTIFACT_KIND)] as const;
+export const MAX_ARTIFACT_BYTES = 100 * 1024 * 1024;

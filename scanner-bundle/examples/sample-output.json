@@ -1,0 +1,17 @@
+{
+  "contractVersion": "shore-sentinel.scanner-output/v1",
+  "scanner": { "name": "shore-baseline", "version": "0.1.0" },
+  "target": { "assetId": "asset-1", "hostname": "demo-host", "ip": "10.0.0.5" },
+  "findings": [
+    {
+      "id": "patch-001",
+      "title": "Missing operating system patch",
+      "severity": "high",
+      "category": "patching",
+      "description": "The target reports at least one missing critical update.",
+      "evidence": ["KB example missing"],
+      "remediation": "Apply approved OS patch baseline."
+    }
+  ],
+  "collectedAt": "2026-06-19T00:00:00Z"
+}

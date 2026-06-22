@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shore360.example/schemas/shore-sentinel/scanner-manifest.schema.json",
+  "title": "Shore Sentinel scanner bundle manifest",
+  "type": "object",
+  "required": ["contractVersion", "bundle", "entrypoint", "outputSchema"],
+  "properties": {
+    "contractVersion": { "const": "shore-sentinel.scanner-bundle/v1" },
+    "bundle": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" }
+      }
+    },
+    "entrypoint": { "type": "string", "description": "Executable path inside the bundle." },
+    "outputSchema": { "const": "shore-sentinel.scanner-output/v1" },
+    "requiredEnv": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

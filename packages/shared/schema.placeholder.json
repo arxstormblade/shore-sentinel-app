@@ -1,0 +1,7 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shore360.local/shore-sentinel/schemas/placeholder.schema.json",
+  "title": "Shore Sentinel Shared Schema Placeholder",
+  "description": "Phase 0 placeholder for future shared API contracts and data schemas.",
+  "type": "object"
+}

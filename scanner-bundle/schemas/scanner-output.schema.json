@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shore360.example/schemas/shore-sentinel/scanner-output.schema.json",
+  "title": "Shore Sentinel scanner output",
+  "type": "object",
+  "required": ["contractVersion", "scanner", "target", "findings", "collectedAt"],
+  "properties": {
+    "contractVersion": { "const": "shore-sentinel.scanner-output/v1" },
+    "scanner": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": true
+    },
+    "target": {
+      "type": "object",
+      "required": ["assetId"],
+      "properties": {
+        "assetId": { "type": "string", "minLength": 1 },
+        "hostname": { "type": "string" },
+        "ip": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "severity"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "severity": { "enum": ["informational", "low", "moderate", "medium", "high", "critical", "info", "crit"] },
+          "category": { "type": "string" },
+          "description": { "type": "string" },
+          "evidence": { "type": "array" },
+          "remediation": { "type": ["string", "null"] },
+          "references": { "type": "array" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "collectedAt": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": true
+}

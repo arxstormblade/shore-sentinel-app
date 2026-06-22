@@ -1,0 +1,29 @@
+# Dependencies and build outputs
+node_modules
+**/node_modules
+.next
+**/.next
+dist
+**/dist
+coverage
+**/coverage
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# VCS/editor noise
+.git
+.gitignore
+.DS_Store
+*.log
+npm-debug.log*
+
+# Python local state
+__pycache__
+**/__pycache__
+*.py[cod]
+.pytest_cache
+.venv
+venv
