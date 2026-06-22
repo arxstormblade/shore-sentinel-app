@@ -30,3 +30,4 @@ __pycache__/
 -H
 docker-compose.previous.yml
 scanner-bundle/reports/
+backups/
