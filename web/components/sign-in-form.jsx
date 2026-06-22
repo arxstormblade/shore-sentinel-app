@@ -2,21 +2,6 @@ import Link from 'next/link';
 import { ShoreLogo } from '@/components/ui';
 import { appPath, routePath } from '@/lib/paths';
 
-export function PublicTopBar({ actionHref = routePath('/auth/register'), actionLabel = 'Create account' }) {
-  return (
-    <header className="public-top" aria-label="Shore Sentinel public navigation">
-      <Link className="brand" href={routePath('/auth/login')} aria-label="Shore Sentinel sign in">
-        <ShoreLogo />
-        <span>Shore Sentinel</span>
-      </Link>
-      <nav className="public-nav" aria-label="Account navigation">
-        <Link href={routePath('/auth/login')}>Sign in</Link>
-        {actionLabel ? <Link className="btn alt" href={actionHref}>{actionLabel}</Link> : null}
-      </nav>
-    </header>
-  );
-}
-
 export function SignInForm({
   title = 'Sign in to Shore Sentinel',
   description = 'Use your operator credentials to open the secure control plane.',
@@ -24,9 +9,7 @@ export function SignInForm({
   registerLabel = 'Create a local account',
 }) {
   return (
-    <>
-      <PublicTopBar actionHref={registerHref} actionLabel={registerLabel} />
-      <div className="narrow auth-route">
+    <div className="narrow auth-route">
       <section className="panel auth-form auth-signin">
         <div className="auth-brandline">
           <ShoreLogo size={44} />
@@ -59,8 +42,7 @@ export function SignInForm({
             Need a local operator profile? <Link href={registerHref}>{registerLabel}</Link>
           </p>
         ) : null}
-        </section>
-      </div>
-    </>
+      </section>
+    </div>
   );
 }

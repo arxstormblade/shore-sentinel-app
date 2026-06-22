@@ -20,9 +20,24 @@ export function Brand() {
   );
 }
 
+export function PublicTopBar({ actionHref = routePath('/auth/register'), actionLabel = 'Create a local account' }) {
+  return (
+    <header className="public-top" aria-label="Shore Sentinel public navigation">
+      <Link className="brand" href={routePath('/auth/login')} aria-label="Shore Sentinel sign in">
+        <ShoreLogo />
+        <span>Shore Sentinel</span>
+      </Link>
+      <nav className="public-nav" aria-label="Account navigation">
+        <Link href={routePath('/auth/login')}>Sign in</Link>
+        {actionLabel ? <Link className="btn alt" href={actionHref}>{actionLabel}</Link> : null}
+      </nav>
+    </header>
+  );
+}
+
 export async function Shell({ children }) {
   const signedIn = await hasActiveSession();
-  if (!signedIn) return <>{children}</>;
+  if (!signedIn) return <><PublicTopBar /><main>{children}</main></>;
   return (
     <>
       <header className="top">

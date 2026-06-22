@@ -43,7 +43,9 @@ if (/preview|What operators see after login|Dashboard|Knowledgebase|Managed-mach
 const loginPage = readFileSync(join(root, 'app/auth/login/page.jsx'), 'utf8');
 const registerPage = readFileSync(join(root, 'app/auth/register/page.jsx'), 'utf8');
 const signInComponent = readFileSync(join(root, 'components/sign-in-form.jsx'), 'utf8');
-if (!/PublicTopBar/.test(signInComponent) || !/ShoreLogo/.test(signInComponent) || !/auth-brandline/.test(signInComponent)) failures.push('public/auth screens must render Shore Sentinel logo and top account navigation');
+const shellComponent = readFileSync(join(root, 'components/ui.jsx'), 'utf8');
+if (!/PublicTopBar/.test(shellComponent) || !/ShoreLogo/.test(shellComponent) || !/if \(!signedIn\) return <>/.test(shellComponent)) failures.push('unauthenticated shell must render Shore Sentinel logo and sign-in top navigation globally');
+if (!/auth-brandline/.test(signInComponent) || !/ShoreLogo/.test(signInComponent)) failures.push('login form must render Shore Sentinel logo');
 if (/apiBase\s*\+|localhost:4000/.test(loginPage + registerPage + signInForm)) failures.push('auth forms must post to web-owned relative actions, not localhost/API absolute URLs');
 const nextConfig = readFileSync(join(root, 'next.config.js'), 'utf8');
 if (!/basePath/.test(nextConfig) || !/shore-sentinel/.test(nextConfig)) failures.push('Next.js must own the /shore-sentinel basePath');
@@ -56,7 +58,7 @@ if (/tenant selector/i.test(source)) failures.push('tenant selector text must no
 if (/localhost:4000|127\.0\.0\.1:4000/.test(source)) failures.push('browser-rendered source must not expose localhost API URLs');
 if (/shore360-rmm-01|finance-ws-14|lab-linux-02|vendor-fw|client-vm|WEB-SRV|LAPTOP|DB-SRV|FILE-SRV|DEV-WS|demo-host|demo-scanner|demo-scan|SEED_DEMO_JOB/i.test(source)) failures.push('web source must not include dummy/demo asset details');
 const shell = readFileSync(join(root, 'components/ui.jsx'), 'utf8');
-if (!/if \(!signedIn\)/.test(shell) || !/return <>{children}<\/>;/.test(shell)) failures.push('shell must hide dashboard chrome until a session is confirmed');
+if (!/if \(!signedIn\) return <>/.test(shell) || !/PublicTopBar/.test(shell)) failures.push('shell must show public logo/sign-in top bar until a session is confirmed');
 const navCount = (readFileSync(join(root, 'lib/data.js'), 'utf8').match(/href:'\/(inventory|scans-reports|remediation)'/g) || []).length;
 if (navCount !== 3) failures.push(`expected 3 primary nav items, found ${navCount}`);
 if (failures.length) {
