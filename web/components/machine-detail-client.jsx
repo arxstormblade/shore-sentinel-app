@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiBase } from '@/lib/data';
-import { routePath } from '@/lib/paths';
+import { appPath, routePath } from '@/lib/paths';
 
 const FINAL_STATUSES = new Set(['succeeded', 'failed']);
 const STATUS_PROGRESS = {
@@ -62,6 +62,7 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
   const [saveBusy, setSaveBusy] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [adminCanManage, setAdminCanManage] = useState(Boolean(canManage));
+  const [permissionStatus, setPermissionStatus] = useState(canManage ? 'Admin permissions confirmed.' : 'Checking admin permissions…');
   const [draft, setDraft] = useState(() => ({
     hostname: machine.name ?? '',
     fqdn: machine.fqdn ?? '',
@@ -85,11 +86,18 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
     let cancelled = false;
     const refreshCurrentUser = async () => {
       try {
-        const response = await fetch(`${apiBase}/auth/me`, { cache: 'no-store' });
-        if (!response.ok) return;
+        const response = await fetch(appPath('/api/auth/me'), { cache: 'no-store', credentials: 'same-origin' });
+        if (!response.ok) {
+          if (!cancelled) setPermissionStatus('Sign in as an admin to enable deletion.');
+          return;
+        }
         const user = await response.json();
         const roles = Array.isArray(user?.roles) ? user.roles.map((role) => String(role).toLowerCase()) : [];
-        if (!cancelled) setAdminCanManage(roles.includes('admin'));
+        const isAdmin = roles.includes('admin');
+        if (!cancelled) {
+          setAdminCanManage(isAdmin);
+          setPermissionStatus(isAdmin ? 'Admin permissions confirmed.' : `Signed in as ${roles.join(', ') || 'non-admin'}; deletion is disabled.`);
+        }
       } catch {
         // leave server-provided permission state unchanged
       }
@@ -338,15 +346,14 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
         </section>
       ) : null}
 
-      {adminCanManage ? (
-        <section className="panel danger-zone">
-          <h2>Admin danger zone</h2>
-          <p>Delete this managed machine and its related scan history. This cannot be undone.</p>
-          <button className="btn danger" type="button" onClick={deleteMachine} disabled={deleteBusy}>
-            {deleteBusy ? 'Deleting managed machine…' : 'Delete managed machine'}
-          </button>
-        </section>
-      ) : null}
+      <section className="panel danger-zone">
+        <h2>Admin danger zone</h2>
+        <p>Delete this managed machine and its related scan history. This cannot be undone.</p>
+        <p className="note">{permissionStatus}</p>
+        <button className="btn danger" type="button" onClick={deleteMachine} disabled={!adminCanManage || deleteBusy}>
+          {deleteBusy ? 'Deleting managed machine…' : 'Delete managed machine'}
+        </button>
+      </section>
 
       <section className="panel">
         <h2>Reports</h2>
