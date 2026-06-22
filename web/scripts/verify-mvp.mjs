@@ -16,6 +16,7 @@ const routes = [
   'app/auth/login/page.jsx',
   'app/auth/register/page.jsx',
   'app/knowledgebase/page.jsx',
+  'app/users/page.jsx',
 ];
 const failures = [];
 for (const route of routes) {
@@ -33,7 +34,7 @@ const source = ['app', 'components', 'lib']
   .filter((path) => /\.(jsx|js|css)$/.test(path))
   .map((path) => readFileSync(path, 'utf8'))
   .join('\n');
-for (const text of ['Inventory','Scans & Reports','Remediation','Knowledgebase','Managed-machine dashboard','Audit History','Promote to Managed Machine','Run One-Time Audit','Add Managed Machine','auth/login','auth/register','Environment','Status','Severity','Time range','Shore Sentinel logo','Findings by Severity','Managed Machine Fleet','Recent Scans','Create local account']) {
+for (const text of ['Inventory','Scans & Reports','Remediation','Users','Knowledgebase','Managed-machine dashboard','Audit History','Promote to Managed Machine','Run One-Time Audit','Add Managed Machine','auth/login','auth/register','Environment','Status','Severity','Time range','Shore Sentinel logo','Findings by Severity','Managed Machine Fleet','Recent Scans','Create local account','User management','Users & access','Delete user']) {
   if (!source.includes(text)) failures.push(`missing ${text}`);
 }
 const landing = readFileSync(join(root, 'app/page.jsx'), 'utf8');
@@ -72,8 +73,8 @@ if (!/if \(!signedIn\) return <>/.test(shell) || !/PublicTopBar/.test(shell)) fa
 for (const detailRoute of ['app/inventory/machines/[id]/page.jsx', 'app/audits/[id]/page.jsx', 'app/scans-reports/reports/[id]/page.jsx']) {
   if (!/export const dynamic = ['"]force-dynamic['"]/.test(readFileSync(join(root, detailRoute), 'utf8'))) failures.push(`${detailRoute} must be force-dynamic so live detail redirects do not crash under cookie-aware layout`);
 }
-const navCount = (readFileSync(join(root, 'lib/data.js'), 'utf8').match(/href:'\/(inventory|scans-reports|remediation)'/g) || []).length;
-if (navCount !== 3) failures.push(`expected 3 primary nav items, found ${navCount}`);
+const navCount = (readFileSync(join(root, 'lib/data.js'), 'utf8').match(/href:'\/(inventory|scans-reports|remediation|users)'/g) || []).length;
+if (navCount !== 4) failures.push(`expected 4 primary nav items, found ${navCount}`);
 if (failures.length) {
   console.error(failures.join('\n'));
   process.exit(1);

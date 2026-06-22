@@ -61,6 +61,7 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
   const [scanBusy, setScanBusy] = useState(false);
   const [saveBusy, setSaveBusy] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
+  const [deleteStatus, setDeleteStatus] = useState('');
   const [adminCanManage, setAdminCanManage] = useState(Boolean(canManage));
   const [permissionStatus, setPermissionStatus] = useState(canManage ? 'Admin permissions confirmed.' : 'Checking admin permissions…');
   const [draft, setDraft] = useState(() => ({
@@ -239,16 +240,30 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
   }
 
   async function deleteMachine() {
-    if (!window.confirm(`Delete ${machine.name}? This removes the machine and related scan history.`)) return;
+    if (!adminCanManage) {
+      setDeleteStatus('Deletion is disabled because admin permissions are not confirmed. Sign out and sign back in with an admin account.');
+      return;
+    }
+    if (!window.confirm(`Delete ${machine.name}? This removes the machine and related scan history.`)) {
+      setDeleteStatus('Delete cancelled.');
+      return;
+    }
     setDeleteBusy(true);
     setNotice('');
+    setDeleteStatus('Deleting managed machine…');
     try {
       const response = await fetch(`${apiBase}/targets/${machine.id}`, { method: 'DELETE' });
-      if (!response.ok) throw new Error('Unable to delete machine.');
+      if (!response.ok) {
+        const errorPayload = await response.json().catch(() => ({}));
+        throw new Error(errorPayload.message || `Delete failed with HTTP ${response.status}`);
+      }
+      setDeleteStatus('Managed machine deleted. Returning to inventory…');
       router.replace(routePath('/inventory'));
       router.refresh();
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : 'Unable to delete machine.');
+      const message = error instanceof Error ? error.message : 'Unable to delete machine.';
+      setNotice(message);
+      setDeleteStatus(message);
       setDeleteBusy(false);
     }
   }
@@ -350,6 +365,7 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
         <h2>Admin danger zone</h2>
         <p>Delete this managed machine and its related scan history. This cannot be undone.</p>
         <p className="note">{permissionStatus}</p>
+        {deleteStatus ? <p className="note">{deleteStatus}</p> : null}
         <button className="btn danger" type="button" onClick={deleteMachine} disabled={!adminCanManage || deleteBusy}>
           {deleteBusy ? 'Deleting managed machine…' : 'Delete managed machine'}
         </button>

@@ -1,4 +1,5 @@
-import { BadRequestException, Body, Controller, Delete, Get, Header, NotFoundException, Param, Patch, Post, Req, Res } from '@nestjs/common';
+import { BadRequestException, Body, ConflictException, Controller, Delete, Get, Header, NotFoundException, Param, Patch, Post, Req, Res } from '@nestjs/common';
+import bcrypt from 'bcryptjs';
 import { createHash } from 'node:crypto';
 import type { Request, Response } from 'express';
 import { RUN_EVENT_TYPE, scannerBundleContractVersion } from '@shore-sentinel/shared';
@@ -18,6 +19,114 @@ export class AppController {
   @Post('auth/login') async login(@Body() body: Record<string, unknown>, @Res({ passthrough: true }) res: Response) { const result = await this.auth.login(requireString(body, 'email'), requireString(body, 'password'), body.rememberMe === true || body.rememberMe === 'true' || body.rememberMe === 'on'); this.setSessionCookie(res, result.token, body.rememberMe === true || body.rememberMe === 'true' || body.rememberMe === 'on'); return { user: result.user }; }
   @Post('auth/logout') logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) { this.auth.logout(this.token(req)); res.clearCookie('shore_session'); return { ok: true }; }
   @Get('auth/me') async me(@Req() req: Request) { return this.auth.me(this.token(req)); }
+
+  @Get('users')
+  async listUsers() {
+    const tenantId = await this.db.tenantId();
+    const result = await this.db.query(
+      `SELECT u.id, u.email, u.display_name, u.disabled_at, u.created_at, u.updated_at,
+              COALESCE(json_agg(r.name ORDER BY r.name) FILTER (WHERE r.name IS NOT NULL), '[]'::json) AS roles
+       FROM users u
+       LEFT JOIN user_roles ur ON ur.user_id = u.id
+       LEFT JOIN roles r ON r.id = ur.role_id
+       WHERE u.tenant_id = $1
+       GROUP BY u.id
+       ORDER BY u.created_at DESC`,
+      [tenantId],
+    );
+    return result.rows;
+  }
+
+  @Get('users/roles')
+  async listRoles() {
+    const result = await this.db.query('SELECT name, description FROM roles ORDER BY name');
+    return result.rows;
+  }
+
+  @Post('users')
+  async createUser(@Body() body: Record<string, unknown>) {
+    const tenantId = await this.db.tenantId();
+    const email = requireString(body, 'email');
+    const displayName = requireString(body, 'display_name');
+    const password = requireString(body, 'password');
+    const roles = Array.isArray(body.roles) ? body.roles.map(String) : ['operator'];
+    const existing = await this.db.query('SELECT id FROM users WHERE email = $1', [email]);
+    if (existing.rows[0]) throw new ConflictException('Email already exists');
+    const passwordHash = await bcrypt.hash(password, 12);
+    const created = await this.db.query<{ id: string }>('INSERT INTO users (tenant_id, email, display_name, password_hash) VALUES ($1,$2,$3,$4) RETURNING id', [tenantId, email, displayName, passwordHash]);
+    const userId = created.rows[0].id;
+    for (const roleName of roles) await this.db.query('INSERT INTO user_roles (user_id, role_id) SELECT $1, id FROM roles WHERE name = $2 ON CONFLICT DO NOTHING', [userId, roleName]);
+    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'user.created', 'user', userId, { email, displayName, roles }]);
+    return { id: userId, email, display_name: displayName, roles };
+  }
+
+  @Patch('users/:id')
+  async updateUser(@Param('id') id: string, @Body() body: Record<string, unknown>) {
+    const tenantId = await this.db.tenantId();
+    const fields: string[] = [];
+    const values: unknown[] = [];
+    let idx = 1;
+    if (typeof body.email === 'string') { fields.push(`email = $${idx++}`); values.push(body.email); }
+    if (typeof body.display_name === 'string') { fields.push(`display_name = $${idx++}`); values.push(body.display_name); }
+    if (typeof body.password === 'string' && body.password.length > 0) { fields.push(`password_hash = $${idx++}`); values.push(await bcrypt.hash(body.password, 12)); }
+    if (fields.length > 0) {
+      fields.push('updated_at = now()');
+      values.push(tenantId, id);
+      await this.db.query(`UPDATE users SET ${fields.join(', ')} WHERE tenant_id = $${idx++} AND id = $${idx}`, values);
+    }
+    if (Array.isArray(body.roles)) {
+      await this.db.query('DELETE FROM user_roles WHERE user_id = $1', [id]);
+      for (const roleName of body.roles.map(String)) await this.db.query('INSERT INTO user_roles (user_id, role_id) SELECT $1, id FROM roles WHERE name = $2 ON CONFLICT DO NOTHING', [id, roleName]);
+    }
+    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'user.updated', 'user', id, { updated_fields: Object.keys(body) }]);
+    const result = await this.db.query(
+      `SELECT u.id, u.email, u.display_name, u.disabled_at, u.created_at, u.updated_at,
+              COALESCE(json_agg(r.name ORDER BY r.name) FILTER (WHERE r.name IS NOT NULL), '[]'::json) AS roles
+       FROM users u
+       LEFT JOIN user_roles ur ON ur.user_id = u.id
+       LEFT JOIN roles r ON r.id = ur.role_id
+       WHERE u.tenant_id = $1 AND u.id = $2
+       GROUP BY u.id`,
+      [tenantId, id],
+    );
+    if (!result.rows[0]) throw new BadRequestException('user not found');
+    return result.rows[0];
+  }
+
+  @Post('users/:id/reset-password')
+  async resetPassword(@Param('id') id: string, @Body() body: Record<string, unknown>) {
+    const tenantId = await this.db.tenantId();
+    const passwordHash = await bcrypt.hash(requireString(body, 'password'), 12);
+    await this.db.query('UPDATE users SET password_hash = $1, updated_at = now() WHERE tenant_id = $2 AND id = $3', [passwordHash, tenantId, id]);
+    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'user.password_reset', 'user', id, {}]);
+    return { ok: true };
+  }
+
+  @Delete('users/:id')
+  async deleteUser(@Param('id') id: string) {
+    const tenantId = await this.db.tenantId();
+    await this.db.query('DELETE FROM user_roles WHERE user_id = $1', [id]);
+    await this.db.query('DELETE FROM users WHERE tenant_id = $1 AND id = $2', [tenantId, id]);
+    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'user.deleted', 'user', id, {}]);
+    return { ok: true };
+  }
+
+  @Post('users/:id/disable')
+  async disableUser(@Param('id') id: string) {
+    const tenantId = await this.db.tenantId();
+    await this.db.query('UPDATE users SET disabled_at = now(), updated_at = now() WHERE tenant_id = $1 AND id = $2', [tenantId, id]);
+    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'user.disabled', 'user', id, {}]);
+    return { ok: true };
+  }
+
+  @Post('users/:id/enable')
+  async enableUser(@Param('id') id: string) {
+    const tenantId = await this.db.tenantId();
+    await this.db.query('UPDATE users SET disabled_at = NULL, updated_at = now() WHERE tenant_id = $1 AND id = $2', [tenantId, id]);
+    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'user.enabled', 'user', id, {}]);
+    return { ok: true };
+  }
+
   @Get('settings/current') async settings() { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT s.*, t.slug AS tenant_slug FROM settings s JOIN tenants t ON t.id=s.tenant_id WHERE s.tenant_id=$1', [tenantId]); return result.rows[0]; }
   @Get('targets') async targets() { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT t.*, e.name AS environment_name, e.slug AS environment_slug FROM targets t LEFT JOIN environments e ON e.id=t.environment_id WHERE t.tenant_id=$1 ORDER BY t.created_at DESC', [tenantId]); return result.rows; }
   @Get('targets/:id') async target(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT t.*, e.name AS environment_name, e.slug AS environment_slug FROM targets t LEFT JOIN environments e ON e.id=t.environment_id WHERE t.tenant_id=$1 AND t.id=$2', [tenantId, id]); if (!result.rows[0]) throw new BadRequestException('target not found'); return result.rows[0]; }
@@ -32,7 +141,7 @@ export class AppController {
     await this.db.query('DELETE FROM target_status_checks WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]);
     await this.db.query('DELETE FROM schedules WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]);
     await this.db.query('DELETE FROM target_identities WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]);
-    await this.db.query('DELETE FROM target_group_members WHERE target_id=$2', [tenantId, id]);
+    await this.db.query('DELETE FROM target_group_members WHERE target_id=$1', [id]);
     await this.db.query('DELETE FROM targets WHERE tenant_id=$1 AND id=$2', [tenantId, id]);
     return { deleted: true, id };
   }

@@ -1406,3 +1406,342 @@ textarea:focus {
     justify-content: center;
   }
 }
+
+/* ── User management ───────────────────────────────────────────── */
+
+.users-page .hero {
+  margin-bottom: 0;
+}
+
+.users-panel {
+  overflow: visible;
+}
+
+.users-panel header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.user-count {
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.users-table thead th {
+  padding: 0.75rem 0.7rem 0.9rem;
+  color: #d7e0ee;
+  font-size: 0.76rem;
+  font-weight: 750;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  border-bottom: 1px solid rgba(128, 152, 199, 0.14);
+}
+
+.users-table tbody td {
+  padding: 0.9rem 0.7rem;
+  color: #e7edf8;
+  border-bottom: 1px solid rgba(128, 152, 199, 0.08);
+  vertical-align: middle;
+}
+
+.users-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.users-table tbody tr.row-disabled td {
+  opacity: 0.55;
+}
+
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.user-cell b {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.user-cell small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.role-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.row-actions .btn {
+  min-height: 2.2rem;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.85rem;
+}
+
+.btn.danger {
+  border-color: rgba(255, 102, 119, 0.2);
+  color: #ffc3cb;
+}
+
+.btn.danger:hover {
+  background: rgba(255, 102, 119, 0.12);
+  border-color: rgba(255, 102, 119, 0.3);
+}
+
+.actions-col {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.loading-row {
+  padding: 2rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(255, 102, 119, 0.2);
+  border-radius: 14px;
+  background: rgba(255, 102, 119, 0.06);
+  color: #ffc3cb;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.toast {
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(102, 217, 138, 0.2);
+  border-radius: 14px;
+  background: rgba(102, 217, 138, 0.06);
+  color: #b6f2c7;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* ── Modal ─────────────────────────────────────────────────────── */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  padding: 1.5rem;
+}
+
+.modal {
+  width: min(100%, 540px);
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(19, 28, 43, 0.98), rgba(11, 17, 27, 0.98));
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+}
+
+.modal-sm {
+  width: min(100%, 420px);
+}
+
+.modal header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.15rem 1.15rem 0;
+  margin-bottom: 0;
+}
+
+.modal header h2 {
+  font-size: 1.25rem;
+}
+
+.modal form {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.15rem;
+}
+
+.modal-desc {
+  padding: 0 1.15rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.modal-desc strong {
+  color: var(--text);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 0.25rem;
+}
+
+.roles-fieldset {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.roles-fieldset legend {
+  color: #dbe4f1;
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0 0.35rem;
+}
+
+.roles-checkboxes {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.role-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  cursor: pointer;
+}
+
+.role-checkbox input[type='checkbox'] {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: var(--blue);
+}
+
+.role-checkbox .pill {
+  flex-shrink: 0;
+}
+
+.role-checkbox small {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.permissions-list {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0 1.15rem;
+}
+
+.perm-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(128, 152, 199, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.perm-row.assigned {
+  border-color: rgba(116, 168, 255, 0.18);
+  background: rgba(74, 156, 255, 0.04);
+}
+
+.perm-row > div {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.perm-row > div small {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.perm-badge {
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.perm-badge.on {
+  border-color: rgba(102, 217, 138, 0.2);
+  background: rgba(102, 217, 138, 0.08);
+  color: #b6f2c7;
+}
+
+/* ── Responsive ────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .users-table thead {
+    display: none;
+  }
+
+  .users-table tbody tr {
+    display: grid;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-bottom: 1px solid rgba(128, 152, 199, 0.1);
+  }
+
+  .users-table tbody td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.25rem 0;
+    border: none;
+  }
+
+  .users-table tbody td::before {
+    content: attr(data-label);
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .actions-col {
+    width: auto;
+  }
+
+  .row-actions {
+    justify-content: flex-end;
+  }
+}
