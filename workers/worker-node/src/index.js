@@ -5,6 +5,7 @@ import { createApiClient } from './apiClient.js';
 import { readConfig } from './config.js';
 import { artifactUploadPayload, lifecycleEvent, retryDecision } from './lifecycle.js';
 import { normalizeJobData } from './payload.js';
+import { runBundledScanner } from './scannerRunner.js';
 
 const config = readConfig();
 const connection = new IORedis(config.redisUrl, { maxRetriesPerRequest: null });
@@ -49,9 +50,16 @@ const worker = new Worker(QUEUES.scanJobs, async (job) => {
   const data = normalizeJobData(job.data);
   await emit(job, RUN_EVENT_TYPE.jobClaimed, JOB_STATUS.claimed, 'Node worker claimed scan job');
   await emit(job, RUN_EVENT_TYPE.jobRunning, JOB_STATUS.running, 'Scan job orchestration started');
+  await emit(job, RUN_EVENT_TYPE.jobRunning, JOB_STATUS.running, 'Bundled Agent Security Selfcheck started');
+  const scannerRun = await runBundledScanner(data);
+  data.scannerOutput = scannerRun.scannerOutput;
+  await emit(job, RUN_EVENT_TYPE.jobRunning, JOB_STATUS.running, 'Bundled Agent Security Selfcheck completed', {
+    artifacts: scannerRun.artifacts.map((artifact) => artifact.kind),
+    findingCount: scannerRun.scannerOutput.findings.length,
+  });
   await emit(job, RUN_EVENT_TYPE.parseStarted, JOB_STATUS.parsing, 'Python parser requested');
 
-  const parsed = await parseWithPython(job);
+  const parsed = await parseWithPython({ ...job, data });
 
   await emit(job, RUN_EVENT_TYPE.parseSucceeded, JOB_STATUS.artifactUploading, 'Python parser completed', {
     findings: parsed.normalizedFindings.length,
@@ -63,8 +71,17 @@ const worker = new Worker(QUEUES.scanJobs, async (job) => {
       kind: ARTIFACT_KIND.scannerRawOutput,
       contentType: 'application/json',
       body: data.scannerOutput,
-      metadata: { contractVersion: scannerBundleContractVersion() },
+      metadata: { contractVersion: scannerBundleContractVersion(), scanner: 'Agent_Security_Selfcheck_v3.4.0.py' },
     }),
+    ...scannerRun.artifacts
+      .filter((artifact) => artifact.kind !== ARTIFACT_KIND.scannerRawOutput)
+      .map((artifact) => artifactUploadPayload({
+        runId: data.runId,
+        kind: artifact.kind,
+        contentType: artifact.contentType,
+        body: artifact.body,
+        metadata: { filename: artifact.filename, scanner: 'Agent_Security_Selfcheck_v3.4.0.py' },
+      })),
     artifactUploadPayload({
       runId: data.runId,
       kind: ARTIFACT_KIND.normalizedFindings,

@@ -18,11 +18,14 @@ export function lifecycleEvent(input) {
 }
 
 export function artifactUploadPayload({ runId, kind, contentType, body, metadata = {} }) {
+  const buffer = Buffer.isBuffer(body)
+    ? body
+    : Buffer.from(typeof body === 'string' ? body : JSON.stringify(body, null, 2));
   return {
     runId,
     kind,
     contentType,
-    bodyBase64: Buffer.from(typeof body === 'string' ? body : JSON.stringify(body, null, 2)).toString('base64'),
+    bodyBase64: buffer.toString('base64'),
     metadata,
   };
 }

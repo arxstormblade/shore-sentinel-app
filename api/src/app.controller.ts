@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Header, Param, Post, Req, Res } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Header, NotFoundException, Param, Patch, Post, Req, Res } from '@nestjs/common';
 import { createHash } from 'node:crypto';
 import type { Request, Response } from 'express';
 import { RUN_EVENT_TYPE, scannerBundleContractVersion } from '@shore-sentinel/shared';
@@ -21,6 +21,21 @@ export class AppController {
   @Get('settings/current') async settings() { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT s.*, t.slug AS tenant_slug FROM settings s JOIN tenants t ON t.id=s.tenant_id WHERE s.tenant_id=$1', [tenantId]); return result.rows[0]; }
   @Get('targets') async targets() { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT t.*, e.name AS environment_name, e.slug AS environment_slug FROM targets t LEFT JOIN environments e ON e.id=t.environment_id WHERE t.tenant_id=$1 ORDER BY t.created_at DESC', [tenantId]); return result.rows; }
   @Get('targets/:id') async target(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT t.*, e.name AS environment_name, e.slug AS environment_slug FROM targets t LEFT JOIN environments e ON e.id=t.environment_id WHERE t.tenant_id=$1 AND t.id=$2', [tenantId, id]); if (!result.rows[0]) throw new BadRequestException('target not found'); return result.rows[0]; }
+  @Get('targets/:id/scan-runs') async targetScanRuns(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query(`SELECT r.*, latest.event_type AS latest_event_type, latest.message AS latest_event_message, latest.progress_percent AS latest_progress_percent, latest.created_at AS latest_event_at, COALESCE(json_agg(jsonb_build_object('id', a.id, 'artifact_type', a.artifact_type, 'storage_uri', a.storage_uri, 'sha256', a.sha256, 'mime_type', a.mime_type, 'size_bytes', a.size_bytes, 'parse_status', a.parse_status, 'created_at', a.created_at) ORDER BY a.created_at DESC) FILTER (WHERE a.id IS NOT NULL), '[]'::json) AS artifacts FROM scan_runs r LEFT JOIN LATERAL (SELECT event_type, message, progress_percent, created_at FROM job_events e WHERE e.tenant_id=$1 AND e.run_id=r.id ORDER BY e.created_at DESC LIMIT 1) latest ON TRUE LEFT JOIN artifacts a ON a.tenant_id=$1 AND a.run_id=r.id WHERE r.tenant_id=$1 AND r.target_id=$2 GROUP BY r.id, latest.event_type, latest.message, latest.progress_percent, latest.created_at ORDER BY r.created_at DESC`, [tenantId, id]); return { runs: result.rows }; }
+  @Get('scan-runs/:id/artifacts') async runArtifacts(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT * FROM artifacts WHERE tenant_id=$1 AND run_id=$2 ORDER BY created_at DESC', [tenantId, id]); return { artifacts: result.rows }; }
+  @Patch('targets/:id') async updateTarget(@Param('id') id: string, @Body() body: Record<string, unknown>) { const tenantId = await this.db.tenantId(); const current = await this.db.query('SELECT * FROM targets WHERE tenant_id=$1 AND id=$2', [tenantId, id]); if (!current.rows[0]) throw new BadRequestException('target not found'); const fields = ['hostname', 'fqdn', 'ip_address', 'owner_team', 'platform', 'connection_mode', 'monitoring_enabled'] as const; const updates: string[] = []; const params: unknown[] = [tenantId, id]; for (const field of fields) { if (Object.prototype.hasOwnProperty.call(body, field)) { updates.push(`${field}=$${params.length + 1}`); params.push(body[field]); } } if (!updates.length) return current.rows[0]; const result = await this.db.query(`UPDATE targets SET ${updates.join(', ')}, updated_at=now() WHERE tenant_id=$1 AND id=$2 RETURNING *`, params); return result.rows[0]; }
+  @Delete('targets/:id') async deleteTarget(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const target = await this.db.query('SELECT id FROM targets WHERE tenant_id=$1 AND id=$2', [tenantId, id]); if (!target.rows[0]) throw new BadRequestException('target not found'); const jobs = await this.db.query<{ id: string }>('SELECT id FROM scan_jobs WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]); const runs = await this.db.query<{ id: string }>('SELECT id FROM scan_runs WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]); const jobIds = jobs.rows.map((row) => row.id); const runIds = runs.rows.map((row) => row.id); if (runIds.length) { await this.db.query('DELETE FROM job_events WHERE tenant_id=$1 AND run_id = ANY($2::uuid[])', [tenantId, runIds]); await this.db.query('DELETE FROM artifacts WHERE tenant_id=$1 AND run_id = ANY($2::uuid[])', [tenantId, runIds]); await this.db.query('DELETE FROM remediation_items WHERE tenant_id=$1 AND finding_instance_id IN (SELECT id FROM finding_instances WHERE tenant_id=$1 AND target_id=$2)', [tenantId, id]); await this.db.query('DELETE FROM finding_instances WHERE tenant_id=$1 AND run_id = ANY($2::uuid[])', [tenantId, runIds]); await this.db.query('DELETE FROM notification_events WHERE tenant_id=$1 AND run_id = ANY($2::uuid[])', [tenantId, runIds]); }
+    await this.db.query('DELETE FROM job_events WHERE tenant_id=$1 AND job_id = ANY($2::uuid[])', [tenantId, jobIds]);
+    await this.db.query('DELETE FROM scan_runs WHERE tenant_id=$1 AND id = ANY($2::uuid[])', [tenantId, runIds]);
+    await this.db.query('DELETE FROM scan_jobs WHERE tenant_id=$1 AND id = ANY($2::uuid[])', [tenantId, jobIds]);
+    await this.db.query('DELETE FROM notification_events WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]);
+    await this.db.query('DELETE FROM target_status_checks WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]);
+    await this.db.query('DELETE FROM schedules WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]);
+    await this.db.query('DELETE FROM target_identities WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]);
+    await this.db.query('DELETE FROM target_group_members WHERE target_id=$2', [tenantId, id]);
+    await this.db.query('DELETE FROM targets WHERE tenant_id=$1 AND id=$2', [tenantId, id]);
+    return { deleted: true, id };
+  }
   @Get('one-time-audits') async oneTimeAudits() { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT * FROM one_time_audits WHERE tenant_id=$1 ORDER BY created_at DESC', [tenantId]); return result.rows; }
   @Get('one-time-audits/:id') async oneTimeAudit(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT * FROM one_time_audits WHERE tenant_id=$1 AND id=$2', [tenantId, id]); if (!result.rows[0]) throw new BadRequestException('one-time audit not found'); return result.rows[0]; }
   @Post('one-time-audits') async createAudit(@Body() body: Record<string, unknown>) { const tenantId = await this.db.tenantId(); const result = await this.db.query('INSERT INTO one_time_audits (tenant_id,display_name,hostname,ip_address,connection_mode) VALUES ($1,$2,$3,$4,$5) RETURNING *', [tenantId, requireString(body, 'display_name'), body.hostname ?? null, body.ip_address ?? null, body.connection_mode ?? 'ssh_push']); return result.rows[0]; }
@@ -35,8 +50,24 @@ export class AppController {
     const tenantId = await this.db.tenantId();
     const eventType = requireString(body, 'type');
     const message = typeof body.message === 'string' ? body.message : eventType;
+    const progressPercent = typeof body.progress_percent === 'number'
+      ? body.progress_percent
+      : typeof body.progressPercent === 'number'
+        ? body.progressPercent
+        : ({
+            'job.queued': 0,
+            'job.claimed': 10,
+            'job.running': 25,
+            'parse.started': 45,
+            'parse.succeeded': 60,
+            'artifact.upload_requested': 75,
+            'artifact.upload_succeeded': 85,
+            'job.retry_scheduled': 90,
+            'job.succeeded': 100,
+            'job.failed': 100,
+          } as Record<string, number | undefined>)[eventType] ?? null;
     await this.applyWorkerEventState(id, eventType);
-    await this.db.query('INSERT INTO job_events (tenant_id,run_id,event_type,message,payload) VALUES ($1,$2,$3,$4,$5)', [tenantId, id, eventType, message, body]);
+    await this.db.query('INSERT INTO job_events (tenant_id,run_id,event_type,message,progress_percent,payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, id, eventType, message, progressPercent, body]);
     return { accepted: true, run_id: id, event_type: eventType };
   }
 
@@ -51,11 +82,25 @@ export class AppController {
     const bodyBase64 = requireString(body, 'bodyBase64');
     const buffer = Buffer.from(bodyBase64, 'base64');
     const sha256 = createHash('sha256').update(buffer).digest('hex');
-    const storageUri = `api://worker-handoff/${runId}/${artifactType}/${sha256}`;
-    const result = await this.db.query("INSERT INTO artifacts (tenant_id,run_id,artifact_type,storage_uri,sha256,mime_type,size_bytes,parse_status,retention_expires_at) VALUES ($1,$2,$3,$4,$5,$6,$7,'uploaded',now()+interval '90 days') ON CONFLICT(run_id,artifact_type,sha256) DO UPDATE SET parse_status='uploaded' RETURNING *", [tenantId, runId, artifactType, storageUri, sha256, body.contentType ?? null, buffer.length]);
+    const stored = await this.artifacts.storeWorkerArtifact(runId, artifactType, buffer, typeof body.contentType === 'string' ? body.contentType : undefined);
+    const storageUri = stored.storage_uri;
+    const result = await this.db.query("INSERT INTO artifacts (tenant_id,run_id,artifact_type,storage_uri,sha256,mime_type,size_bytes,parse_status,retention_expires_at) VALUES ($1,$2,$3,$4,$5,$6,$7,'uploaded',now()+interval '90 days') ON CONFLICT(run_id,artifact_type,sha256) DO UPDATE SET parse_status='uploaded', storage_uri=EXCLUDED.storage_uri, mime_type=EXCLUDED.mime_type RETURNING *", [tenantId, runId, artifactType, storageUri, sha256, body.contentType ?? null, buffer.length]);
     await this.queue.enqueue('artifact_processing', { artifactId: result.rows[0].id, artifact_id: result.rows[0].id, runId, run_id: runId, artifactType, artifact_type: artifactType });
     await this.db.query("INSERT INTO job_events (tenant_id,run_id,event_type,message,payload) VALUES ($1,$2,'artifact.uploaded',$3,$4)", [tenantId, runId, `${artifactType} artifact uploaded through API handoff`, { artifact_id: result.rows[0].id, metadata: body.metadata ?? {} }]);
     return result.rows[0];
+  }
+
+  @Get('artifacts/:id/download')
+  async downloadArtifact(@Param('id') id: string, @Res() res: Response) {
+    const tenantId = await this.db.tenantId();
+    const result = await this.db.query('SELECT * FROM artifacts WHERE tenant_id=$1 AND id=$2', [tenantId, id]);
+    const artifact = result.rows[0];
+    if (!artifact) throw new NotFoundException('artifact not found');
+    const stream = await this.artifacts.readArtifact(artifact.storage_uri);
+    const extension = artifact.artifact_type === 'markdown' ? 'md' : String(artifact.artifact_type).replace(/[^a-z0-9]/gi, '-');
+    res.setHeader('content-type', artifact.mime_type || 'application/octet-stream');
+    res.setHeader('content-disposition', `inline; filename="shore-sentinel-${artifact.run_id}-${artifact.artifact_type}.${extension}"`);
+    stream.pipe(res);
   }
 
   @Post('artifacts/upload-complete') async uploadComplete(@Body() body: Record<string, unknown>) { const tenantId = await this.db.tenantId(); const runId = requireString(body, 'run_id'); const storageUri = requireString(body, 'storage_uri'); const { artifactType, sha256, sizeBytes } = validateArtifactComplete(body); const result = await this.db.query("INSERT INTO artifacts (tenant_id,run_id,artifact_type,storage_uri,sha256,mime_type,size_bytes,parse_status,retention_expires_at) VALUES ($1,$2,$3,$4,$5,$6,$7,'uploaded',now()+interval '90 days') ON CONFLICT(run_id,artifact_type,sha256) DO UPDATE SET parse_status='uploaded' RETURNING *", [tenantId, runId, artifactType, storageUri, sha256, body.mime_type ?? null, sizeBytes]); await this.queue.enqueue('artifact_processing', { artifactId: result.rows[0].id, artifact_id: result.rows[0].id, runId, run_id: runId, artifactType, artifact_type: artifactType }); await this.db.query("INSERT INTO job_events (tenant_id,run_id,event_type,message,payload) VALUES ($1,$2,'artifact.uploaded',$3,$4)", [tenantId, runId, `${artifactType} artifact uploaded`, { artifact_id: result.rows[0].id }]); return result.rows[0]; }

@@ -18,6 +18,12 @@ function controller() {
       if (sql.includes('INSERT INTO one_time_audits')) return { rows: [{ id: 'audit-1', display_name: params[1], status: 'draft' }] };
       if (sql.includes('INSERT INTO targets')) return { rows: [{ id: 'target-1', hostname: params[1], status: 'unknown' }] };
       if (sql.includes('SELECT id FROM environments')) return { rows: [{ id: 'env-1' }] };
+      if (sql.includes('SELECT * FROM targets WHERE tenant_id=$1 AND id=$2')) return { rows: [{ id: 'target-1', hostname: 'alpha-ws-01', fqdn: 'alpha-ws-01.example.test', owner_team: 'Desktop Engineering', platform: 'windows', connection_mode: 'pull_checkin', monitoring_enabled: true }] };
+      if (sql.includes('SELECT id FROM targets WHERE tenant_id=$1 AND id=$2')) return { rows: [{ id: 'target-1' }] };
+      if (sql.includes('SELECT * FROM artifacts WHERE tenant_id=$1 AND run_id=$2')) return { rows: [{ id: 'artifact-1', artifact_type: ARTIFACT_KIND.scannerRawOutput, storage_uri: 's3://bucket/runs/run-1/file.json', sha256: 'a'.repeat(64), mime_type: 'application/json', size_bytes: 12 }] };
+      if (sql.includes('SELECT r.*') && sql.includes('FROM scan_runs r')) return { rows: [{ id: 'run-1', status: 'completed', latest_event_type: 'job.succeeded', latest_progress_percent: 100, artifacts: [{ id: 'artifact-1', artifact_type: ARTIFACT_KIND.scannerRawOutput }] }] };
+      if (sql.includes('UPDATE targets SET')) return { rows: [{ id: 'target-1', hostname: params[2] ?? 'alpha-ws-01', fqdn: params[3] ?? 'alpha-ws-01.example.test', owner_team: params[4] ?? 'Desktop Engineering', platform: params[5] ?? 'windows', connection_mode: params[6] ?? 'pull_checkin' }] };
+      if (sql.includes('DELETE FROM targets')) return { rows: [] };
       rows.push({ sql, params }); return { rows: [] };
     }
   };
@@ -33,7 +39,11 @@ function controller() {
       return { queued: true, queue: queueName === 'scan_jobs' ? QUEUES.scanJobs : QUEUES.artifactProcessing, payload };
     }
   };
-  const artifacts = { createUpload: async (runId: string, artifactType: string) => ({ object_key: `runs/${runId}/file.${artifactType}`, storage_uri: `s3://bucket/runs/${runId}/file.${artifactType}`, upload_url: null }) };
+  const artifacts = {
+    createUpload: async (runId: string, artifactType: string) => ({ object_key: `runs/${runId}/file.${artifactType}`, storage_uri: `s3://bucket/runs/${runId}/file.${artifactType}`, upload_url: null }),
+    storeWorkerArtifact: async (runId: string, artifactType: string) => ({ object_key: `runs/${runId}/handoff.${artifactType}`, storage_uri: `s3://bucket/runs/${runId}/handoff.${artifactType}` }),
+    readArtifact: async () => { throw new Error('not implemented in test'); },
+  };
   return { app: new AppController(db as never, auth as never, queue as never, artifacts as never), calls, queueCalls, authCalls };
 }
 
@@ -109,4 +119,37 @@ test('worker artifact handoff accepts canonical shared artifact kinds', async ()
   assert.equal(result.artifact_type, ARTIFACT_KIND.scannerRawOutput);
   assert.equal(queueCalls[0].queueName, 'artifact_processing');
   assert.equal(queueCalls[0].payload.artifactType, ARTIFACT_KIND.scannerRawOutput);
+});
+
+test('managed target update endpoint persists editable machine fields', async () => {
+  const { app, calls } = controller();
+  const result = await app.updateTarget('target-1', {
+    hostname: 'alpha-ws-01',
+    fqdn: 'alpha-ws-01.example.test',
+    owner_team: 'Desktop Engineering',
+    platform: 'windows',
+    connection_mode: 'pull_checkin',
+  });
+
+  assert.equal(result.id, 'target-1');
+  assert.equal(result.hostname, 'alpha-ws-01');
+  assert.equal(calls.some((sql) => sql.includes('UPDATE targets SET')), true);
+});
+
+test('managed target delete endpoint removes dependent scan data before deleting the machine', async () => {
+  const { app, calls } = controller();
+  const result = await app.deleteTarget('target-1');
+
+  assert.equal(result.deleted, true);
+  assert.equal(calls.some((sql) => sql.includes('DELETE FROM scan_jobs')), true);
+  assert.equal(calls.some((sql) => sql.includes('DELETE FROM targets')), true);
+});
+
+test('managed target scan run endpoint returns the live run history with artifacts', async () => {
+  const { app } = controller();
+  const result = await app.targetScanRuns('target-1');
+
+  assert.ok(Array.isArray(result.runs));
+  assert.equal(result.runs[0].id, 'run-1');
+  assert.equal(result.runs[0].artifacts[0].artifact_type, ARTIFACT_KIND.scannerRawOutput);
 });
