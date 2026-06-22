@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import { reports, byId } from '@/lib/data';
 
+export const dynamic = 'force-dynamic';
+
 export function generateStaticParams() { return []; }
 
 export default function Report({ params }) {

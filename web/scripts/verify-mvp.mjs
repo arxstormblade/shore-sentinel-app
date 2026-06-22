@@ -59,6 +59,9 @@ if (/localhost:4000|127\.0\.0\.1:4000/.test(source)) failures.push('browser-rend
 if (/shore360-rmm-01|finance-ws-14|lab-linux-02|vendor-fw|client-vm|WEB-SRV|LAPTOP|DB-SRV|FILE-SRV|DEV-WS|demo-host|demo-scanner|demo-scan|SEED_DEMO_JOB/i.test(source)) failures.push('web source must not include dummy/demo asset details');
 const shell = readFileSync(join(root, 'components/ui.jsx'), 'utf8');
 if (!/if \(!signedIn\) return <>/.test(shell) || !/PublicTopBar/.test(shell)) failures.push('shell must show public logo/sign-in top bar until a session is confirmed');
+for (const detailRoute of ['app/inventory/machines/[id]/page.jsx', 'app/audits/[id]/page.jsx', 'app/scans-reports/reports/[id]/page.jsx']) {
+  if (!/export const dynamic = ['"]force-dynamic['"]/.test(readFileSync(join(root, detailRoute), 'utf8'))) failures.push(`${detailRoute} must be force-dynamic so live detail redirects do not crash under cookie-aware layout`);
+}
 const navCount = (readFileSync(join(root, 'lib/data.js'), 'utf8').match(/href:'\/(inventory|scans-reports|remediation)'/g) || []).length;
 if (navCount !== 3) failures.push(`expected 3 primary nav items, found ${navCount}`);
 if (failures.length) {
