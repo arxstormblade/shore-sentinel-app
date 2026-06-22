@@ -1,67 +1,56 @@
 import Link from 'next/link';
 import { routePath } from '@/lib/paths';
 
-const fleet = [
-  { label: 'Online', value: 42, color: 'green', sub: 'Machines' },
-  { label: 'Offline', value: 7, color: 'amber', sub: 'Machines' },
-  { label: 'Stale', value: 11, color: 'gray', sub: 'Machines' },
-];
+const serverApiBase = () => (process.env.INTERNAL_API_URL || process.env.API_URL || 'http://api:4000').replace(/\/$/, '');
 
-const severity = [
-  { label: 'Critical', value: 18, pct: '21%', color: 'red' },
-  { label: 'High', value: 34, pct: '39%', color: 'orange' },
-  { label: 'Medium', value: 22, pct: '25%', color: 'yellow' },
-  { label: 'Low', value: 13, pct: '15%', color: 'green' },
-];
+async function getJson(path) {
+  try {
+    const response = await fetch(`${serverApiBase()}${path}`, { cache: 'no-store' });
+    if (!response.ok) return [];
+    return await response.json();
+  } catch {
+    return [];
+  }
+}
 
-const scans = [
-  ['WEB-SRV-01', 'Security Audit', 'Completed', '12 (3 Critical)', 'May 15, 2025 10:24 AM', '▣'],
-  ['LAPTOP-23', 'Compliance Audit', 'Completed', '7 (1 Critical)', 'May 15, 2025 9:15 AM', '▣'],
-  ['DB-SRV-02', 'Security Audit', 'Completed', '5 (0 Critical)', 'May 14, 2025 5:42 PM', '▣'],
-  ['FILE-SRV-01', 'Quick Scan', 'Completed', '2 (0 Critical)', 'May 14, 2025 2:11 PM', '▣'],
-  ['DEV-WS-17', 'Security Audit', 'Failed', '—', 'May 14, 2025 11:03 AM', '—'],
-];
+export default async function Dashboard() {
+  const [machines, audits] = await Promise.all([getJson('/targets'), getJson('/one-time-audits')]);
+  const online = machines.filter((machine) => machine.status && machine.status !== 'offline').length;
+  const offline = machines.filter((machine) => machine.status === 'offline').length;
+  const pendingAudits = audits.filter((audit) => !['completed', 'ready'].includes(String(audit.status).toLowerCase())).length;
+  const totalFindings = 0;
 
-const guides = [
-  ['▤', 'Connect a new endpoint', 'Step-by-step guide to add and onboard a new machine.'],
-  ['⌕', 'Run an audit scan', 'How to run on-demand scans and understand results.'],
-  ['♢', 'Review remediation steps', 'Identify issues and apply recommended fixes.'],
-  ['▥', 'Export compliance report', 'Generate and export reports for audits and compliance.'],
-];
-
-export default function Dashboard() {
   return (
     <div className="dashboard-shell" data-view="Managed-machine dashboard">
       <section className="panel dashboard-hero">
         <div className="hero-copy">
           <p className="eye">Single-tenant security operations</p>
-          <h1>Keep managed machines, one-time audits, and remediation in one calm control plane.</h1>
+          <h1>Start clean, then build live inventory, audits, and remediation from real data.</h1>
           <p>
-            Shore Sentinel keeps the first decision obvious: launch an ad hoc audit or enroll a managed
-            machine, then move straight into evidence, trends, and follow-up.
+            Shore Sentinel is ready for live records. Add a managed machine or run a one-time audit to populate this dashboard.
           </p>
           <div className="hero-chipbar">
             <span className="chip green">Tailnet secure</span>
             <span className="chip">Single tenant</span>
-            <span className="chip">Dark operator UI</span>
+            <span className="chip">Live data only</span>
           </div>
         </div>
 
         <div className="signal-board">
           <div className="signal-card accent">
             <span>Managed fleet</span>
-            <strong>42 online</strong>
-            <small>7 offline · 11 stale</small>
+            <strong>{machines.length}</strong>
+            <small>{online} online · {offline} offline</small>
           </div>
           <div className="signal-card">
             <span>Findings</span>
-            <strong>87</strong>
-            <small>18 critical · 34 high</small>
+            <strong>{totalFindings}</strong>
+            <small>No scanner findings recorded yet</small>
           </div>
           <div className="signal-card wide">
-            <span>Primary actions</span>
-            <strong>Run audit · Add machine</strong>
-            <small>Everything else stays in secondary workflows.</small>
+            <span>Pending audits</span>
+            <strong>{pendingAudits}</strong>
+            <small>Create live records from the actions below.</small>
           </div>
         </div>
       </section>
@@ -71,10 +60,7 @@ export default function Dashboard() {
           <div className="round-icon">▣</div>
           <div>
             <h2>Run One-Time Audit</h2>
-            <p>
-              Run an on-demand audit scan against one or more machines to assess security configuration and
-              identify issues.
-            </p>
+            <p>Create a live one-time audit target without adding it to managed fleet health.</p>
             <Link className="btn" href={routePath('/audits/new')}>Run Audit</Link>
           </div>
         </article>
@@ -83,9 +69,7 @@ export default function Dashboard() {
           <div className="round-icon">⊞</div>
           <div>
             <h2>Add Managed Machine</h2>
-            <p>
-              Add a new machine to your inventory and begin continuous monitoring, reporting, and history.
-            </p>
+            <p>Add a real machine to inventory for monitoring, reporting, and scan history.</p>
             <Link className="btn" href={routePath('/inventory/new')}>Add Machine</Link>
           </div>
         </article>
@@ -93,91 +77,36 @@ export default function Dashboard() {
 
       <section className="dashboard-grid">
         <article className="panel data-panel fleet-panel">
-          <header>
-            <h2>Managed Machine Fleet</h2>
-            <span className="info-dot">i</span>
-          </header>
-          <div className="fleet-cards">
-            {fleet.map((item) => (
-              <div className="fleet-card" key={item.label}>
-                <span className={`status-dot ${item.color}`} />
-                <b>{item.label}</b>
-                <strong>{item.value}</strong>
-                <small>{item.sub}</small>
-              </div>
-            ))}
-          </div>
+          <header><h2>Managed Machine Fleet</h2><span className="info-dot">i</span></header>
+          {machines.length ? (
+            <div className="fleet-cards">
+              <div className="fleet-card"><span className="status-dot green" /><b>Online</b><strong>{online}</strong><small>Machines</small></div>
+              <div className="fleet-card"><span className="status-dot amber" /><b>Offline</b><strong>{offline}</strong><small>Machines</small></div>
+              <div className="fleet-card"><span className="status-dot gray" /><b>Total</b><strong>{machines.length}</strong><small>Machines</small></div>
+            </div>
+          ) : <div className="empty"><h3>No managed machines yet</h3><p>Add your first live managed machine to populate fleet health.</p><Link className="btn" href={routePath('/inventory/new')}>Add Managed Machine</Link></div>}
         </article>
 
         <article className="panel data-panel severity-panel">
           <h2>Findings by Severity</h2>
-          <div className="severity-content">
-            <div className="donut" aria-label="Findings by Severity chart" />
-            <div className="severity-list">
-              {severity.map((item) => (
-                <div key={item.label}>
-                  <span className={`status-dot ${item.color}`} />
-                  <span>{item.label}</span>
-                  <b>{item.value}</b>
-                  <small>{item.pct}</small>
-                </div>
-              ))}
-            </div>
-            <div className="total-findings">
-              <span>Total Findings</span>
-              <strong>87</strong>
-              <small>Across all machines</small>
-            </div>
-          </div>
+          <div className="empty"><h3>No findings yet</h3><p>Run a scan or audit to generate live findings and remediation items.</p></div>
         </article>
 
         <article className="panel data-panel scans-panel">
-          <header>
-            <h2>Recent Scans</h2>
-            <Link href={routePath('/scans-reports')}>View all scans</Link>
-          </header>
-          <table>
-            <thead>
-              <tr>
-                <th>Machine</th>
-                <th>Scan Type</th>
-                <th>Status</th>
-                <th>Findings</th>
-                <th>Last Run</th>
-                <th>Report</th>
-              </tr>
-            </thead>
-            <tbody>
-              {scans.map((row) => (
-                <tr key={row[0]}>
-                  <td data-label="Machine">{row[0]}</td>
-                  <td data-label="Scan Type">{row[1]}</td>
-                  <td data-label="Status"><span className={row[2] === 'Failed' ? 'failed' : 'completed'}>{row[2]}</span></td>
-                  <td data-label="Findings">{row[3]}</td>
-                  <td data-label="Last Run">{row[4]}</td>
-                  <td data-label="Report">{row[5]}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="pager"><span>‹</span><b>1</b><span>2</span><span>3</span><span>›</span></div>
+          <header><h2>Recent Scans</h2><Link href={routePath('/scans-reports')}>View all scans</Link></header>
+          <div className="empty"><h3>No scans yet</h3><p>Live scan history will appear here after you run an audit or managed-machine scan.</p></div>
         </article>
 
         <article className="panel data-panel kb-panel">
-          <header>
-            <h2>Knowledgebase</h2>
-            <Link href={routePath('/knowledgebase')}>View all articles</Link>
-          </header>
+          <header><h2>Knowledgebase</h2><Link href={routePath('/knowledgebase')}>View all articles</Link></header>
           <div className="guide-list">
-            {guides.map(([icon, title, desc]) => (
-              <Link href={routePath('/knowledgebase')} key={title}>
-                <span>{icon}</span>
-                <div>
-                  <b>{title}</b>
-                  <small>{desc}</small>
-                </div>
-                <i>›</i>
-              </Link>
+            {[
+              ['▤', 'Connect a new endpoint', 'Add your first live managed machine.'],
+              ['⌕', 'Run an audit scan', 'Launch a one-time audit from scratch.'],
+              ['♢', 'Review remediation steps', 'Remediation appears after live findings exist.'],
+              ['▥', 'Export compliance report', 'Reports become available after scans complete.'],
+            ].map(([icon, title, desc]) => (
+              <Link href={routePath('/knowledgebase')} key={title}><span>{icon}</span><div><b>{title}</b><small>{desc}</small></div><i>›</i></Link>
             ))}
           </div>
         </article>

@@ -89,7 +89,7 @@ export class AppController {
     const subjectId = targetId ?? oneTimeAuditId ?? 'unknown-subject';
     return {
       contractVersion: scannerBundleContractVersion(),
-      scanner: { name: 'shore-sentinel-api-placeholder', version: body.scanner_version ?? '0.1.0' },
+      scanner: { name: 'shore-sentinel-bundled-scanner', version: body.scanner_version ?? '3.4.0' },
       target: { assetId: subjectId, subjectType },
       findings: [],
       collectedAt: new Date().toISOString(),

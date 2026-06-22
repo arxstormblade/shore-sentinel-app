@@ -110,19 +110,6 @@ events.on('waiting', ({ jobId }) => {
   console.log(JSON.stringify({ component: 'worker-node', queue: QUEUES.scanJobs, jobId, status: 'waiting' }));
 });
 
-if (process.env.SEED_DEMO_JOB === 'true') {
-  await queue.add('demo-scan', {
-    runId: `demo-${Date.now()}`,
-    scannerOutput: {
-      contractVersion: scannerBundleContractVersion(),
-      scanner: { name: 'demo-scanner', version: '0.1.0' },
-      target: { assetId: 'demo-host', hostname: 'demo-host.local' },
-      findings: [],
-      collectedAt: new Date().toISOString(),
-    },
-  });
-}
-
 console.log(JSON.stringify({ component: 'worker-node', status: 'started', queue: QUEUES.scanJobs, redisUrl: config.redisUrl.replace(/:\/\/.*@/, '://***@') }));
 
 async function shutdown(signal) {

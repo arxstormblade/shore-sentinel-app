@@ -17,15 +17,15 @@ export default function NewMachine() {
         <form action={appPath('/api/targets')} method="post">
           <label>
             Hostname
-            <input name="hostname" placeholder="finance-ws-14" required />
+            <input name="hostname" placeholder="hostname-to-enroll" required />
           </label>
           <label>
             FQDN
-            <input name="fqdn" placeholder="finance-ws-14.corp.local" />
+            <input name="fqdn" placeholder="host.example.local" />
           </label>
           <label>
             IP address
-            <input name="ip_address" placeholder="10.20.18.14" />
+            <input name="ip_address" placeholder="IP address" />
           </label>
           <label>
             Owner team

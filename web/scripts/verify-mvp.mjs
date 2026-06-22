@@ -33,7 +33,7 @@ const source = ['app', 'components', 'lib']
   .filter((path) => /\.(jsx|js|css)$/.test(path))
   .map((path) => readFileSync(path, 'utf8'))
   .join('\n');
-for (const text of ['Inventory','Scans & Reports','Remediation','Knowledgebase','Managed-machine dashboard','Audit History','Promote to Managed Machine','Run One-Time Audit','Add Managed Machine','auth/login','auth/register','Environment','Status','Severity','Time range','Shore Shield logo','Findings by Severity','Managed Machine Fleet','Recent Scans','Create local account']) {
+for (const text of ['Inventory','Scans & Reports','Remediation','Knowledgebase','Managed-machine dashboard','Audit History','Promote to Managed Machine','Run One-Time Audit','Add Managed Machine','auth/login','auth/register','Environment','Status','Severity','Time range','Shore Sentinel logo','Findings by Severity','Managed Machine Fleet','Recent Scans','Create local account']) {
   if (!source.includes(text)) failures.push(`missing ${text}`);
 }
 const landing = readFileSync(join(root, 'app/page.jsx'), 'utf8');
@@ -52,6 +52,7 @@ if (/href=['"]\/shore-sentinel/.test(source) || /action=['"]\/shore-sentinel/.te
 if (/href=\{appPath\(/.test(source)) failures.push('Next Link hrefs must use routePath, not mounted appPath, when next.config basePath is active');
 if (/tenant selector/i.test(source)) failures.push('tenant selector text must not appear');
 if (/localhost:4000|127\.0\.0\.1:4000/.test(source)) failures.push('browser-rendered source must not expose localhost API URLs');
+if (/shore360-rmm-01|finance-ws-14|lab-linux-02|vendor-fw|client-vm|WEB-SRV|LAPTOP|DB-SRV|FILE-SRV|DEV-WS|demo-host|demo-scanner|demo-scan|SEED_DEMO_JOB/i.test(source)) failures.push('web source must not include dummy/demo asset details');
 const shell = readFileSync(join(root, 'components/ui.jsx'), 'utf8');
 if (!/if \(!signedIn\)/.test(shell) || !/return <>{children}<\/>;/.test(shell)) failures.push('shell must hide dashboard chrome until a session is confirmed');
 const navCount = (readFileSync(join(root, 'lib/data.js'), 'utf8').match(/href:'\/(inventory|scans-reports|remediation)'/g) || []).length;

@@ -1,16 +1,12 @@
 import Link from 'next/link';
 import { navItems } from '@/lib/data';
 import { hasActiveSession } from '@/lib/session';
-import { routePath } from '@/lib/paths';
+import { appPath, routePath } from '@/lib/paths';
 
 export function ShoreLogo({ size = 34 }) {
   return (
-    <span className="logo-mark" aria-label="Shore Shield logo" style={{ '--logo-size': `${size}px` }}>
-      <svg viewBox="0 0 48 48" role="img" aria-hidden="true">
-        <path d="M24 4 40 9.5v12.2c0 10.1-6.5 18.8-16 22.3C14.5 40.5 8 31.8 8 21.7V9.5L24 4Z" fill="none" stroke="currentColor" strokeWidth="3" />
-        <path d="M17.5 26.2c2.5-7.4 7.5-9.7 14-7.1" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="3" />
-        <path d="M18 28.5c3.1 2.5 7.3 2.6 10.4.3" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="3" />
-      </svg>
+    <span className="logo-mark" aria-label="Shore Sentinel logo" style={{ '--logo-size': `${size}px` }}>
+      <img src={appPath('/shore-sentinel-logo-v2.png')} alt="Shore Sentinel" aria-hidden="true" />
     </span>
   );
 }

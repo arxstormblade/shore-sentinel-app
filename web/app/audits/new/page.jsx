@@ -17,15 +17,15 @@ export default function NewAudit() {
         <form action={appPath('/api/one-time-audits')} method="post">
           <label>
             Display name
-            <input name="display_name" placeholder="vendor-firewall-export" required />
+            <input name="display_name" placeholder="Audit target name" required />
           </label>
           <label>
             Hostname
-            <input name="hostname" placeholder="firewall.example.local" />
+            <input name="hostname" placeholder="Hostname or FQDN" />
           </label>
           <label>
             IP address
-            <input name="ip_address" placeholder="10.10.4.18" />
+            <input name="ip_address" placeholder="IP address" />
           </label>
           <label>
             Connection mode
