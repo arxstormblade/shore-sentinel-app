@@ -42,6 +42,8 @@ if (!/Remember me/.test(signInForm) || !/name="rememberMe"/.test(signInForm)) fa
 if (/preview|What operators see after login|Dashboard|Knowledgebase|Managed-machine dashboard/.test(landing)) failures.push('landing page must not expose confidential dashboard or preview content');
 const loginPage = readFileSync(join(root, 'app/auth/login/page.jsx'), 'utf8');
 const registerPage = readFileSync(join(root, 'app/auth/register/page.jsx'), 'utf8');
+const signInComponent = readFileSync(join(root, 'components/sign-in-form.jsx'), 'utf8');
+if (!/PublicTopBar/.test(signInComponent) || !/ShoreLogo/.test(signInComponent) || !/auth-brandline/.test(signInComponent)) failures.push('public/auth screens must render Shore Sentinel logo and top account navigation');
 if (/apiBase\s*\+|localhost:4000/.test(loginPage + registerPage + signInForm)) failures.push('auth forms must post to web-owned relative actions, not localhost/API absolute URLs');
 const nextConfig = readFileSync(join(root, 'next.config.js'), 'utf8');
 if (!/basePath/.test(nextConfig) || !/shore-sentinel/.test(nextConfig)) failures.push('Next.js must own the /shore-sentinel basePath');

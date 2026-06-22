@@ -151,6 +151,32 @@ main {
   white-space: nowrap;
 }
 
+.public-top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 74px;
+  padding: 0.95rem 1.35rem;
+  background: rgba(5, 8, 16, 0.72);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(128, 152, 199, 0.14);
+}
+
+.public-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.public-nav > a:not(.btn) {
+  color: #c7d0df;
+  font-weight: 650;
+}
+
 .logo-mark {
   --logo-size: 34px;
   display: inline-grid;
