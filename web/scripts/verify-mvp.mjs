@@ -33,24 +33,27 @@ const source = ['app', 'components', 'lib']
   .filter((path) => /\.(jsx|js|css)$/.test(path))
   .map((path) => readFileSync(path, 'utf8'))
   .join('\n');
-for (const text of ['Inventory','Scans & Reports','Remediation','Knowledgebase','Managed-machine dashboard','Audit History','Promote to Managed Machine','Run One-Time Audit','Add Managed Machine','auth/login','auth/register','Environment','Status','Severity','Time range','Shore Shield logo','Findings by Severity','Managed Machine Fleet','Recent Scans','Create local account','Sign in to continue']) {
+for (const text of ['Inventory','Scans & Reports','Remediation','Knowledgebase','Managed-machine dashboard','Audit History','Promote to Managed Machine','Run One-Time Audit','Add Managed Machine','auth/login','auth/register','Environment','Status','Severity','Time range','Shore Shield logo','Findings by Severity','Managed Machine Fleet','Recent Scans','Create local account']) {
   if (!source.includes(text)) failures.push(`missing ${text}`);
 }
 const landing = readFileSync(join(root, 'app/page.jsx'), 'utf8');
-if (!/auth-landing/.test(landing)) failures.push('landing page must be login/create account page');
-if (/Managed-machine dashboard|Fleet health without one-time audit noise/.test(landing)) failures.push('dashboard content must not be the root landing page');
+const signInForm = readFileSync(join(root, 'components/sign-in-form.jsx'), 'utf8');
+if (!/Remember me/.test(signInForm) || !/name="rememberMe"/.test(signInForm)) failures.push('sign-in form must include remember me');
+if (/preview|What operators see after login|Dashboard|Knowledgebase|Managed-machine dashboard/.test(landing)) failures.push('landing page must not expose confidential dashboard or preview content');
 const loginPage = readFileSync(join(root, 'app/auth/login/page.jsx'), 'utf8');
 const registerPage = readFileSync(join(root, 'app/auth/register/page.jsx'), 'utf8');
-if (/apiBase\s*\+|localhost:4000/.test(loginPage + registerPage)) failures.push('auth forms must post to web-owned relative actions, not localhost/API absolute URLs');
+if (/apiBase\s*\+|localhost:4000/.test(loginPage + registerPage + signInForm)) failures.push('auth forms must post to web-owned relative actions, not localhost/API absolute URLs');
 const nextConfig = readFileSync(join(root, 'next.config.js'), 'utf8');
 if (!/basePath/.test(nextConfig) || !/shore-sentinel/.test(nextConfig)) failures.push('Next.js must own the /shore-sentinel basePath');
-if (!/action=\{appPath\(['"]\/api\/auth\/login['"]\)\}/.test(loginPage + landing)) failures.push('login forms must post through mounted appPath(/api/auth/login)');
+if (!/action=\{appPath\(['"]\/api\/auth\/login['"]\)\}/.test(signInForm)) failures.push('login form must post through mounted appPath(/api/auth/login)');
 if (!/action=\{appPath\(['"]\/api\/auth\/register['"]\)\}/.test(registerPage)) failures.push('register form must post through mounted appPath(/api/auth/register)');
-if (!/href=\{routePath\(['"]\/dashboard['"]\)\}/.test(loginPage + registerPage + landing)) failures.push('auth success links must use Next routePath(/dashboard) under basePath');
+if (/href=\{routePath\(['"]\/dashboard['"]\)\}/.test(landing + loginPage + signInForm)) failures.push('landing and auth pages must not expose dashboard links');
 if (/href=['"]\/shore-sentinel/.test(source) || /action=['"]\/shore-sentinel/.test(source)) failures.push('source must not hard-code mounted /shore-sentinel href/action strings');
 if (/href=\{appPath\(/.test(source)) failures.push('Next Link hrefs must use routePath, not mounted appPath, when next.config basePath is active');
 if (/tenant selector/i.test(source)) failures.push('tenant selector text must not appear');
 if (/localhost:4000|127\.0\.0\.1:4000/.test(source)) failures.push('browser-rendered source must not expose localhost API URLs');
+const shell = readFileSync(join(root, 'components/ui.jsx'), 'utf8');
+if (!/if \(!signedIn\)/.test(shell) || !/return <>{children}<\/>;/.test(shell)) failures.push('shell must hide dashboard chrome until a session is confirmed');
 const navCount = (readFileSync(join(root, 'lib/data.js'), 'utf8').match(/href:'\/(inventory|scans-reports|remediation)'/g) || []).length;
 if (navCount !== 3) failures.push(`expected 3 primary nav items, found ${navCount}`);
 if (failures.length) {

@@ -43,7 +43,7 @@ export default function NewMachine() {
             Connection mode
             <select name="connection_mode" defaultValue="ssh_push">
               <option value="ssh_push">ssh_push</option>
-              <option value="pull_agent">pull_agent</option>
+              <option value="pull_checkin">pull_checkin</option>
             </select>
           </label>
           <button className="btn" type="submit">Create managed machine</button>

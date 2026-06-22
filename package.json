@@ -21,8 +21,10 @@
     "web:build": "npm --workspace @shore-sentinel/web run build",
     "web:test": "npm --workspace @shore-sentinel/web run test",
     "worker:test": "npm --workspace @shore-sentinel/worker-node test && PYTHONPATH=workers/worker-python python3 -m unittest discover -s workers/worker-python/test",
+    "scanner:validate": "python3 scripts/validate_scanner_bundle.py",
+    "scanner:run": "python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py --target . --out-dir scanner-bundle/reports --exit-zero",
     "test": "npm run worker:test && npm run api:test && npm run web:test",
-    "check": "python3 scripts/validate_phase0.py && npm run compose:smoke && npm run worker:test && npm --workspace @shore-sentinel/api run check && npm run web:test",
+    "check": "python3 scripts/validate_phase0.py && npm run scanner:validate && npm run compose:smoke && npm run worker:test && npm --workspace @shore-sentinel/api run check && npm run web:test",
     "compose:smoke": "python3 scripts/compose_smoke.py"
   }
 }

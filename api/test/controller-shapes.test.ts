@@ -24,6 +24,7 @@ function controller() {
   const authCalls: { method: string; args: unknown[] }[] = [];
   const auth = {
     register: async (...args: unknown[]) => { authCalls.push({ method: 'register', args }); return { token: 'token-1', user: { id: 'user-1', email: args[1], display_name: args[0] } }; },
+    login: async (...args: unknown[]) => { authCalls.push({ method: 'login', args }); return { token: 'token-1', user: { id: 'user-1', email: args[0], display_name: 'Local Operator' } }; },
   };
   const queue = {
     health: async () => ({ configured: false }),
@@ -78,6 +79,22 @@ test('register endpoint creates local account through AuthService and sets sessi
   assert.deepEqual(authCalls[0].args, ['Local Operator', 'operator@example.test', 'ChangeMe123!']);
   assert.equal(cookies[0].name, 'shore_session');
   assert.equal(cookies[0].value, 'token-1');
+  assert.equal(result.user.email, 'operator@example.test');
+});
+
+test('login endpoint honors remember-me with a 30 day session cookie', async () => {
+  const { app, authCalls } = controller();
+  const cookies: { name: string; value: string; options: Record<string, unknown> }[] = [];
+  const result = await app.login(
+    { email: 'operator@example.test', password: 'ChangeMe123!', rememberMe: true },
+    { cookie: (name: string, value: string, options: Record<string, unknown>) => cookies.push({ name, value, options }) } as never,
+  );
+
+  assert.equal(authCalls[0].method, 'login');
+  assert.deepEqual(authCalls[0].args, ['operator@example.test', 'ChangeMe123!', true]);
+  assert.equal(cookies[0].name, 'shore_session');
+  assert.equal(cookies[0].value, 'token-1');
+  assert.equal(cookies[0].options.maxAge, 1000 * 60 * 60 * 24 * 30);
   assert.equal(result.user.email, 'operator@example.test');
 });
 

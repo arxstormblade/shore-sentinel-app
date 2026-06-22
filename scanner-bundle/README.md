@@ -1,20 +1,45 @@
-# Shore Sentinel scanner bundle contract
+# Shore Sentinel scanner bundle
 
-The scanner bundle is a packaged scanner plus a stable JSON contract consumed by `worker-node` and `worker-python`. Workers must treat the bundle as an untrusted producer: validate the manifest, parse stdout JSON, then hand artifacts to the API. Workers must not write directly to MinIO/S3.
+The scanner bundle is now included in this repository so Shore Sentinel is portable as one app. It contains:
 
-## Bundle manifest
+- `bin/Agent_Security_Selfcheck_v3.4.0.py` — portable read-only scanner entrypoint.
+- `bin/envdetect.py` — runtime/container/VM environment detection helper.
+- `bin/hardware_collection.py` — hardware/resource inventory helper.
+- `tools/ARX_Agent_Security_Remediation.py` — separate dry-run remediation planner/applier. It is not run automatically and requires explicit approval flags to apply changes.
+- `schemas/` — scanner manifest/output contracts consumed by workers.
+- `examples/sample-output.json` — example scanner payload.
+- `docs/` — scanner usage and version history copied from the source scanner bundle.
 
-Each bundle includes `scanner-manifest.json` matching `schemas/scanner-manifest.schema.json`:
+## Portable scanner usage
 
-```json
-{
-  "contractVersion": "shore-sentinel.scanner-bundle/v1",
-  "bundle": { "name": "shore-baseline", "version": "0.1.0" },
-  "entrypoint": "bin/scan",
-  "outputSchema": "shore-sentinel.scanner-output/v1",
-  "requiredEnv": []
-}
+From the repository root:
+
+```bash
+python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py \
+  --target /path/to/target \
+  --out-dir scanner-bundle/reports \
+  --exit-zero
 ```
+
+For this app itself:
+
+```bash
+npm run scanner:run
+```
+
+The scanner is validation-only. It does not install packages, mutate configuration, remediate findings, change cron jobs, or print secret values.
+
+Generated reports are written to `scanner-bundle/reports/` and are ignored by Git by default.
+
+## Validation
+
+The bundle is verified by:
+
+```bash
+npm run scanner:validate
+```
+
+`npm run check` includes scanner bundle validation, so a missing scanner file breaks the standard release gate.
 
 ## Runtime interface
 

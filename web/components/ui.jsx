@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { navItems } from '@/lib/data';
+import { hasActiveSession } from '@/lib/session';
 import { routePath } from '@/lib/paths';
 
 export function ShoreLogo({ size = 34 }) {
@@ -23,7 +24,9 @@ export function Brand() {
   );
 }
 
-export function Shell({ children }) {
+export async function Shell({ children }) {
+  const signedIn = await hasActiveSession();
+  if (!signedIn) return <>{children}</>;
   return (
     <>
       <header className="top">

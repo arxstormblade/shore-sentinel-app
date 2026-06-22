@@ -31,7 +31,7 @@ export default function NewAudit() {
             Connection mode
             <select name="connection_mode" defaultValue="ssh_push">
               <option value="ssh_push">ssh_push</option>
-              <option value="pull_agent">pull_agent</option>
+              <option value="temporary_runner">temporary_runner</option>
             </select>
           </label>
           <button className="btn" type="submit">Create audit</button>
