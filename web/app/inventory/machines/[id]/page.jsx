@@ -47,7 +47,8 @@ export default async function Machine({ params }) {
     score: live.monitoring_enabled ? 90 : 72,
   };
 
-  const canManage = Array.isArray(session?.roles) && session.roles.includes('admin');
+  const roles = Array.isArray(session?.roles) ? session.roles.map((role) => String(role).toLowerCase()) : [];
+  const canManage = roles.includes('admin');
 
   return (
     <MachineDetailClient machine={machine} initialRuns={runsPayload.runs ?? []} canManage={canManage} />

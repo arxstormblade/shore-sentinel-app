@@ -44,6 +44,8 @@ const loginPage = readFileSync(join(root, 'app/auth/login/page.jsx'), 'utf8');
 const registerPage = readFileSync(join(root, 'app/auth/register/page.jsx'), 'utf8');
 const signInComponent = readFileSync(join(root, 'components/sign-in-form.jsx'), 'utf8');
 const shellComponent = readFileSync(join(root, 'components/ui.jsx'), 'utf8');
+const machineDetailClient = readFileSync(join(root, 'components/machine-detail-client.jsx'), 'utf8');
+if (!/Admin danger zone/.test(machineDetailClient) || !/Delete managed machine/.test(machineDetailClient)) failures.push('admin managed machine detail must expose a clear delete danger zone');
 if (!/PublicTopBar/.test(shellComponent) || !/ShoreLogo/.test(shellComponent) || !/if \(!signedIn\) return <>/.test(shellComponent)) failures.push('unauthenticated shell must render Shore Sentinel logo and sign-in top navigation globally');
 if (!/auth-brandline/.test(signInComponent) || !/ShoreLogo/.test(signInComponent)) failures.push('login form must render Shore Sentinel logo');
 if (/apiBase\s*\+|localhost:4000/.test(loginPage + registerPage + signInForm)) failures.push('auth forms must post to web-owned relative actions, not localhost/API absolute URLs');

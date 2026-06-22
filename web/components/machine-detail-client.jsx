@@ -309,9 +309,18 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
             </label>
             <div className="actions-row">
               <button className="btn" type="submit" disabled={saveBusy}>{saveBusy ? 'Saving…' : 'Save changes'}</button>
-              <button className="btn alt" type="button" onClick={deleteMachine} disabled={deleteBusy}>{deleteBusy ? 'Deleting…' : 'Delete machine'}</button>
             </div>
           </form>
+        </section>
+      ) : null}
+
+      {canManage ? (
+        <section className="panel danger-zone">
+          <h2>Admin danger zone</h2>
+          <p>Delete this managed machine and its related scan history. This cannot be undone.</p>
+          <button className="btn danger" type="button" onClick={deleteMachine} disabled={deleteBusy}>
+            {deleteBusy ? 'Deleting managed machine…' : 'Delete managed machine'}
+          </button>
         </section>
       ) : null}
 
