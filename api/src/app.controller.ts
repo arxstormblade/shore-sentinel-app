@@ -128,6 +128,18 @@ export class AppController {
   }
 
   @Get('settings/current') async settings() { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT s.*, t.slug AS tenant_slug FROM settings s JOIN tenants t ON t.id=s.tenant_id WHERE s.tenant_id=$1', [tenantId]); return result.rows[0]; }
+  @Get('dashboard/metrics')
+  async dashboardMetrics() {
+    const tenantId = await this.db.tenantId();
+    const severityCounts = { critical: 0, high: 0, medium: 0, low: 0, informational: 0 };
+    const severityResult = await this.db.query('SELECT f.severity, count(*)::int AS count FROM finding_instances fi JOIN findings f ON f.id=fi.finding_id WHERE fi.tenant_id=$1 GROUP BY f.severity', [tenantId]);
+    for (const row of severityResult.rows) {
+      const severity = String(row.severity || '').toLowerCase();
+      if (Object.prototype.hasOwnProperty.call(severityCounts, severity)) severityCounts[severity as keyof typeof severityCounts] = Number(row.count) || 0;
+    }
+    const recentRuns = await this.db.query(`SELECT r.id, r.status, r.subject_type, r.target_id, r.one_time_audit_id, r.created_at, r.completed_at, COALESCE(t.hostname, a.display_name, 'unknown subject') AS subject_name FROM scan_runs r LEFT JOIN targets t ON t.id=r.target_id LEFT JOIN one_time_audits a ON a.id=r.one_time_audit_id WHERE r.tenant_id=$1 ORDER BY r.created_at DESC LIMIT 5`, [tenantId]);
+    return { severityCounts, totalFindings: Object.values(severityCounts).reduce((sum, count) => sum + count, 0), recentRuns: recentRuns.rows };
+  }
   @Get('targets') async targets() { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT t.*, e.name AS environment_name, e.slug AS environment_slug FROM targets t LEFT JOIN environments e ON e.id=t.environment_id WHERE t.tenant_id=$1 ORDER BY t.created_at DESC', [tenantId]); return result.rows; }
   @Get('targets/:id') async target(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT t.*, e.name AS environment_name, e.slug AS environment_slug FROM targets t LEFT JOIN environments e ON e.id=t.environment_id WHERE t.tenant_id=$1 AND t.id=$2', [tenantId, id]); if (!result.rows[0]) throw new BadRequestException('target not found'); return result.rows[0]; }
   @Get('targets/:id/scan-runs') async targetScanRuns(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query(`SELECT r.*, latest.event_type AS latest_event_type, latest.message AS latest_event_message, latest.progress_percent AS latest_progress_percent, latest.created_at AS latest_event_at, COALESCE(json_agg(jsonb_build_object('id', a.id, 'artifact_type', a.artifact_type, 'storage_uri', a.storage_uri, 'sha256', a.sha256, 'mime_type', a.mime_type, 'size_bytes', a.size_bytes, 'parse_status', a.parse_status, 'created_at', a.created_at) ORDER BY a.created_at DESC) FILTER (WHERE a.id IS NOT NULL), '[]'::json) AS artifacts FROM scan_runs r LEFT JOIN LATERAL (SELECT event_type, message, progress_percent, created_at FROM job_events e WHERE e.tenant_id=$1 AND e.run_id=r.id ORDER BY e.created_at DESC LIMIT 1) latest ON TRUE LEFT JOIN artifacts a ON a.tenant_id=$1 AND a.run_id=r.id WHERE r.tenant_id=$1 AND r.target_id=$2 GROUP BY r.id, latest.event_type, latest.message, latest.progress_percent, latest.created_at ORDER BY r.created_at DESC`, [tenantId, id]); return { runs: result.rows }; }
@@ -194,6 +206,7 @@ export class AppController {
     const stored = await this.artifacts.storeWorkerArtifact(runId, artifactType, buffer, typeof body.contentType === 'string' ? body.contentType : undefined);
     const storageUri = stored.storage_uri;
     const result = await this.db.query("INSERT INTO artifacts (tenant_id,run_id,artifact_type,storage_uri,sha256,mime_type,size_bytes,parse_status,retention_expires_at) VALUES ($1,$2,$3,$4,$5,$6,$7,'uploaded',now()+interval '90 days') ON CONFLICT(run_id,artifact_type,sha256) DO UPDATE SET parse_status='uploaded', storage_uri=EXCLUDED.storage_uri, mime_type=EXCLUDED.mime_type RETURNING *", [tenantId, runId, artifactType, storageUri, sha256, body.contentType ?? null, buffer.length]);
+    if (artifactType === 'scanner.normalized_findings') await this.persistNormalizedFindings(tenantId, runId, result.rows[0].id, buffer);
     await this.queue.enqueue('artifact_processing', { artifactId: result.rows[0].id, artifact_id: result.rows[0].id, runId, run_id: runId, artifactType, artifact_type: artifactType });
     await this.db.query("INSERT INTO job_events (tenant_id,run_id,event_type,message,payload) VALUES ($1,$2,'artifact.uploaded',$3,$4)", [tenantId, runId, `${artifactType} artifact uploaded through API handoff`, { artifact_id: result.rows[0].id, metadata: body.metadata ?? {} }]);
     return result.rows[0];
@@ -214,6 +227,63 @@ export class AppController {
 
   @Post('artifacts/upload-complete') async uploadComplete(@Body() body: Record<string, unknown>) { const tenantId = await this.db.tenantId(); const runId = requireString(body, 'run_id'); const storageUri = requireString(body, 'storage_uri'); const { artifactType, sha256, sizeBytes } = validateArtifactComplete(body); const result = await this.db.query("INSERT INTO artifacts (tenant_id,run_id,artifact_type,storage_uri,sha256,mime_type,size_bytes,parse_status,retention_expires_at) VALUES ($1,$2,$3,$4,$5,$6,$7,'uploaded',now()+interval '90 days') ON CONFLICT(run_id,artifact_type,sha256) DO UPDATE SET parse_status='uploaded' RETURNING *", [tenantId, runId, artifactType, storageUri, sha256, body.mime_type ?? null, sizeBytes]); await this.queue.enqueue('artifact_processing', { artifactId: result.rows[0].id, artifact_id: result.rows[0].id, runId, run_id: runId, artifactType, artifact_type: artifactType }); await this.db.query("INSERT INTO job_events (tenant_id,run_id,event_type,message,payload) VALUES ($1,$2,'artifact.uploaded',$3,$4)", [tenantId, runId, `${artifactType} artifact uploaded`, { artifact_id: result.rows[0].id }]); return result.rows[0]; }
   @Get('events/stream') @Header('Content-Type', 'text/event-stream') async stream(@Res() res: Response) { res.write(`event: ready\ndata: ${JSON.stringify({ ok: true, at: new Date().toISOString() })}\n\n`); const timer = setInterval(() => res.write(`event: heartbeat\ndata: ${JSON.stringify({ at: new Date().toISOString() })}\n\n`), 15000); res.on('close', () => clearInterval(timer)); }
+
+  private normalizeFindingSeverity(value: unknown) {
+    const severity = String(value || 'informational').toLowerCase();
+    if (severity === 'critical' || severity === 'high' || severity === 'low' || severity === 'informational') return severity;
+    if (severity === 'moderate' || severity === 'medium' || severity === 'med') return 'medium';
+    if (severity === 'info') return 'informational';
+    if (severity === 'crit') return 'critical';
+    return 'informational';
+  }
+
+  private textValue(value: unknown, fallback = '') {
+    if (typeof value === 'string') return value;
+    if (value == null) return fallback;
+    return String(value);
+  }
+
+  private evidenceSummary(value: unknown) {
+    if (Array.isArray(value)) return value.map((item) => this.textValue(item)).filter(Boolean).join('\n').slice(0, 4000);
+    return this.textValue(value).slice(0, 4000);
+  }
+
+  private async persistNormalizedFindings(tenantId: string, runId: string, artifactId: string, buffer: Buffer) {
+    const parsed = JSON.parse(buffer.toString('utf8')) as unknown;
+    const findings = Array.isArray(parsed) ? parsed : [];
+    const run = await this.db.query('SELECT id, target_id, one_time_audit_id FROM scan_runs WHERE tenant_id=$1 AND id=$2', [tenantId, runId]);
+    const runRow = run.rows[0];
+    if (!runRow) throw new BadRequestException('scan run not found');
+    await this.db.query('DELETE FROM remediation_items WHERE tenant_id=$1 AND finding_instance_id IN (SELECT id FROM finding_instances WHERE tenant_id=$1 AND run_id=$2)', [tenantId, runId]);
+    await this.db.query('DELETE FROM finding_instances WHERE tenant_id=$1 AND run_id=$2', [tenantId, runId]);
+    for (const raw of findings) {
+      if (!raw || typeof raw !== 'object') continue;
+      const finding = raw as Record<string, unknown>;
+      const scannerFindingId = this.textValue(finding.id || finding.findingId || finding.title || `finding-${runId}`).slice(0, 500);
+      const title = this.textValue(finding.title || finding.name || scannerFindingId, scannerFindingId).slice(0, 500);
+      const category = this.textValue(finding.category || 'agent-security-selfcheck', 'agent-security-selfcheck').slice(0, 200);
+      const severity = this.normalizeFindingSeverity(finding.severity);
+      const description = this.textValue(finding.description || finding.summary || '').slice(0, 4000);
+      const persisted = await this.db.query(
+        `INSERT INTO findings (tenant_id, scanner_finding_id, title, category, severity, description)
+         VALUES ($1,$2,$3,$4,$5,$6)
+         ON CONFLICT(tenant_id, scanner_finding_id) DO UPDATE SET title=EXCLUDED.title, category=EXCLUDED.category, severity=EXCLUDED.severity, description=EXCLUDED.description, updated_at=now()
+         RETURNING id`,
+        [tenantId, scannerFindingId, title, category, severity, description],
+      );
+      const instance = await this.db.query(
+        'INSERT INTO finding_instances (tenant_id,finding_id,run_id,target_id,one_time_audit_id,status,evidence_summary,source_artifact_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id',
+        [tenantId, persisted.rows[0].id, runId, runRow.target_id ?? null, runRow.one_time_audit_id ?? null, 'open', this.evidenceSummary(finding.evidence), artifactId],
+      );
+      const remediation = finding.remediation || finding.recommendation;
+      if (remediation) {
+        await this.db.query(
+          'INSERT INTO remediation_items (tenant_id,finding_instance_id,source,priority,category,title,action,instructions,status) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+          [tenantId, instance.rows[0].id, 'scanner_generated', severity, category, `Remediate: ${title}`.slice(0, 500), this.textValue(remediation).slice(0, 1000), this.textValue(remediation).slice(0, 4000), 'open'],
+        );
+      }
+    }
+  }
 
   private async createJob(subjectType: 'managed_target' | 'one_time_audit', targetId: string | null, oneTimeAuditId: string | null, body: Record<string, unknown>) {
     assertExactlyOneSubject(subjectType, targetId, oneTimeAuditId);

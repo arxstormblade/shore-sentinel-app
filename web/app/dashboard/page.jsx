@@ -2,23 +2,36 @@ import Link from 'next/link';
 import { routePath } from '@/lib/paths';
 
 const serverApiBase = () => (process.env.INTERNAL_API_URL || process.env.API_URL || 'http://api:4000').replace(/\/$/, '');
+const severityOrder = ['critical', 'high', 'medium', 'low', 'informational'];
+const severityLabels = { critical: 'Critical', high: 'High', medium: 'Medium', low: 'Low', informational: 'Informational' };
 
-async function getJson(path) {
+async function getJson(path, fallback) {
   try {
     const response = await fetch(`${serverApiBase()}${path}`, { cache: 'no-store' });
-    if (!response.ok) return [];
+    if (!response.ok) return fallback;
     return await response.json();
   } catch {
-    return [];
+    return fallback;
   }
 }
 
+function formatTime(value) {
+  if (!value) return '—';
+  try { return new Date(value).toLocaleString(); } catch { return '—'; }
+}
+
 export default async function Dashboard() {
-  const [machines, audits] = await Promise.all([getJson('/targets'), getJson('/one-time-audits')]);
+  const [machines, audits, metrics] = await Promise.all([
+    getJson('/targets', []),
+    getJson('/one-time-audits', []),
+    getJson('/dashboard/metrics', { severityCounts: {}, totalFindings: 0, recentRuns: [] }),
+  ]);
   const online = machines.filter((machine) => machine.status && machine.status !== 'offline').length;
   const offline = machines.filter((machine) => machine.status === 'offline').length;
   const pendingAudits = audits.filter((audit) => !['completed', 'ready'].includes(String(audit.status).toLowerCase())).length;
-  const totalFindings = 0;
+  const severityCounts = metrics.severityCounts || {};
+  const totalFindings = Number(metrics.totalFindings || 0);
+  const recentRuns = Array.isArray(metrics.recentRuns) ? metrics.recentRuns : [];
 
   return (
     <div className="dashboard-shell" data-view="Managed-machine dashboard">
@@ -45,7 +58,7 @@ export default async function Dashboard() {
           <div className="signal-card">
             <span>Findings</span>
             <strong>{totalFindings}</strong>
-            <small>No scanner findings recorded yet</small>
+            <small>{totalFindings ? 'Live scanner findings recorded' : 'No scanner findings recorded yet'}</small>
           </div>
           <div className="signal-card wide">
             <span>Pending audits</span>
@@ -89,12 +102,43 @@ export default async function Dashboard() {
 
         <article className="panel data-panel severity-panel">
           <h2>Findings by Severity</h2>
-          <div className="empty"><h3>No findings yet</h3><p>Run a scan or audit to generate live findings and remediation items.</p></div>
+          {totalFindings ? (
+            <div className="severity-content">
+              <div className="total-findings"><span>Total findings</span><strong>{totalFindings}</strong></div>
+              <div className="severity-list">
+                {severityOrder.map((severity) => {
+                  const count = Number(severityCounts[severity] || 0);
+                  const percent = totalFindings ? Math.round((count / totalFindings) * 100) : 0;
+                  return (
+                    <div key={severity}>
+                      <span className={`status-dot ${severity}`} />
+                      <b>{severityLabels[severity]}</b>
+                      <small>{percent}%</small>
+                      <strong>{count}</strong>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : <div className="empty"><h3>No findings yet</h3><p>Run a scan or audit to generate live findings and remediation items.</p></div>}
         </article>
 
         <article className="panel data-panel scans-panel">
           <header><h2>Recent Scans</h2><Link href={routePath('/scans-reports')}>View all scans</Link></header>
-          <div className="empty"><h3>No scans yet</h3><p>Live scan history will appear here after you run an audit or managed-machine scan.</p></div>
+          {recentRuns.length ? (
+            <table>
+              <thead><tr><th>Subject</th><th>Status</th><th>Completed</th></tr></thead>
+              <tbody>
+                {recentRuns.map((run) => (
+                  <tr key={run.id}>
+                    <td>{run.subject_name || run.id}</td>
+                    <td><span className={run.status === 'completed' ? 'completed' : 'failed'}>{run.status}</span></td>
+                    <td>{formatTime(run.completed_at || run.created_at)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : <div className="empty"><h3>No scans yet</h3><p>Live scan history will appear here after you run an audit or managed-machine scan.</p></div>}
         </article>
 
         <article className="panel data-panel kb-panel">

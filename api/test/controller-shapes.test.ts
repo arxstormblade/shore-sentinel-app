@@ -12,9 +12,14 @@ function controller() {
     tenantId: async () => 'tenant-1',
     query: async (sql: string, params: unknown[] = []) => {
       calls.push(sql);
+      if (sql.includes('SELECT f.severity, count(*)::int AS count')) return { rows: [{ severity: 'high', count: 2 }, { severity: 'medium', count: 1 }] };
+      if (sql.includes('FROM scan_runs r LEFT JOIN targets')) return { rows: [{ id: 'run-1', status: 'completed', subject_name: 'alpha-ws-01' }] };
       if (sql.includes('INSERT INTO scan_jobs')) return { rows: [{ id: 'job-1', tenant_id: params[0], subject_type: params[1], target_id: params[2], one_time_audit_id: params[3], status: 'queued' }] };
       if (sql.includes('INSERT INTO scan_runs')) return { rows: [{ id: 'run-1', job_id: params[1], subject_type: params[2], target_id: params[3], one_time_audit_id: params[4], status: 'pending' }] };
       if (sql.includes('INSERT INTO artifacts')) return { rows: [{ id: 'artifact-1', run_id: params[1], artifact_type: params[2], storage_uri: params[3], sha256: params[4], size_bytes: params[6] }] };
+      if (sql.includes('SELECT id, target_id, one_time_audit_id FROM scan_runs')) return { rows: [{ id: 'run-1', target_id: 'target-1', one_time_audit_id: null }] };
+      if (sql.includes('INSERT INTO findings')) return { rows: [{ id: 'finding-1', scanner_finding_id: params[1], title: params[2], severity: params[4] }] };
+      if (sql.includes('INSERT INTO finding_instances')) return { rows: [{ id: 'finding-instance-1' }] };
       if (sql.includes('INSERT INTO one_time_audits')) return { rows: [{ id: 'audit-1', display_name: params[1], status: 'draft' }] };
       if (sql.includes('INSERT INTO targets')) return { rows: [{ id: 'target-1', hostname: params[1], status: 'unknown' }] };
       if (sql.includes('SELECT id FROM environments')) return { rows: [{ id: 'env-1' }] };
@@ -119,6 +124,30 @@ test('worker artifact handoff accepts canonical shared artifact kinds', async ()
   assert.equal(result.artifact_type, ARTIFACT_KIND.scannerRawOutput);
   assert.equal(queueCalls[0].queueName, 'artifact_processing');
   assert.equal(queueCalls[0].payload.artifactType, ARTIFACT_KIND.scannerRawOutput);
+});
+
+test('normalized findings artifact populates dashboard finding tables', async () => {
+  const { app, calls } = controller();
+  await app.workerArtifact({
+    runId: 'run-1',
+    kind: ARTIFACT_KIND.normalizedFindings,
+    contentType: 'application/json',
+    bodyBase64: Buffer.from(JSON.stringify([
+      { id: 'check-high', title: 'High risk issue', severity: 'high', category: 'agent-security', description: 'Evidence summary', remediation: 'Fix it' },
+      { id: 'check-moderate', title: 'Moderate issue', severity: 'moderate', category: 'agent-security' },
+    ])).toString('base64'),
+  });
+
+  assert.equal(calls.some((sql) => sql.includes('INSERT INTO findings')), true);
+  assert.equal(calls.some((sql) => sql.includes('INSERT INTO finding_instances')), true);
+  assert.equal(calls.some((sql) => sql.includes('DELETE FROM finding_instances')), true);
+});
+
+test('dashboard metrics aggregate live findings by severity', async () => {
+  const { app } = controller();
+  const result = await app.dashboardMetrics();
+  assert.deepEqual(result.severityCounts, { critical: 0, high: 2, medium: 1, low: 0, informational: 0 });
+  assert.equal(result.totalFindings, 3);
 });
 
 test('managed target update endpoint persists editable machine fields', async () => {
