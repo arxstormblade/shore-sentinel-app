@@ -51,7 +51,7 @@ function controller() {
     storeWorkerArtifact: async (runId: string, artifactType: string) => ({ object_key: `runs/${runId}/handoff.${artifactType}`, storage_uri: `s3://bucket/runs/${runId}/handoff.${artifactType}` }),
     readArtifact: async () => { throw new Error('not implemented in test'); },
   };
-  return { app: new AppController(db as never, auth as never, queue as never, artifacts as never), calls, queueCalls, authCalls };
+  return { app: new AppController(db as never, auth as never, queue as never, artifacts as never), calls, queryRows: rows, queueCalls, authCalls };
 }
 
 test('one-time audit run endpoint returns job, run, and BullMQ queue envelope', async () => {
@@ -129,13 +129,13 @@ test('worker artifact handoff accepts canonical shared artifact kinds', async ()
 });
 
 test('normalized findings artifact populates dashboard finding tables', async () => {
-  const { app, calls } = controller();
+  const { app, calls, queryRows } = controller();
   await app.workerArtifact({
     runId: 'run-1',
     kind: ARTIFACT_KIND.normalizedFindings,
     contentType: 'application/json',
     bodyBase64: Buffer.from(JSON.stringify([
-      { id: 'check-high', title: 'High risk issue', severity: 'high', category: 'agent-security', description: 'Evidence summary', remediation: 'Fix it' },
+      { id: 'check-high', title: 'High risk issue', severity: 'high', category: 'agent-security', description: 'Evidence summary', remediation: { file_path: '/app/AGENTS.md', instruction: 'Fix it safely' } },
       { id: 'check-moderate', title: 'Moderate issue', severity: 'moderate', category: 'agent-security' },
     ])).toString('base64'),
   });
@@ -143,6 +143,12 @@ test('normalized findings artifact populates dashboard finding tables', async ()
   assert.equal(calls.some((sql) => sql.includes('INSERT INTO findings')), true);
   assert.equal(calls.some((sql) => sql.includes('INSERT INTO finding_instances')), true);
   assert.equal(calls.some((sql) => sql.includes('DELETE FROM finding_instances')), true);
+  const remediationInsert = queryRows.find((row) => String(row.sql).includes('INSERT INTO remediation_items'));
+  assert.ok(remediationInsert, 'expected remediation insert for object remediation');
+  const remediationParams = remediationInsert.params as unknown[];
+  assert.equal(remediationParams.includes('[object Object]'), false);
+  assert.match(String(remediationParams[6]), /Fix it safely/);
+  assert.match(String(remediationParams[7]), /\/app\/AGENTS\.md/);
 });
 
 test('dashboard metrics aggregate live findings by severity', async () => {

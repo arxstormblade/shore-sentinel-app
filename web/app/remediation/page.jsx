@@ -15,6 +15,27 @@ async function loadFindings() {
   }
 }
 
+function readableText(value, fallback = '') {
+  if (typeof value === 'string') return value === '[object Object]' ? fallback : value;
+  if (value == null) return fallback;
+  if (Array.isArray(value)) return value.map((item) => readableText(item)).filter(Boolean).join('\n');
+  if (typeof value === 'object') {
+    const primary = value.instruction || value.action || value.recommendation || value.remediation || value.description || value.summary || value.title;
+    const parts = [readableText(primary, fallback)];
+    if (value.file_path) parts.push(`File: ${value.file_path}`);
+    if (value.command) parts.push(`Command: ${value.command}`);
+    return parts.filter(Boolean).join('\n') || fallback;
+  }
+  return String(value);
+}
+
+function remediationText(finding) {
+  return readableText(
+    finding.remediation_action || finding.remediation_instructions || finding.remediation_title,
+    'Review evidence, apply the recommended hardening step, then rerun the scan.',
+  );
+}
+
 export default async function Remediation() {
   const findings = await loadFindings();
   return (
@@ -31,7 +52,7 @@ export default async function Remediation() {
                   <p className="eye">{finding.subject_name}</p>
                   <h3>{finding.title}</h3>
                   <p>{finding.description || finding.evidence_summary || 'Scanner evidence is available in the report artifacts.'}</p>
-                  <small>Suggested remediation: {finding.remediation_action || finding.remediation_instructions || finding.remediation_title || 'Review evidence, apply the recommended hardening step, then rerun the scan.'}</small>
+                  <small>Suggested remediation: {remediationText(finding)}</small>
                 </div>
                 <aside>
                   <Pill tone={severityTone[finding.severity] || ''}>{finding.severity}</Pill>

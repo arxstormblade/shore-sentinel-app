@@ -251,9 +251,18 @@ export class AppController {
     return 'informational';
   }
 
-  private textValue(value: unknown, fallback = '') {
+  private textValue(value: unknown, fallback = ''): string {
     if (typeof value === 'string') return value;
     if (value == null) return fallback;
+    if (Array.isArray(value)) return value.map((item) => this.textValue(item)).filter(Boolean).join('\n');
+    if (typeof value === 'object') {
+      const record = value as Record<string, unknown>;
+      const primary = record.instruction ?? record.action ?? record.recommendation ?? record.remediation ?? record.description ?? record.summary ?? record.title;
+      const parts = [this.textValue(primary, fallback)];
+      if (typeof record.file_path === 'string' && record.file_path) parts.push(`File: ${record.file_path}`);
+      if (typeof record.command === 'string' && record.command) parts.push(`Command: ${record.command}`);
+      return parts.filter((part) => part && part !== '[object Object]').join('\n') || fallback;
+    }
     return String(value);
   }
 
