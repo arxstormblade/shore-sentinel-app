@@ -87,6 +87,16 @@ if (!/filterOptions/.test(shell) || /<option>Production<\/option><option>High<\/
 if (!/Edit<\/button>/.test(usersPage) || !/Reset password<\/button>/.test(usersPage) || !/Roles<\/button>/.test(usersPage) || !/Delete<\/button>/.test(usersPage)) failures.push('user-management actions must use text labels, not icon-only controls');
 if (/0 user\{users.length/.test(usersPage) || !/loading \? 'Loading…'/.test(usersPage)) failures.push('user count must not show false zero while loading');
 if (!/Not sure which connection method to use/.test(newMachinePage) || !/How severity is calculated/.test(dashboardPage) || !/When to use one-time audit vs managed machine/.test(newMachinePage + dashboardPage)) failures.push('contextual knowledgebase help must appear at high-friction decisions');
+const css = readFileSync(join(root, 'app/globals.css'), 'utf8');
+if (!/skip-link/.test(shell + css) || !/id="main-content"/.test(shell)) failures.push('shell must provide a skip-to-main link and main landmark target');
+if (!/role="dialog"/.test(usersPage) || !/aria-modal="true"/.test(usersPage) || !/aria-labelledby/.test(usersPage)) failures.push('user-management modals must expose accessible dialog semantics');
+if (!/role="status"/.test(usersPage) || !/role="alert"/.test(usersPage) || !/aria-busy=\{loading\}/.test(usersPage)) failures.push('user-management async loading, toast, and errors must be announced to assistive tech');
+if (!/data-label="Subject"/.test(scansPage) || !/data-label="Actions"/.test(usersPage) || !/className="visually-hidden"/.test(scansPage + usersPage)) failures.push('responsive tables must preserve accessible labels and headers');
+if (!/a:focus-visible/.test(css) || !/guide-list a:focus-visible/.test(css) || !/severity-row:focus-visible/.test(css)) failures.push('interactive elements must have visible keyboard focus states');
+if (!/prefers-reduced-motion: reduce/.test(css)) failures.push('CSS must honor reduced-motion preferences');
+if (!/min-height: 2\.75rem/.test(css)) failures.push('row action buttons must meet larger motor-accessible target sizing');
+if (!/text-decoration: underline/.test(css)) failures.push('inline/action links must be visibly identifiable without hover');
+if (!/aria-hidden="true"/.test(shell)) failures.push('decorative navigation/status icons must be hidden from screen readers');
 for (const detailRoute of ['app/inventory/machines/[id]/page.jsx', 'app/audits/[id]/page.jsx', 'app/scans-reports/reports/[id]/page.jsx']) {
   if (!/export const dynamic = ['"]force-dynamic['"]/.test(readFileSync(join(root, detailRoute), 'utf8'))) failures.push(`${detailRoute} must be force-dynamic so live detail redirects do not crash under cookie-aware layout`);
 }

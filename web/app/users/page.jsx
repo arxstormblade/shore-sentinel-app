@@ -187,21 +187,21 @@ export default function UsersPage() {
       </section>
 
       {/* Toast */}
-      {toast ? <div className="toast">{toast}</div> : null}
+      {toast ? <div className="toast" role="status" aria-live="polite">{toast}</div> : null}
 
       {/* Error */}
       {error ? (
-        <div className="error-banner">
+        <div className="error-banner" role="alert">
           <span>{error}</span>
           <button className="btn ghost" onClick={() => setError('')}>Dismiss</button>
         </div>
       ) : null}
 
       {/* Users table */}
-      <section className="panel users-panel">
+      <section className="panel users-panel" aria-busy={loading}>
         <header>
           <h2>Tenant users</h2>
-          <span className="user-count">{loading ? 'Loading…' : `${users.length} user${users.length !== 1 ? 's' : ''}`}</span>
+          <span className="user-count" role="status" aria-live="polite">{loading ? 'Loading…' : `${users.length} user${users.length !== 1 ? 's' : ''}`}</span>
         </header>
 
         {loading ? (
@@ -212,7 +212,7 @@ export default function UsersPage() {
           </div>
         ) : (
           <table className="users-table">
-            <thead>
+            <thead className="visually-hidden">
               <tr>
                 <th>User</th>
                 <th>Roles</th>
@@ -224,7 +224,7 @@ export default function UsersPage() {
             <tbody>
               {users.map((user) => (
                 <tr key={user.id} className={user.disabled_at ? 'row-disabled' : ''}>
-                  <td>
+                  <td data-label="User">
                     <div className="user-cell">
                       <span className="avatar">{getInitials(user.display_name)}</span>
                       <div>
@@ -233,24 +233,24 @@ export default function UsersPage() {
                       </div>
                     </div>
                   </td>
-                  <td>
+                  <td data-label="Roles">
                     <div className="role-pills">
                       {(user.roles || []).filter(Boolean).map((role) => (
                         <span key={role} className={`pill ${roleColor(role)}`}>{role}</span>
                       ))}
                     </div>
                   </td>
-                  <td>
+                  <td data-label="Status">
                     {user.disabled_at ? (
                       <span className="pill red">Disabled</span>
                     ) : (
                       <span className="pill green">Active</span>
                     )}
                   </td>
-                  <td>
+                  <td data-label="Created">
                     <small>{formatDate(user.created_at)}</small>
                   </td>
-                  <td className="actions-col">
+                  <td className="actions-col" data-label="Actions">
                     <div className="row-actions">
                       <button className="btn ghost" title="Edit" onClick={() => openEdit(user)}>Edit</button>
                       <button className="btn ghost" title="Reset password" onClick={() => openResetPassword(user)}>Reset password</button>
@@ -275,9 +275,9 @@ export default function UsersPage() {
       {/* Add / Edit modal */}
       {modal === 'add' || modal === 'edit' ? (
         <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+          <div className="modal" role="dialog" aria-modal="true" aria-labelledby="edit-user-title" onClick={(e) => e.stopPropagation()}>
             <header>
-              <h2>{modal === 'add' ? 'Add user' : 'Edit user'}</h2>
+              <h2 id="edit-user-title">{modal === 'add' ? 'Add user' : 'Edit user'}</h2>
               <button className="btn ghost" onClick={closeModal}>Close</button>
             </header>
             <form onSubmit={handleSubmit}>
@@ -341,9 +341,9 @@ export default function UsersPage() {
       {/* Reset password modal */}
       {modal === 'reset-password' ? (
         <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal modal-sm" onClick={(e) => e.stopPropagation()}>
+          <div className="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="reset-password-title" onClick={(e) => e.stopPropagation()}>
             <header>
-              <h2>Reset password</h2>
+              <h2 id="reset-password-title">Reset password</h2>
               <button className="btn ghost" onClick={closeModal}>Close</button>
             </header>
             <form onSubmit={handleResetPassword}>
@@ -376,9 +376,9 @@ export default function UsersPage() {
       {/* Delete confirmation modal */}
       {modal === 'delete' ? (
         <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal modal-sm" onClick={(e) => e.stopPropagation()}>
+          <div className="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="delete-user-title" onClick={(e) => e.stopPropagation()}>
             <header>
-              <h2>Delete user</h2>
+              <h2 id="delete-user-title">Delete user</h2>
               <button className="btn ghost" onClick={closeModal}>Close</button>
             </header>
             <p className="modal-desc">
@@ -398,9 +398,9 @@ export default function UsersPage() {
       {/* Permissions modal */}
       {modal === 'permissions' ? (
         <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+          <div className="modal" role="dialog" aria-modal="true" aria-labelledby="permissions-title" onClick={(e) => e.stopPropagation()}>
             <header>
-              <h2>Permissions</h2>
+              <h2 id="permissions-title">Permissions</h2>
               <button className="btn ghost" onClick={closeModal}>Close</button>
             </header>
             <p className="modal-desc">

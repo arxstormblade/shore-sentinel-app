@@ -44,25 +44,30 @@ export function PublicTopBar({ actionHref = routePath('/auth/register'), actionL
   );
 }
 
+function Main({ children }) {
+  return <main id="main-content" tabIndex={-1}>{children}</main>;
+}
+
 export async function Shell({ children }) {
   const signedIn = await hasActiveSession();
-  if (!signedIn) return <><PublicTopBar /><main>{children}</main></>;
+  if (!signedIn) return <><a className="skip-link" href="#main-content">Skip to main content</a><PublicTopBar /><Main>{children}</Main></>;
   return (
     <>
+      <a className="skip-link" href="#main-content">Skip to main content</a>
       <header className="top">
         <Brand />
         <nav className="primary-nav" aria-label="Primary navigation">
-          {navItems.map((item) => <Link key={item.href} href={routePath(item.href)}>{item.icon}<span>{item.label}</span></Link>)}
+          {navItems.map((item) => <Link key={item.href} href={routePath(item.href)}><span aria-hidden="true">{item.icon}</span><span>{item.label}</span></Link>)}
         </nav>
         <aside className="user-strip" aria-label="Current session">
-          <span className="system-ok"><i />All Systems Operational</span>
+          <span className="system-ok" role="status"><i aria-hidden="true" />All Systems Operational</span>
           <Link className="avatar-link" href={routePath('/users')} title="Manage users and roles">
-            <span className="avatar">AD</span>
+            <span className="avatar" aria-hidden="true">AD</span>
             <span><b>Signed in as Admin User</b><small>Admin</small></span>
           </Link>
         </aside>
       </header>
-      <main>{children}</main>
+      <Main>{children}</Main>
       <footer><b>Knowledgebase</b><Link href={routePath('/knowledgebase')}>Reference guide</Link><Link href={routePath('/audits')}>Audit History</Link><Link href={routePath('/dashboard')}>Dashboard</Link></footer>
     </>
   );
@@ -87,7 +92,7 @@ export function Filters({ name, items }) {
           </label>
         );
       })}
-      <small className="filter-hint">Filters are scoped to this view so each choice matches the data below.</small>
+      <small className="filter-hint" role="status" aria-live="polite">Filters are scoped to this view so each choice matches the data below.</small>
     </section>
   );
 }

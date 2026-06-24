@@ -39,14 +39,14 @@ export default async function Scans() {
       <section className="panel scans-panel">
         <header><div><h2>Recent scan runs</h2><p>Scan completed rows link directly to reports and artifacts. Running rows show progress entry points.</p></div><Pill>{runs.length} scans</Pill></header>
         {runs.length ? (
-          <table><thead><tr><th>Subject</th><th>Status</th><th>Findings</th><th>Completed</th><th>Next action</th></tr></thead><tbody>
+          <table><thead className="visually-hidden"><tr><th>Subject</th><th>Status</th><th>Findings</th><th>Completed</th><th>Next action</th></tr></thead><tbody>
             {runs.map((run) => (
               <tr key={run.id}>
-                <td>{run.subject_name || run.id}</td>
-                <td><span className={run.status === 'completed' ? 'completed' : 'failed'}>{run.status}</span></td>
-                <td>{run.findings_count ?? 0}</td>
-                <td>{formatTime(run.completed_at || run.created_at)}</td>
-                <td><Link href={routePath(`/scans-reports/reports/${run.id}`)}>{run.status === 'completed' ? 'Open report' : 'View progress'}</Link></td>
+                <td data-label="Subject">{run.subject_name || run.id}</td>
+                <td data-label="Status"><span className={run.status === 'completed' ? 'completed' : 'failed'}>{run.status}</span></td>
+                <td data-label="Findings">{run.findings_count ?? 0}</td>
+                <td data-label="Completed">{formatTime(run.completed_at || run.created_at)}</td>
+                <td data-label="Next action"><Link href={routePath(`/scans-reports/reports/${run.id}`)}>{run.status === 'completed' ? 'Open report' : 'View progress'}</Link></td>
               </tr>
             ))}
           </tbody></table>
