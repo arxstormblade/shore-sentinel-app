@@ -1111,8 +1111,8 @@ textarea:focus {
 
 .severity-content {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
   gap: 1rem;
 }
 
@@ -1144,18 +1144,19 @@ textarea:focus {
   gap: 0.55rem;
 }
 
-.severity-list > div {
+.severity-list > .severity-row {
   display: grid;
-  grid-template-columns: auto 1fr auto auto;
+  grid-template-columns: auto minmax(7rem, 1fr) auto auto auto;
   align-items: center;
   gap: 0.55rem;
-  padding: 0.72rem 0.8rem;
-  border: 1px solid rgba(128, 152, 199, 0.12);
+  min-width: 0;
+  padding: 0.72rem 0.75rem;
+  border: 1px solid var(--border);
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.02);
 }
 
-.severity-list > div small {
+.severity-list > .severity-row small {
   color: var(--muted);
 }
 
