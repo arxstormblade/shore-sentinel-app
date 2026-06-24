@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { Header, Filters, Pill } from '@/components/ui';
-import { apiBase } from '@/lib/data';
 import { routePath } from '@/lib/paths';
 
 const serverApiBase = () => (process.env.INTERNAL_API_URL || process.env.API_URL || 'http://api:4000').replace(/\/$/, '');
@@ -31,7 +30,6 @@ export default async function Audits() {
         <Link className="btn" href={routePath('/audits/new')}>Run One-Time Audit</Link>
       </Header>
       <Filters name="Audit history" items={['Severity', 'Time range', 'Environment']} />
-      <p className="note">API list: {apiBase}/audits?asset_mode=one_time_audit</p>
       <section className="panel">
         {audits.length ? audits.map((audit) => (
           <Link className="row" href={routePath('/audits/' + audit.id)} key={audit.id}>

@@ -13,7 +13,9 @@ function controller() {
     query: async (sql: string, params: unknown[] = []) => {
       calls.push(sql);
       if (sql.includes('SELECT f.severity, count(*)::int AS count')) return { rows: [{ severity: 'high', count: 2 }, { severity: 'medium', count: 1 }] };
-      if (sql.includes('FROM scan_runs r LEFT JOIN targets')) return { rows: [{ id: 'run-1', status: 'completed', subject_name: 'alpha-ws-01' }] };
+      if (sql.includes('FROM scan_runs r LEFT JOIN targets') && sql.includes('LIMIT 50')) return { rows: [{ id: 'run-1', status: 'completed', subject_name: 'alpha-ws-01', findings_count: 3, artifacts: [{ id: 'artifact-1', artifact_type: 'pdf' }] }] };
+      if (sql.includes('FROM scan_runs r LEFT JOIN targets') && sql.includes('LIMIT 5')) return { rows: [{ id: 'run-1', status: 'completed', subject_name: 'alpha-ws-01' }] };
+      if (sql.includes('FROM finding_instances fi JOIN findings')) return { rows: [{ id: 'finding-instance-1', title: 'High risk issue', severity: 'high', remediation_action: 'Fix it', subject_name: 'alpha-ws-01' }] };
       if (sql.includes('INSERT INTO scan_jobs')) return { rows: [{ id: 'job-1', tenant_id: params[0], subject_type: params[1], target_id: params[2], one_time_audit_id: params[3], status: 'queued' }] };
       if (sql.includes('INSERT INTO scan_runs')) return { rows: [{ id: 'run-1', job_id: params[1], subject_type: params[2], target_id: params[3], one_time_audit_id: params[4], status: 'pending' }] };
       if (sql.includes('INSERT INTO artifacts')) return { rows: [{ id: 'artifact-1', run_id: params[1], artifact_type: params[2], storage_uri: params[3], sha256: params[4], size_bytes: params[6] }] };
@@ -148,6 +150,21 @@ test('dashboard metrics aggregate live findings by severity', async () => {
   const result = await app.dashboardMetrics();
   assert.deepEqual(result.severityCounts, { critical: 0, high: 2, medium: 1, low: 0, informational: 0 });
   assert.equal(result.totalFindings, 3);
+});
+
+test('scan runs endpoint returns recent scans with artifacts and finding counts', async () => {
+  const { app } = controller();
+  const result = await app.scanRuns();
+  assert.equal(result[0].id, 'run-1');
+  assert.equal(result[0].findings_count, 3);
+  assert.equal(result[0].artifacts[0].artifact_type, 'pdf');
+});
+
+test('findings endpoint returns actionable findings with remediation guidance', async () => {
+  const { app } = controller();
+  const result = await app.findings();
+  assert.equal(result[0].severity, 'high');
+  assert.equal(result[0].remediation_action, 'Fix it');
 });
 
 test('managed target update endpoint persists editable machine fields', async () => {

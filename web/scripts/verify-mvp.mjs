@@ -69,7 +69,24 @@ if (/tenant selector/i.test(source)) failures.push('tenant selector text must no
 if (/localhost:4000|127\.0\.0\.1:4000/.test(source)) failures.push('browser-rendered source must not expose localhost API URLs');
 if (/shore360-rmm-01|finance-ws-14|lab-linux-02|vendor-fw|client-vm|WEB-SRV|LAPTOP|DB-SRV|FILE-SRV|DEV-WS|demo-host|demo-scanner|demo-scan|SEED_DEMO_JOB/i.test(source)) failures.push('web source must not include dummy/demo asset details');
 const shell = readFileSync(join(root, 'components/ui.jsx'), 'utf8');
+const dashboardPage = readFileSync(join(root, 'app/dashboard/page.jsx'), 'utf8');
+const inventoryPage = readFileSync(join(root, 'app/inventory/page.jsx'), 'utf8');
+const newMachinePage = readFileSync(join(root, 'app/inventory/new/page.jsx'), 'utf8');
+const scansPage = readFileSync(join(root, 'app/scans-reports/page.jsx'), 'utf8');
+const remediationPage = readFileSync(join(root, 'app/remediation/page.jsx'), 'utf8');
+const usersPage = readFileSync(join(root, 'app/users/page.jsx'), 'utf8');
+const sharedData = readFileSync(join(root, 'lib/data.js'), 'utf8');
 if (!/if \(!signedIn\) return <>/.test(shell) || !/PublicTopBar/.test(shell)) failures.push('shell must show public logo/sign-in top bar until a session is confirmed');
+if (!/Signed in as/.test(shell) || !/Admin/.test(shell)) failures.push('authenticated shell must make signed-in/admin state explicit');
+if (/API list:/.test(source) || /\/machines\?asset_mode=managed_machine/.test(source)) failures.push('production UI must not expose API implementation notes');
+if (!/Security posture from live scans/.test(dashboardPage) || !/View high findings/.test(dashboardPage) || !/View progress/.test(dashboardPage) || !/Highest severity/.test(inventoryPage + dashboardPage)) failures.push('dashboard and inventory must use state-aware, action-oriented scan/finding language');
+if (!/Recent scan runs/.test(scansPage) || !/Generated artifacts/.test(scansPage) || !/Scan completed/.test(scansPage)) failures.push('Scans & Reports must show completed scans and report artifacts instead of a generic empty state');
+if (!/Actionable findings/.test(remediationPage) || !/Suggested remediation/.test(remediationPage) || !/Create remediation tasks from scanner recommendations/.test(remediationPage)) failures.push('Remediation must surface findings/remediation actions when findings exist');
+if (!/Shore Sentinel connects to the machine/.test(newMachinePage) || !/Machine checks in to Shore Sentinel/.test(newMachinePage) || /asset_mode = managed_machine|ssh_push<\/option>|pull_checkin<\/option>/.test(newMachinePage)) failures.push('machine enrollment must explain connection choices in plain language and hide raw mode labels');
+if (!/filterOptions/.test(shell) || /<option>Production<\/option><option>High<\/option><option>Last 30 days<\/option>/.test(shell)) failures.push('filters must be scoped by category, not repeated generic values');
+if (!/Edit<\/button>/.test(usersPage) || !/Reset password<\/button>/.test(usersPage) || !/Roles<\/button>/.test(usersPage) || !/Delete<\/button>/.test(usersPage)) failures.push('user-management actions must use text labels, not icon-only controls');
+if (/0 user\{users.length/.test(usersPage) || !/loading \? 'Loading…'/.test(usersPage)) failures.push('user count must not show false zero while loading');
+if (!/Not sure which connection method to use/.test(newMachinePage) || !/How severity is calculated/.test(dashboardPage) || !/When to use one-time audit vs managed machine/.test(newMachinePage + dashboardPage)) failures.push('contextual knowledgebase help must appear at high-friction decisions');
 for (const detailRoute of ['app/inventory/machines/[id]/page.jsx', 'app/audits/[id]/page.jsx', 'app/scans-reports/reports/[id]/page.jsx']) {
   if (!/export const dynamic = ['"]force-dynamic['"]/.test(readFileSync(join(root, detailRoute), 'utf8'))) failures.push(`${detailRoute} must be force-dynamic so live detail redirects do not crash under cookie-aware layout`);
 }

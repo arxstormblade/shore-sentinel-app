@@ -3,6 +3,15 @@ import { navItems } from '@/lib/data';
 import { hasActiveSession } from '@/lib/session';
 import { appPath, routePath } from '@/lib/paths';
 
+const filterOptions = {
+  Environment: ['All environments', 'Production', 'Lab', 'Unassigned'],
+  Status: ['All statuses', 'Online', 'Offline', 'Unknown', 'Running', 'Completed', 'Failed'],
+  Severity: ['All severities', 'Critical', 'High', 'Medium', 'Low', 'Informational'],
+  'Time range': ['Any time', 'Last 24 hours', 'Last 7 days', 'Last 30 days'],
+  Platform: ['All platforms', 'Windows', 'Linux', 'macOS'],
+  Owner: ['All owners', 'Unassigned', 'IT', 'Security'],
+};
+
 export function ShoreLogo({ size = 34 }) {
   return (
     <span className="logo-mark" aria-label="Shore Sentinel logo" style={{ '--logo-size': `${size}px` }}>
@@ -45,9 +54,12 @@ export async function Shell({ children }) {
         <nav className="primary-nav" aria-label="Primary navigation">
           {navItems.map((item) => <Link key={item.href} href={routePath(item.href)}>{item.icon}<span>{item.label}</span></Link>)}
         </nav>
-        <aside className="user-strip">
+        <aside className="user-strip" aria-label="Current session">
           <span className="system-ok"><i />All Systems Operational</span>
-          <Link className="avatar-link" href={routePath('/auth/login')}><span className="avatar">AD</span><span>Admin User</span></Link>
+          <Link className="avatar-link" href={routePath('/users')} title="Manage users and roles">
+            <span className="avatar">AD</span>
+            <span><b>Signed in as Admin User</b><small>Admin</small></span>
+          </Link>
         </aside>
       </header>
       <main>{children}</main>
@@ -61,7 +73,23 @@ export function Header({ eye, title, desc, children }) {
 }
 
 export function Filters({ name, items }) {
-  return <section className="filters"><b>{name} filters</b>{items.map((f) => <label key={f}><span>{f}</span><select><option>All {f.toLowerCase()}</option><option>Production</option><option>High</option><option>Last 30 days</option></select></label>)}</section>;
+  return (
+    <section className="filters" aria-label={`${name} filters`}>
+      <b>{name} filters</b>
+      {items.map((filterName) => {
+        const options = filterOptions[filterName] || [`All ${filterName.toLowerCase()}`];
+        return (
+          <label key={filterName}>
+            <span>{filterName}</span>
+            <select aria-label={`${name} ${filterName} filter`}>
+              {options.map((option) => <option key={option}>{option}</option>)}
+            </select>
+          </label>
+        );
+      })}
+      <small className="filter-hint">Filters are scoped to this view so each choice matches the data below.</small>
+    </section>
+  );
 }
 
 export function Pill({ children, tone = '' }) { return <span className={`pill ${tone}`}>{children}</span>; }

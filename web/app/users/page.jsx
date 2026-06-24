@@ -201,7 +201,7 @@ export default function UsersPage() {
       <section className="panel users-panel">
         <header>
           <h2>Tenant users</h2>
-          <span className="user-count">{users.length} user{users.length !== 1 ? 's' : ''}</span>
+          <span className="user-count">{loading ? 'Loading…' : `${users.length} user${users.length !== 1 ? 's' : ''}`}</span>
         </header>
 
         {loading ? (
@@ -252,15 +252,15 @@ export default function UsersPage() {
                   </td>
                   <td className="actions-col">
                     <div className="row-actions">
-                      <button className="btn ghost" title="Edit" onClick={() => openEdit(user)}>✎</button>
-                      <button className="btn ghost" title="Reset password" onClick={() => openResetPassword(user)}>🔑</button>
-                      <button className="btn ghost" title="Permissions" onClick={() => openPermissions(user)}>⚙</button>
+                      <button className="btn ghost" title="Edit" onClick={() => openEdit(user)}>Edit</button>
+                      <button className="btn ghost" title="Reset password" onClick={() => openResetPassword(user)}>Reset password</button>
+                      <button className="btn ghost" title="Roles" onClick={() => openPermissions(user)}>Roles</button>
                       {user.disabled_at ? (
-                        <button className="btn ghost" title="Enable" onClick={() => handleToggleStatus(user)}>✓</button>
+                        <button className="btn ghost" title="Enable" onClick={() => handleToggleStatus(user)}>Enable</button>
                       ) : (
-                        <button className="btn ghost" title="Disable" onClick={() => handleToggleStatus(user)}>⊘</button>
+                        <button className="btn ghost" title="Disable" onClick={() => handleToggleStatus(user)}>Disable</button>
                       )}
-                      <button className="btn ghost danger" title="Delete" onClick={() => openDelete(user)}>✕</button>
+                      <button className="btn ghost danger" title="Delete" onClick={() => openDelete(user)}>Delete</button>
                     </div>
                   </td>
                 </tr>
@@ -278,7 +278,7 @@ export default function UsersPage() {
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <header>
               <h2>{modal === 'add' ? 'Add user' : 'Edit user'}</h2>
-              <button className="btn ghost" onClick={closeModal}>✕</button>
+              <button className="btn ghost" onClick={closeModal}>Close</button>
             </header>
             <form onSubmit={handleSubmit}>
               <label>
@@ -344,7 +344,7 @@ export default function UsersPage() {
           <div className="modal modal-sm" onClick={(e) => e.stopPropagation()}>
             <header>
               <h2>Reset password</h2>
-              <button className="btn ghost" onClick={closeModal}>✕</button>
+              <button className="btn ghost" onClick={closeModal}>Close</button>
             </header>
             <form onSubmit={handleResetPassword}>
               <p className="modal-desc">
@@ -379,7 +379,7 @@ export default function UsersPage() {
           <div className="modal modal-sm" onClick={(e) => e.stopPropagation()}>
             <header>
               <h2>Delete user</h2>
-              <button className="btn ghost" onClick={closeModal}>✕</button>
+              <button className="btn ghost" onClick={closeModal}>Close</button>
             </header>
             <p className="modal-desc">
               Are you sure you want to delete <strong>{activeUser?.display_name}</strong> ({activeUser?.email})?
@@ -401,7 +401,7 @@ export default function UsersPage() {
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <header>
               <h2>Permissions</h2>
-              <button className="btn ghost" onClick={closeModal}>✕</button>
+              <button className="btn ghost" onClick={closeModal}>Close</button>
             </header>
             <p className="modal-desc">
               Current role assignments for <strong>{activeUser?.display_name}</strong>.

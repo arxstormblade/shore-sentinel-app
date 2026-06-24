@@ -20,6 +20,10 @@ function formatTime(value) {
   try { return new Date(value).toLocaleString(); } catch { return '—'; }
 }
 
+function highestSeverity(counts) {
+  return severityOrder.find((severity) => Number(counts?.[severity] || 0) > 0) || 'none';
+}
+
 export default async function Dashboard() {
   const [machines, audits, metrics] = await Promise.all([
     getJson('/targets', []),
@@ -32,60 +36,38 @@ export default async function Dashboard() {
   const severityCounts = metrics.severityCounts || {};
   const totalFindings = Number(metrics.totalFindings || 0);
   const recentRuns = Array.isArray(metrics.recentRuns) ? metrics.recentRuns : [];
+  const topSeverity = highestSeverity(severityCounts);
+  const hasLiveData = machines.length || totalFindings || recentRuns.length;
 
   return (
     <div className="dashboard-shell" data-view="Managed-machine dashboard">
       <section className="panel dashboard-hero">
         <div className="hero-copy">
           <p className="eye">Single-tenant security operations</p>
-          <h1>Start clean, then build live inventory, audits, and remediation from real data.</h1>
+          <h1>{hasLiveData ? 'Security posture from live scans' : 'Start with one clear operational choice'}</h1>
           <p>
-            Shore Sentinel is ready for live records. Add a managed machine or run a one-time audit to populate this dashboard.
+            {hasLiveData
+              ? `Your managed fleet has ${totalFindings} open finding${totalFindings === 1 ? '' : 's'}. Highest severity is ${topSeverity === 'none' ? 'none' : severityLabels[topSeverity]}. Review severity, inspect reports, or start a new scan.`
+              : 'Add a managed machine or run a one-time audit to generate live findings, reports, and remediation work.'}
           </p>
           <div className="hero-chipbar">
             <span className="chip green">Tailnet secure</span>
             <span className="chip">Single tenant</span>
-            <span className="chip">Live data only</span>
+            <span className="chip">Highest severity: {topSeverity === 'none' ? 'None' : severityLabels[topSeverity]}</span>
           </div>
+          <p className="note"><Link href={routePath('/knowledgebase')}>How severity is calculated</Link> · <Link href={routePath('/knowledgebase')}>When to use one-time audit vs managed machine</Link></p>
         </div>
 
         <div className="signal-board">
-          <div className="signal-card accent">
-            <span>Managed fleet</span>
-            <strong>{machines.length}</strong>
-            <small>{online} online · {offline} offline</small>
-          </div>
-          <div className="signal-card">
-            <span>Findings</span>
-            <strong>{totalFindings}</strong>
-            <small>{totalFindings ? 'Live scanner findings recorded' : 'No scanner findings recorded yet'}</small>
-          </div>
-          <div className="signal-card wide">
-            <span>Pending audits</span>
-            <strong>{pendingAudits}</strong>
-            <small>Create live records from the actions below.</small>
-          </div>
+          <div className="signal-card accent"><span>Managed fleet</span><strong>{machines.length}</strong><small>{online} online · {offline} offline</small></div>
+          <div className="signal-card"><span>Findings</span><strong>{totalFindings}</strong><small>{totalFindings ? 'Live scanner findings recorded' : 'No scanner findings recorded yet'}</small></div>
+          <div className="signal-card wide"><span>Pending audits</span><strong>{pendingAudits}</strong><small>Create live records from the actions below.</small></div>
         </div>
       </section>
 
       <section className="hero-actions">
-        <article className="action-card panel">
-          <div className="round-icon">▣</div>
-          <div>
-            <h2>Run One-Time Audit</h2>
-            <p>Create a live one-time audit target without adding it to managed fleet health.</p>
-            <Link className="btn" href={routePath('/audits/new')}>Run Audit</Link>
-          </div>
-        </article>
-
-        <article className="action-card panel">
-          <div className="round-icon">⊞</div>
-          <div>
-            <h2>Add Managed Machine</h2>
-            <p>Add a real machine to inventory for monitoring, reporting, and scan history.</p>
-            <Link className="btn" href={routePath('/inventory/new')}>Add Machine</Link>
-          </div>
-        </article>
+        <article className="action-card panel"><div className="round-icon">▣</div><div><h2>Run One-Time Audit</h2><p>Use this for temporary evidence without adding the endpoint to fleet health.</p><Link className="btn" href={routePath('/audits/new')}>Run Audit</Link></div></article>
+        <article className="action-card panel"><div className="round-icon">⊞</div><div><h2>Add Managed Machine</h2><p>Use this for ongoing inventory, scan history, and fleet posture.</p><Link className="btn" href={routePath('/inventory/new')}>Add Machine</Link></div></article>
       </section>
 
       <section className="dashboard-grid">
@@ -110,12 +92,13 @@ export default async function Dashboard() {
                   const count = Number(severityCounts[severity] || 0);
                   const percent = totalFindings ? Math.round((count / totalFindings) * 100) : 0;
                   return (
-                    <div key={severity}>
+                    <Link className="severity-row" href={routePath(`/remediation?severity=${severity}`)} key={severity}>
                       <span className={`status-dot ${severity}`} />
                       <b>{severityLabels[severity]}</b>
                       <small>{percent}%</small>
                       <strong>{count}</strong>
-                    </div>
+                      <em>{severity === 'high' ? 'View high findings' : 'Review findings'}</em>
+                    </Link>
                   );
                 })}
               </div>
@@ -126,18 +109,16 @@ export default async function Dashboard() {
         <article className="panel data-panel scans-panel">
           <header><h2>Recent Scans</h2><Link href={routePath('/scans-reports')}>View all scans</Link></header>
           {recentRuns.length ? (
-            <table>
-              <thead><tr><th>Subject</th><th>Status</th><th>Completed</th></tr></thead>
-              <tbody>
-                {recentRuns.map((run) => (
-                  <tr key={run.id}>
-                    <td>{run.subject_name || run.id}</td>
-                    <td><span className={run.status === 'completed' ? 'completed' : 'failed'}>{run.status}</span></td>
-                    <td>{formatTime(run.completed_at || run.created_at)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <table><thead><tr><th>Subject</th><th>Status</th><th>Completed</th><th>Next</th></tr></thead><tbody>
+              {recentRuns.map((run) => (
+                <tr key={run.id}>
+                  <td>{run.subject_name || run.id}</td>
+                  <td><span className={run.status === 'completed' ? 'completed' : 'failed'}>{run.status}</span></td>
+                  <td>{formatTime(run.completed_at || run.created_at)}</td>
+                  <td><Link href={routePath(`/scans-reports/reports/${run.id}`)}>{run.status === 'running' || run.status === 'leased' ? 'View progress' : 'Open report'}</Link></td>
+                </tr>
+              ))}
+            </tbody></table>
           ) : <div className="empty"><h3>No scans yet</h3><p>Live scan history will appear here after you run an audit or managed-machine scan.</p></div>}
         </article>
 
@@ -149,9 +130,7 @@ export default async function Dashboard() {
               ['⌕', 'Run an audit scan', 'Launch a one-time audit from scratch.'],
               ['♢', 'Review remediation steps', 'Remediation appears after live findings exist.'],
               ['▥', 'Export compliance report', 'Reports become available after scans complete.'],
-            ].map(([icon, title, desc]) => (
-              <Link href={routePath('/knowledgebase')} key={title}><span>{icon}</span><div><b>{title}</b><small>{desc}</small></div><i>›</i></Link>
-            ))}
+            ].map(([icon, title, desc]) => <Link href={routePath('/knowledgebase')} key={title}><span>{icon}</span><div><b>{title}</b><small>{desc}</small></div><i>›</i></Link>)}
           </div>
         </article>
       </section>
