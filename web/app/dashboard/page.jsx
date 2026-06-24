@@ -66,18 +66,18 @@ export default async function Dashboard() {
       </section>
 
       <section className="hero-actions">
-        <article className="action-card panel"><div className="round-icon">▣</div><div><h2>Run One-Time Audit</h2><p>Use this for temporary evidence without adding the endpoint to fleet health.</p><Link className="btn" href={routePath('/audits/new')}>Run Audit</Link></div></article>
-        <article className="action-card panel"><div className="round-icon">⊞</div><div><h2>Add Managed Machine</h2><p>Use this for ongoing inventory, scan history, and fleet posture.</p><Link className="btn" href={routePath('/inventory/new')}>Add Machine</Link></div></article>
+        <article className="action-card panel"><div className="round-icon" aria-hidden="true">▣</div><div><h2>Run One-Time Audit</h2><p>Use this for temporary evidence without adding the endpoint to fleet health.</p><Link className="btn" href={routePath('/audits/new')}>Run Audit</Link></div></article>
+        <article className="action-card panel"><div className="round-icon" aria-hidden="true">⊞</div><div><h2>Add Managed Machine</h2><p>Use this for ongoing inventory, scan history, and fleet posture.</p><Link className="btn" href={routePath('/inventory/new')}>Add Machine</Link></div></article>
       </section>
 
       <section className="dashboard-grid">
         <article className="panel data-panel fleet-panel">
-          <header><h2>Managed Machine Fleet</h2><span className="info-dot">i</span></header>
+          <header><h2>Managed Machine Fleet</h2><span className="info-dot" aria-hidden="true">i</span></header>
           {machines.length ? (
             <div className="fleet-cards">
-              <div className="fleet-card"><span className="status-dot green" /><b>Online</b><strong>{online}</strong><small>Machines</small></div>
-              <div className="fleet-card"><span className="status-dot amber" /><b>Offline</b><strong>{offline}</strong><small>Machines</small></div>
-              <div className="fleet-card"><span className="status-dot gray" /><b>Total</b><strong>{machines.length}</strong><small>Machines</small></div>
+              <div className="fleet-card"><span className="status-dot green" aria-hidden="true" /><b>Online</b><strong>{online}</strong><small>Machines</small></div>
+              <div className="fleet-card"><span className="status-dot amber" aria-hidden="true" /><b>Offline</b><strong>{offline}</strong><small>Machines</small></div>
+              <div className="fleet-card"><span className="status-dot gray" aria-hidden="true" /><b>Total</b><strong>{machines.length}</strong><small>Machines</small></div>
             </div>
           ) : <div className="empty"><h3>No managed machines yet</h3><p>Add your first live managed machine to populate fleet health.</p><Link className="btn" href={routePath('/inventory/new')}>Add Managed Machine</Link></div>}
         </article>
@@ -93,7 +93,7 @@ export default async function Dashboard() {
                   const percent = totalFindings ? Math.round((count / totalFindings) * 100) : 0;
                   return (
                     <Link className="severity-row" href={routePath(`/remediation?severity=${severity}`)} key={severity}>
-                      <span className={`status-dot ${severity}`} />
+                      <span className={`status-dot ${severity}`} aria-hidden="true" />
                       <b>{severityLabels[severity]}</b>
                       <small>{percent}%</small>
                       <strong>{count}</strong>
@@ -112,10 +112,10 @@ export default async function Dashboard() {
             <table><thead><tr><th>Subject</th><th>Status</th><th>Completed</th><th>Next</th></tr></thead><tbody>
               {recentRuns.map((run) => (
                 <tr key={run.id}>
-                  <td>{run.subject_name || run.id}</td>
-                  <td><span className={run.status === 'completed' ? 'completed' : 'failed'}>{run.status}</span></td>
-                  <td>{formatTime(run.completed_at || run.created_at)}</td>
-                  <td><Link href={routePath(`/scans-reports/reports/${run.id}`)}>{run.status === 'running' || run.status === 'leased' ? 'View progress' : 'Open report'}</Link></td>
+                  <td data-label="Subject">{run.subject_name || run.id}</td>
+                  <td data-label="Status"><span className={run.status === 'completed' ? 'completed' : 'failed'}>{run.status}</span></td>
+                  <td data-label="Completed">{formatTime(run.completed_at || run.created_at)}</td>
+                  <td data-label="Next"><Link href={routePath(`/scans-reports/reports/${run.id}`)}>{run.status === 'running' || run.status === 'leased' ? 'View progress' : 'Open report'}</Link></td>
                 </tr>
               ))}
             </tbody></table>
@@ -130,7 +130,7 @@ export default async function Dashboard() {
               ['⌕', 'Run an audit scan', 'Launch a one-time audit from scratch.'],
               ['♢', 'Review remediation steps', 'Remediation appears after live findings exist.'],
               ['▥', 'Export compliance report', 'Reports become available after scans complete.'],
-            ].map(([icon, title, desc]) => <Link href={routePath('/knowledgebase')} key={title}><span>{icon}</span><div><b>{title}</b><small>{desc}</small></div><i>›</i></Link>)}
+            ].map(([icon, title, desc]) => <Link href={routePath('/knowledgebase')} key={title}><span aria-hidden="true">{icon}</span><div><b>{title}</b><small>{desc}</small></div><i aria-hidden="true">›</i></Link>)}
           </div>
         </article>
       </section>

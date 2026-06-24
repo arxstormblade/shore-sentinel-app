@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { routePath } from '@/lib/paths';
 import {
   fetchUsers,
@@ -20,6 +20,15 @@ const EMPTY_FORM = {
   roles: ['operator'],
 };
 
+const FOCUSABLE_SELECTOR = [
+  'a[href]',
+  'button:not([disabled])',
+  'textarea:not([disabled])',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(',');
+
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
@@ -31,6 +40,8 @@ export default function UsersPage() {
   const [resetPw, setResetPw] = useState('');
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState('');
+  const modalRef = useRef(null);
+  const lastFocusedElement = useRef(null);
 
   const load = useCallback(async () => {
     try {
@@ -48,18 +59,39 @@ export default function UsersPage() {
 
   useEffect(() => { load(); }, [load]);
 
+  useEffect(() => {
+    if (!modal || !modalRef.current) return undefined;
+    const dialog = modalRef.current;
+    const firstFocusable = dialog.querySelector(FOCUSABLE_SELECTOR);
+    (firstFocusable || dialog).focus();
+    return undefined;
+  }, [modal]);
+
+  function rememberTrigger(event) {
+    lastFocusedElement.current = event?.currentTarget || document.activeElement;
+  }
+
+  function restoreTriggerFocus() {
+    const trigger = lastFocusedElement.current;
+    if (trigger && typeof trigger.focus === 'function') {
+      window.setTimeout(() => trigger.focus(), 0);
+    }
+  }
+
   function showToast(msg) {
     setToast(msg);
     setTimeout(() => setToast(''), 3000);
   }
 
-  function openAdd() {
+  function openAdd(event) {
+    rememberTrigger(event);
     setForm(EMPTY_FORM);
     setActiveUser(null);
     setModal('add');
   }
 
-  function openEdit(user) {
+  function openEdit(user, event) {
+    rememberTrigger(event);
     setForm({
       email: user.email || '',
       display_name: user.display_name || '',
@@ -70,18 +102,21 @@ export default function UsersPage() {
     setModal('edit');
   }
 
-  function openResetPassword(user) {
+  function openResetPassword(user, event) {
+    rememberTrigger(event);
     setResetPw('');
     setActiveUser(user);
     setModal('reset-password');
   }
 
-  function openDelete(user) {
+  function openDelete(user, event) {
+    rememberTrigger(event);
     setActiveUser(user);
     setModal('delete');
   }
 
-  function openPermissions(user) {
+  function openPermissions(user, event) {
+    rememberTrigger(event);
     setActiveUser(user);
     setModal('permissions');
   }
@@ -91,6 +126,33 @@ export default function UsersPage() {
     setActiveUser(null);
     setForm(EMPTY_FORM);
     setResetPw('');
+    restoreTriggerFocus();
+  }
+
+  function handleModalKeyDown(event) {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeModal();
+      return;
+    }
+    if (event.key !== 'Tab' || !modalRef.current) return;
+
+    const focusable = Array.from(modalRef.current.querySelectorAll(FOCUSABLE_SELECTOR));
+    if (!focusable.length) {
+      event.preventDefault();
+      modalRef.current.focus();
+      return;
+    }
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   }
 
   async function handleSubmit(e) {
@@ -174,7 +236,6 @@ export default function UsersPage() {
 
   return (
     <div className="stack users-page">
-      {/* Header */}
       <section className="hero">
         <div>
           <p className="eye">User management</p>
@@ -186,10 +247,8 @@ export default function UsersPage() {
         </div>
       </section>
 
-      {/* Toast */}
       {toast ? <div className="toast" role="status" aria-live="polite">{toast}</div> : null}
 
-      {/* Error */}
       {error ? (
         <div className="error-banner" role="alert">
           <span>{error}</span>
@@ -197,7 +256,6 @@ export default function UsersPage() {
         </div>
       ) : null}
 
-      {/* Users table */}
       <section className="panel users-panel" aria-busy={loading}>
         <header>
           <h2>Tenant users</h2>
@@ -205,7 +263,7 @@ export default function UsersPage() {
         </header>
 
         {loading ? (
-          <div className="loading-row">Loading users…</div>
+          <div className="loading-row" role="status" aria-live="polite">Loading users…</div>
         ) : users.length === 0 ? (
           <div className="empty-state">
             <p>No users found. Add the first operator account to get started.</p>
@@ -226,7 +284,7 @@ export default function UsersPage() {
                 <tr key={user.id} className={user.disabled_at ? 'row-disabled' : ''}>
                   <td data-label="User">
                     <div className="user-cell">
-                      <span className="avatar">{getInitials(user.display_name)}</span>
+                      <span className="avatar" aria-hidden="true">{getInitials(user.display_name)}</span>
                       <div>
                         <b>{user.display_name}</b>
                         <small>{user.email}</small>
@@ -252,15 +310,15 @@ export default function UsersPage() {
                   </td>
                   <td className="actions-col" data-label="Actions">
                     <div className="row-actions">
-                      <button className="btn ghost" title="Edit" onClick={() => openEdit(user)}>Edit</button>
-                      <button className="btn ghost" title="Reset password" onClick={() => openResetPassword(user)}>Reset password</button>
-                      <button className="btn ghost" title="Roles" onClick={() => openPermissions(user)}>Roles</button>
+                      <button className="btn ghost" title="Edit" onClick={(event) => openEdit(user, event)}>Edit</button>
+                      <button className="btn ghost" title="Reset password" onClick={(event) => openResetPassword(user, event)}>Reset password</button>
+                      <button className="btn ghost" title="Roles" onClick={(event) => openPermissions(user, event)}>Roles</button>
                       {user.disabled_at ? (
                         <button className="btn ghost" title="Enable" onClick={() => handleToggleStatus(user)}>Enable</button>
                       ) : (
                         <button className="btn ghost" title="Disable" onClick={() => handleToggleStatus(user)}>Disable</button>
                       )}
-                      <button className="btn ghost danger" title="Delete" onClick={() => openDelete(user)}>Delete</button>
+                      <button className="btn ghost danger" title="Delete" onClick={(event) => openDelete(user, event)}>Delete</button>
                     </div>
                   </td>
                 </tr>
@@ -270,17 +328,15 @@ export default function UsersPage() {
         )}
       </section>
 
-      {/* ── Modals ── */}
-
-      {/* Add / Edit modal */}
       {modal === 'add' || modal === 'edit' ? (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal" role="dialog" aria-modal="true" aria-labelledby="edit-user-title" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay" role="presentation">
+          <div className="modal" ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="edit-user-title" aria-describedby="edit-user-desc" tabIndex={-1} onKeyDown={handleModalKeyDown}>
             <header>
               <h2 id="edit-user-title">{modal === 'add' ? 'Add user' : 'Edit user'}</h2>
               <button className="btn ghost" onClick={closeModal}>Close</button>
             </header>
-            <form onSubmit={handleSubmit}>
+            <p id="edit-user-desc" className="modal-desc">Create or update an operator account and assign the roles this user needs.</p>
+            <form onSubmit={handleSubmit} aria-busy={busy}>
               <label>
                 Display name
                 <input
@@ -338,16 +394,15 @@ export default function UsersPage() {
         </div>
       ) : null}
 
-      {/* Reset password modal */}
       {modal === 'reset-password' ? (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="reset-password-title" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay" role="presentation">
+          <div className="modal modal-sm" ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="reset-password-title" aria-describedby="reset-password-desc" tabIndex={-1} onKeyDown={handleModalKeyDown}>
             <header>
               <h2 id="reset-password-title">Reset password</h2>
               <button className="btn ghost" onClick={closeModal}>Close</button>
             </header>
-            <form onSubmit={handleResetPassword}>
-              <p className="modal-desc">
+            <form onSubmit={handleResetPassword} aria-busy={busy}>
+              <p id="reset-password-desc" className="modal-desc">
                 Set a new password for <strong>{activeUser?.display_name}</strong> ({activeUser?.email}).
               </p>
               <label>
@@ -359,7 +414,6 @@ export default function UsersPage() {
                   required
                   minLength={8}
                   placeholder="Minimum 8 characters"
-                  autoFocus
                 />
               </label>
               <div className="modal-actions">
@@ -373,19 +427,18 @@ export default function UsersPage() {
         </div>
       ) : null}
 
-      {/* Delete confirmation modal */}
       {modal === 'delete' ? (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="delete-user-title" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay" role="presentation">
+          <div className="modal modal-sm" ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="delete-user-title" aria-describedby="delete-user-desc" tabIndex={-1} onKeyDown={handleModalKeyDown}>
             <header>
               <h2 id="delete-user-title">Delete user</h2>
               <button className="btn ghost" onClick={closeModal}>Close</button>
             </header>
-            <p className="modal-desc">
+            <p id="delete-user-desc" className="modal-desc">
               Are you sure you want to delete <strong>{activeUser?.display_name}</strong> ({activeUser?.email})?
               This action cannot be undone.
             </p>
-            <div className="modal-actions">
+            <div className="modal-actions" aria-busy={busy}>
               <button type="button" className="btn alt" onClick={closeModal}>Cancel</button>
               <button className="btn danger" onClick={handleDelete} disabled={busy}>
                 {busy ? 'Deleting…' : 'Delete user'}
@@ -395,15 +448,14 @@ export default function UsersPage() {
         </div>
       ) : null}
 
-      {/* Permissions modal */}
       {modal === 'permissions' ? (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal" role="dialog" aria-modal="true" aria-labelledby="permissions-title" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay" role="presentation">
+          <div className="modal" ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="permissions-title" aria-describedby="permissions-desc" tabIndex={-1} onKeyDown={handleModalKeyDown}>
             <header>
               <h2 id="permissions-title">Permissions</h2>
               <button className="btn ghost" onClick={closeModal}>Close</button>
             </header>
-            <p className="modal-desc">
+            <p id="permissions-desc" className="modal-desc">
               Current role assignments for <strong>{activeUser?.display_name}</strong>.
             </p>
             <div className="permissions-list">
@@ -424,7 +476,7 @@ export default function UsersPage() {
             </div>
             <div className="modal-actions">
               <button className="btn alt" onClick={closeModal}>Close</button>
-              <button className="btn" onClick={() => { closeModal(); openEdit(activeUser); }}>Edit roles</button>
+              <button className="btn" onClick={(event) => { rememberTrigger(event); closeModal(); openEdit(activeUser, event); }}>Edit roles</button>
             </div>
           </div>
         </div>

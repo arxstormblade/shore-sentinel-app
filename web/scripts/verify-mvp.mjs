@@ -92,8 +92,10 @@ if (!/Not sure which connection method to use/.test(newMachinePage) || !/How sev
 const css = readFileSync(join(root, 'app/globals.css'), 'utf8');
 if (!/skip-link/.test(shell + css) || !/id="main-content"/.test(shell)) failures.push('shell must provide a skip-to-main link and main landmark target');
 if (!/role="dialog"/.test(usersPage) || !/aria-modal="true"/.test(usersPage) || !/aria-labelledby/.test(usersPage)) failures.push('user-management modals must expose accessible dialog semantics');
+if (!/useRef/.test(usersPage) || !/modalRef/.test(usersPage) || !/lastFocusedElement/.test(usersPage) || !/event\.key === 'Escape'/.test(usersPage) || !/event\.key !== 'Tab'/.test(usersPage)) failures.push('user-management modals must trap focus, close on Escape, and return focus to the trigger');
 if (!/role="status"/.test(usersPage) || !/role="alert"/.test(usersPage) || !/aria-busy=\{loading\}/.test(usersPage)) failures.push('user-management async loading, toast, and errors must be announced to assistive tech');
-if (!/data-label="Subject"/.test(scansPage) || !/data-label="Actions"/.test(usersPage) || !/className="visually-hidden"/.test(scansPage + usersPage)) failures.push('responsive tables must preserve accessible labels and headers');
+if (!/data-label="Subject"/.test(scansPage + dashboardPage) || !/data-label="Next"/.test(dashboardPage) || !/data-label="Actions"/.test(usersPage) || !/className="visually-hidden"/.test(scansPage + usersPage)) failures.push('responsive tables must preserve accessible labels and headers');
+if (!/round-icon" aria-hidden="true"/.test(dashboardPage) || !/status-dot[^>]*aria-hidden="true"/.test(dashboardPage)) failures.push('decorative dashboard icons and status dots must be hidden from screen readers');
 if (!/a:focus-visible/.test(css) || !/guide-list a:focus-visible/.test(css) || !/severity-row:focus-visible/.test(css)) failures.push('interactive elements must have visible keyboard focus states');
 if (!/prefers-reduced-motion: reduce/.test(css)) failures.push('CSS must honor reduced-motion preferences');
 if (!/min-height: 2\.75rem/.test(css)) failures.push('row action buttons must meet larger motor-accessible target sizing');
