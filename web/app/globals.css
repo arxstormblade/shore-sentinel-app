@@ -5,11 +5,16 @@
   --surface: rgba(14, 20, 31, 0.9);
   --surface-strong: rgba(18, 26, 41, 0.96);
   --surface-soft: rgba(255, 255, 255, 0.02);
+  --surface-operational: rgba(255, 255, 255, 0.045);
   --text: #f2f6ff;
   --muted: #a8b4c9;
   --faint: #9aa7bc;
   --border: rgba(160, 180, 220, 0.28);
   --border-strong: rgba(180, 200, 240, 0.42);
+  --border-operational: rgba(190, 210, 245, 0.42);
+  --target-min: 44px;
+  --target-comfortable: 48px;
+  --font-operational-min: 0.875rem;
   --blue: #74a8ff;
   --blue-2: #336ff1;
   --teal: #58d2c2;
@@ -369,6 +374,7 @@ footer a:hover,
   display: inline-flex;
   align-items: center;
   gap: 0.72rem;
+  min-height: var(--target-min);
   padding: 0.42rem 0.72rem 0.42rem 0.42rem;
   border-radius: 999px;
   border: 1px solid var(--border);
@@ -471,6 +477,8 @@ footer a:hover,
   color: var(--blue);
   font-style: normal;
   font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
 }
 
 footer {
@@ -695,7 +703,7 @@ button.btn:focus-visible {
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.02);
   color: #d6deec;
-  font-size: 0.8rem;
+  font-size: var(--font-operational-min);
   font-weight: 700;
   letter-spacing: 0.01em;
 }
@@ -747,9 +755,9 @@ button.btn:focus-visible {
   gap: 0.8rem;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   padding: 1rem 1.1rem;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-operational);
   border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--surface-operational);
 }
 
 .filters b {
@@ -1061,6 +1069,7 @@ textarea:focus {
 .data-panel {
   display: grid;
   gap: 1rem;
+  border-color: var(--border-operational);
 }
 
 .data-panel > header {
@@ -1101,8 +1110,8 @@ textarea:focus {
 .info-dot {
   display: inline-grid;
   place-items: center;
-  width: 1.45rem;
-  height: 1.45rem;
+  width: var(--target-min);
+  height: var(--target-min);
   border-radius: 999px;
   border: 1px solid var(--border);
   color: var(--muted);
@@ -1151,9 +1160,9 @@ textarea:focus {
   gap: 0.55rem;
   min-width: 0;
   padding: 0.72rem 0.75rem;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-operational);
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--surface-operational);
 }
 
 .severity-list > .severity-row small {
@@ -1190,7 +1199,7 @@ textarea:focus {
 .scans-panel thead th {
   padding: 0.75rem 0.7rem 0.9rem;
   color: #d7e0ee;
-  font-size: 0.76rem;
+  font-size: var(--font-operational-min);
   font-weight: 750;
   text-align: left;
   text-transform: uppercase;
@@ -1231,8 +1240,8 @@ textarea:focus {
 .pager b {
   display: inline-grid;
   place-items: center;
-  min-width: 2rem;
-  height: 2rem;
+  min-width: var(--target-min);
+  height: var(--target-min);
   border-radius: 999px;
   border: 1px solid transparent;
 }
@@ -1265,6 +1274,15 @@ textarea:focus {
   transform: translateY(-1px);
   border-color: rgba(116, 168, 255, 0.42);
   background: rgba(116, 168, 255, 0.08);
+}
+
+.guide-list a::after {
+  content: "Open";
+  color: var(--blue);
+  font-size: var(--font-operational-min);
+  font-weight: 750;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
 }
 
 .guide-list a > span {
@@ -1599,7 +1617,7 @@ textarea:focus {
 .users-table thead th {
   padding: 0.75rem 0.7rem 0.9rem;
   color: #d7e0ee;
-  font-size: 0.76rem;
+  font-size: var(--font-operational-min);
   font-weight: 750;
   text-align: left;
   text-transform: uppercase;
@@ -1934,5 +1952,20 @@ textarea:focus {
   .guide-list a:hover,
   .guide-list a:focus-visible {
     transform: none !important;
+  }
+}
+
+
+@media (prefers-reduced-transparency: reduce) {
+  body::after {
+    filter: none;
+    opacity: 0.35;
+  }
+
+  .top,
+  .public-top,
+  .modal-overlay {
+    backdrop-filter: none;
+    background: rgba(5, 8, 16, 0.96);
   }
 }
