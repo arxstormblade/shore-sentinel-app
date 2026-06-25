@@ -66,8 +66,8 @@ export default async function Dashboard() {
       </section>
 
       <section className="hero-actions">
-        <article className="action-card panel"><div className="round-icon" aria-hidden="true">▣</div><div><h2>Run One-Time Audit</h2><p>Use this for temporary evidence without adding the endpoint to fleet health.</p><Link className="btn" href={routePath('/audits/new')}>Run Audit</Link></div></article>
-        <article className="action-card panel"><div className="round-icon" aria-hidden="true">⊞</div><div><h2>Add Managed Machine</h2><p>Use this for ongoing inventory, scan history, and fleet posture.</p><Link className="btn" href={routePath('/inventory/new')}>Add Machine</Link></div></article>
+        <article className="action-card panel"><div className="round-icon" aria-hidden="true">▣</div><h2>Start scan</h2><p>Collect live evidence from any endpoint without adding it to the fleet. Takes you to scan progress and the completed report.</p><Link className="btn" href={routePath('/scans/start')}>Start scan</Link></article>
+        <article className="action-card panel"><div className="round-icon" aria-hidden="true">⊞</div><h2>Add &amp; scan machine</h2><p>Enroll a managed machine for ongoing inventory, scan history, and fleet-wide posture from the dashboard.</p><Link className="btn" href={routePath('/inventory/new')}>Add &amp; scan machine</Link></article>
       </section>
 
       <section className="dashboard-grid">

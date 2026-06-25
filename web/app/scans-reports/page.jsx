@@ -32,7 +32,7 @@ export default async function Scans() {
   return (
     <div className="stack">
       <Header eye="Scans & Reports" title="Run scans, follow progress, review reports" desc="Completed scans, live progress, and generated artifacts are shown together so you know where to act next.">
-        <Link id="audit-entry" className="btn" href={routePath('/audits/new')}>Run One-Time Audit</Link>
+        <Link id="audit-entry" className="btn" href={routePath('/scans/start')}>Start scan</Link>
       </Header>
       <Filters name="Scans & Reports" items={['Severity', 'Status', 'Time range', 'Environment']} />
 
@@ -50,7 +50,7 @@ export default async function Scans() {
               </tr>
             ))}
           </tbody></table>
-        ) : <div className="empty"><h3>No scans have been run yet</h3><p>Run a one-time audit or scan a managed machine to create the first report.</p><Link className="btn" href={routePath('/audits/new')}>Run One-Time Audit</Link></div>}
+        ) : <div className="empty"><h3>No scans have been run yet</h3><p>Run a one-time audit or scan a managed machine to create the first report.</p><Link className="btn" href={routePath('/scans/start')}>Start scan</Link></div>}
       </section>
 
       <section className="panel">

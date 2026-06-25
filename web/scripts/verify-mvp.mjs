@@ -9,6 +9,7 @@ const routes = [
   'app/inventory/machines/[id]/page.jsx',
   'app/audits/page.jsx',
   'app/audits/[id]/page.jsx',
+  'app/scans/start/page.jsx',
   'app/scans-reports/page.jsx',
   'app/scans-reports/reports/[id]/page.jsx',
   'app/remediation/page.jsx',
@@ -34,9 +35,10 @@ const source = ['app', 'components', 'lib']
   .filter((path) => /\.(jsx|js|css)$/.test(path))
   .map((path) => readFileSync(path, 'utf8'))
   .join('\n');
-for (const text of ['Inventory','Scans & Reports','Remediation','Users','Knowledgebase','Managed-machine dashboard','Audit History','Promote to Managed Machine','Run One-Time Audit','Add Managed Machine','auth/login','auth/register','Environment','Status','Severity','Time range','Shore Sentinel logo','Findings by Severity','Managed Machine Fleet','Recent Scans','Create local account','User management','Users & access','Delete user']) {
+for (const text of ['Inventory','Scans & Reports','Remediation','Users','Knowledgebase','Managed-machine dashboard','Audit History','Promote to Managed Machine','Start scan','auth/login','auth/register','Environment','Status','Severity','Time range','Shore Sentinel logo','Findings by Severity','Managed Machine Fleet','Recent Scans','Create local account','User management','Users & access','Delete user']) {
   if (!source.includes(text)) failures.push(`missing ${text}`);
 }
+if (!/Add.{0,8}scan machine/.test(source)) failures.push('missing Add & scan machine CTA');
 const landing = readFileSync(join(root, 'app/page.jsx'), 'utf8');
 const signInForm = readFileSync(join(root, 'components/sign-in-form.jsx'), 'utf8');
 if (!/Remember me/.test(signInForm) || !/name="rememberMe"/.test(signInForm)) failures.push('sign-in form must include remember me');
@@ -112,6 +114,17 @@ for (const detailRoute of ['app/inventory/machines/[id]/page.jsx', 'app/audits/[
 }
 const navCount = (readFileSync(join(root, 'lib/data.js'), 'utf8').match(/href:'\/(inventory|scans-reports|remediation|users)'/g) || []).length;
 if (navCount !== 4) failures.push(`expected 4 primary nav items, found ${navCount}`);
+
+// --- Guided scan flow assertions ---
+const guidedStartPage = readFileSync(join(root, 'app/scans/start/page.jsx'), 'utf8');
+if (!/routePath\(['"]\/scans\/start['"]\)/.test(dashboardPage)) failures.push('dashboard must link primary CTA to /scans/start');
+if (!/routePath\(['"]\/scans\/start['"]\)/.test(scansPage)) failures.push('scans-reports Header must link to /scans/start');
+if (!/routePath\(['"]\/scans-reports\/reports\/|progress/i.test(guidedStartPage)) failures.push('scans-start must reference scan progress/report routes');
+if (!/one-time audit|one.time audit/i.test(guidedStartPage)) failures.push('scans-start must explain one-time audit in plain language');
+if (!/managed machine/i.test(guidedStartPage)) failures.push('scans-start must explain managed machine in plain language');
+if (!/progress|report|completed scan/i.test(guidedStartPage)) failures.push('scans-start flow must reach scan progress / completed report');
+if (!/role="status"|role="alert"/.test(guidedStartPage)) failures.push('scans-start must use role=status or role=alert for progress/report sections');
+if (!/h[12]>[\s\S]*h[12]/i.test(guidedStartPage)) failures.push('scans-start must have proper heading hierarchy');
 if (failures.length) {
   console.error(failures.join('\n'));
   process.exit(1);
