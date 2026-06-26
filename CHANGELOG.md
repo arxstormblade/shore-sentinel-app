@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.3.1 - 2026-06-26
+
+### Fixed
+- Fixed live remediation page runtime crash by correcting the shared `SEVERITY_LEVELS` filter constant.
+- Fixed live `/remediations/status-counts` API route ordering so Nest does not route `status-counts` through the parameterized remediation-id handler.
+
+### Verification
+- API build/tests passed: 45/45.
+- Web regression verifier and production build passed.
+- Live Tailnet verification rerun after deployment.
+
 ## v0.3.0 - 2026-06-25
 
 ### Added

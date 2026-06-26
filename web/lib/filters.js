@@ -1,6 +1,6 @@
 const ENV_VALUES = new Set(['Production', 'Lab', 'Unassigned']);
 const STATUS_VALUES = new Set(['Online', 'Offline', 'Unknown']);
-const severity_LEVELS = ['critical', 'high', 'medium', 'low', 'informational'];
+const SEVERITY_LEVELS = ['critical', 'high', 'medium', 'low', 'informational'];
 const RUN_STATUS_VALUES = new Set(['completed', 'running', 'leased', 'pending']);
 const RUN_STATUS_LABELS = {
   completed: 'Completed',

@@ -270,6 +270,21 @@ export class AppController {
     return result.rows;
   }
 
+
+  @Get('remediations/status-counts')
+  async remediationStatusCounts() {
+    const tenantId = await this.db.tenantId();
+    const result = await this.db.query(
+      `SELECT status, count(*)::int AS count FROM remediation_items WHERE tenant_id=$1 GROUP BY status`,
+      [tenantId],
+    );
+    const counts: Record<string, number> = { needs_review: 0, in_progress: 0, fixed: 0, accepted_risk: 0 };
+    for (const row of result.rows) {
+      counts[String(row.status)] = Number(row.count) || 0;
+    }
+    return counts;
+  }
+
   @Get('remediations')
   async remediations(@Query('status') status?: string) {
     const tenantId = await this.db.tenantId();
@@ -433,19 +448,6 @@ export class AppController {
     return updated.rows[0];
   }
 
-  @Get('remediations/status-counts')
-  async remediationStatusCounts() {
-    const tenantId = await this.db.tenantId();
-    const result = await this.db.query(
-      `SELECT status, count(*)::int AS count FROM remediation_items WHERE tenant_id=$1 GROUP BY status`,
-      [tenantId],
-    );
-    const counts: Record<string, number> = { needs_review: 0, in_progress: 0, fixed: 0, accepted_risk: 0 };
-    for (const row of result.rows) {
-      counts[String(row.status)] = Number(row.count) || 0;
-    }
-    return counts;
-  }
 
   @Get('targets') async targets() { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT t.*, e.name AS environment_name, e.slug AS environment_slug FROM targets t LEFT JOIN environments e ON e.id=t.environment_id WHERE t.tenant_id=$1 ORDER BY t.created_at DESC', [tenantId]); return result.rows; }
   @Get('targets/:id') async target(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT t.*, e.name AS environment_name, e.slug AS environment_slug FROM targets t LEFT JOIN environments e ON e.id=t.environment_id WHERE t.tenant_id=$1 AND t.id=$2', [tenantId, id]); if (!result.rows[0]) throw new BadRequestException('target not found'); return result.rows[0]; }

@@ -78,6 +78,7 @@ if (/localhost:4000|127\.0\.0\.1:4000/.test(source)) failures.push('browser-rend
 if (/shore360-rmm-01|finance-ws-14|lab-linux-02|vendor-fw|client-vm|WEB-SRV|LAPTOP|DB-SRV|FILE-SRV|DEV-WS|demo-host|demo-scanner|demo-scan|SEED_DEMO_JOB/i.test(source)) failures.push('web source must not include dummy/demo asset details');
 const shell = readFileSync(join(root, 'components/ui.jsx'), 'utf8');
 const filtersClient = readFileSync(join(root, 'components/filters.tsx'), 'utf8');
+const filtersLib = readFileSync(join(root, 'lib/filters.js'), 'utf8');
 const dashboardPage = readFileSync(join(root, 'app/dashboard/page.jsx'), 'utf8');
 const inventoryPage = readFileSync(join(root, 'app/inventory/page.jsx'), 'utf8');
 const css = readFileSync(join(root, 'app/globals.css'), 'utf8');
@@ -135,6 +136,7 @@ if (!/loadRemediation/.test(detailPage) || !/export const dynamic = ['"]force-dy
 if (!/function readableText/.test(remediationPage) || !/function remediationText/.test(remediationPage) || /Suggested remediation: \{finding\.remediation_action/.test(remediationPage)) failures.push('Remediation must format object remediation values instead of rendering [object Object]');
 if (!/Shore Sentinel connects to the machine/.test(newMachinePage) || !/Machine checks in to Shore Sentinel/.test(newMachinePage) || /asset_mode = managed_machine|ssh_push<\/option>|pull_checkin<\/option>/.test(newMachinePage)) failures.push('machine enrollment must explain connection choices in plain language and hide raw mode labels');
 if (!/filterOptions/.test(filtersClient)) failures.push('filters must be scoped by category, not repeated generic values');
+if (!/const SEVERITY_LEVELS\s*=/.test(filtersLib) || /severity_LEVELS/.test(filtersLib)) failures.push('filters lib must define the exact SEVERITY_LEVELS symbol used by severity filtering');
 if (!/URLSearchParams/.test(filtersClient)) failures.push('filters must write state to URLSearchParams for shareable/bookmarkable filters');
 if (!/window\.location\.search|window\.history\.pushState|router\.push/.test(filtersClient)) failures.push('filters must update the URL when a selection changes');
 
