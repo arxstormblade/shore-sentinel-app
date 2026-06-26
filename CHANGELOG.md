@@ -1,5 +1,41 @@
 # Changelog
 
+## v0.3.0 - 2026-06-25
+
+### Added
+- Product-roadmap epic release covering the full scan-to-remediation activation path, operator guidance, remediation operations, saved views, display preferences, notifications planning, and trend analytics.
+- Guided scan entry flow at `/scans/start` so operators can choose one-time audit or managed-machine enrollment from a single Start scan path and land on progress/report surfaces.
+- Next-best-action guidance on dashboard, scan/report, and remediation surfaces so each security state tells operators what to do next.
+- Remediation workflow states and API support for `needs_review`, `in_progress`, `fixed`, and `accepted_risk`, including status counts and status transitions.
+- Remediation teamwork model with owner, due date, evidence attachments, threaded comments, and activity history.
+- Report-to-remediation continuity from scan reports, evidence views, and remediation detail pages.
+- Saved operational views for high findings, unreviewed remediation, failed scans, and recently completed scans.
+- Display preferences for comfortable/compact density, standard/high contrast, and full/reduced visual effects.
+- Dashboard trend analytics contract and panel covering severity history, risk-score movement, fixed-vs-new findings, and internal posture benchmarking.
+- Notification planning for failed scans, critical/high findings, weekly posture summaries, and Telegram/Teams/email channel routing.
+
+### Changed
+- Dashboard, Scans & Reports, Remediation, Inventory, Audits, Users, Knowledgebase, and navigation were updated for clearer operator flow and stronger accessibility affordances.
+- Filters now provide applied result summaries, clear-filter affordances, URL-state behavior, and screen-reader status announcements.
+- Severity and score explanations are visible inline so operators do not need hover-only help to understand prioritization.
+- Admin delete flows now use safer confirmation, soft-delete/undo semantics where applicable, affected-resource detail, and audit trail coverage.
+- Remediation queue can group findings by severity and machine to speed triage.
+- Architecture and release documentation now reflect the product roadmap additions and operational workflow expectations.
+
+### Fixed
+- Fixed remediation detail runtime import coverage and expanded verifier checks around dynamic remediation detail pages.
+- Fixed integration gaps found during the Kanban epic sequencing/release process, including build-cache ownership and release metadata drift.
+
+### Verification
+- Phase 0 scaffold validation passed.
+- Scanner bundle validation passed.
+- Docker Compose smoke validation passed.
+- Worker Python tests passed.
+- Worker Node tests passed: 7/7.
+- API build and tests passed: 44/44.
+- Web regression verifier passed: 18 routes.
+- Web production build passed: 28 generated routes.
+
 ## v0.2.0 - 2026-06-25
 
 ### Added

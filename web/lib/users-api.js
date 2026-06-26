@@ -60,6 +60,19 @@ export async function deleteUser(id) {
   return res.json();
 }
 
+export async function undoDeleteUser(id, undoToken) {
+  const res = await fetch(`${apiBase}/users/${id}/undo-delete`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ undo_token: undoToken }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || 'Failed to undo delete');
+  }
+  return res.json();
+}
+
 export async function disableUser(id) {
   const res = await fetch(`${apiBase}/users/${id}/disable`, { method: 'POST' });
   if (!res.ok) {

@@ -11,6 +11,7 @@ import {
   deleteUser,
   disableUser,
   enableUser,
+  undoDeleteUser,
 } from '@/lib/users-api';
 
 const EMPTY_FORM = {
@@ -40,6 +41,7 @@ export default function UsersPage() {
   const [resetPw, setResetPw] = useState('');
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState('');
+  const [deletedUser, setDeletedUser] = useState(null);
   const modalRef = useRef(null);
   const lastFocusedElement = useRef(null);
 
@@ -80,7 +82,7 @@ export default function UsersPage() {
 
   function showToast(msg) {
     setToast(msg);
-    setTimeout(() => setToast(''), 3000);
+    setTimeout(() => setToast(''), 5000);
   }
 
   function openAdd(event) {
@@ -194,12 +196,36 @@ export default function UsersPage() {
   async function handleDelete() {
     setBusy(true);
     try {
-      await deleteUser(activeUser.id);
-      showToast('User deleted');
+      const result = await deleteUser(activeUser.id);
+      const undoToken = result?.undo_token;
+      const affectedName = activeUser?.display_name || 'User';
+      const affectedEmail = activeUser?.email || '';
+      const affectedRoles = result?.affected?.roles || [];
       closeModal();
+      if (undoToken) {
+        showToast(`${affectedName} soft-deleted. Undo available for 24 hours.`);
+      } else {
+        showToast('User deleted');
+      }
+      setDeletedUser({ id: activeUser.id, name: affectedName, email: affectedEmail, roles: affectedRoles, undoToken });
       await load();
     } catch (e) {
       setError(e.message || 'Failed to delete user');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleUndoDelete() {
+    if (!deletedUser?.undoToken) return;
+    setBusy(true);
+    try {
+      await undoDeleteUser(deletedUser.id, deletedUser.undoToken);
+      showToast(`User ${deletedUser.name} restored`);
+      setDeletedUser(null);
+      await load();
+    } catch (e) {
+      setError(e.message || 'Failed to undo delete');
     } finally {
       setBusy(false);
     }
@@ -247,7 +273,16 @@ export default function UsersPage() {
         </div>
       </section>
 
-      {toast ? <div className="toast" role="status" aria-live="polite">{toast}</div> : null}
+      {toast ? (
+        <div className="toast" role="status" aria-live="polite">
+          <span>{toast}</span>
+          {deletedUser?.undoToken ? (
+            <button className="btn ghost" onClick={handleUndoDelete} style={{ marginLeft: '0.5rem' }}>
+              Undo delete
+            </button>
+          ) : null}
+        </div>
+      ) : null}
 
       {error ? (
         <div className="error-banner" role="alert">
@@ -265,8 +300,10 @@ export default function UsersPage() {
         {loading ? (
           <div className="loading-row" role="status" aria-live="polite">Loading users…</div>
         ) : users.length === 0 ? (
-          <div className="empty-state">
-            <p>No users found. Add the first operator account to get started.</p>
+          <div className="empty" data-testid="users-empty-state">
+            <h3>No operator accounts yet</h3>
+            <p>Shore Sentinel is ready for your team. Create the first operator account so colleagues can sign in, view scan evidence, and work remediation tasks.</p>
+            <button className="btn" onClick={openAdd}>+ Add user</button>
           </div>
         ) : (
           <table className="users-table">
@@ -434,16 +471,26 @@ export default function UsersPage() {
               <h2 id="delete-user-title">Delete user</h2>
               <button className="btn ghost" onClick={closeModal}>Close</button>
             </header>
-            <p id="delete-user-desc" className="modal-desc">
-              Are you sure you want to delete <strong>{activeUser?.display_name}</strong> ({activeUser?.email})?
-              This action cannot be undone.
-            </p>
-            <div className="modal-actions" aria-busy={busy}>
-              <button type="button" className="btn alt" onClick={closeModal}>Cancel</button>
-              <button className="btn danger" onClick={handleDelete} disabled={busy}>
-                {busy ? 'Deleting…' : 'Delete user'}
-              </button>
-            </div>
+            <form onSubmit={handleDelete} aria-busy={busy}>
+              <p id="delete-user-desc" className="modal-desc">
+                Delete <strong>{activeUser?.display_name}</strong> ({activeUser?.email})?
+                The account will be soft-deleted so it can be restored within 24 hours.
+              </p>
+              <div className="affected-resources" role="status" aria-live="polite">
+                <p className="affected-title">Affected resource details:</p>
+                <ul className="affected-list">
+                  <li>User: <strong>{activeUser?.display_name}</strong> ({activeUser?.email})</li>
+                  <li>Roles: <strong>{(activeUser?.roles || []).filter(Boolean).join(', ') || 'none'}</strong></li>
+                  <li>After 24 hours: user data is permanently purged and cannot be restored.</li>
+                </ul>
+              </div>
+              <div className="modal-actions">
+                <button type="button" className="btn alt" onClick={closeModal}>Cancel</button>
+                <button type="submit" className="btn danger" disabled={busy}>
+                  {busy ? 'Deleting…' : 'Delete user'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       ) : null}

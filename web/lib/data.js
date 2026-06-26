@@ -1,4 +1,4 @@
-export const navItems=[{href:'/inventory',label:'Inventory',icon:'▤'},{href:'/scans-reports',label:'Scans & Reports',icon:'◎'},{href:'/remediation',label:'Remediation',icon:'✓'},{href:'/users',label:'Users',icon:'☺'}];
+export const navItems=[{href:'/inventory',label:'Inventory',icon:'▤'},{href:'/scans-reports',label:'Scans & Reports',icon:'◎'},{href:'/remediation',label:'Remediation',icon:'✓'},{href:'/saved-views',label:'Saved Views',icon:'★'},{href:'/users',label:'Users',icon:'☺'}];
 export const apiBase=process.env.NEXT_PUBLIC_SHORE_SENTINEL_API_URL||process.env.NEXT_PUBLIC_API_URL||'/shore-sentinel-api';
 export const machines=[];
 export const audits=[];

@@ -1,6 +1,6 @@
-import { BadRequestException, Body, ConflictException, Controller, Delete, Get, Header, NotFoundException, Param, Patch, Post, Req, Res } from '@nestjs/common';
+import { BadRequestException, Body, ConflictException, Controller, Delete, Get, Header, NotFoundException, Param, Patch, Post, Query, Req, Res } from '@nestjs/common';
 import bcrypt from 'bcryptjs';
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import type { Request, Response } from 'express';
 import { RUN_EVENT_TYPE, scannerBundleContractVersion } from '@shore-sentinel/shared';
 import { ArtifactService } from './artifact.service.js';
@@ -24,12 +24,12 @@ export class AppController {
   async listUsers() {
     const tenantId = await this.db.tenantId();
     const result = await this.db.query(
-      `SELECT u.id, u.email, u.display_name, u.disabled_at, u.created_at, u.updated_at,
+      `SELECT u.id, u.email, u.display_name, u.disabled_at, u.deleted_at, u.created_at, u.updated_at,
               COALESCE(json_agg(r.name ORDER BY r.name) FILTER (WHERE r.name IS NOT NULL), '[]'::json) AS roles
        FROM users u
        LEFT JOIN user_roles ur ON ur.user_id = u.id
        LEFT JOIN roles r ON r.id = ur.role_id
-       WHERE u.tenant_id = $1
+       WHERE u.tenant_id = $1 AND u.deleted_at IS NULL
        GROUP BY u.id
        ORDER BY u.created_at DESC`,
       [tenantId],
@@ -105,10 +105,43 @@ export class AppController {
   @Delete('users/:id')
   async deleteUser(@Param('id') id: string) {
     const tenantId = await this.db.tenantId();
-    await this.db.query('DELETE FROM user_roles WHERE user_id = $1', [id]);
-    await this.db.query('DELETE FROM users WHERE tenant_id = $1 AND id = $2', [tenantId, id]);
-    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'user.deleted', 'user', id, {}]);
-    return { ok: true };
+    const user = await this.db.query<{ id: string; email: string; display_name: string }>('SELECT id, email, display_name FROM users WHERE tenant_id = $1 AND id = $2 AND deleted_at IS NULL', [tenantId, id]);
+    if (!user.rows[0]) throw new BadRequestException('user not found or already deleted');
+    const roles = await this.db.query<{ name: string }>('SELECT r.name FROM roles r JOIN user_roles ur ON ur.role_id = r.id WHERE ur.user_id = $1', [id]);
+    const undoToken = randomUUID();
+    await this.db.query('INSERT INTO user_deletion_tokens (token, user_id, tenant_id, expires_at) VALUES ($1, $2, $3, now() + interval \'24 hours\')', [undoToken, id, tenantId]);
+    await this.db.query('UPDATE users SET deleted_at = now(), updated_at = now(), password_hash = \'DELETED\', email = \'deleted-\' || id || \'@deleted.local\' WHERE tenant_id = $1 AND id = $2', [tenantId, id]);
+    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'user.deleted', 'user', id, { email: user.rows[0].email, display_name: user.rows[0].display_name, affected_roles: roles.rows.map((r) => r.name), undo_token: undoToken }]);
+    return { ok: true, undo_token: undoToken, undo_expires_in: '24 hours', affected: { email: user.rows[0].email, display_name: user.rows[0].display_name, roles: roles.rows.map((r) => r.name) } };
+  }
+
+  @Post('users/:id/undo-delete')
+  async undoDeleteUser(@Param('id') id: string, @Body() body: Record<string, unknown>) {
+    const tenantId = await this.db.tenantId();
+    const token = typeof body.undo_token === 'string' ? body.undo_token : '';
+    if (!token) throw new BadRequestException('undo_token is required');
+    const tokenResult = await this.db.query<{ token: string; user_id: string }>(
+      'SELECT token, user_id FROM user_deletion_tokens WHERE token = $1 AND user_id = $2 AND expires_at > now() AND consumed_at IS NULL',
+      [token, id],
+    );
+    if (!tokenResult.rows[0]) throw new BadRequestException('invalid or expired undo token');
+    const auditResult = await this.db.query<{ payload: string }>(
+      "SELECT payload FROM audit_log WHERE resource_type = 'user' AND resource_id = $1 AND action = 'user.deleted' ORDER BY created_at DESC LIMIT 1",
+      [id],
+    );
+    let originalEmail = '';
+    let originalName = '';
+    try {
+      const parsed = JSON.parse(auditResult.rows[0]?.payload ?? '{}') as Record<string, unknown>;
+      originalEmail = typeof parsed.email === 'string' ? parsed.email : '';
+      originalName = typeof parsed.display_name === 'string' ? parsed.display_name : '';
+    } catch {
+      // fallback if payload unparsable
+    }
+    await this.db.query('UPDATE users SET deleted_at = NULL, updated_at = now(), email = $1, display_name = $2 WHERE tenant_id = $3 AND id = $4', [originalEmail || 'restored-' + id + '@restored.local', originalName || 'Restored user', tenantId, id]);
+    await this.db.query('UPDATE user_deletion_tokens SET consumed_at = now() WHERE token = $1', [token]);
+    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'user.restored', 'user', id, { email: originalEmail }]);
+    return { ok: true, id };
   }
 
   @Post('users/:id/disable')
@@ -138,7 +171,90 @@ export class AppController {
       if (Object.prototype.hasOwnProperty.call(severityCounts, severity)) severityCounts[severity as keyof typeof severityCounts] = Number(row.count) || 0;
     }
     const recentRuns = await this.db.query(`SELECT r.id, r.status, r.subject_type, r.target_id, r.one_time_audit_id, r.created_at, r.completed_at, COALESCE(t.hostname, a.display_name, 'unknown subject') AS subject_name FROM scan_runs r LEFT JOIN targets t ON t.id=r.target_id LEFT JOIN one_time_audits a ON a.id=r.one_time_audit_id WHERE r.tenant_id=$1 ORDER BY r.created_at DESC LIMIT 5`, [tenantId]);
-    return { severityCounts, totalFindings: Object.values(severityCounts).reduce((sum, count) => sum + count, 0), recentRuns: recentRuns.rows };
+    const remediationCounts = { needs_review: 0, in_progress: 0, fixed: 0, accepted_risk: 0 };
+    const remediationResult = await this.db.query(`SELECT ri.status, count(*)::int AS count FROM remediation_items ri WHERE ri.tenant_id=$1 GROUP BY ri.status`, [tenantId]);
+    for (const row of remediationResult.rows) {
+      const status = String(row.status);
+      if (Object.prototype.hasOwnProperty.call(remediationCounts, status)) remediationCounts[status as keyof typeof remediationCounts] = Number(row.count) || 0;
+    }
+    return { severityCounts, totalFindings: Object.values(severityCounts).reduce((sum, count) => sum + count, 0), recentRuns: recentRuns.rows, remediationCounts };
+  }
+
+  @Get('dashboard/trends')
+  async dashboardTrends() {
+    const tenantId = await this.db.tenantId();
+    const severityResult = await this.db.query(
+      `SELECT date_trunc('day', fi.created_at)::date AS bucket_date, f.severity, count(*)::int AS count
+       FROM finding_instances fi
+       JOIN findings f ON f.id=fi.finding_id
+       WHERE fi.tenant_id=$1 AND fi.created_at >= now() - interval '30 days'
+       GROUP BY bucket_date, f.severity
+       ORDER BY bucket_date ASC`,
+      [tenantId],
+    );
+    const severityBuckets = new Map<string, Record<string, number | string>>();
+    for (const row of severityResult.rows) {
+      const date = String(row.bucket_date).slice(0, 10);
+      const bucket = severityBuckets.get(date) ?? { date, critical: 0, high: 0, medium: 0, low: 0, informational: 0 };
+      const severity = String(row.severity || '').toLowerCase();
+      if (Object.prototype.hasOwnProperty.call(bucket, severity)) bucket[severity] = Number(row.count) || 0;
+      severityBuckets.set(date, bucket);
+    }
+
+    const riskHistoryResult = await this.db.query(
+      `SELECT r.id, r.completed_at, r.created_at, COALESCE(t.hostname, a.display_name, 'unknown subject') AS subject_name,
+              COALESCE(sum(CASE f.severity WHEN 'critical' THEN 25 WHEN 'high' THEN 15 WHEN 'medium' THEN 8 WHEN 'low' THEN 3 ELSE 1 END), 0)::int AS risk_points,
+              count(fi.id)::int AS findings_count
+       FROM scan_runs r
+       LEFT JOIN targets t ON t.id=r.target_id
+       LEFT JOIN one_time_audits a ON a.id=r.one_time_audit_id
+       LEFT JOIN finding_instances fi ON fi.tenant_id=$1 AND fi.run_id=r.id
+       LEFT JOIN findings f ON f.id=fi.finding_id
+       WHERE r.tenant_id=$1 AND r.status='completed'
+       GROUP BY r.id, t.hostname, a.display_name
+       ORDER BY r.completed_at DESC NULLS LAST, r.created_at DESC
+       LIMIT 12`,
+      [tenantId],
+    );
+    const riskScoreHistory = riskHistoryResult.rows.map((row) => {
+      const riskPoints = Number(row.risk_points) || 0;
+      return {
+        run_id: row.id,
+        subject_name: row.subject_name,
+        date: String(row.completed_at || row.created_at || '').slice(0, 10),
+        findings_count: Number(row.findings_count) || 0,
+        risk_score: Math.max(0, 100 - Math.min(100, riskPoints)),
+      };
+    }).reverse();
+
+    const movementResult = await this.db.query(
+      `SELECT count(DISTINCT fi.id) FILTER (WHERE fi.created_at >= now() - interval '30 days')::int AS new_findings,
+              count(DISTINCT ri.id) FILTER (WHERE ri.status='fixed' AND ri.updated_at >= now() - interval '30 days')::int AS fixed_findings,
+              count(DISTINCT fi.id) FILTER (WHERE fi.status='open')::int AS open_findings
+       FROM finding_instances fi
+       LEFT JOIN remediation_items ri ON ri.finding_instance_id=fi.id
+       WHERE fi.tenant_id=$1`,
+      [tenantId],
+    );
+    const movement = movementResult.rows[0] ?? {};
+    const latestRiskScore = riskScoreHistory.at(-1)?.risk_score ?? 100;
+    const targetScore = 90;
+    return {
+      severityTrends: Array.from(severityBuckets.values()),
+      riskScoreHistory,
+      findingMovement: {
+        newFindings: Number(movement.new_findings) || 0,
+        fixedFindings: Number(movement.fixed_findings) || 0,
+        openFindings: Number(movement.open_findings) || 0,
+      },
+      postureBenchmark: {
+        currentScore: latestRiskScore,
+        targetScore,
+        delta: latestRiskScore - targetScore,
+        status: latestRiskScore >= targetScore ? 'on_target' : latestRiskScore >= 75 ? 'watch' : 'elevated_risk',
+        comparisonBasis: 'Internal 90-point operational target',
+      },
+    };
   }
   @Get('scan-runs')
   async scanRuns() {
@@ -154,12 +270,204 @@ export class AppController {
     return result.rows;
   }
 
+  @Get('remediations')
+  async remediations(@Query('status') status?: string) {
+    const tenantId = await this.db.tenantId();
+    const params: unknown[] = [tenantId];
+    let statusClause = '';
+    if (status) {
+      params.push(status);
+      statusClause = `AND ri.status = $${params.length}`;
+    }
+    const result = await this.db.query(
+      `SELECT ri.id, ri.status, ri.title, ri.action, ri.instructions, ri.priority, ri.category, ri.due_date, ri.owner_user_id, owner.display_name AS owner_name,
+              ri.evidence_artifact_id, evidence.artifact_type AS evidence_artifact_type, evidence.mime_type AS evidence_mime_type, evidence.size_bytes AS evidence_size_bytes,
+              ri.created_at, ri.updated_at, fi.id AS finding_instance_id, f.title AS finding_title, f.severity, f.category AS finding_category,
+              r.id AS run_id, COALESCE(t.hostname, a.display_name, 'unknown subject') AS subject_name
+       FROM remediation_items ri
+       JOIN finding_instances fi ON fi.id = ri.finding_instance_id
+       JOIN findings f ON f.id = fi.finding_id
+       JOIN scan_runs r ON r.id = fi.run_id
+       LEFT JOIN targets t ON t.id = fi.target_id
+       LEFT JOIN one_time_audits a ON a.id = fi.one_time_audit_id
+       LEFT JOIN users owner ON owner.id = ri.owner_user_id
+       LEFT JOIN artifacts evidence ON evidence.id = ri.evidence_artifact_id
+       WHERE ri.tenant_id = $1 ${statusClause}
+       ORDER BY ri.updated_at DESC`,
+      params,
+    );
+    return result.rows;
+  }
+
+  @Get('remediations/:id')
+  async remediation(@Param('id') id: string) {
+    const tenantId = await this.db.tenantId();
+    const result = await this.db.query(
+      `SELECT ri.id, ri.status, ri.title, ri.action, ri.instructions, ri.priority, ri.category, ri.file_path, ri.due_date, ri.owner_user_id, owner.display_name AS owner_name, owner.email AS owner_email,
+              ri.evidence_artifact_id, evidence.artifact_type AS evidence_artifact_type, evidence.mime_type AS evidence_mime_type, evidence.size_bytes AS evidence_size_bytes, evidence.storage_uri AS evidence_storage_uri,
+              ri.created_at, ri.updated_at, fi.id AS finding_instance_id, fi.evidence_summary, f.title AS finding_title, f.severity, f.description AS finding_description,
+              r.id AS run_id, COALESCE(t.hostname, a.display_name, 'unknown subject') AS subject_name
+       FROM remediation_items ri
+       JOIN finding_instances fi ON fi.id = ri.finding_instance_id
+       JOIN findings f ON f.id = fi.finding_id
+       JOIN scan_runs r ON r.id = fi.run_id
+       LEFT JOIN targets t ON t.id = fi.target_id
+       LEFT JOIN one_time_audits a ON a.id = fi.one_time_audit_id
+       LEFT JOIN users owner ON owner.id = ri.owner_user_id
+       LEFT JOIN artifacts evidence ON evidence.id = ri.evidence_artifact_id
+       WHERE ri.tenant_id = $1 AND ri.id = $2`,
+      [tenantId, id],
+    );
+    const remediation = result.rows[0];
+    if (!remediation) throw new NotFoundException('remediation item not found');
+    const [comments, activity] = await Promise.all([
+      this.db.query(
+        `SELECT c.id, c.body, c.created_at, c.updated_at, c.author_user_id, COALESCE(u.display_name, 'Unknown') AS author_name
+         FROM remediation_item_comments c
+         LEFT JOIN users u ON u.id = c.author_user_id
+         WHERE c.tenant_id = $1 AND c.remediation_item_id = $2
+         ORDER BY c.created_at ASC`,
+        [tenantId, id],
+      ),
+      this.db.query(
+        `SELECT h.id, h.event_type, h.payload, h.created_at, h.actor_user_id, COALESCE(u.display_name, 'System') AS actor_name
+         FROM remediation_item_activity h
+         LEFT JOIN users u ON u.id = h.actor_user_id
+         WHERE h.tenant_id = $1 AND h.remediation_item_id = $2
+         ORDER BY h.created_at ASC`,
+        [tenantId, id],
+      ),
+    ]);
+    return { ...remediation, comments: comments.rows, activity: activity.rows };
+  }
+
+  @Patch('remediations/:id')
+  async updateRemediation(@Param('id') id: string, @Body() body: Record<string, unknown>) {
+    const tenantId = await this.db.tenantId();
+    const current = await this.db.query('SELECT id, status, title FROM remediation_items WHERE tenant_id=$1 AND id=$2', [tenantId, id]);
+    if (!current.rows[0]) throw new NotFoundException('remediation item not found');
+    const fields: string[] = [];
+    const values: unknown[] = [tenantId, id];
+    let idx = 3;
+    for (const field of ['title', 'action', 'instructions', 'file_path', 'priority', 'category', 'owner_user_id', 'due_date', 'evidence_artifact_id'] as const) {
+      if (Object.prototype.hasOwnProperty.call(body, field)) {
+        fields.push(`${field} = $${idx++}`);
+        values.push(body[field]);
+      }
+    }
+    if (typeof body.status === 'string' && body.status.trim()) {
+      fields.push(`status = $${idx++}`);
+      values.push(body.status.toLowerCase());
+    }
+    if (!fields.length) return current.rows[0];
+    fields.push('updated_at = now()');
+    const updated = await this.db.query(`UPDATE remediation_items SET ${fields.join(', ')} WHERE tenant_id=$1 AND id=$2 RETURNING *`, values);
+    await this.db.query(
+      'INSERT INTO remediation_item_activity (tenant_id, remediation_item_id, actor_user_id, event_type, payload) VALUES ($1,$2,$3,$4,$5)',
+      [tenantId, id, null, 'remediation.updated', { updated_fields: fields.filter((field) => field !== 'updated_at = now()') }],
+    );
+    return updated.rows[0];
+  }
+
+  @Post('remediations/:id/comments')
+  async addRemediationComment(@Param('id') id: string, @Body() body: Record<string, unknown>) {
+    const tenantId = await this.db.tenantId();
+    const existing = await this.db.query('SELECT id FROM remediation_items WHERE tenant_id=$1 AND id=$2', [tenantId, id]);
+    if (!existing.rows[0]) throw new NotFoundException('remediation item not found');
+    const comment = typeof body.body === 'string' ? body.body.trim() : typeof body.comment === 'string' ? body.comment.trim() : '';
+    if (!comment) throw new BadRequestException('comment body is required');
+    const authorUserId = typeof body.author_user_id === 'string' && body.author_user_id ? body.author_user_id : null;
+    const created = await this.db.query(
+      'INSERT INTO remediation_item_comments (tenant_id, remediation_item_id, author_user_id, body) VALUES ($1,$2,$3,$4) RETURNING *',
+      [tenantId, id, authorUserId, comment],
+    );
+    await this.db.query(
+      'INSERT INTO remediation_item_activity (tenant_id, remediation_item_id, actor_user_id, event_type, payload) VALUES ($1,$2,$3,$4,$5)',
+      [tenantId, id, authorUserId, 'remediation.commented', { comment_id: created.rows[0].id }],
+    );
+    return created.rows[0];
+  }
+
+  @Get('remediations/:id/comments')
+  async remediationComments(@Param('id') id: string) {
+    const tenantId = await this.db.tenantId();
+    const result = await this.db.query(
+      `SELECT c.id, c.body, c.created_at, c.updated_at, c.author_user_id, COALESCE(u.display_name, 'Unknown') AS author_name
+       FROM remediation_item_comments c
+       LEFT JOIN users u ON u.id = c.author_user_id
+       WHERE c.tenant_id = $1 AND c.remediation_item_id = $2
+       ORDER BY c.created_at ASC`,
+      [tenantId, id],
+    );
+    return { comments: result.rows };
+  }
+
+  @Get('remediations/:id/activity')
+  async remediationActivity(@Param('id') id: string) {
+    const tenantId = await this.db.tenantId();
+    const result = await this.db.query(
+      `SELECT h.id, h.event_type, h.payload, h.created_at, h.actor_user_id, COALESCE(u.display_name, 'System') AS actor_name
+       FROM remediation_item_activity h
+       LEFT JOIN users u ON u.id = h.actor_user_id
+       WHERE h.tenant_id = $1 AND h.remediation_item_id = $2
+       ORDER BY h.created_at ASC`,
+      [tenantId, id],
+    );
+    return { activity: result.rows };
+  }
+
+  @Patch('remediations/:id/status')
+  @Patch('remediation/:id/status')
+  async updateRemediationStatus(@Param('id') id: string, @Body() body: Record<string, unknown>) {
+    const tenantId = await this.db.tenantId();
+    const newStatus = typeof body.status === 'string' ? body.status.toLowerCase() : '';
+    const allowedStatuses = ['needs_review', 'in_progress', 'fixed', 'accepted_risk', 'open', 'accepted', 'ignored', 'resolved'];
+    if (!newStatus || !allowedStatuses.includes(newStatus)) {
+      throw new BadRequestException(`invalid status: ${newStatus}. allowed: ${allowedStatuses.join(', ')}`);
+    }
+    const current = await this.db.query('SELECT id, status, title FROM remediation_items WHERE tenant_id=$1 AND id=$2', [tenantId, id]);
+    if (!current.rows[0]) throw new NotFoundException('remediation item not found');
+    const updated = await this.db.query('UPDATE remediation_items SET status=$1, updated_at=now() WHERE tenant_id=$2 AND id=$3 RETURNING *', [newStatus, tenantId, id]);
+    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'remediation.status_changed', 'remediation_item', id, { from: current.rows[0].status, to: newStatus, title: current.rows[0].title }]);
+    await this.db.query('INSERT INTO remediation_item_activity (tenant_id, remediation_item_id, actor_user_id, event_type, payload) VALUES ($1,$2,$3,$4,$5)', [tenantId, id, null, 'remediation.status_changed', { from: current.rows[0].status, to: newStatus, title: current.rows[0].title }]);
+    return updated.rows[0];
+  }
+
+  @Get('remediations/status-counts')
+  async remediationStatusCounts() {
+    const tenantId = await this.db.tenantId();
+    const result = await this.db.query(
+      `SELECT status, count(*)::int AS count FROM remediation_items WHERE tenant_id=$1 GROUP BY status`,
+      [tenantId],
+    );
+    const counts: Record<string, number> = { needs_review: 0, in_progress: 0, fixed: 0, accepted_risk: 0 };
+    for (const row of result.rows) {
+      counts[String(row.status)] = Number(row.count) || 0;
+    }
+    return counts;
+  }
+
   @Get('targets') async targets() { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT t.*, e.name AS environment_name, e.slug AS environment_slug FROM targets t LEFT JOIN environments e ON e.id=t.environment_id WHERE t.tenant_id=$1 ORDER BY t.created_at DESC', [tenantId]); return result.rows; }
   @Get('targets/:id') async target(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT t.*, e.name AS environment_name, e.slug AS environment_slug FROM targets t LEFT JOIN environments e ON e.id=t.environment_id WHERE t.tenant_id=$1 AND t.id=$2', [tenantId, id]); if (!result.rows[0]) throw new BadRequestException('target not found'); return result.rows[0]; }
   @Get('targets/:id/scan-runs') async targetScanRuns(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query(`SELECT r.*, latest.event_type AS latest_event_type, latest.message AS latest_event_message, latest.progress_percent AS latest_progress_percent, latest.created_at AS latest_event_at, COALESCE(json_agg(jsonb_build_object('id', a.id, 'artifact_type', a.artifact_type, 'storage_uri', a.storage_uri, 'sha256', a.sha256, 'mime_type', a.mime_type, 'size_bytes', a.size_bytes, 'parse_status', a.parse_status, 'created_at', a.created_at) ORDER BY a.created_at DESC) FILTER (WHERE a.id IS NOT NULL), '[]'::json) AS artifacts FROM scan_runs r LEFT JOIN LATERAL (SELECT event_type, message, progress_percent, created_at FROM job_events e WHERE e.tenant_id=$1 AND e.run_id=r.id ORDER BY e.created_at DESC LIMIT 1) latest ON TRUE LEFT JOIN artifacts a ON a.tenant_id=$1 AND a.run_id=r.id WHERE r.tenant_id=$1 AND r.target_id=$2 GROUP BY r.id, latest.event_type, latest.message, latest.progress_percent, latest.created_at ORDER BY r.created_at DESC`, [tenantId, id]); return { runs: result.rows }; }
   @Get('scan-runs/:id/artifacts') async runArtifacts(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT * FROM artifacts WHERE tenant_id=$1 AND run_id=$2 ORDER BY created_at DESC', [tenantId, id]); return { artifacts: result.rows }; }
   @Patch('targets/:id') async updateTarget(@Param('id') id: string, @Body() body: Record<string, unknown>) { const tenantId = await this.db.tenantId(); const current = await this.db.query('SELECT * FROM targets WHERE tenant_id=$1 AND id=$2', [tenantId, id]); if (!current.rows[0]) throw new BadRequestException('target not found'); const fields = ['hostname', 'fqdn', 'ip_address', 'owner_team', 'platform', 'connection_mode', 'monitoring_enabled'] as const; const updates: string[] = []; const params: unknown[] = [tenantId, id]; for (const field of fields) { if (Object.prototype.hasOwnProperty.call(body, field)) { updates.push(`${field}=$${params.length + 1}`); params.push(body[field]); } } if (!updates.length) return current.rows[0]; const result = await this.db.query(`UPDATE targets SET ${updates.join(', ')}, updated_at=now() WHERE tenant_id=$1 AND id=$2 RETURNING *`, params); return result.rows[0]; }
-  @Delete('targets/:id') async deleteTarget(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const target = await this.db.query('SELECT id FROM targets WHERE tenant_id=$1 AND id=$2', [tenantId, id]); if (!target.rows[0]) throw new BadRequestException('target not found'); const jobs = await this.db.query<{ id: string }>('SELECT id FROM scan_jobs WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]); const runs = await this.db.query<{ id: string }>('SELECT id FROM scan_runs WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]); const jobIds = jobs.rows.map((row) => row.id); const runIds = runs.rows.map((row) => row.id); if (runIds.length) { await this.db.query('DELETE FROM job_events WHERE tenant_id=$1 AND run_id = ANY($2::uuid[])', [tenantId, runIds]); await this.db.query('DELETE FROM artifacts WHERE tenant_id=$1 AND run_id = ANY($2::uuid[])', [tenantId, runIds]); await this.db.query('DELETE FROM remediation_items WHERE tenant_id=$1 AND finding_instance_id IN (SELECT id FROM finding_instances WHERE tenant_id=$1 AND target_id=$2)', [tenantId, id]); await this.db.query('DELETE FROM finding_instances WHERE tenant_id=$1 AND run_id = ANY($2::uuid[])', [tenantId, runIds]); await this.db.query('DELETE FROM notification_events WHERE tenant_id=$1 AND run_id = ANY($2::uuid[])', [tenantId, runIds]); }
+  @Delete('targets/:id') async deleteTarget(@Param('id') id: string) {
+    const tenantId = await this.db.tenantId();
+    const target = await this.db.query<{ id: string; hostname: string }>('SELECT id, hostname FROM targets WHERE tenant_id = $1 AND id = $2', [tenantId, id]);
+    if (!target.rows[0]) throw new BadRequestException('target not found');
+    const runs = await this.db.query<{ id: string }>('SELECT id FROM scan_runs WHERE tenant_id = $1 AND target_id = $2', [tenantId, id]);
+    const jobResult = await this.db.query<{ id: string }>('SELECT id FROM scan_jobs WHERE tenant_id = $1 AND target_id = $2', [tenantId, id]);
+    const runIds = runs.rows.map((row) => row.id);
+    const jobIds = jobResult.rows.map((row) => row.id);
+    const affected = { runs: runIds.length, jobs: jobIds.length, scheduled_target: target.rows[0].hostname };
+    if (runIds.length) {
+      await this.db.query('DELETE FROM job_events WHERE tenant_id=$1 AND run_id = ANY($2::uuid[])', [tenantId, runIds]);
+      await this.db.query('DELETE FROM artifacts WHERE tenant_id=$1 AND run_id = ANY($2::uuid[])', [tenantId, runIds]);
+      await this.db.query('DELETE FROM remediation_items WHERE tenant_id=$1 AND finding_instance_id IN (SELECT id FROM finding_instances WHERE tenant_id=$1 AND target_id=$2)', [tenantId, id]);
+      await this.db.query('DELETE FROM finding_instances WHERE tenant_id=$1 AND run_id = ANY($2::uuid[])', [tenantId, runIds]);
+      await this.db.query('DELETE FROM notification_events WHERE tenant_id=$1 AND run_id = ANY($2::uuid[])', [tenantId, runIds]);
+    }
     await this.db.query('DELETE FROM job_events WHERE tenant_id=$1 AND job_id = ANY($2::uuid[])', [tenantId, jobIds]);
     await this.db.query('DELETE FROM scan_runs WHERE tenant_id=$1 AND id = ANY($2::uuid[])', [tenantId, runIds]);
     await this.db.query('DELETE FROM scan_jobs WHERE tenant_id=$1 AND id = ANY($2::uuid[])', [tenantId, jobIds]);
@@ -169,7 +477,8 @@ export class AppController {
     await this.db.query('DELETE FROM target_identities WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]);
     await this.db.query('DELETE FROM target_group_members WHERE target_id=$1', [id]);
     await this.db.query('DELETE FROM targets WHERE tenant_id=$1 AND id=$2', [tenantId, id]);
-    return { deleted: true, id };
+    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'target.deleted', 'target', id, affected]);
+    return { deleted: true, id, affected };
   }
   @Get('one-time-audits') async oneTimeAudits() { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT * FROM one_time_audits WHERE tenant_id=$1 ORDER BY created_at DESC', [tenantId]); return result.rows; }
   @Get('one-time-audits/:id') async oneTimeAudit(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT * FROM one_time_audits WHERE tenant_id=$1 AND id=$2', [tenantId, id]); if (!result.rows[0]) throw new BadRequestException('one-time audit not found'); return result.rows[0]; }
@@ -179,6 +488,27 @@ export class AppController {
   @Post('targets/:id/scan-jobs') async runTarget(@Param('id') id: string, @Body() body: Record<string, unknown>) { return this.createJob('managed_target', id, null, body); }
   @Get('scan-jobs/:id') async job(@Param('id') id: string) { const result = await this.db.query('SELECT * FROM scan_jobs WHERE id=$1', [id]); if (!result.rows[0]) throw new BadRequestException('scan job not found'); return result.rows[0]; }
   @Get('scan-runs/:id') async run(@Param('id') id: string) { const result = await this.db.query('SELECT * FROM scan_runs WHERE id=$1', [id]); if (!result.rows[0]) throw new BadRequestException('scan run not found'); return result.rows[0]; }
+
+  @Get('scan-runs/:id/findings') async runFindings(@Param('id') id: string) {
+    const tenantId = await this.db.tenantId();
+    const run = await this.db.query('SELECT id FROM scan_runs WHERE id=$1', [id]);
+    if (!run.rows[0]) throw new BadRequestException('scan run not found');
+    const result = await this.db.query(
+      `SELECT fi.id AS finding_instance_id, fi.status AS finding_status,
+              f.id AS finding_id, f.title, f.category, f.severity, f.description,
+              ri.id AS remediation_id, ri.title AS remediation_title, ri.action AS remediation_action,
+              ri.instructions AS remediation_instructions, ri.status AS remediation_status,
+              r.id AS run_id
+       FROM finding_instances fi
+       JOIN findings f ON f.id=fi.finding_id
+       JOIN scan_runs r ON r.id=fi.run_id
+       LEFT JOIN remediation_items ri ON ri.finding_instance_id=fi.id
+       WHERE fi.tenant_id=$1 AND fi.run_id=$2
+       ORDER BY CASE f.severity WHEN 'critical' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 WHEN 'low' THEN 4 ELSE 5 END, fi.created_at DESC`,
+      [tenantId, id],
+    );
+    return { findings: result.rows };
+  }
 
   @Post('runs/:id/events')
   async workerEvent(@Param('id') id: string, @Body() body: Record<string, unknown>) {
@@ -302,7 +632,7 @@ export class AppController {
       if (remediation) {
         await this.db.query(
           'INSERT INTO remediation_items (tenant_id,finding_instance_id,source,priority,category,title,action,instructions,status) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
-          [tenantId, instance.rows[0].id, 'scanner_generated', severity, category, `Remediate: ${title}`.slice(0, 500), this.textValue(remediation).slice(0, 1000), this.textValue(remediation).slice(0, 4000), 'open'],
+          [tenantId, instance.rows[0].id, 'scanner_generated', severity, category, `Remediate: ${title}`.slice(0, 500), this.textValue(remediation).slice(0, 1000), this.textValue(remediation).slice(0, 4000), 'needs_review'],
         );
       }
     }
@@ -363,6 +693,220 @@ export class AppController {
       await this.db.query("UPDATE scan_runs SET status='failed', completed_at=now(), heartbeat_at=now(), updated_at=now() WHERE id=$1", [runId]);
       await this.db.query("UPDATE scan_jobs SET status='failed', completed_at=now(), updated_at=now() WHERE id=(SELECT job_id FROM scan_runs WHERE id=$1)", [runId]);
     }
+  }
+
+  @Get('saved-views')
+  async listSavedViews() {
+    const tenantId = await this.db.tenantId();
+    const result = await this.db.query(
+      `SELECT id, slug, title, view_type, filters, sort_by, is_pinned, created_at, updated_at
+       FROM saved_views WHERE tenant_id = $1
+       ORDER BY is_pinned DESC, updated_at DESC`,
+      [tenantId],
+    );
+    const presetDefaults = this.savedViewPresets();
+    const existingSlugs = new Set(result.rows.map((r) => r.slug));
+    const missing = presetDefaults.filter((p) => !existingSlugs.has(p.slug));
+    if (missing.length) {
+      for (const preset of missing) {
+        await this.db.query(
+          `INSERT INTO saved_views (tenant_id, slug, title, view_type, filters, sort_by, is_pinned)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)
+           ON CONFLICT (tenant_id, slug) DO NOTHING`,
+          [tenantId, preset.slug, preset.title, preset.view_type, JSON.stringify(preset.filters), preset.sort_by, preset.is_pinned],
+        );
+      }
+      const all = await this.db.query(
+        `SELECT id, slug, title, view_type, filters, sort_by, is_pinned, created_at, updated_at
+         FROM saved_views WHERE tenant_id = $1
+         ORDER BY is_pinned DESC, updated_at DESC`,
+        [tenantId],
+      );
+      return all.rows;
+    }
+    return result.rows;
+  }
+
+  @Get('saved-views/:slug')
+  async getSavedView(@Param('slug') slug: string) {
+    const tenantId = await this.db.tenantId();
+    const result = await this.db.query(
+      `SELECT id, slug, title, view_type, filters, sort_by, is_pinned, created_at, updated_at
+       FROM saved_views WHERE tenant_id = $1 AND slug = $2`,
+      [tenantId, slug],
+    );
+    if (!result.rows[0]) throw new NotFoundException('saved view not found');
+    return result.rows[0];
+  }
+
+  @Get('saved-views/:slug/data')
+  async getSavedViewData(@Param('slug') slug: string) {
+    const tenantId = await this.db.tenantId();
+    const view = await this.db.query('SELECT * FROM saved_views WHERE tenant_id=$1 AND slug=$2', [tenantId, slug]);
+    if (!view.rows[0]) throw new NotFoundException('saved view not found');
+    const preset = this.savedViewPresets().find((p) => p.slug === slug);
+    if (!preset) throw new BadRequestException(`unknown saved view: ${slug}`);
+    return preset.resolve(tenantId, this.db);
+  }
+
+  @Post('saved-views')
+  async createSavedView(@Body() body: Record<string, unknown>) {
+    const tenantId = await this.db.tenantId();
+    const slug = typeof body.slug === 'string' ? body.slug.trim() : '';
+    const title = typeof body.title === 'string' ? body.title.trim() : '';
+    const viewType = typeof body.view_type === 'string' ? body.view_type : '';
+    const allowedTypes = ['high_findings','unreviewed_remediation','failed_scans','recently_completed'];
+    if (!slug || !title || !allowedTypes.includes(viewType)) {
+      throw new BadRequestException('slug, title, and valid view_type are required');
+    }
+    const filters = typeof body.filters === 'object' && body.filters ? body.filters : {};
+    const sortBy = typeof body.sort_by === 'string' ? body.sort_by : 'default';
+    const result = await this.db.query(
+      `INSERT INTO saved_views (tenant_id, slug, title, view_type, filters, sort_by)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       ON CONFLICT (tenant_id, slug) DO UPDATE SET title=EXCLUDED.title, filters=EXCLUDED.filters, sort_by=EXCLUDED.sort_by, updated_at=now()
+       RETURNING *`,
+      [tenantId, slug.slice(0, 100), title.slice(0, 200), viewType, JSON.stringify(filters), sortBy],
+    );
+    return result.rows[0];
+  }
+
+  @Delete('saved-views/:slug')
+  async deleteSavedView(@Param('slug') slug: string) {
+    const tenantId = await this.db.tenantId();
+    const presets = this.savedViewPresets().map((p) => p.slug);
+    if (presets.includes(slug)) throw new BadRequestException('cannot delete preset saved views');
+    const result = await this.db.query(
+      'DELETE FROM saved_views WHERE tenant_id = $1 AND slug = $2 RETURNING id',
+      [tenantId, slug],
+    );
+    if (!result.rows[0]) throw new NotFoundException('saved view not found');
+    return { deleted: true, slug };
+  }
+
+  private savedViewPresets() {
+    return [
+      {
+        slug: 'high-findings',
+        title: 'High findings',
+        view_type: 'high_findings',
+        filters: { severity: 'critical,high' },
+        sort_by: 'severity',
+        is_pinned: false,
+        resolve: async (tenantId: string, db: { query: (sql: string, params: unknown[]) => Promise<{ rows: Record<string, unknown>[] }> }) => {
+          const result = await db.query(
+            `SELECT fi.id, fi.status, fi.evidence_summary, fi.created_at, f.title, f.category, f.severity, f.description,
+                    r.id AS run_id, r.status AS run_status,
+                    COALESCE(t.hostname, a.display_name, 'unknown subject') AS subject_name,
+                    ri.id AS remediation_id, ri.title AS remediation_title, ri.action AS remediation_action,
+                    ri.instructions AS remediation_instructions, ri.status AS remediation_status
+             FROM finding_instances fi
+             JOIN findings f ON f.id=fi.finding_id
+             JOIN scan_runs r ON r.id=fi.run_id
+             LEFT JOIN targets t ON t.id=fi.target_id
+             LEFT JOIN one_time_audits a ON a.id=fi.one_time_audit_id
+             LEFT JOIN remediation_items ri ON ri.finding_instance_id=fi.id
+             WHERE fi.tenant_id=$1 AND f.severity IN ('critical','high')
+             ORDER BY CASE f.severity WHEN 'critical' THEN 1 WHEN 'high' THEN 2 ELSE 3 END, fi.created_at DESC LIMIT 100`,
+            [tenantId],
+          );
+          return { view_type: 'high_findings', items: result.rows, total: result.rows.length };
+        },
+      },
+      {
+        slug: 'unreviewed-remediation',
+        title: 'Unreviewed remediation',
+        view_type: 'unreviewed_remediation',
+        filters: { status: 'needs_review' },
+        sort_by: 'date',
+        is_pinned: false,
+        resolve: async (tenantId: string, db: { query: (sql: string, params: unknown[]) => Promise<{ rows: Record<string, unknown>[] }> }) => {
+          const result = await db.query(
+            `SELECT ri.id, ri.status, ri.title, ri.action, ri.instructions, ri.priority, ri.category, ri.created_at, ri.updated_at,
+                    fi.id AS finding_instance_id, f.title AS finding_title, f.severity, f.category AS finding_category,
+                    r.id AS run_id, COALESCE(t.hostname, a.display_name, 'unknown subject') AS subject_name
+             FROM remediation_items ri
+             JOIN finding_instances fi ON fi.id = ri.finding_instance_id
+             JOIN findings f ON f.id = fi.finding_id
+             JOIN scan_runs r ON r.id = fi.run_id
+             LEFT JOIN targets t ON t.id = fi.target_id
+             LEFT JOIN one_time_audits a ON a.id = fi.one_time_audit_id
+             WHERE ri.tenant_id = $1 AND ri.status = 'needs_review'
+             ORDER BY ri.created_at DESC LIMIT 100`,
+            [tenantId],
+          );
+          return { view_type: 'unreviewed_remediation', items: result.rows, total: result.rows.length };
+        },
+      },
+      {
+        slug: 'failed-scans',
+        title: 'Failed scans',
+        view_type: 'failed_scans',
+        filters: { runStatus: 'failed' },
+        sort_by: 'date',
+        is_pinned: false,
+        resolve: async (tenantId: string, db: { query: (sql: string, params: unknown[]) => Promise<{ rows: Record<string, unknown>[] }> }) => {
+          const result = await db.query(
+            `SELECT r.id, r.status, r.subject_type, r.target_id, r.one_time_audit_id, r.created_at, r.started_at, r.completed_at, r.exit_code,
+                    COALESCE(t.hostname, a.display_name, 'unknown subject') AS subject_name,
+                    COALESCE(count(DISTINCT fi.id), 0)::int AS findings_count
+             FROM scan_runs r
+             LEFT JOIN targets t ON t.id=r.target_id
+             LEFT JOIN one_time_audits a ON a.id=r.one_time_audit_id
+             LEFT JOIN finding_instances fi ON fi.tenant_id=$1 AND fi.run_id=r.id
+             WHERE r.tenant_id=$1 AND r.status='failed'
+             GROUP BY r.id, t.hostname, a.display_name
+             ORDER BY r.completed_at DESC NULLS LAST, r.created_at DESC LIMIT 50`,
+            [tenantId],
+          );
+          return { view_type: 'failed_scans', items: result.rows, total: result.rows.length };
+        },
+      },
+      {
+        slug: 'recently-completed',
+        title: 'Recently completed scans',
+        view_type: 'recently_completed',
+        filters: { runStatus: 'completed', timeRange: 'Last 30 days' },
+        sort_by: 'date',
+        is_pinned: false,
+        resolve: async (tenantId: string, db: { query: (sql: string, params: unknown[]) => Promise<{ rows: Record<string, unknown>[] }> }) => {
+          const result = await db.query(
+            `SELECT r.id, r.status, r.subject_type, r.target_id, r.one_time_audit_id, r.created_at, r.started_at, r.completed_at, r.duration_seconds,
+                    COALESCE(t.hostname, a.display_name, 'unknown subject') AS subject_name,
+                    COALESCE(count(DISTINCT fi.id), 0)::int AS findings_count
+             FROM scan_runs r
+             LEFT JOIN targets t ON t.id=r.target_id
+             LEFT JOIN one_time_audits a ON a.id=r.one_time_audit_id
+             LEFT JOIN finding_instances fi ON fi.tenant_id=$1 AND fi.run_id=r.id
+             WHERE r.tenant_id=$1 AND r.status='completed'
+             GROUP BY r.id, t.hostname, a.display_name
+             ORDER BY r.completed_at DESC NULLS LAST, r.created_at DESC LIMIT 20`,
+            [tenantId],
+          );
+          return { view_type: 'recently_completed', items: result.rows, total: result.rows.length };
+        },
+      },
+    ];
+  }
+
+  @Get('audit-log')
+  async auditLog(@Query('action') action?: string, @Query('resource_type') resourceType?: string, @Query('limit') limit?: string) {
+    const tenantId = await this.db.tenantId();
+    const conditions: string[] = ['tenant_id = $1'];
+    const params: unknown[] = [tenantId];
+    if (action) { params.push(action); conditions.push(`action = $${params.length}`); }
+    if (resourceType) { params.push(resourceType); conditions.push(`resource_type = $${params.length}`); }
+    const limitNum = Math.min(Math.max(parseInt(limit ?? '50', 10) || 50, 1), 200);
+    params.push(limitNum);
+    const result = await this.db.query(
+      `SELECT id, action, resource_type, resource_id, payload, created_at
+       FROM audit_log
+       WHERE ${conditions.join(' AND ')}
+       ORDER BY created_at DESC
+       LIMIT $${params.length}`,
+      params,
+    );
+    return { events: result.rows };
   }
 
   private setSessionCookie(res: Response, token: string, rememberMe = false) { res.cookie('shore_session', token, { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: rememberMe ? 1000 * 60 * 60 * 24 * 30 : undefined }); }

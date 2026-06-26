@@ -838,7 +838,9 @@ Move to a separate analytics/index store only after PostgreSQL becomes a proven 
 | artifacts | raw file metadata and storage references |
 | findings | normalized finding definitions |
 | finding_instances | per-run/per-target finding occurrences |
-| remediation_items | scanner-generated remediation actions and status |
+| remediation_items | scanner-generated remediation actions, assignment, due dates, evidence links, and status |
+| remediation_item_comments | threaded remediation comments for handoffs and review notes |
+| remediation_item_activity | event history for assignment, due-date, evidence, comment, and status changes |
 | notification_events | informational notifications |
 | alert_rules | event triggers such as scan failed, report ready, machine offline, and high severity findings |
 | notification_email_templates | customizable email form/templates |
@@ -869,6 +871,8 @@ Because Shore Sentinel is single-tenant for MVP, the UI should not expose tenant
 - artifacts
 - findings / finding_instances
 - remediation_items
+- remediation_item_comments
+- remediation_item_activity
 - notification_events
 - alert_rules
 - notification_email_templates
@@ -1029,10 +1033,39 @@ title
 action
 file_path
 instructions
+owner_user_id
+due_date
+evidence_artifact_id
 status: open | accepted | ignored | resolved
 created_at
 updated_at
 ```
+
+#### remediation_item_comments
+
+```text
+id
+tenant_id
+remediation_item_id
+author_user_id
+body
+created_at
+updated_at
+```
+
+#### remediation_item_activity
+
+```text
+id
+tenant_id
+remediation_item_id
+actor_user_id
+event_type
+payload
+created_at
+```
+
+API projections should join users and artifacts to expose `owner_name`, `owner_email`, `evidence_artifact_type`, `evidence_storage_uri`, and the comment/activity collections in the remediation detail view.
 
 #### knowledgebase_articles
 
@@ -1278,16 +1311,25 @@ POST   /settings/smtp/test
 ### Logs, alert rules, and email delivery
 
 - Alert events should appear in the app’s logs page as the source of truth for notification history.
+- The notification layer is informational, not incident-response automation, and should stay narrowly scoped to operator visibility.
+- Delivery channels are ordered by urgency:
+  - Telegram / Archon Protocol for short, immediate, high-value workflow events
+  - Teams for team-wide operational visibility when a group channel is preferred
+  - Email for durable digests, external recipients, and inbox-based follow-up
 - Alert rules should cover at least:
-  - scan failed
-  - scan completed
-  - report ready
-  - high severity findings
+  - failed scans
+  - critical and high severity findings
+  - weekly posture summaries
   - machine added
   - machine offline
+  - report ready
+- Failed scan notifications should fire once per final failed run, after retries are exhausted, and include the target, run identifier, last failure reason, and a link back to the run or report.
+- High severity finding notifications should dedupe by run and finding instance so a single scan does not spam multiple channels with repeated copies of the same issue.
+- Weekly posture summaries should run on a predictable schedule, default to Monday 09:00 PHT, and summarize open critical/high findings, failed scans, offline machines, and the oldest unresolved remediation items.
+- Telegram should stay terse and action-oriented; Teams can carry the same operational summary for shared-team visibility; email should carry the full digest plus the follow-up link set.
 - The notification email form should be customizable so operators can edit subject, body, recipient selection, and per-event wording.
 - SMTP settings should support custom host, port, encryption mode, username, password, from address, and test-send behavior.
-- Logs page entries should show event type, target, user, timestamp, delivery state, and a compact payload preview where appropriate.
+- Logs page entries should show event type, target, user, timestamp, delivery state, channel, and a compact payload preview where appropriate.
 
 ---
 
@@ -1476,7 +1518,7 @@ Recommended examples:
 feature/one-time-audit-flow
 feature/managed-machine-schedules
 feature/knowledgebase
-release/v0.2.0
+release/vX.Y.Z
 hotfix/minio-upload-validation
 ```
 
@@ -1514,6 +1556,17 @@ Every feature update should include:
 9. Changelog entry
 10. Version bump when release-worthy
 11. Rollback note or mitigation path
+
+### Trend analysis and posture benchmarking
+
+For the initial comparison analytics surface, Shore Sentinel should keep analytics in PostgreSQL and expose a small dashboard contract rather than introducing a separate warehouse. `GET /dashboard/trends` provides four operator-facing signals:
+
+- 30-day severity trends grouped by day and severity tier
+- recent completed-scan risk-score history, derived from weighted finding severity
+- fixed-vs-new finding movement over the same operational window
+- posture benchmarking against an internal 90-point Shore Sentinel operational target
+
+The benchmark is intentionally an internal product target until a sourced external benchmark is approved. UI copy should say "internal operational target" and avoid implying industry-peer comparison.
 
 ### Docker validation checklist
 

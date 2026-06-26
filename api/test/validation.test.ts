@@ -14,6 +14,11 @@ test('subject validation rejects missing, ambiguous, and mismatched subjects', (
 test('schema contains database-level exactly-one constraints for jobs and runs', () => {
   assert.match(SCHEMA_SQL, /CONSTRAINT scan_jobs_exactly_one_subject CHECK/);
   assert.match(SCHEMA_SQL, /CONSTRAINT scan_runs_exactly_one_subject CHECK/);
+  assert.match(SCHEMA_SQL, /owner_user_id uuid REFERENCES users\(id\)/);
+  assert.match(SCHEMA_SQL, /due_date date/);
+  assert.match(SCHEMA_SQL, /evidence_artifact_id uuid REFERENCES artifacts\(id\)/);
+  assert.match(SCHEMA_SQL, /CREATE TABLE IF NOT EXISTS remediation_item_comments/);
+  assert.match(SCHEMA_SQL, /CREATE TABLE IF NOT EXISTS remediation_item_activity/);
 });
 test('artifact completion validation accepts legacy upload types and canonical worker kinds', () => {
   const ok = validateArtifactComplete({ artifact_type: 'sarif', sha256: 'a'.repeat(64), size_bytes: 25 });

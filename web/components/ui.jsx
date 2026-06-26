@@ -3,15 +3,6 @@ import { navItems } from '@/lib/data';
 import { hasActiveSession } from '@/lib/session';
 import { appPath, routePath } from '@/lib/paths';
 
-const filterOptions = {
-  Environment: ['All environments', 'Production', 'Lab', 'Unassigned'],
-  Status: ['All statuses', 'Online', 'Offline', 'Unknown', 'Running', 'Completed', 'Failed'],
-  Severity: ['All severities', 'Critical', 'High', 'Medium', 'Low', 'Informational'],
-  'Time range': ['Any time', 'Last 24 hours', 'Last 7 days', 'Last 30 days'],
-  Platform: ['All platforms', 'Windows', 'Linux', 'macOS'],
-  Owner: ['All owners', 'Unassigned', 'IT', 'Security'],
-};
-
 export function ShoreLogo({ size = 34 }) {
   return (
     <span className="logo-mark" aria-label="Shore Sentinel logo" style={{ '--logo-size': `${size}px` }}>
@@ -61,6 +52,9 @@ export async function Shell({ children }) {
         </nav>
         <aside className="user-strip" aria-label="Current session">
           <span className="system-ok" role="status"><i aria-hidden="true" />All Systems Operational</span>
+          <Link className="display-link" href={routePath('/preferences')} title="Adjust density, contrast, and effects">
+            Display
+          </Link>
           <Link className="avatar-link" href={routePath('/users')} title="Manage users and roles">
             <span className="avatar" aria-hidden="true">AD</span>
             <span><b>Signed in as Admin User</b><small>Admin</small></span>
@@ -68,7 +62,7 @@ export async function Shell({ children }) {
         </aside>
       </header>
       <Main>{children}</Main>
-      <footer><b>Knowledgebase</b><Link href={routePath('/knowledgebase')}>Reference guide</Link><Link href={routePath('/audits')}>Audit History</Link><Link href={routePath('/dashboard')}>Dashboard</Link></footer>
+      <footer><b>Knowledgebase</b><Link href={routePath('/knowledgebase')}>Reference guide</Link><Link href={routePath('/audits')}>Audit History</Link><Link href={routePath('/dashboard')}>Dashboard</Link><Link href={routePath('/preferences')}>Display preferences</Link></footer>
     </>
   );
 }
@@ -77,25 +71,7 @@ export function Header({ eye, title, desc, children }) {
   return <section className="hero"><div><p className="eye">{eye}</p><h1>{title}</h1><p>{desc}</p></div><div className="actions">{children}</div></section>;
 }
 
-export function Filters({ name, items }) {
-  return (
-    <section className="filters" aria-label={`${name} filters`}>
-      <b>{name} filters</b>
-      {items.map((filterName) => {
-        const options = filterOptions[filterName] || [`All ${filterName.toLowerCase()}`];
-        return (
-          <label key={filterName}>
-            <span>{filterName}</span>
-            <select aria-label={`${name} ${filterName} filter`}>
-              {options.map((option) => <option key={option}>{option}</option>)}
-            </select>
-          </label>
-        );
-      })}
-      <small className="filter-hint" role="status" aria-live="polite">Filters are scoped to this view so each choice matches the data below.</small>
-    </section>
-  );
-}
+export { Filters } from './filters';
 
 export function Pill({ children, tone = '' }) { return <span className={`pill ${tone}`}>{children}</span>; }
 
