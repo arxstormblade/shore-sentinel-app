@@ -325,7 +325,10 @@ main {
 
 .primary-nav {
   display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
   padding: 0.35rem;
   border: 1px solid var(--border);
@@ -337,11 +340,13 @@ main {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  padding: 0.68rem 1rem;
+  min-width: 0;
+  padding: 0.68rem 0.9rem;
   border-radius: 999px;
   color: #c7d0df;
-  font-size: 0.95rem;
+  font-size: clamp(0.84rem, 0.72vw, 0.95rem);
   font-weight: 650;
+  white-space: nowrap;
   transition: background 150ms ease, color 150ms ease, transform 150ms ease;
 }
 
@@ -1324,17 +1329,44 @@ textarea:focus {
 .action-card {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  gap: 1rem;
+  grid-template-areas:
+    "icon title"
+    "icon copy"
+    "icon action";
+  gap: 0.55rem 1rem;
+  min-width: 0;
   padding: 1.2rem;
   align-items: start;
 }
 
+.action-card > * {
+  min-width: 0;
+}
+
+.action-card .round-icon {
+  grid-area: icon;
+}
+
 .action-card h2 {
-  margin-bottom: 0.35rem;
+  grid-area: title;
+  margin-bottom: 0;
+  max-width: 18ch;
+  text-wrap: balance;
 }
 
 .action-card p {
-  margin-bottom: 1rem;
+  grid-area: copy;
+  max-width: 68ch;
+  margin-bottom: 0.35rem;
+  overflow-wrap: anywhere;
+}
+
+.action-card .btn {
+  grid-area: action;
+  justify-self: start;
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
 }
 
 .round-icon {
@@ -1363,6 +1395,10 @@ textarea:focus {
 
 .severity-panel {
   grid-column: span 4;
+}
+
+.remediation-panel {
+  grid-column: span 3;
 }
 
 .scans-panel {
@@ -1813,6 +1849,40 @@ textarea:focus {
   align-items: center;
 }
 
+@media (max-width: 1360px) {
+  .top {
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .primary-nav {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .user-strip {
+    margin-left: auto;
+  }
+
+  .hero-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+
+  .fleet-panel,
+  .severity-panel,
+  .remediation-panel,
+  .scans-panel,
+  .kb-panel {
+    grid-column: span 4;
+  }
+}
+
 @media (max-width: 1180px) {
   .dashboard-hero,
   .auth-landing,
@@ -1831,6 +1901,7 @@ textarea:focus {
 
   .fleet-panel,
   .severity-panel,
+  .remediation-panel,
   .scans-panel,
   .kb-panel {
     grid-column: span 12;
@@ -1971,6 +2042,11 @@ textarea:focus {
 
   .action-card {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "icon"
+      "title"
+      "copy"
+      "action";
   }
 
   .guide-list a {

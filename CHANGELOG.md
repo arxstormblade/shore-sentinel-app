@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.3.3 - 2026-06-26
+
+### Fixed
+- Resolved dashboard layout overflow in the top action cards by using explicit card grid areas and allowing CTA wrapping.
+- Prevented the dashboard remediation panel from collapsing into a narrow sliver at medium widths.
+- Improved the top navigation layout so long labels wrap as a row before they clip the dashboard content.
+
+### Verification
+- Web regression verifier passed.
+- Web production build passed.
+
 ## v0.3.2 - 2026-06-26
 
 ### Security
