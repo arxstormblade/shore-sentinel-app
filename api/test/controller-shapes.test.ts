@@ -76,6 +76,9 @@ function controller() {
       if (sql.includes('UPDATE remediation_items SET status=')) return { rows: [{ id: params[2], status: params[0], title: 'Remediate: test' }] };
       if (sql.includes('SELECT id FROM remediation_items WHERE tenant_id=$1 AND id=$2')) return { rows: [{ id: params[1] }] };
       if (sql.includes('SELECT id, status, title FROM remediation_items WHERE tenant_id=$1 AND id=$2')) return { rows: [{ id: params[1], status: 'needs_review', title: 'Remediate: test' }] };
+      if (sql.includes('SELECT id FROM users WHERE tenant_id=$1 AND id=$2 AND deleted_at IS NULL')) return { rows: [{ id: params[1] }] };
+      if (sql.includes('SELECT id FROM artifacts WHERE tenant_id=$1 AND id=$2')) return { rows: [{ id: params[1] }] };
+      if (sql.includes('SELECT id FROM users WHERE tenant_id = $1 AND lower(email)')) return { rows: [] };
       if (sql.includes('UPDATE remediation_items SET') && sql.includes('RETURNING *')) return { rows: [{ id: params[1], status: 'needs_review', title: 'Remediate: test', due_date: '2026-07-01' }] };
       if (sql.includes('WHERE fi.tenant_id=$1 AND f.severity IN')) return { rows: [{ id: 'fi-1', title: 'Critical issue', severity: 'critical', remediation_status: 'needs_review', subject_name: 'alpha-ws-01' }] };
       if (sql.includes("WHERE ri.tenant_id = $1 AND ri.status = 'needs_review'")) return { rows: [{ id: 'remediation-1', status: 'needs_review', title: 'Remediate: High risk issue', severity: 'high', subject_name: 'alpha-ws-01', run_id: 'run-1' }] };

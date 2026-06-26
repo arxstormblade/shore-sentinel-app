@@ -40,3 +40,20 @@ test('remediation status-counts route is declared before parameterized remediati
   assert.ok(idIndex > -1, 'remediation id route missing');
   assert.ok(statusCountsIndex < idIndex, 'status-counts must be declared before :id so Nest does not treat status-counts as a UUID id');
 });
+
+test('user undo-delete tokens are tenant scoped and not exposed through audit logs', () => {
+  const source = readFileSync(join(process.cwd(), 'src/app.controller.ts'), 'utf8');
+  assert.match(source, /user_deletion_tokens WHERE token = \$1 AND user_id = \$2 AND tenant_id = \$3/);
+  assert.doesNotMatch(source, /action = 'user\.deleted'[\s\S]*undo_token/);
+  assert.match(source, /redactAuditPayload/);
+  assert.match(source, /token\|secret\|password\|key/i);
+  assert.doesNotMatch(source, /password_hash = '\'DELETED\''/);
+});
+
+test('remediation mutation endpoints validate tenant-owned references and status values', () => {
+  const source = readFileSync(join(process.cwd(), 'src/app.controller.ts'), 'utf8');
+  assert.match(source, /owner_user_id is not a user in this tenant/);
+  assert.match(source, /evidence_artifact_id is not an artifact in this tenant/);
+  assert.match(source, /author_user_id is not a user in this tenant/);
+  assert.match(source, /requestedStatus && !allowedUpdateStatuses\.includes\(requestedStatus\)/);
+});

@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.3.2 - 2026-06-26
+
+### Security
+- Removed undo-delete tokens from user deletion audit payloads and redacts token/secret/password/key fields from audit-log API payloads.
+- Tenant-scoped undo-delete token validation and token consumption.
+- Preserved password hashes during soft delete so successful undo restores the account without leaving `password_hash=DELETED`.
+- Added tenant validation for remediation owner, evidence artifact, and comment author references.
+
+### Fixed
+- Prevented browser form navigation during user delete confirmation submit.
+- Added validation for generic remediation status updates to return a controlled 400 instead of database constraint errors.
+
+### Verification
+- API build/tests passed: 47/47.
+- Web verifier and production build passed.
+
 ## v0.3.1 - 2026-06-26
 
 ### Fixed

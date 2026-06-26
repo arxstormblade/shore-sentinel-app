@@ -193,7 +193,8 @@ export default function UsersPage() {
     }
   }
 
-  async function handleDelete() {
+  async function handleDelete(e) {
+    e.preventDefault();
     setBusy(true);
     try {
       const result = await deleteUser(activeUser.id);

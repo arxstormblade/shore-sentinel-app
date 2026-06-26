@@ -121,13 +121,13 @@ export class AppController {
     const token = typeof body.undo_token === 'string' ? body.undo_token : '';
     if (!token) throw new BadRequestException('undo_token is required');
     const tokenResult = await this.db.query<{ token: string; user_id: string }>(
-      'SELECT token, user_id FROM user_deletion_tokens WHERE token = $1 AND user_id = $2 AND expires_at > now() AND consumed_at IS NULL',
-      [token, id],
+      'SELECT token, user_id FROM user_deletion_tokens WHERE token = $1 AND user_id = $2 AND tenant_id = $3 AND expires_at > now() AND consumed_at IS NULL',
+      [token, id, tenantId],
     );
     if (!tokenResult.rows[0]) throw new BadRequestException('invalid or expired undo token');
     const auditResult = await this.db.query<{ payload: string }>(
-      "SELECT payload FROM audit_log WHERE resource_type = 'user' AND resource_id = $1 AND action = 'user.deleted' ORDER BY created_at DESC LIMIT 1",
-      [id],
+      "SELECT payload FROM audit_log WHERE tenant_id = $1 AND resource_type = 'user' AND resource_id = $2 AND action = 'user.deleted' ORDER BY created_at DESC LIMIT 1",
+      [tenantId, id],
     );
     let originalEmail = '';
     let originalName = '';
@@ -138,8 +138,12 @@ export class AppController {
     } catch {
       // fallback if payload unparsable
     }
-    await this.db.query('UPDATE users SET deleted_at = NULL, updated_at = now(), email = $1, display_name = $2 WHERE tenant_id = $3 AND id = $4', [originalEmail || 'restored-' + id + '@restored.local', originalName || 'Restored user', tenantId, id]);
-    await this.db.query('UPDATE user_deletion_tokens SET consumed_at = now() WHERE token = $1', [token]);
+    const restoreEmail = originalEmail || 'restored-' + id + '@restored.local';
+    const restoreName = originalName || 'Restored user';
+    const duplicate = await this.db.query('SELECT id FROM users WHERE tenant_id = $1 AND lower(email) = lower($2) AND id <> $3 AND deleted_at IS NULL', [tenantId, restoreEmail, id]);
+    if (duplicate.rows[0]) throw new ConflictException('cannot restore user because another active account uses the original email');
+    await this.db.query('UPDATE users SET deleted_at = NULL, updated_at = now(), email = $1, display_name = $2 WHERE tenant_id = $3 AND id = $4', [restoreEmail, restoreName, tenantId, id]);
+    await this.db.query('UPDATE user_deletion_tokens SET consumed_at = now() WHERE token = $1 AND tenant_id = $2', [token, tenantId]);
     await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'user.restored', 'user', id, { email: originalEmail }]);
     return { ok: true, id };
   }
@@ -361,6 +365,17 @@ export class AppController {
     const tenantId = await this.db.tenantId();
     const current = await this.db.query('SELECT id, status, title FROM remediation_items WHERE tenant_id=$1 AND id=$2', [tenantId, id]);
     if (!current.rows[0]) throw new NotFoundException('remediation item not found');
+    if (typeof body.owner_user_id === 'string' && body.owner_user_id) {
+      const owner = await this.db.query('SELECT id FROM users WHERE tenant_id=$1 AND id=$2 AND deleted_at IS NULL', [tenantId, body.owner_user_id]);
+      if (!owner.rows[0]) throw new BadRequestException('owner_user_id is not a user in this tenant');
+    }
+    if (typeof body.evidence_artifact_id === 'string' && body.evidence_artifact_id) {
+      const artifact = await this.db.query('SELECT id FROM artifacts WHERE tenant_id=$1 AND id=$2', [tenantId, body.evidence_artifact_id]);
+      if (!artifact.rows[0]) throw new BadRequestException('evidence_artifact_id is not an artifact in this tenant');
+    }
+    const allowedUpdateStatuses = ['needs_review', 'in_progress', 'fixed', 'accepted_risk', 'open', 'accepted', 'ignored', 'resolved'];
+    const requestedStatus = typeof body.status === 'string' && body.status.trim() ? body.status.toLowerCase() : '';
+    if (requestedStatus && !allowedUpdateStatuses.includes(requestedStatus)) throw new BadRequestException(`invalid status: ${requestedStatus}. allowed: ${allowedUpdateStatuses.join(', ')}`);
     const fields: string[] = [];
     const values: unknown[] = [tenantId, id];
     let idx = 3;
@@ -370,9 +385,9 @@ export class AppController {
         values.push(body[field]);
       }
     }
-    if (typeof body.status === 'string' && body.status.trim()) {
+    if (requestedStatus) {
       fields.push(`status = $${idx++}`);
-      values.push(body.status.toLowerCase());
+      values.push(requestedStatus);
     }
     if (!fields.length) return current.rows[0];
     fields.push('updated_at = now()');
@@ -392,6 +407,11 @@ export class AppController {
     const comment = typeof body.body === 'string' ? body.body.trim() : typeof body.comment === 'string' ? body.comment.trim() : '';
     if (!comment) throw new BadRequestException('comment body is required');
     const authorUserId = typeof body.author_user_id === 'string' && body.author_user_id ? body.author_user_id : null;
+    if (authorUserId) {
+      const author = await this.db.query('SELECT id FROM users WHERE tenant_id=$1 AND id=$2 AND deleted_at IS NULL', [tenantId, authorUserId]);
+      if (!author.rows[0]) throw new BadRequestException('author_user_id is not a user in this tenant');
+    }
+    if (comment.length > 4000) throw new BadRequestException('comment body is too long');
     const created = await this.db.query(
       'INSERT INTO remediation_item_comments (tenant_id, remediation_item_id, author_user_id, body) VALUES ($1,$2,$3,$4) RETURNING *',
       [tenantId, id, authorUserId, comment],
@@ -908,7 +928,18 @@ export class AppController {
        LIMIT $${params.length}`,
       params,
     );
-    return { events: result.rows };
+    return { events: result.rows.map((row) => ({ ...row, payload: this.redactAuditPayload(row.payload) })) };
+  }
+
+  private redactAuditPayload(payload: unknown): unknown {
+    if (!payload || typeof payload !== 'object') return payload ?? {};
+    const source = payload as Record<string, unknown>;
+    const redacted: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(source)) {
+      if (/token|secret|password|key/i.test(key)) redacted[key] = '[REDACTED]';
+      else redacted[key] = value && typeof value === 'object' ? this.redactAuditPayload(value) : value;
+    }
+    return redacted;
   }
 
   private setSessionCookie(res: Response, token: string, rememberMe = false) { res.cookie('shore_session', token, { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: rememberMe ? 1000 * 60 * 60 * 24 * 30 : undefined }); }
