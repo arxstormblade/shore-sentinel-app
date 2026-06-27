@@ -49,6 +49,20 @@ with tempfile.TemporaryDirectory(prefix='shore-scanner-validate-') as tmp:
         print(run.stdout)
         print(run.stderr)
         raise SystemExit(1)
+    raw_report = next((p for p in out_dir.glob('*.json')), None)
+    if raw_report is None:
+        print('Scanner bundle validation failed: missing JSON report')
+        raise SystemExit(1)
+    with raw_report.open() as handle:
+        raw = json.load(handle)
+    self_hits = [
+        finding for finding in raw.get('findings', [])
+        if finding.get('check') == 'No obvious plaintext secrets in non-secret configs'
+        and 'Agent_Security_Selfcheck_v3.4.0.py' in str(finding.get('evidence', ''))
+    ]
+    if self_hits:
+        print('Scanner bundle validation failed: self-scan secret false positive still present')
+        raise SystemExit(1)
     reports = sorted(out_dir.glob('*'))
     suffixes = {p.suffix for p in reports}
     expected = {'.json', '.md', '.sarif', '.pdf'}

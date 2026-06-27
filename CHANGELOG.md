@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.3.4 - 2026-06-27
+
+### Fixed
+- Prevented the scanner from self-flagging its own remediation text as a plaintext secret finding.
+- Added a regression check so the scanner bundle validation fails if the self-scan false positive returns.
+
+### Verification
+- Scanner bundle validation passed.
+- Web regression verifier and production build passed.
+- Live app redeployed successfully.
+
 ## v0.3.3 - 2026-06-26
 
 ### Fixed

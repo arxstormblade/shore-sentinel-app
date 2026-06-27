@@ -549,7 +549,10 @@ def scan_universal(ctx: dict[str, Any], findings: list[Finding]) -> None:
             "no common secret files discovered under target root", "Continue keeping credentials outside committed config.")
 
     secret_hits = []
+    self_path = Path(__file__).resolve()
     for p in ctx["files"][:5000]:
+        if p.resolve() == self_path:
+            continue
         if p.name in SECRET_FILE_NAMES or p.name.startswith(".env"):
             continue
         if p.suffix.lower() not in {".yaml", ".yml", ".json", ".toml", ".ini", ".conf", ".md", ".py", ".js", ".ts"}:
