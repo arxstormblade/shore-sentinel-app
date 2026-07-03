@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.3.5
+## v0.3.5 - 2026-07-04
 - Changed remediation into a machine-first queue with summary findings visible before expansion.
 - Moved remediation options, evidence links, and details behind expandable machine cards.
 - Preserved status counts, filters, top recommendation, and evidence/detail links in the API-backed remediation page.
