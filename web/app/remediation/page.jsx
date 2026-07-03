@@ -13,6 +13,10 @@ const severityExplanations = {
   low: 'Minor weakness or hygiene item. Track and fix when schedule allows.',
   informational: 'Context, best-practice note, or inert observation. No immediate action required.',
 };
+const severityRank = (severity) => {
+  const index = severityOrder.indexOf(String(severity || 'informational').toLowerCase());
+  return index === -1 ? 99 : index;
+};
 const statusTones = { needs_review: 'amber', in_progress: 'blue', fixed: 'green', accepted_risk: 'yellow' };
 const statusLabels = { needs_review: 'Needs review', in_progress: 'In progress', fixed: 'Fixed', accepted_risk: 'Accepted risk' };
 
@@ -47,34 +51,43 @@ function remediationText(finding) {
   );
 }
 
-function groupFindingsBySeverityAndMachine(findings) {
-  const groups = [];
-  const severityMap = new Map();
+function groupFindingsByMachine(findings) {
+  const statusOrder = { needs_review: 0, in_progress: 1, open: 2, accepted_risk: 3, fixed: 4 };
+  const groups = new Map();
+
   for (const finding of findings) {
-    const sev = String(finding.severity || 'informational').toLowerCase();
-    if (!severityMap.has(sev)) severityMap.set(sev, []);
-    severityMap.get(sev).push(finding);
-  }
-  for (const sev of severityOrder) {
-    const items = severityMap.get(sev);
-    if (!items || items.length === 0) continue;
-    const machineMap = new Map();
-    for (const item of items) {
-      const machine = item.subject_name || 'Unknown';
-      if (!machineMap.has(machine)) machineMap.set(machine, []);
-      machineMap.get(machine).push(item);
+    const machine = finding.subject_name || 'Unknown machine';
+    const existing = groups.get(machine) || {
+      machine,
+      env: finding.environment_name || finding.environment || 'Unknown environment',
+      owner: finding.owner_name || 'Unassigned owner',
+      findings: [],
+      severityCounts: {},
+      openCount: 0,
+      highestSeverity: 'informational',
+    };
+    const severity = String(finding.severity || 'informational').toLowerCase();
+    existing.findings.push(finding);
+    existing.severityCounts[severity] = (existing.severityCounts[severity] || 0) + 1;
+    if (!['fixed', 'accepted_risk'].includes(String(finding.remediation_status || '').toLowerCase())) existing.openCount += 1;
+    if (severityRank(severity) < severityRank(existing.highestSeverity)) {
+      existing.highestSeverity = severity;
     }
-    const machineGroups = [];
-    for (const [machine, machineItems] of machineMap) {
-      machineGroups.push({ machine, items: machineItems.sort((a, b) => {
-        const statusOrder = { needs_review: 0, in_progress: 1, open: 2, accepted_risk: 3, fixed: 4 };
-        return (statusOrder[String(a.remediation_status).toLowerCase()] ?? 99) - (statusOrder[String(b.remediation_status).toLowerCase()] ?? 99);
-      }) });
-    }
-    machineGroups.sort((a, b) => a.machine.localeCompare(b.machine));
-    groups.push({ severity: sev, count: items.length, machineGroups });
+    groups.set(machine, existing);
   }
-  return groups;
+
+  return Array.from(groups.values()).map((group) => ({
+    ...group,
+    findings: group.findings.sort((a, b) => {
+      const severityDelta = severityRank(a.severity) - severityRank(b.severity);
+      if (severityDelta) return severityDelta;
+      return (statusOrder[String(a.remediation_status).toLowerCase()] ?? 99) - (statusOrder[String(b.remediation_status).toLowerCase()] ?? 99);
+    }),
+  })).sort((a, b) => {
+    const severityDelta = severityRank(a.highestSeverity) - severityRank(b.highestSeverity);
+    if (severityDelta) return severityDelta;
+    return b.openCount - a.openCount || a.machine.localeCompare(b.machine);
+  });
 }
 
 export default async function Remediation({ searchParams }) {
@@ -97,7 +110,7 @@ export default async function Remediation({ searchParams }) {
       })[0]
     : null;
 
-  const groupedFindings = groupFindingsBySeverityAndMachine(filteredFindings);
+  const machineGroups = groupFindingsByMachine(filteredFindings);
 
   const totalRemediations = Object.values(statusCounts).reduce((sum, n) => sum + (Number(n) || 0), 0);
   const filteredCount = filteredFindings.length;
@@ -105,7 +118,7 @@ export default async function Remediation({ searchParams }) {
 
   return (
     <div className="stack">
-      <Header eye="Remediation" title="Actionable findings" desc="Turn scanner findings into clear remediation work. Create remediation tasks from scanner recommendations or review suggested remediation directly from the scan evidence. Each row tracks status through review, fix, and accept-risk workflow.">
+      <Header eye="Remediation" title="Machine remediation queue" desc="Choose a machine first. Review summary findings, then expand the machine to see remediation options and evidence.">
         <Pill data-testid="remediation-total-count">{totalRemediations} item{totalRemediations === 1 ? '' : 's'}</Pill>
       </Header>
 
@@ -134,7 +147,7 @@ export default async function Remediation({ searchParams }) {
         {isFiltered ? <a className="btn-link" href={clearHref}>Clear filters</a> : null}
       </div>
 
-      <Filters name="Remediation" items={['Severity', 'Status', 'Environment', 'Owner']} />
+      <Filters name="Remediation" items={['Machine', 'Severity', 'Status', 'Environment', 'Owner']} />
 
 
       {topFinding ? (
@@ -161,27 +174,51 @@ export default async function Remediation({ searchParams }) {
         </section>
       ) : null}
 
-      <section className="panel">
-        <header><div><h2>Remediation queue</h2><p>Create remediation tasks from scanner recommendations or review suggested remediation directly from the scan evidence. Findings are grouped by severity and machine for triage.</p></div><Pill>{filteredCount} findings</Pill></header>
+      <section className="panel machine-remediation-panel">
+        <header>
+          <div>
+            <h2>Machines with findings</h2>
+            <p>Summary findings stay visible. Remediation guidance, evidence, and detail links appear after you open a machine.</p>
+          </div>
+          <Pill>{filteredCount} findings</Pill>
+        </header>
         {filteredFindings.length ? (
-          <div className="finding-list" data-testid="remediation-list">
-            {groupedFindings.map((group) => (
-              <div key={group.severity} className="severity-group" data-testid={`severity-group-${group.severity}`}>
-                <div className="severity-group-header" tabIndex={0} role="group" aria-label={`${group.severity} severity: ${group.count} findings across ${group.machineGroups.length} machine${group.machineGroups.length === 1 ? '' : 's'}`}>
-                  <span className={`status-dot ${severityTone[group.severity] || ''}`} aria-hidden="true" />
-                  <h3>{group.severity} <span className="group-count">{group.count} findings</span></h3>
-                  <span className="group-machine-count">{group.machineGroups.length} machine{group.machineGroups.length === 1 ? '' : 's'}</span>
-                </div>
-                {group.machineGroups.map((machineGroup) => (
-                  <div key={machineGroup.machine} className="machine-group" data-testid={`machine-group-${machineGroup.machine}`}>
-                    <div className="machine-group-header">
-                      <span className="machine-dot" aria-hidden="true" />
-                      <h4>{machineGroup.machine}</h4>
-                      <span className="machine-count">{machineGroup.items.length}</span>
-                    </div>
-                    {machineGroup.items.map((finding) => (
+          <div className="machine-remediation-list" data-testid="remediation-list">
+            {machineGroups.map((group) => (
+              <details className="machine-remediation-card" key={group.machine} data-testid={`machine-group-${group.machine}`}>
+                <summary className="machine-remediation-summary" aria-label={`${group.machine}: ${group.findings.length} findings, ${group.openCount} open items`}>
+                  <span className="machine-summary-main">
+                    <span className={`status-dot ${severityTone[group.highestSeverity] || ''}`} aria-hidden="true" />
+                    <span>
+                      <b>{group.machine}</b>
+                      <small>{group.env} · {group.owner}</small>
+                    </span>
+                  </span>
+                  <span className="machine-summary-findings">
+                    {group.findings.slice(0, 3).map((finding) => (
+                      <span className="machine-summary-finding" key={finding.id}>{finding.title}</span>
+                    ))}
+                  </span>
+                  <span className="machine-summary-meta">
+                    <Pill>{group.findings.length} finding{group.findings.length === 1 ? '' : 's'}</Pill>
+                    {severityOrder.filter((severity) => group.severityCounts[severity]).map((severity) => (
+                      <Pill tone={severityTone[severity] || ''} key={severity}>{group.severityCounts[severity]} {severity}</Pill>
+                    ))}
+                    <span className="machine-open-hint">Open machine</span>
+                  </span>
+                </summary>
+                <div className="machine-remediation-body">
+                  <div className="machine-remediation-body-head">
+                    <span>
+                      <b>Remediation options and evidence</b>
+                      <small>{group.openCount} open item{group.openCount === 1 ? '' : 's'} for this machine</small>
+                    </span>
+                  </div>
+                  <div className="machine-finding-stack">
+                    {group.findings.map((finding) => (
                       <article className="finding-row machine-finding-row" key={finding.id} data-testid="remediation-row" data-status={finding.remediation_status || 'open'}>
                         <div>
+                          <small className="finding-row-kicker">{finding.severity} · {statusLabels[finding.remediation_status] || finding.remediation_status || 'open'}</small>
                           <h3>{finding.title}</h3>
                           <p>{finding.description || finding.evidence_summary || 'Scanner evidence is available in the report artifacts.'}</p>
                           <small>Suggested remediation: {remediationText(finding)}</small>
@@ -199,8 +236,8 @@ export default async function Remediation({ searchParams }) {
                       </article>
                     ))}
                   </div>
-                ))}
-              </div>
+                </div>
+              </details>
             ))}
           </div>
         ) : <div className="empty" data-testid="remediation-empty-state"><h3>No actionable findings match filters</h3><p>Try adjusting your filters to see more results, or clear them to view all findings.</p><div className="empty-actions"><Link className="btn" href={clearHref}>Clear filters</Link></div></div>}

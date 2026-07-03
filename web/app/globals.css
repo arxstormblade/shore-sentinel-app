@@ -552,98 +552,145 @@ footer a:hover,
   justify-content: flex-end;
 }
 
-/* --- Grouped remediation layout --- */
+/* --- Machine-first remediation layout --- */
 
-.severity-group {
-  border-top: 1px solid var(--border);
-  padding-top: 0.5rem;
+.machine-remediation-panel {
+  display: grid;
+  gap: 1rem;
 }
 
-.severity-group:first-child {
-  border-top: none;
-  padding-top: 0;
+.machine-remediation-list {
+  display: grid;
+  gap: 0.9rem;
 }
 
-.severity-group-header {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.6rem 0.5rem;
-  cursor: pointer;
+.machine-remediation-card {
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--text);
+  background: rgba(255, 255, 255, 0.025);
+  overflow: clip;
+  transition: border-color 150ms ease, background 150ms ease, transform 150ms ease;
 }
 
-.severity-group-header:hover {
-  background: rgba(255, 255, 255, 0.03);
+.machine-remediation-card[open] {
+  border-color: rgba(116, 168, 255, 0.34);
+  background: rgba(116, 168, 255, 0.045);
 }
 
-.severity-group-header:focus-visible {
-  outline: 2px solid var(--accent, #74a8ff);
-  outline-offset: 2px;
+.machine-remediation-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(116, 168, 255, 0.24);
 }
 
-.severity-group-header h3 {
-  margin: 0;
-  font-size: 0.95rem;
-  font-weight: 700;
-  text-transform: capitalize;
-}
-
-.group-count {
-  font-weight: 400;
-  font-size: 0.82rem;
-  color: var(--muted);
-}
-
-.group-machine-count {
-  margin-left: auto;
-  font-size: 0.8rem;
-  font-weight: 400;
-  color: var(--muted);
-}
-
-.machine-group {
-  margin-left: 1.25rem;
-  padding-left: 0.75rem;
-  border-left: 2px solid var(--border);
-}
-
-.machine-group-header {
-  display: flex;
+.machine-remediation-summary {
+  display: grid;
+  grid-template-columns: minmax(14rem, 0.9fr) minmax(16rem, 1.4fr) auto;
+  gap: 1rem;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.5rem;
-  margin-top: 0.35rem;
+  padding: 1rem;
+  cursor: pointer;
+  list-style: none;
 }
 
-.machine-group-header h4 {
-  margin: 0;
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--text);
+.machine-remediation-summary::-webkit-details-marker {
+  display: none;
 }
 
-.machine-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--muted);
-  flex-shrink: 0;
+.machine-summary-main,
+.machine-summary-findings,
+.machine-remediation-body-head span,
+.machine-finding-row > div:first-child {
+  display: grid;
+  gap: 0.32rem;
 }
 
-.machine-count {
-  margin-left: auto;
-  font-size: 0.78rem;
+.machine-summary-main {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+}
+
+.machine-summary-main b,
+.machine-finding-row h3 {
+  color: #eef4ff;
+}
+
+.machine-summary-main small,
+.machine-remediation-body-head small,
+.machine-finding-row small {
   color: var(--muted);
-  font-weight: 500;
+}
+
+.machine-summary-findings {
+  gap: 0.4rem;
+}
+
+.machine-summary-finding {
+  color: #dce7f7;
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
+.machine-summary-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.45rem;
+}
+
+.machine-open-hint {
+  color: var(--blue);
+  font-size: 0.82rem;
+  font-weight: 750;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.machine-remediation-body {
+  display: grid;
+  gap: 0.85rem;
+  padding: 0 1rem 1rem;
+}
+
+.machine-remediation-body-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border);
+}
+
+.machine-finding-stack {
+  display: grid;
+  gap: 0.7rem;
 }
 
 .machine-finding-row {
-  margin-left: 0.5rem;
-  margin-bottom: 0.4rem;
+  margin: 0;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.finding-row-kicker {
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.machine-finding-row .btn {
+  padding: 0.5rem 0.7rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .machine-remediation-summary,
+  .machine-finding-row {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .machine-summary-meta {
+    justify-content: flex-start;
+  }
 }
 
 .severity-row {

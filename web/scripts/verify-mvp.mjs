@@ -97,7 +97,7 @@ if (!/displayPreferencesBootstrapScript/.test(displayPreferencesLib) || !/html\[
 
 if (!/className="severity-row"/.test(dashboardPage) || !/\.severity-list > \.severity-row/.test(readFileSync(join(root, 'app/globals.css'), 'utf8'))) failures.push('dashboard severity rows must style the current Link-based severity-row markup, not stale div selectors');
 if (!/Recent scan runs/.test(scansPage) || !/Generated artifacts/.test(scansPage) || !/Scan completed/.test(scansPage)) failures.push('Scans & Reports must show completed scans and report artifacts instead of a generic empty state');
-if (!/Actionable findings/.test(remediationPage) || !/Suggested remediation/.test(remediationPage) || !/Create remediation tasks from scanner recommendations/.test(remediationPage)) failures.push('Remediation must surface findings/remediation actions when findings exist');
+if (!/Machine remediation queue/.test(remediationPage) || !/Suggested remediation/.test(remediationPage) || !/Remediation options and evidence/.test(remediationPage)) failures.push('Remediation must surface machine-first findings and remediation actions when findings exist');
 if (!/Plan owner:/.test(remediationPage) || !/Due date:/.test(remediationPage)) failures.push('Remediation queue must surface plan owner and due date metadata');
 
 // --- Remediation workflow states assertions ---
@@ -106,14 +106,13 @@ if (!/data-testid="remediation-status-counts"/.test(remediationPage)) failures.p
 if (!/data-testid="remediation-total-count"/.test(remediationPage)) failures.push('Remediation page must expose a total count pill');
 if (!/data-testid="remediation-list"/.test(remediationPage)) failures.push('Remediation page must include a remediation-list marker');
 
-// --- Grouped remediation assertions ---
-if (!/severity-group/.test(remediationPage)) failures.push('Remediation page must group findings by severity');
-if (!/severity-group-header/.test(remediationPage)) failures.push('Remediation page must expose severity group headers');
-if (!/machine-group/.test(remediationPage)) failures.push('Remediation page must group findings within each severity by machine');
-if (!/machine-group-header/.test(remediationPage)) failures.push('Remediation page must expose machine group headers');
-if (!/groupFindingsBySeverityAndMachine/.test(remediationPage)) failures.push('Remediation page must group findings via a severity-then-machine function');
-if (!/tabIndex=\{0\}/.test(remediationPage)) failures.push('Remediation group headers must be keyboard focusable');
-if (!/aria-label=.*severity:.*findings across.*machine/.test(remediationPage)) failures.push('Remediation severity group headers must announce count summary to assistive tech');
+// --- Machine-first remediation assertions ---
+if (!/groupFindingsByMachine/.test(remediationPage)) failures.push('Remediation page must group findings by machine first');
+if (!/machine-remediation-card/.test(remediationPage)) failures.push('Remediation page must expose expandable machine cards');
+if (!/machine-remediation-summary/.test(remediationPage)) failures.push('Remediation page must show machine summaries before expansion');
+if (!/machine-summary-findings/.test(remediationPage)) failures.push('Remediation page must show summary findings on each machine');
+if (!/machine-open-hint/.test(remediationPage)) failures.push('Remediation page must clearly show that machines can be opened');
+if (!/aria-label=\{`\$\{group\.machine\}: \$\{group\.findings\.length\} findings, \$\{group\.openCount\} open items`\}/.test(remediationPage)) failures.push('Machine cards must announce finding and open-item counts to assistive tech');
 if (!/data-testid="row-status"/.test(remediationPage)) failures.push('Remediation rows must expose a row-status pill');
 if (!/Needs review/.test(remediationPage) || !/In progress/.test(remediationPage) || !/Fixed/.test(remediationPage) || !/Accepted risk/.test(remediationPage)) failures.push('Remediation status board must show all four workflow states');
 if (!/aria-live="polite"/.test(remediationPage)) failures.push('Remediation page must announce filter changes to screen readers via aria-live');
