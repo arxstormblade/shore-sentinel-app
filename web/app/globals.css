@@ -1052,6 +1052,38 @@ textarea:focus {
   background: rgba(255, 255, 255, 0.015);
 }
 
+.data-panel header a,
+.scans-panel tbody a {
+  display: inline-flex;
+  min-height: 2.4rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: #9fc2ff;
+  font-weight: 750;
+  transition: transform 180ms cubic-bezier(0.32, 0.72, 0, 1), border-color 180ms cubic-bezier(0.32, 0.72, 0, 1), background 180ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.data-panel header a {
+  padding: 0.35rem 0.8rem;
+  border: 1px solid rgba(116, 168, 255, 0.16);
+  background: rgba(116, 168, 255, 0.055);
+}
+
+.scans-panel tbody a {
+  min-width: 3.25rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid rgba(116, 168, 255, 0.14);
+  background: rgba(116, 168, 255, 0.045);
+}
+
+.data-panel header a:hover,
+.scans-panel tbody a:hover {
+  transform: translateY(-1px);
+  border-color: rgba(116, 168, 255, 0.32);
+  background: rgba(116, 168, 255, 0.095);
+}
+
 .completed {
   color: #b6f2c7;
   font-weight: 700;
