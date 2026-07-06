@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.9
+- Improved dashboard action affordance by converting secondary dashboard links and report-row open actions into compact pill controls with larger hit areas and clearer hover states.
+- Released managed-machine credential enrollment refinements, including SSH username, port, and authentication method capture with sealed credential storage and non-secret inventory metadata display.
+- Added reusable Shore Sentinel UI/UX QA loop guidance for future live quality-gate passes.
+
 ## v0.3.8
 - Added a documented GitHub-to-Docker installation path for customers cloning the repository and running Shore Sentinel with Docker Compose.
 - Added an admin-only System Update page and protected API endpoints for checking and applying fast-forward GitHub updates.
