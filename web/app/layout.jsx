@@ -1,21 +1,12 @@
 import './globals.css';
 import { Shell } from '@/components/ui';
-import { displayPreferencesBootstrapScript } from '@/lib/display-preferences';
+import { getAuthenticatedUser } from '@/lib/session';
 
-export const metadata = {
-  title: 'Shore Sentinel',
-  description: 'Security scanning, audit history, managed inventory, reports, and remediation control plane.',
-};
+export const metadata = { title: 'Shore Sentinel', description: 'Security scanning, audit history, managed inventory, reports, and remediation control plane.' };
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-export default function RootLayout({ children }) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: displayPreferencesBootstrapScript() }} />
-      </head>
-      <body>
-        <Shell>{children}</Shell>
-      </body>
-    </html>
-  );
+export default async function RootLayout({ children }) {
+  const user = await getAuthenticatedUser();
+  return <html lang="en"><body><Shell authenticated={Boolean(user)} user={user}>{children}</Shell></body></html>;
 }

@@ -14,17 +14,14 @@ async function forwardAuth(path, formData) {
 
 function normalizeAuthCookie(apiCookie) {
   if (!apiCookie) return null;
-  const withoutPath = apiCookie
-    .split(';')
-    .map((part) => part.trim())
-    .filter((part) => !/^path=/i.test(part));
-  return [...withoutPath, 'Path=/'].join('; ');
+  const parts = apiCookie.split(';').map((part) => part.trim()).filter((part) => !/^path=/i.test(part));
+  return [...parts, 'Path=/'].join('; ');
 }
 
 function redirectTo(path, apiCookie) {
   const headers = new Headers({ location: appPath(path) });
-  const normalizedCookie = normalizeAuthCookie(apiCookie);
-  if (normalizedCookie) headers.append('set-cookie', normalizedCookie);
+  const cookie = normalizeAuthCookie(apiCookie);
+  if (cookie) headers.append('set-cookie', cookie);
   return new Response(null, { status: 303, headers });
 }
 

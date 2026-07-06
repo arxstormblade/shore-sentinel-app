@@ -1,55 +1,59 @@
+import Link from 'next/link';
+import { unstable_noStore as noStore } from 'next/cache';
 import { notFound } from 'next/navigation';
-import { getSessionUser } from '@/lib/session';
-import { MachineDetailClient } from '@/components/machine-detail-client';
-
-const serverApiBase = () => (process.env.INTERNAL_API_URL || process.env.API_URL || 'http://api:4000').replace(/\/$/, '');
+import { Header, Pill } from '@/components/ui';
+import { routePath } from '@/lib/paths';
+import { apiGet } from '@/lib/api-data';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-async function loadTarget(id) {
-  try {
-    const response = await fetch(`${serverApiBase()}/targets/${id}`, { cache: 'no-store' });
-    if (!response.ok) return null;
-    return await response.json();
-  } catch {
-    return null;
-  }
-}
-
-async function loadTargetRuns(id) {
-  try {
-    const response = await fetch(`${serverApiBase()}/targets/${id}/scan-runs`, { cache: 'no-store' });
-    if (!response.ok) return { runs: [] };
-    return await response.json();
-  } catch {
-    return { runs: [] };
-  }
-}
-
 export default async function Machine({ params }) {
-  const [live, session, runsPayload] = await Promise.all([loadTarget(params.id), getSessionUser(), loadTargetRuns(params.id)]);
-  if (!live) notFound();
-
-  const machine = {
-    id: live.id,
-    name: live.hostname,
-    fqdn: live.fqdn,
-    ip_address: live.ip_address,
-    env: live.environment_name ?? 'Unassigned',
-    owner: live.owner_team ?? 'Unassigned',
-    platform: live.platform ?? 'windows',
-    connection_mode: live.connection_mode ?? 'ssh_push',
-    monitoring_enabled: live.monitoring_enabled ?? true,
-    summary: live.fqdn ? `${live.fqdn} enrolled through the managed machine workflow.` : 'Managed machine enrolled through the live workflow.',
-    status: live.status === 'unknown' ? 'Online' : live.status,
-    score: live.monitoring_enabled ? 90 : 72,
-  };
-
-  const roles = Array.isArray(session?.roles) ? session.roles.map((role) => String(role).toLowerCase()) : [];
-  const canManage = roles.includes('admin');
+  noStore();
+  const { id } = await params;
+  let machine;
+  try {
+    machine = await apiGet('/targets/' + id);
+  } catch (error) {
+    if (String(error.message || error).includes('400')) notFound();
+    throw error;
+  }
 
   return (
-    <MachineDetailClient machine={machine} initialRuns={runsPayload.runs ?? []} canManage={canManage} />
+    <div className="stack">
+      <Header eye="Managed machine" title={machine.name || machine.hostname} desc={`${machine.platform || 'unknown'} target managed by ${machine.owner || 'Unassigned owner'}`}>
+        <Pill>{machine.status}</Pill>
+      </Header>
+      <section className="grid">
+        <article className="panel">
+          <h2>Asset details</h2>
+          <p>Environment: {machine.env}</p>
+          <p>Owner: {machine.owner}</p>
+          <p>Connection: {machine.connection_mode}</p>
+          <p>Asset mode: managed_machine</p>
+        </article>
+        <article className="panel">
+          <h2>Posture</h2>
+          <b className="score">{machine.finding_count || 0}</b>
+          <p>{machine.remediation_count || 0} open remediation item{machine.remediation_count === 1 ? '' : 's'}</p>
+        </article>
+      </section>
+      <section className="panel">
+        <h2>Reports</h2>
+        {(machine.reports || []).length === 0 ? <p className="note">No scan reports exist for this machine yet.</p> : (machine.reports || []).map((r) => (
+          <Link className="row" href={routePath('/scans-reports/reports/' + r.id)} key={r.id}>
+            <span><b>{r.subject_type} run</b><small>{r.created_at}</small></span><Pill>{r.status}</Pill>
+          </Link>
+        ))}
+      </section>
+      <section className="panel">
+        <h2>Remediation</h2>
+        {(machine.remediations || []).length === 0 ? <p className="note">No remediation items are open for this machine.</p> : (machine.remediations || []).map((r) => (
+          <Link className="row" href={routePath('/remediation/' + r.id)} key={r.id}>
+            <span><b>{r.title}</b><small>{r.status}</small></span><Pill>{r.severity}</Pill>
+          </Link>
+        ))}
+      </section>
+    </div>
   );
 }

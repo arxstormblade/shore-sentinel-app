@@ -1,9 +1,13 @@
 import { redirect } from 'next/navigation';
-import { routePath } from '@/lib/paths';
-import { hasActiveSession } from '@/lib/session';
 import { SignInForm } from '@/components/sign-in-form';
+import { getAuthenticatedUser } from '@/lib/session';
 
 export default async function Landing() {
-  if (await hasActiveSession()) redirect(routePath('/dashboard'));
-  return <SignInForm description="Sign in to reach the confidential Shore Sentinel control plane." registerLabel="Create a local account" />;
+  if (await getAuthenticatedUser()) redirect('/dashboard');
+
+  return (
+    <div className="auth-landing">
+      <SignInForm showRegisterLink={false} />
+    </div>
+  );
 }

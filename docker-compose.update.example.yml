@@ -1,0 +1,20 @@
+# Optional self-update override for Shore Sentinel.
+#
+# Usage:
+#   cp docker-compose.update.example.yml docker-compose.update.yml
+#   docker compose -f docker-compose.yml -f docker-compose.update.yml up -d --build
+#
+# This grants the API container access to the host Docker socket and Git checkout
+# so admin users can trigger updates from the System Update page. Enable only on
+# trusted single-tenant installations.
+
+services:
+  api:
+    environment:
+      SHORE_SENTINEL_ENABLE_SELF_UPDATE: 'true'
+      SHORE_SENTINEL_APP_DIR: /workspace/shore360-workspace/apps/shore-sentinel
+      SHORE_SENTINEL_UPDATE_REMOTE: origin
+      SHORE_SENTINEL_UPDATE_BRANCH: main
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../../:/workspace/shore360-workspace

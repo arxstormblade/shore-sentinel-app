@@ -38,7 +38,10 @@
           "description": { "type": "string" },
           "evidence": { "type": "array" },
           "remediation": { "type": ["string", "null"] },
-          "references": { "type": "array" }
+          "references": { "type": "array" },
+          "cve": { "type": ["string", "null"] },
+          "cveUrl": { "type": ["string", "null"] },
+          "cves": { "type": "array" }
         },
         "additionalProperties": true
       }

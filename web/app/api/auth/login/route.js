@@ -14,17 +14,14 @@ async function forwardAuth(path, formData) {
 
 function normalizeAuthCookie(apiCookie) {
   if (!apiCookie) return null;
-  const withoutPath = apiCookie
-    .split(';')
-    .map((part) => part.trim())
-    .filter((part) => !/^path=/i.test(part));
-  return [...withoutPath, 'Path=/'].join('; ');
+  const parts = apiCookie.split(';').map((part) => part.trim()).filter((part) => !/^path=/i.test(part));
+  return [...parts, 'Path=/'].join('; ');
 }
 
 function redirectTo(path, apiCookie) {
   const headers = new Headers({ location: appPath(path) });
-  const normalizedCookie = normalizeAuthCookie(apiCookie);
-  if (normalizedCookie) headers.append('set-cookie', normalizedCookie);
+  const cookie = normalizeAuthCookie(apiCookie);
+  if (cookie) headers.append('set-cookie', cookie);
   return new Response(null, { status: 303, headers });
 }
 
@@ -32,9 +29,9 @@ export async function POST(request) {
   const formData = await request.formData();
   try {
     const apiResponse = await forwardAuth('/auth/login', formData);
-    if (!apiResponse.ok) return redirectTo('/?auth=failed');
+    if (!apiResponse.ok) return redirectTo('/auth/login?auth=failed');
     return redirectTo('/dashboard', apiResponse.headers.get('set-cookie'));
   } catch {
-    return redirectTo('/?auth=unavailable');
+    return redirectTo('/auth/login?auth=unavailable');
   }
 }

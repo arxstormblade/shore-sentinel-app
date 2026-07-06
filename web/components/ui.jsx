@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { navItems } from '@/lib/data';
-import { hasActiveSession } from '@/lib/session';
 import { appPath, routePath } from '@/lib/paths';
 
 export function ShoreLogo({ size = 34 }) {
@@ -20,49 +19,32 @@ export function Brand() {
   );
 }
 
-export function PublicTopBar({ actionHref = routePath('/auth/register'), actionLabel = 'Create a local account' }) {
-  return (
-    <header className="public-top" aria-label="Shore Sentinel public navigation">
-      <Link className="brand" href={routePath('/auth/login')} aria-label="Shore Sentinel sign in">
-        <ShoreLogo />
-        <span>Shore Sentinel</span>
-      </Link>
-      <nav className="public-nav" aria-label="Account navigation">
-        <Link href={routePath('/auth/login')}>Sign in</Link>
-        {actionLabel ? <Link className="btn alt" href={actionHref}>{actionLabel}</Link> : null}
-      </nav>
-    </header>
-  );
-}
-
-function Main({ children }) {
-  return <main id="main-content" tabIndex={-1}>{children}</main>;
-}
-
-export async function Shell({ children }) {
-  const signedIn = await hasActiveSession();
-  if (!signedIn) return <><a className="skip-link" href="#main-content">Skip to main content</a><PublicTopBar /><Main>{children}</Main></>;
+export function Shell({ children, authenticated = false, user = null }) {
+  const initials = user?.display_name ? user.display_name.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() : 'AD';
   return (
     <>
-      <a className="skip-link" href="#main-content">Skip to main content</a>
       <header className="top">
         <Brand />
-        <nav className="primary-nav" aria-label="Primary navigation">
-          {navItems.map((item) => <Link key={item.href} href={routePath(item.href)}><span aria-hidden="true">{item.icon}</span><span>{item.label}</span></Link>)}
-        </nav>
-        <aside className="user-strip" aria-label="Current session">
-          <span className="system-ok" role="status"><i aria-hidden="true" />All Systems Operational</span>
-          <Link className="display-link" href={routePath('/preferences')} title="Adjust density, contrast, and effects">
-            Display
-          </Link>
-          <Link className="avatar-link" href={routePath('/users')} title="Manage users and roles">
-            <span className="avatar" aria-hidden="true">AD</span>
-            <span><b>Signed in as Admin User</b><small>Admin</small></span>
-          </Link>
-        </aside>
+        {authenticated ? (
+          <>
+            <nav className="primary-nav" aria-label="Primary navigation">
+              {navItems.map((item) => <Link key={item.href} href={routePath(item.href)}>{item.icon}<span>{item.label}</span></Link>)}
+            </nav>
+            <aside className="user-strip">
+              <span className="system-ok"><i />All Systems Operational</span>
+              <Link className="avatar-link" href={routePath('/users')}><span className="avatar">{initials}</span><span>{user?.display_name || 'Admin User'}</span></Link>
+            </aside>
+          </>
+        ) : (
+          <aside className="user-strip">
+            <Link className="btn alt" href={routePath('/auth/login')}>Sign in</Link>
+          </aside>
+        )}
       </header>
-      <Main>{children}</Main>
-      <footer><b>Knowledgebase</b><Link href={routePath('/knowledgebase')}>Reference guide</Link><Link href={routePath('/audits')}>Audit History</Link><Link href={routePath('/dashboard')}>Dashboard</Link><Link href={routePath('/preferences')}>Display preferences</Link></footer>
+      <main>{children}</main>
+      {authenticated ? (
+        <footer><b>Knowledgebase</b><Link href={routePath('/knowledgebase')}>Reference guide</Link><Link href={routePath('/audits')}>Audit History</Link><Link href={routePath('/system/update')}>System Update</Link><Link href={routePath('/dashboard')}>Dashboard</Link></footer>
+      ) : null}
     </>
   );
 }
@@ -71,7 +53,9 @@ export function Header({ eye, title, desc, children }) {
   return <section className="hero"><div><p className="eye">{eye}</p><h1>{title}</h1><p>{desc}</p></div><div className="actions">{children}</div></section>;
 }
 
-export { Filters } from './filters';
+export function Filters({ name, items }) {
+  return <section className="filters"><b>{name} filters</b>{items.map((f) => <label key={f}><span>{f}</span><select><option>All {f.toLowerCase()}</option><option>Production</option><option>High</option><option>Last 30 days</option></select></label>)}</section>;
+}
 
 export function Pill({ children, tone = '' }) { return <span className={`pill ${tone}`}>{children}</span>; }
 

@@ -1,7 +1,7 @@
 {
   "contractVersion": "shore-sentinel.scanner-output/v1",
   "scanner": { "name": "shore-baseline", "version": "0.1.0" },
-  "target": { "assetId": "asset-1", "hostname": "example-host", "ip": "192.0.2.10" },
+  "target": { "assetId": "asset-1", "hostname": "demo-host", "ip": "10.0.0.5" },
   "findings": [
     {
       "id": "patch-001",

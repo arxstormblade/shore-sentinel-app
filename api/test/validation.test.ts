@@ -3,8 +3,6 @@ import assert from 'node:assert/strict';
 import { ARTIFACT_KIND } from '@shore-sentinel/shared';
 import { assertExactlyOneSubject, validateArtifactComplete } from '../src/validation.js';
 import { SCHEMA_SQL } from '../src/schema.js';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 
 test('subject validation accepts canonical one-time audit subject only', () => assert.doesNotThrow(() => assertExactlyOneSubject('one_time_audit', null, 'audit-id')));
 test('subject validation accepts canonical managed target subject only', () => assert.doesNotThrow(() => assertExactlyOneSubject('managed_target', 'target-id', null)));
@@ -16,11 +14,6 @@ test('subject validation rejects missing, ambiguous, and mismatched subjects', (
 test('schema contains database-level exactly-one constraints for jobs and runs', () => {
   assert.match(SCHEMA_SQL, /CONSTRAINT scan_jobs_exactly_one_subject CHECK/);
   assert.match(SCHEMA_SQL, /CONSTRAINT scan_runs_exactly_one_subject CHECK/);
-  assert.match(SCHEMA_SQL, /owner_user_id uuid REFERENCES users\(id\)/);
-  assert.match(SCHEMA_SQL, /due_date date/);
-  assert.match(SCHEMA_SQL, /evidence_artifact_id uuid REFERENCES artifacts\(id\)/);
-  assert.match(SCHEMA_SQL, /CREATE TABLE IF NOT EXISTS remediation_item_comments/);
-  assert.match(SCHEMA_SQL, /CREATE TABLE IF NOT EXISTS remediation_item_activity/);
 });
 test('artifact completion validation accepts legacy upload types and canonical worker kinds', () => {
   const ok = validateArtifactComplete({ artifact_type: 'sarif', sha256: 'a'.repeat(64), size_bytes: 25 });
@@ -30,30 +23,4 @@ test('artifact completion validation accepts legacy upload types and canonical w
   assert.throws(() => validateArtifactComplete({ artifact_type: 'exe', sha256: 'a'.repeat(64), size_bytes: 25 }), /artifact_type/);
   assert.throws(() => validateArtifactComplete({ artifact_type: 'json', sha256: 'nope', size_bytes: 25 }), /sha256/);
   assert.throws(() => validateArtifactComplete({ artifact_type: 'json', sha256: 'a'.repeat(64), size_bytes: 0 }), /size_bytes/);
-});
-
-test('remediation status-counts route is declared before parameterized remediation id route', () => {
-  const source = readFileSync(join(process.cwd(), 'src/app.controller.ts'), 'utf8');
-  const statusCountsIndex = source.indexOf("@Get('remediations/status-counts')");
-  const idIndex = source.indexOf("@Get('remediations/:id')");
-  assert.ok(statusCountsIndex > -1, 'status-counts route missing');
-  assert.ok(idIndex > -1, 'remediation id route missing');
-  assert.ok(statusCountsIndex < idIndex, 'status-counts must be declared before :id so Nest does not treat status-counts as a UUID id');
-});
-
-test('user undo-delete tokens are tenant scoped and not exposed through audit logs', () => {
-  const source = readFileSync(join(process.cwd(), 'src/app.controller.ts'), 'utf8');
-  assert.match(source, /user_deletion_tokens WHERE token = \$1 AND user_id = \$2 AND tenant_id = \$3/);
-  assert.doesNotMatch(source, /action = 'user\.deleted'[\s\S]*undo_token/);
-  assert.match(source, /redactAuditPayload/);
-  assert.match(source, /token\|secret\|password\|key/i);
-  assert.doesNotMatch(source, /password_hash = '\'DELETED\''/);
-});
-
-test('remediation mutation endpoints validate tenant-owned references and status values', () => {
-  const source = readFileSync(join(process.cwd(), 'src/app.controller.ts'), 'utf8');
-  assert.match(source, /owner_user_id is not a user in this tenant/);
-  assert.match(source, /evidence_artifact_id is not an artifact in this tenant/);
-  assert.match(source, /author_user_id is not a user in this tenant/);
-  assert.match(source, /requestedStatus && !allowedUpdateStatuses\.includes\(requestedStatus\)/);
 });

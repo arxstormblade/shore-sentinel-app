@@ -70,6 +70,11 @@ services:
       MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-replace-me-minio-access}
       MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-replace-me-minio-secret}
       SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-replace-me-seed-admin-password}
+      SHORE_SENTINEL_ENABLE_SELF_UPDATE: ${SHORE_SENTINEL_ENABLE_SELF_UPDATE:-false}
+      SHORE_SENTINEL_UPDATE_SCRIPT: ${SHORE_SENTINEL_UPDATE_SCRIPT:-/app/scripts/shore-sentinel-update.sh}
+      SHORE_SENTINEL_APP_DIR: ${SHORE_SENTINEL_APP_DIR:-/workspace/shore360-workspace/apps/shore-sentinel}
+      SHORE_SENTINEL_UPDATE_REMOTE: ${SHORE_SENTINEL_UPDATE_REMOTE:-origin}
+      SHORE_SENTINEL_UPDATE_BRANCH: ${SHORE_SENTINEL_UPDATE_BRANCH:-main}
     depends_on:
       postgres:
         condition: service_healthy
@@ -100,7 +105,7 @@ services:
       api:
         condition: service_healthy
     healthcheck:
-      test: ['CMD-SHELL', 'wget --spider -q http://127.0.0.1:3010${SHORE_SENTINEL_BASE_PATH:-/shore-sentinel}']
+      test: ['CMD', 'wget', '--spider', '-q', 'http://127.0.0.1:3010/shore-sentinel/dashboard']
       interval: 15s
       timeout: 5s
       retries: 5

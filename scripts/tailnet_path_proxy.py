@@ -2,13 +2,14 @@
 from __future__ import annotations
 
 import http.client
+import os
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse
 
-UPSTREAM = "http://127.0.0.1:3010"
-BASE_PATH = "/shore-sentinel"
-LISTEN_HOST = "127.0.0.1"
-LISTEN_PORT = 8788
+UPSTREAM = os.environ.get("SHORE_SENTINEL_PROXY_UPSTREAM", "http://127.0.0.1:3010")
+BASE_PATH = os.environ.get("SHORE_SENTINEL_BASE_PATH", "/shore-sentinel")
+LISTEN_HOST = os.environ.get("SHORE_SENTINEL_PROXY_HOST", "127.0.0.1")
+LISTEN_PORT = int(os.environ.get("SHORE_SENTINEL_PROXY_PORT", "8788"))
 
 
 def upstream_path(path: str) -> str:

@@ -8,7 +8,7 @@ export function normalizeJobData(data) {
   const oneTimeAuditId = data.oneTimeAuditId ?? data.one_time_audit_id ?? null;
   const scannerOutput = data.scannerOutput ?? {
     contractVersion: scannerBundleContractVersion(),
-    scanner: { name: 'shore-sentinel-bundled-scanner', version: data.scannerVersion ?? data.scanner_version ?? '3.4.0' },
+    scanner: { name: 'shore-sentinel-worker-placeholder', version: data.scannerVersion ?? data.scanner_version ?? '0.1.0' },
     target: { assetId: targetId ?? oneTimeAuditId ?? jobId ?? runId, subjectType },
     findings: [],
     collectedAt: new Date().toISOString(),

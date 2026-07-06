@@ -17,21 +17,21 @@ export default function NewAudit() {
         <form action={appPath('/api/one-time-audits')} method="post">
           <label>
             Display name
-            <input name="display_name" placeholder="Audit target name" required />
+            <input name="display_name" placeholder="vendor-firewall-export" required />
           </label>
           <label>
             Hostname
-            <input name="hostname" placeholder="Hostname or FQDN" />
+            <input name="hostname" placeholder="firewall.example.local" />
           </label>
           <label>
             IP address
-            <input name="ip_address" placeholder="IP address" />
+            <input name="ip_address" placeholder="10.10.4.18" />
           </label>
           <label>
             Connection mode
             <select name="connection_mode" defaultValue="ssh_push">
               <option value="ssh_push">ssh_push</option>
-              <option value="temporary_runner">temporary_runner</option>
+              <option value="pull_agent">pull_agent</option>
             </select>
           </label>
           <button className="btn" type="submit">Create audit</button>

@@ -24,6 +24,28 @@ class ParserTests(unittest.TestCase):
         self.assertEqual(len(result["normalizedFindings"]), 2)
         self.assertEqual(result["normalizedFindings"][1]["severity"], "critical")
         self.assertEqual(result["enrichmentSummary"]["severityCounts"], {"high": 1, "critical": 1})
+        self.assertEqual(result["enrichmentSummary"]["findingsWithCve"], 0)
+
+    def test_parse_scanner_output_extracts_cve_reference(self):
+        result = parse_scanner_output("run-1", {
+            "contractVersion": CONTRACT_VERSION,
+            "scanner": {"name": "framework-check", "version": "0.1.0"},
+            "target": {"assetId": "asset-1", "hostname": "host1", "ip": "10.0.0.5"},
+            "findings": [
+                {
+                    "id": "f1",
+                    "title": "Framework vulnerability",
+                    "severity": "high",
+                    "references": ["https://nvd.nist.gov/vuln/detail/CVE-2024-12345"],
+                },
+            ],
+        }).to_dict()
+
+        finding = result["normalizedFindings"][0]
+        self.assertEqual(finding["cve"], "CVE-2024-12345")
+        self.assertEqual(finding["cveUrl"], "https://nvd.nist.gov/vuln/detail/CVE-2024-12345")
+        self.assertEqual(result["enrichmentSummary"]["findingsWithCve"], 1)
+        self.assertEqual(result["enrichmentSummary"]["cves"], ["CVE-2024-12345"])
 
     def test_parse_rejects_wrong_contract_version(self):
         with self.assertRaisesRegex(ValueError, "contractVersion"):

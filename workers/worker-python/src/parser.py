@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any
 
 PARSER_VERSION = "0.1.0"
 CONTRACT_VERSION = "shore-sentinel.scanner-output/v1"
+CVE_PATTERN = re.compile(r"\bCVE-\d{4}-\d{4,7}\b", re.IGNORECASE)
+NVD_URL = "https://nvd.nist.gov/vuln/detail/{cve}"
 
 
 @dataclass(frozen=True)
@@ -36,9 +39,54 @@ def normalize_severity(value: Any) -> str:
     return normalized if normalized in allowed else "informational"
 
 
+def _reference_texts(references: Any) -> list[str]:
+    if not isinstance(references, list):
+        return []
+    texts: list[str] = []
+    for reference in references:
+        if isinstance(reference, str):
+            texts.append(reference)
+            continue
+        if isinstance(reference, dict):
+            values = [reference.get(key) for key in ("cve", "id", "url", "title", "name", "text", "value")]
+            for value in values:
+                if isinstance(value, str) and value:
+                    texts.append(value)
+            joined = " ".join(str(value) for value in reference.values() if value is not None)
+            if joined:
+                texts.append(joined)
+            continue
+        if reference is not None:
+            texts.append(str(reference))
+    return texts
+
+
+def extract_cve_info(raw: dict[str, Any]) -> tuple[str | None, str | None, list[str]]:
+    sources: list[str] = []
+    sources.extend(_reference_texts(raw.get("references")))
+    for field in ("title", "name", "description", "summary", "category", "remediation", "recommendation"):
+        value = raw.get(field)
+        if isinstance(value, str) and value:
+            sources.append(value)
+    discovered: list[str] = []
+    for source in sources:
+        for match in CVE_PATTERN.findall(source):
+            cve = match.upper()
+            if cve not in discovered:
+                discovered.append(cve)
+    if not discovered:
+        return None, None, []
+    cve = discovered[0]
+    return cve, NVD_URL.format(cve=cve), discovered
+
+
 def normalize_finding(raw: dict[str, Any], *, index: int, target: dict[str, Any]) -> dict[str, Any]:
     finding_id = raw.get("id") or raw.get("findingId") or f"finding-{index + 1}"
     title = raw.get("title") or raw.get("name") or "Untitled finding"
+    cve, cve_url, cves = extract_cve_info(raw)
+    references = raw.get("references") or []
+    if not isinstance(references, list):
+        references = [references]
     return {
         "id": str(finding_id),
         "title": str(title),
@@ -52,7 +100,10 @@ def normalize_finding(raw: dict[str, Any], *, index: int, target: dict[str, Any]
         },
         "evidence": raw.get("evidence") or [],
         "remediation": raw.get("remediation") or raw.get("recommendation") or None,
-        "references": raw.get("references") or [],
+        "references": references,
+        "cve": cve,
+        "cveUrl": cve_url,
+        "cves": cves,
         "source": raw.get("source") or raw.get("check") or "scanner",
     }
 
@@ -72,8 +123,12 @@ def parse_scanner_output(run_id: str, scanner_output: dict[str, Any]) -> ParseRe
 
     normalized = [normalize_finding(item or {}, index=i, target=target) for i, item in enumerate(raw_findings)]
     severity_counts: dict[str, int] = {}
+    all_cves: list[str] = []
     for finding in normalized:
         severity_counts[finding["severity"]] = severity_counts.get(finding["severity"], 0) + 1
+        for cve in finding.get("cves") or []:
+            if cve not in all_cves:
+                all_cves.append(cve)
 
     summary = {
         "runId": run_id,
@@ -81,6 +136,8 @@ def parse_scanner_output(run_id: str, scanner_output: dict[str, Any]) -> ParseRe
         "scanner": scanner_output.get("scanner") or {},
         "target": target,
         "totalFindings": len(normalized),
+        "findingsWithCve": sum(1 for finding in normalized if finding.get("cve")),
+        "cves": all_cves,
         "severityCounts": severity_counts,
         "parsedAt": _now(),
     }

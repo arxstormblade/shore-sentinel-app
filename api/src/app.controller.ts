@@ -1,509 +1,254 @@
-import { BadRequestException, Body, ConflictException, Controller, Delete, Get, Header, NotFoundException, Param, Patch, Post, Query, Req, Res } from '@nestjs/common';
+import { BadRequestException, Body, ConflictException, Controller, Delete, ForbiddenException, Get, Header, NotFoundException, Param, Patch, Post, Req, Res } from '@nestjs/common';
 import bcrypt from 'bcryptjs';
-import { createHash, randomUUID } from 'node:crypto';
+import { createHash } from 'node:crypto';
+import { Readable } from 'node:stream';
 import type { Request, Response } from 'express';
 import { RUN_EVENT_TYPE, scannerBundleContractVersion } from '@shore-sentinel/shared';
 import { ArtifactService } from './artifact.service.js';
 import { AuthService } from './auth.service.js';
 import { DatabaseService } from './database.service.js';
 import { QueueService } from './queue.service.js';
+import { UpdateService } from './update.service.js';
 import { assertExactlyOneSubject, requireString, validateArtifactComplete, validateArtifactType } from './validation.js';
+
+const THIRTY_DAYS_SECONDS = 60 * 60 * 24 * 30;
 
 @Controller()
 export class AppController {
-  constructor(private readonly db: DatabaseService, private readonly auth: AuthService, private readonly queue: QueueService, private readonly artifacts: ArtifactService) {}
+  constructor(
+    private readonly db: DatabaseService,
+    private readonly auth: AuthService,
+    private readonly queue: QueueService,
+    private readonly artifacts: ArtifactService,
+    private readonly updates: UpdateService,
+  ) {}
 
   @Get('health') health() { return { ok: true, service: 'shore-sentinel-api' }; }
   @Get('ready') async ready() { await this.db.query('SELECT 1'); return { ok: this.db.isReady(), database: 'ok', redis: await this.queue.health().catch((error) => ({ configured: true, error: error.message })) }; }
-  @Post('auth/register') async register(@Body() body: Record<string, unknown>, @Res({ passthrough: true }) res: Response) { const result = await this.auth.register(requireString(body, 'name'), requireString(body, 'email'), requireString(body, 'password')); this.setSessionCookie(res, result.token); return { user: result.user }; }
-  @Post('auth/login') async login(@Body() body: Record<string, unknown>, @Res({ passthrough: true }) res: Response) { const result = await this.auth.login(requireString(body, 'email'), requireString(body, 'password'), body.rememberMe === true || body.rememberMe === 'true' || body.rememberMe === 'on'); this.setSessionCookie(res, result.token, body.rememberMe === true || body.rememberMe === 'true' || body.rememberMe === 'on'); return { user: result.user }; }
+  @Post('auth/register') async register(@Body() body: Record<string, unknown>, @Res({ passthrough: true }) res: Response) { const rememberMe = this.rememberMe(body); const result = await this.auth.register(requireString(body, 'name'), requireString(body, 'email'), requireString(body, 'password'), rememberMe); this.setSessionCookie(res, result.token, rememberMe); return { user: result.user }; }
+  @Post('auth/login') async login(@Body() body: Record<string, unknown>, @Res({ passthrough: true }) res: Response) { const rememberMe = this.rememberMe(body); const result = await this.auth.login(requireString(body, 'email'), requireString(body, 'password'), rememberMe); this.setSessionCookie(res, result.token, rememberMe); return { user: result.user }; }
   @Post('auth/logout') logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) { this.auth.logout(this.token(req)); res.clearCookie('shore_session'); return { ok: true }; }
   @Get('auth/me') async me(@Req() req: Request) { return this.auth.me(this.token(req)); }
-
-  @Get('users')
-  async listUsers() {
-    const tenantId = await this.db.tenantId();
-    const result = await this.db.query(
-      `SELECT u.id, u.email, u.display_name, u.disabled_at, u.deleted_at, u.created_at, u.updated_at,
-              COALESCE(json_agg(r.name ORDER BY r.name) FILTER (WHERE r.name IS NOT NULL), '[]'::json) AS roles
-       FROM users u
-       LEFT JOIN user_roles ur ON ur.user_id = u.id
-       LEFT JOIN roles r ON r.id = ur.role_id
-       WHERE u.tenant_id = $1 AND u.deleted_at IS NULL
-       GROUP BY u.id
-       ORDER BY u.created_at DESC`,
-      [tenantId],
-    );
-    return result.rows;
-  }
-
-  @Get('users/roles')
-  async listRoles() {
-    const result = await this.db.query('SELECT name, description FROM roles ORDER BY name');
-    return result.rows;
-  }
-
-  @Post('users')
-  async createUser(@Body() body: Record<string, unknown>) {
-    const tenantId = await this.db.tenantId();
-    const email = requireString(body, 'email');
-    const displayName = requireString(body, 'display_name');
-    const password = requireString(body, 'password');
-    const roles = Array.isArray(body.roles) ? body.roles.map(String) : ['operator'];
-    const existing = await this.db.query('SELECT id FROM users WHERE email = $1', [email]);
-    if (existing.rows[0]) throw new ConflictException('Email already exists');
-    const passwordHash = await bcrypt.hash(password, 12);
-    const created = await this.db.query<{ id: string }>('INSERT INTO users (tenant_id, email, display_name, password_hash) VALUES ($1,$2,$3,$4) RETURNING id', [tenantId, email, displayName, passwordHash]);
-    const userId = created.rows[0].id;
-    for (const roleName of roles) await this.db.query('INSERT INTO user_roles (user_id, role_id) SELECT $1, id FROM roles WHERE name = $2 ON CONFLICT DO NOTHING', [userId, roleName]);
-    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'user.created', 'user', userId, { email, displayName, roles }]);
-    return { id: userId, email, display_name: displayName, roles };
-  }
-
-  @Patch('users/:id')
-  async updateUser(@Param('id') id: string, @Body() body: Record<string, unknown>) {
-    const tenantId = await this.db.tenantId();
-    const fields: string[] = [];
-    const values: unknown[] = [];
-    let idx = 1;
-    if (typeof body.email === 'string') { fields.push(`email = $${idx++}`); values.push(body.email); }
-    if (typeof body.display_name === 'string') { fields.push(`display_name = $${idx++}`); values.push(body.display_name); }
-    if (typeof body.password === 'string' && body.password.length > 0) { fields.push(`password_hash = $${idx++}`); values.push(await bcrypt.hash(body.password, 12)); }
-    if (fields.length > 0) {
-      fields.push('updated_at = now()');
-      values.push(tenantId, id);
-      await this.db.query(`UPDATE users SET ${fields.join(', ')} WHERE tenant_id = $${idx++} AND id = $${idx}`, values);
-    }
-    if (Array.isArray(body.roles)) {
-      await this.db.query('DELETE FROM user_roles WHERE user_id = $1', [id]);
-      for (const roleName of body.roles.map(String)) await this.db.query('INSERT INTO user_roles (user_id, role_id) SELECT $1, id FROM roles WHERE name = $2 ON CONFLICT DO NOTHING', [id, roleName]);
-    }
-    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'user.updated', 'user', id, { updated_fields: Object.keys(body) }]);
-    const result = await this.db.query(
-      `SELECT u.id, u.email, u.display_name, u.disabled_at, u.created_at, u.updated_at,
-              COALESCE(json_agg(r.name ORDER BY r.name) FILTER (WHERE r.name IS NOT NULL), '[]'::json) AS roles
-       FROM users u
-       LEFT JOIN user_roles ur ON ur.user_id = u.id
-       LEFT JOIN roles r ON r.id = ur.role_id
-       WHERE u.tenant_id = $1 AND u.id = $2
-       GROUP BY u.id`,
-      [tenantId, id],
-    );
-    if (!result.rows[0]) throw new BadRequestException('user not found');
-    return result.rows[0];
-  }
-
-  @Post('users/:id/reset-password')
-  async resetPassword(@Param('id') id: string, @Body() body: Record<string, unknown>) {
-    const tenantId = await this.db.tenantId();
-    const passwordHash = await bcrypt.hash(requireString(body, 'password'), 12);
-    await this.db.query('UPDATE users SET password_hash = $1, updated_at = now() WHERE tenant_id = $2 AND id = $3', [passwordHash, tenantId, id]);
-    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'user.password_reset', 'user', id, {}]);
-    return { ok: true };
-  }
-
-  @Delete('users/:id')
-  async deleteUser(@Param('id') id: string) {
-    const tenantId = await this.db.tenantId();
-    const user = await this.db.query<{ id: string; email: string; display_name: string }>('SELECT id, email, display_name FROM users WHERE tenant_id = $1 AND id = $2 AND deleted_at IS NULL', [tenantId, id]);
-    if (!user.rows[0]) throw new BadRequestException('user not found or already deleted');
-    const roles = await this.db.query<{ name: string }>('SELECT r.name FROM roles r JOIN user_roles ur ON ur.role_id = r.id WHERE ur.user_id = $1', [id]);
-    const undoToken = randomUUID();
-    await this.db.query('INSERT INTO user_deletion_tokens (token, user_id, tenant_id, expires_at) VALUES ($1, $2, $3, now() + interval \'24 hours\')', [undoToken, id, tenantId]);
-    await this.db.query('UPDATE users SET deleted_at = now(), updated_at = now(), password_hash = \'DELETED\', email = \'deleted-\' || id || \'@deleted.local\' WHERE tenant_id = $1 AND id = $2', [tenantId, id]);
-    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'user.deleted', 'user', id, { email: user.rows[0].email, display_name: user.rows[0].display_name, affected_roles: roles.rows.map((r) => r.name), undo_token: undoToken }]);
-    return { ok: true, undo_token: undoToken, undo_expires_in: '24 hours', affected: { email: user.rows[0].email, display_name: user.rows[0].display_name, roles: roles.rows.map((r) => r.name) } };
-  }
-
-  @Post('users/:id/undo-delete')
-  async undoDeleteUser(@Param('id') id: string, @Body() body: Record<string, unknown>) {
-    const tenantId = await this.db.tenantId();
-    const token = typeof body.undo_token === 'string' ? body.undo_token : '';
-    if (!token) throw new BadRequestException('undo_token is required');
-    const tokenResult = await this.db.query<{ token: string; user_id: string }>(
-      'SELECT token, user_id FROM user_deletion_tokens WHERE token = $1 AND user_id = $2 AND tenant_id = $3 AND expires_at > now() AND consumed_at IS NULL',
-      [token, id, tenantId],
-    );
-    if (!tokenResult.rows[0]) throw new BadRequestException('invalid or expired undo token');
-    const auditResult = await this.db.query<{ payload: string }>(
-      "SELECT payload FROM audit_log WHERE tenant_id = $1 AND resource_type = 'user' AND resource_id = $2 AND action = 'user.deleted' ORDER BY created_at DESC LIMIT 1",
-      [tenantId, id],
-    );
-    let originalEmail = '';
-    let originalName = '';
-    try {
-      const parsed = JSON.parse(auditResult.rows[0]?.payload ?? '{}') as Record<string, unknown>;
-      originalEmail = typeof parsed.email === 'string' ? parsed.email : '';
-      originalName = typeof parsed.display_name === 'string' ? parsed.display_name : '';
-    } catch {
-      // fallback if payload unparsable
-    }
-    const restoreEmail = originalEmail || 'restored-' + id + '@restored.local';
-    const restoreName = originalName || 'Restored user';
-    const duplicate = await this.db.query('SELECT id FROM users WHERE tenant_id = $1 AND lower(email) = lower($2) AND id <> $3 AND deleted_at IS NULL', [tenantId, restoreEmail, id]);
-    if (duplicate.rows[0]) throw new ConflictException('cannot restore user because another active account uses the original email');
-    await this.db.query('UPDATE users SET deleted_at = NULL, updated_at = now(), email = $1, display_name = $2 WHERE tenant_id = $3 AND id = $4', [restoreEmail, restoreName, tenantId, id]);
-    await this.db.query('UPDATE user_deletion_tokens SET consumed_at = now() WHERE token = $1 AND tenant_id = $2', [token, tenantId]);
-    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'user.restored', 'user', id, { email: originalEmail }]);
-    return { ok: true, id };
-  }
-
-  @Post('users/:id/disable')
-  async disableUser(@Param('id') id: string) {
-    const tenantId = await this.db.tenantId();
-    await this.db.query('UPDATE users SET disabled_at = now(), updated_at = now() WHERE tenant_id = $1 AND id = $2', [tenantId, id]);
-    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'user.disabled', 'user', id, {}]);
-    return { ok: true };
-  }
-
-  @Post('users/:id/enable')
-  async enableUser(@Param('id') id: string) {
-    const tenantId = await this.db.tenantId();
-    await this.db.query('UPDATE users SET disabled_at = NULL, updated_at = now() WHERE tenant_id = $1 AND id = $2', [tenantId, id]);
-    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'user.enabled', 'user', id, {}]);
-    return { ok: true };
-  }
-
   @Get('settings/current') async settings() { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT s.*, t.slug AS tenant_slug FROM settings s JOIN tenants t ON t.id=s.tenant_id WHERE s.tenant_id=$1', [tenantId]); return result.rows[0]; }
-  @Get('dashboard/metrics')
-  async dashboardMetrics() {
-    const tenantId = await this.db.tenantId();
-    const severityCounts = { critical: 0, high: 0, medium: 0, low: 0, informational: 0 };
-    const severityResult = await this.db.query('SELECT f.severity, count(*)::int AS count FROM finding_instances fi JOIN findings f ON f.id=fi.finding_id WHERE fi.tenant_id=$1 GROUP BY f.severity', [tenantId]);
-    for (const row of severityResult.rows) {
-      const severity = String(row.severity || '').toLowerCase();
-      if (Object.prototype.hasOwnProperty.call(severityCounts, severity)) severityCounts[severity as keyof typeof severityCounts] = Number(row.count) || 0;
-    }
-    const recentRuns = await this.db.query(`SELECT r.id, r.status, r.subject_type, r.target_id, r.one_time_audit_id, r.created_at, r.completed_at, COALESCE(t.hostname, a.display_name, 'unknown subject') AS subject_name FROM scan_runs r LEFT JOIN targets t ON t.id=r.target_id LEFT JOIN one_time_audits a ON a.id=r.one_time_audit_id WHERE r.tenant_id=$1 ORDER BY r.created_at DESC LIMIT 5`, [tenantId]);
-    const remediationCounts = { needs_review: 0, in_progress: 0, fixed: 0, accepted_risk: 0 };
-    const remediationResult = await this.db.query(`SELECT ri.status, count(*)::int AS count FROM remediation_items ri WHERE ri.tenant_id=$1 GROUP BY ri.status`, [tenantId]);
-    for (const row of remediationResult.rows) {
-      const status = String(row.status);
-      if (Object.prototype.hasOwnProperty.call(remediationCounts, status)) remediationCounts[status as keyof typeof remediationCounts] = Number(row.count) || 0;
-    }
-    return { severityCounts, totalFindings: Object.values(severityCounts).reduce((sum, count) => sum + count, 0), recentRuns: recentRuns.rows, remediationCounts };
+
+  @Get('system/update')
+  async updateStatus(@Req() req: Request) {
+    await this.requireAdmin(req);
+    return this.updates.run('status');
   }
 
-  @Get('dashboard/trends')
-  async dashboardTrends() {
-    const tenantId = await this.db.tenantId();
-    const severityResult = await this.db.query(
-      `SELECT date_trunc('day', fi.created_at)::date AS bucket_date, f.severity, count(*)::int AS count
-       FROM finding_instances fi
-       JOIN findings f ON f.id=fi.finding_id
-       WHERE fi.tenant_id=$1 AND fi.created_at >= now() - interval '30 days'
-       GROUP BY bucket_date, f.severity
-       ORDER BY bucket_date ASC`,
-      [tenantId],
-    );
-    const severityBuckets = new Map<string, Record<string, number | string>>();
-    for (const row of severityResult.rows) {
-      const date = String(row.bucket_date).slice(0, 10);
-      const bucket = severityBuckets.get(date) ?? { date, critical: 0, high: 0, medium: 0, low: 0, informational: 0 };
-      const severity = String(row.severity || '').toLowerCase();
-      if (Object.prototype.hasOwnProperty.call(bucket, severity)) bucket[severity] = Number(row.count) || 0;
-      severityBuckets.set(date, bucket);
-    }
-
-    const riskHistoryResult = await this.db.query(
-      `SELECT r.id, r.completed_at, r.created_at, COALESCE(t.hostname, a.display_name, 'unknown subject') AS subject_name,
-              COALESCE(sum(CASE f.severity WHEN 'critical' THEN 25 WHEN 'high' THEN 15 WHEN 'medium' THEN 8 WHEN 'low' THEN 3 ELSE 1 END), 0)::int AS risk_points,
-              count(fi.id)::int AS findings_count
-       FROM scan_runs r
-       LEFT JOIN targets t ON t.id=r.target_id
-       LEFT JOIN one_time_audits a ON a.id=r.one_time_audit_id
-       LEFT JOIN finding_instances fi ON fi.tenant_id=$1 AND fi.run_id=r.id
-       LEFT JOIN findings f ON f.id=fi.finding_id
-       WHERE r.tenant_id=$1 AND r.status='completed'
-       GROUP BY r.id, t.hostname, a.display_name
-       ORDER BY r.completed_at DESC NULLS LAST, r.created_at DESC
-       LIMIT 12`,
-      [tenantId],
-    );
-    const riskScoreHistory = riskHistoryResult.rows.map((row) => {
-      const riskPoints = Number(row.risk_points) || 0;
-      return {
-        run_id: row.id,
-        subject_name: row.subject_name,
-        date: String(row.completed_at || row.created_at || '').slice(0, 10),
-        findings_count: Number(row.findings_count) || 0,
-        risk_score: Math.max(0, 100 - Math.min(100, riskPoints)),
-      };
-    }).reverse();
-
-    const movementResult = await this.db.query(
-      `SELECT count(DISTINCT fi.id) FILTER (WHERE fi.created_at >= now() - interval '30 days')::int AS new_findings,
-              count(DISTINCT ri.id) FILTER (WHERE ri.status='fixed' AND ri.updated_at >= now() - interval '30 days')::int AS fixed_findings,
-              count(DISTINCT fi.id) FILTER (WHERE fi.status='open')::int AS open_findings
-       FROM finding_instances fi
-       LEFT JOIN remediation_items ri ON ri.finding_instance_id=fi.id
-       WHERE fi.tenant_id=$1`,
-      [tenantId],
-    );
-    const movement = movementResult.rows[0] ?? {};
-    const latestRiskScore = riskScoreHistory.at(-1)?.risk_score ?? 100;
-    const targetScore = 90;
-    return {
-      severityTrends: Array.from(severityBuckets.values()),
-      riskScoreHistory,
-      findingMovement: {
-        newFindings: Number(movement.new_findings) || 0,
-        fixedFindings: Number(movement.fixed_findings) || 0,
-        openFindings: Number(movement.open_findings) || 0,
-      },
-      postureBenchmark: {
-        currentScore: latestRiskScore,
-        targetScore,
-        delta: latestRiskScore - targetScore,
-        status: latestRiskScore >= targetScore ? 'on_target' : latestRiskScore >= 75 ? 'watch' : 'elevated_risk',
-        comparisonBasis: 'Internal 90-point operational target',
-      },
-    };
+  @Post('system/update/check')
+  async checkUpdate(@Req() req: Request) {
+    await this.requireAdmin(req);
+    return this.updates.run('check');
   }
-  @Get('scan-runs')
-  async scanRuns() {
+
+  @Post('system/update/apply')
+  async applyUpdate(@Req() req: Request) {
+    await this.requireAdmin(req);
+    return this.updates.run('apply');
+  }
+
+  @Get('targets')
+  async listTargets() {
     const tenantId = await this.db.tenantId();
-    const result = await this.db.query(`SELECT r.id, r.status, r.subject_type, r.target_id, r.one_time_audit_id, r.created_at, r.started_at, r.completed_at, COALESCE(t.hostname, a.display_name, 'unknown subject') AS subject_name, COALESCE(count(DISTINCT fi.id), 0)::int AS findings_count, COALESCE(json_agg(DISTINCT jsonb_build_object('id', ar.id, 'artifact_type', ar.artifact_type, 'mime_type', ar.mime_type, 'size_bytes', ar.size_bytes, 'created_at', ar.created_at)) FILTER (WHERE ar.id IS NOT NULL), '[]'::json) AS artifacts FROM scan_runs r LEFT JOIN targets t ON t.id=r.target_id LEFT JOIN one_time_audits a ON a.id=r.one_time_audit_id LEFT JOIN finding_instances fi ON fi.tenant_id=$1 AND fi.run_id=r.id LEFT JOIN artifacts ar ON ar.tenant_id=$1 AND ar.run_id=r.id WHERE r.tenant_id=$1 GROUP BY r.id, t.hostname, a.display_name ORDER BY r.created_at DESC LIMIT 50`, [tenantId]);
+    const result = await this.db.query(
+      `SELECT t.id, t.hostname AS name, t.hostname, t.fqdn, t.ip_address::text AS ip_address,
+              COALESCE(e.name, 'Unassigned') AS env,
+              COALESCE(t.owner_team, 'Unassigned owner') AS owner,
+              COALESCE(t.platform, 'unknown') AS platform,
+              COALESCE(t.status, 'unknown') AS status,
+              t.connection_mode, t.last_seen_at, t.last_successful_scan_at, t.created_at,
+              COUNT(DISTINCT fi.id)::int AS finding_count,
+              COUNT(DISTINCT ri.id) FILTER (WHERE ri.status IN ('open','accepted'))::int AS remediation_count,
+              COALESCE(MAX(sr.created_at), t.created_at) AS latest_activity_at
+       FROM targets t
+       LEFT JOIN environments e ON e.id = t.environment_id
+       LEFT JOIN scan_runs sr ON sr.target_id = t.id
+       LEFT JOIN finding_instances fi ON fi.target_id = t.id
+       LEFT JOIN remediation_items ri ON ri.finding_instance_id = fi.id
+       WHERE t.tenant_id = $1 AND t.asset_mode = 'managed_machine'
+       GROUP BY t.id, e.name
+       ORDER BY latest_activity_at DESC`,
+      [tenantId],
+    );
     return result.rows;
   }
 
-  @Get('findings')
-  async findings() {
-    const tenantId = await this.db.tenantId();
-    const result = await this.db.query(`SELECT fi.id, fi.status, fi.evidence_summary, fi.created_at, f.title, f.category, f.severity, f.description, r.id AS run_id, r.status AS run_status, COALESCE(t.hostname, a.display_name, 'unknown subject') AS subject_name, ri.id AS remediation_id, ri.title AS remediation_title, ri.action AS remediation_action, ri.instructions AS remediation_instructions, ri.status AS remediation_status FROM finding_instances fi JOIN findings f ON f.id=fi.finding_id JOIN scan_runs r ON r.id=fi.run_id LEFT JOIN targets t ON t.id=fi.target_id LEFT JOIN one_time_audits a ON a.id=fi.one_time_audit_id LEFT JOIN remediation_items ri ON ri.finding_instance_id=fi.id WHERE fi.tenant_id=$1 ORDER BY CASE f.severity WHEN 'critical' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 WHEN 'low' THEN 4 ELSE 5 END, fi.created_at DESC LIMIT 100`, [tenantId]);
-    return result.rows;
-  }
-
-
-  @Get('remediations/status-counts')
-  async remediationStatusCounts() {
+  @Get('targets/:id')
+  async getTarget(@Param('id') id: string) {
     const tenantId = await this.db.tenantId();
     const result = await this.db.query(
-      `SELECT status, count(*)::int AS count FROM remediation_items WHERE tenant_id=$1 GROUP BY status`,
-      [tenantId],
+      `SELECT t.id, t.hostname AS name, t.hostname, t.fqdn, t.ip_address::text AS ip_address,
+              COALESCE(e.name, 'Unassigned') AS env,
+              COALESCE(t.owner_team, 'Unassigned owner') AS owner,
+              COALESCE(t.platform, 'unknown') AS platform,
+              COALESCE(t.status, 'unknown') AS status,
+              t.connection_mode, t.last_seen_at, t.last_successful_scan_at, t.created_at,
+              COUNT(DISTINCT fi.id)::int AS finding_count,
+              COUNT(DISTINCT ri.id) FILTER (WHERE ri.status IN ('open','accepted'))::int AS remediation_count
+       FROM targets t
+       LEFT JOIN environments e ON e.id = t.environment_id
+       LEFT JOIN scan_runs sr ON sr.target_id = t.id
+       LEFT JOIN finding_instances fi ON fi.target_id = t.id
+       LEFT JOIN remediation_items ri ON ri.finding_instance_id = fi.id
+       WHERE t.tenant_id = $1 AND t.id = $2
+       GROUP BY t.id, e.name`,
+      [tenantId, id],
     );
-    const counts: Record<string, number> = { needs_review: 0, in_progress: 0, fixed: 0, accepted_risk: 0 };
-    for (const row of result.rows) {
-      counts[String(row.status)] = Number(row.count) || 0;
-    }
-    return counts;
-  }
-
-  @Get('remediations')
-  async remediations(@Query('status') status?: string) {
-    const tenantId = await this.db.tenantId();
-    const params: unknown[] = [tenantId];
-    let statusClause = '';
-    if (status) {
-      params.push(status);
-      statusClause = `AND ri.status = $${params.length}`;
-    }
-    const result = await this.db.query(
-      `SELECT ri.id, ri.status, ri.title, ri.action, ri.instructions, ri.priority, ri.category, ri.due_date, ri.owner_user_id, owner.display_name AS owner_name,
-              ri.evidence_artifact_id, evidence.artifact_type AS evidence_artifact_type, evidence.mime_type AS evidence_mime_type, evidence.size_bytes AS evidence_size_bytes,
-              ri.created_at, ri.updated_at, fi.id AS finding_instance_id, f.title AS finding_title, f.severity, f.category AS finding_category,
-              r.id AS run_id, COALESCE(t.hostname, a.display_name, 'unknown subject') AS subject_name
+    if (!result.rows[0]) throw new BadRequestException('target not found');
+    const reports = await this.db.query('SELECT id, status, subject_type, created_at FROM scan_runs WHERE tenant_id=$1 AND target_id=$2 ORDER BY created_at DESC LIMIT 10', [tenantId, id]);
+    const remediation = await this.db.query(
+      `SELECT ri.id, ri.title, ri.status, f.severity
        FROM remediation_items ri
        JOIN finding_instances fi ON fi.id = ri.finding_instance_id
        JOIN findings f ON f.id = fi.finding_id
-       JOIN scan_runs r ON r.id = fi.run_id
-       LEFT JOIN targets t ON t.id = fi.target_id
-       LEFT JOIN one_time_audits a ON a.id = fi.one_time_audit_id
-       LEFT JOIN users owner ON owner.id = ri.owner_user_id
-       LEFT JOIN artifacts evidence ON evidence.id = ri.evidence_artifact_id
-       WHERE ri.tenant_id = $1 ${statusClause}
-       ORDER BY ri.updated_at DESC`,
-      params,
+       WHERE ri.tenant_id=$1 AND fi.target_id=$2
+       ORDER BY ri.created_at DESC LIMIT 20`,
+      [tenantId, id],
+    );
+    return { ...result.rows[0], reports: reports.rows, remediations: remediation.rows };
+  }
+
+  @Get('one-time-audits')
+  async listAudits() {
+    const tenantId = await this.db.tenantId();
+    const result = await this.db.query(
+      `SELECT id, display_name AS target, display_name, hostname, ip_address::text AS ip_address,
+              status, connection_mode, created_at, updated_at,
+              'Promote to Managed Machine' AS promote
+       FROM one_time_audits
+       WHERE tenant_id = $1
+       ORDER BY created_at DESC`,
+      [tenantId],
     );
     return result.rows;
   }
 
-  @Get('remediations/:id')
-  async remediation(@Param('id') id: string) {
+  @Get('reports')
+  async listReports() {
     const tenantId = await this.db.tenantId();
     const result = await this.db.query(
-      `SELECT ri.id, ri.status, ri.title, ri.action, ri.instructions, ri.priority, ri.category, ri.file_path, ri.due_date, ri.owner_user_id, owner.display_name AS owner_name, owner.email AS owner_email,
-              ri.evidence_artifact_id, evidence.artifact_type AS evidence_artifact_type, evidence.mime_type AS evidence_mime_type, evidence.size_bytes AS evidence_size_bytes, evidence.storage_uri AS evidence_storage_uri,
-              ri.created_at, ri.updated_at, fi.id AS finding_instance_id, fi.evidence_summary, f.title AS finding_title, f.severity, f.description AS finding_description,
-              r.id AS run_id, COALESCE(t.hostname, a.display_name, 'unknown subject') AS subject_name
+      `SELECT sr.id, sr.id AS report_id, sr.subject_type, sr.status, sr.created_at, sr.completed_at,
+              COALESCE(t.hostname, ota.display_name, 'Unknown target') AS title,
+              CASE WHEN sr.subject_type = 'managed_target' THEN 'Managed machine' ELSE 'One-time audit' END AS source,
+              COALESCE(e.name, 'Unassigned') AS env,
+              t.id AS machine_id,
+              ota.id AS audit_id,
+              COUNT(fi.id)::int AS finding_count,
+              COALESCE(MAX(f.severity), 'informational') AS severity,
+              COALESCE(json_agg(json_build_object('id', f.id, 'summary', f.title, 'severity', f.severity, 'status', fi.status, 'evidence', fi.evidence_summary) ORDER BY fi.created_at DESC) FILTER (WHERE f.id IS NOT NULL), '[]'::json) AS findings
+       FROM scan_runs sr
+       LEFT JOIN targets t ON t.id = sr.target_id
+       LEFT JOIN environments e ON e.id = t.environment_id
+       LEFT JOIN one_time_audits ota ON ota.id = sr.one_time_audit_id
+       LEFT JOIN finding_instances fi ON fi.run_id = sr.id
+       LEFT JOIN findings f ON f.id = fi.finding_id
+       WHERE sr.tenant_id = $1
+       GROUP BY sr.id, t.id, t.hostname, ota.id, ota.display_name, e.name
+       ORDER BY sr.created_at DESC`,
+      [tenantId],
+    );
+    return result.rows;
+  }
+
+  @Get('reports/:id')
+  async getReport(@Param('id') id: string) {
+    const tenantId = await this.db.tenantId();
+    const result = await this.db.query(
+      `SELECT sr.id, sr.id AS report_id, sr.subject_type, sr.status, sr.created_at, sr.completed_at,
+              COALESCE(t.hostname, ota.display_name, 'Unknown target') AS title,
+              CASE WHEN sr.subject_type = 'managed_target' THEN 'Managed machine' ELSE 'One-time audit' END AS source,
+              COALESCE(e.name, 'Unassigned') AS env,
+              t.id AS machine_id,
+              ota.id AS audit_id,
+              COUNT(fi.id)::int AS finding_count,
+              COALESCE(MAX(f.severity), 'informational') AS severity,
+              COALESCE(json_agg(json_build_object('id', f.id, 'summary', f.title, 'severity', f.severity, 'status', fi.status, 'evidence', fi.evidence_summary) ORDER BY fi.created_at DESC) FILTER (WHERE f.id IS NOT NULL), '[]'::json) AS findings
+       FROM scan_runs sr
+       LEFT JOIN targets t ON t.id = sr.target_id
+       LEFT JOIN environments e ON e.id = t.environment_id
+       LEFT JOIN one_time_audits ota ON ota.id = sr.one_time_audit_id
+       LEFT JOIN finding_instances fi ON fi.run_id = sr.id
+       LEFT JOIN findings f ON f.id = fi.finding_id
+       WHERE sr.tenant_id = $1 AND sr.id = $2
+       GROUP BY sr.id, t.id, t.hostname, ota.id, ota.display_name, e.name`,
+      [tenantId, id],
+    );
+    if (!result.rows[0]) throw new BadRequestException('report not found');
+    const artifacts = await this.db.query(
+      `SELECT id, artifact_type, storage_uri, mime_type, size_bytes, parse_status, created_at,
+              CASE WHEN storage_uri LIKE 's3://%' THEN '/artifacts/' || id || '/download' ELSE NULL END AS download_path
+       FROM artifacts
+       WHERE tenant_id = $1 AND run_id = $2
+       ORDER BY CASE artifact_type
+         WHEN 'pdf' THEN 1
+         WHEN 'markdown' THEN 2
+         WHEN 'sarif' THEN 3
+         WHEN 'scanner.normalized_findings' THEN 4
+         WHEN 'scanner.enrichment_summary' THEN 5
+         WHEN 'scanner.raw_output' THEN 6
+         ELSE 7
+       END, created_at DESC`,
+      [tenantId, id],
+    );
+    return { ...result.rows[0], artifacts: artifacts.rows };
+  }
+
+  @Get('remediation')
+  async listRemediation() {
+    const tenantId = await this.db.tenantId();
+    const result = await this.db.query(
+      `SELECT ri.id, ri.title, ri.action, ri.instructions AS guidance, ri.status, ri.priority, ri.category,
+              f.severity, f.title AS finding_title, f.description,
+              fi.evidence_summary,
+              COALESCE(t.hostname, ota.display_name, 'Unassigned machine') AS asset,
+              COALESCE(e.name, 'Unassigned') AS env,
+              COALESCE(t.owner_team, 'Unassigned owner') AS owner,
+              t.id AS machine_id,
+              fi.run_id,
+              ri.created_at, ri.updated_at
        FROM remediation_items ri
        JOIN finding_instances fi ON fi.id = ri.finding_instance_id
        JOIN findings f ON f.id = fi.finding_id
-       JOIN scan_runs r ON r.id = fi.run_id
        LEFT JOIN targets t ON t.id = fi.target_id
-       LEFT JOIN one_time_audits a ON a.id = fi.one_time_audit_id
-       LEFT JOIN users owner ON owner.id = ri.owner_user_id
-       LEFT JOIN artifacts evidence ON evidence.id = ri.evidence_artifact_id
+       LEFT JOIN environments e ON e.id = t.environment_id
+       LEFT JOIN one_time_audits ota ON ota.id = fi.one_time_audit_id
+       WHERE ri.tenant_id = $1
+       ORDER BY COALESCE(t.hostname, ota.display_name, 'Unassigned machine'),
+                CASE f.severity WHEN 'critical' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 WHEN 'low' THEN 4 ELSE 5 END,
+                ri.created_at DESC`,
+      [tenantId],
+    );
+    return result.rows;
+  }
+
+  @Get('remediation/:id')
+  async getRemediation(@Param('id') id: string) {
+    const tenantId = await this.db.tenantId();
+    const result = await this.db.query(
+      `SELECT ri.id, ri.title, ri.action, ri.instructions AS guidance, ri.status, ri.priority, ri.category,
+              f.severity, f.title AS finding_title, f.description,
+              fi.evidence_summary,
+              COALESCE(t.hostname, ota.display_name, 'Unassigned machine') AS asset,
+              COALESCE(e.name, 'Unassigned') AS env,
+              COALESCE(t.owner_team, 'Unassigned owner') AS owner,
+              t.id AS machine_id,
+              fi.run_id,
+              ri.created_at, ri.updated_at
+       FROM remediation_items ri
+       JOIN finding_instances fi ON fi.id = ri.finding_instance_id
+       JOIN findings f ON f.id = fi.finding_id
+       LEFT JOIN targets t ON t.id = fi.target_id
+       LEFT JOIN environments e ON e.id = t.environment_id
+       LEFT JOIN one_time_audits ota ON ota.id = fi.one_time_audit_id
        WHERE ri.tenant_id = $1 AND ri.id = $2`,
       [tenantId, id],
     );
-    const remediation = result.rows[0];
-    if (!remediation) throw new NotFoundException('remediation item not found');
-    const [comments, activity] = await Promise.all([
-      this.db.query(
-        `SELECT c.id, c.body, c.created_at, c.updated_at, c.author_user_id, COALESCE(u.display_name, 'Unknown') AS author_name
-         FROM remediation_item_comments c
-         LEFT JOIN users u ON u.id = c.author_user_id
-         WHERE c.tenant_id = $1 AND c.remediation_item_id = $2
-         ORDER BY c.created_at ASC`,
-        [tenantId, id],
-      ),
-      this.db.query(
-        `SELECT h.id, h.event_type, h.payload, h.created_at, h.actor_user_id, COALESCE(u.display_name, 'System') AS actor_name
-         FROM remediation_item_activity h
-         LEFT JOIN users u ON u.id = h.actor_user_id
-         WHERE h.tenant_id = $1 AND h.remediation_item_id = $2
-         ORDER BY h.created_at ASC`,
-        [tenantId, id],
-      ),
-    ]);
-    return { ...remediation, comments: comments.rows, activity: activity.rows };
+    if (!result.rows[0]) throw new BadRequestException('remediation item not found');
+    return result.rows[0];
   }
 
-  @Patch('remediations/:id')
-  async updateRemediation(@Param('id') id: string, @Body() body: Record<string, unknown>) {
-    const tenantId = await this.db.tenantId();
-    const current = await this.db.query('SELECT id, status, title FROM remediation_items WHERE tenant_id=$1 AND id=$2', [tenantId, id]);
-    if (!current.rows[0]) throw new NotFoundException('remediation item not found');
-    if (typeof body.owner_user_id === 'string' && body.owner_user_id) {
-      const owner = await this.db.query('SELECT id FROM users WHERE tenant_id=$1 AND id=$2 AND deleted_at IS NULL', [tenantId, body.owner_user_id]);
-      if (!owner.rows[0]) throw new BadRequestException('owner_user_id is not a user in this tenant');
-    }
-    if (typeof body.evidence_artifact_id === 'string' && body.evidence_artifact_id) {
-      const artifact = await this.db.query('SELECT id FROM artifacts WHERE tenant_id=$1 AND id=$2', [tenantId, body.evidence_artifact_id]);
-      if (!artifact.rows[0]) throw new BadRequestException('evidence_artifact_id is not an artifact in this tenant');
-    }
-    const allowedUpdateStatuses = ['needs_review', 'in_progress', 'fixed', 'accepted_risk', 'open', 'accepted', 'ignored', 'resolved'];
-    const requestedStatus = typeof body.status === 'string' && body.status.trim() ? body.status.toLowerCase() : '';
-    if (requestedStatus && !allowedUpdateStatuses.includes(requestedStatus)) throw new BadRequestException(`invalid status: ${requestedStatus}. allowed: ${allowedUpdateStatuses.join(', ')}`);
-    const fields: string[] = [];
-    const values: unknown[] = [tenantId, id];
-    let idx = 3;
-    for (const field of ['title', 'action', 'instructions', 'file_path', 'priority', 'category', 'owner_user_id', 'due_date', 'evidence_artifact_id'] as const) {
-      if (Object.prototype.hasOwnProperty.call(body, field)) {
-        fields.push(`${field} = $${idx++}`);
-        values.push(body[field]);
-      }
-    }
-    if (requestedStatus) {
-      fields.push(`status = $${idx++}`);
-      values.push(requestedStatus);
-    }
-    if (!fields.length) return current.rows[0];
-    fields.push('updated_at = now()');
-    const updated = await this.db.query(`UPDATE remediation_items SET ${fields.join(', ')} WHERE tenant_id=$1 AND id=$2 RETURNING *`, values);
-    await this.db.query(
-      'INSERT INTO remediation_item_activity (tenant_id, remediation_item_id, actor_user_id, event_type, payload) VALUES ($1,$2,$3,$4,$5)',
-      [tenantId, id, null, 'remediation.updated', { updated_fields: fields.filter((field) => field !== 'updated_at = now()') }],
-    );
-    return updated.rows[0];
-  }
-
-  @Post('remediations/:id/comments')
-  async addRemediationComment(@Param('id') id: string, @Body() body: Record<string, unknown>) {
-    const tenantId = await this.db.tenantId();
-    const existing = await this.db.query('SELECT id FROM remediation_items WHERE tenant_id=$1 AND id=$2', [tenantId, id]);
-    if (!existing.rows[0]) throw new NotFoundException('remediation item not found');
-    const comment = typeof body.body === 'string' ? body.body.trim() : typeof body.comment === 'string' ? body.comment.trim() : '';
-    if (!comment) throw new BadRequestException('comment body is required');
-    const authorUserId = typeof body.author_user_id === 'string' && body.author_user_id ? body.author_user_id : null;
-    if (authorUserId) {
-      const author = await this.db.query('SELECT id FROM users WHERE tenant_id=$1 AND id=$2 AND deleted_at IS NULL', [tenantId, authorUserId]);
-      if (!author.rows[0]) throw new BadRequestException('author_user_id is not a user in this tenant');
-    }
-    if (comment.length > 4000) throw new BadRequestException('comment body is too long');
-    const created = await this.db.query(
-      'INSERT INTO remediation_item_comments (tenant_id, remediation_item_id, author_user_id, body) VALUES ($1,$2,$3,$4) RETURNING *',
-      [tenantId, id, authorUserId, comment],
-    );
-    await this.db.query(
-      'INSERT INTO remediation_item_activity (tenant_id, remediation_item_id, actor_user_id, event_type, payload) VALUES ($1,$2,$3,$4,$5)',
-      [tenantId, id, authorUserId, 'remediation.commented', { comment_id: created.rows[0].id }],
-    );
-    return created.rows[0];
-  }
-
-  @Get('remediations/:id/comments')
-  async remediationComments(@Param('id') id: string) {
-    const tenantId = await this.db.tenantId();
-    const result = await this.db.query(
-      `SELECT c.id, c.body, c.created_at, c.updated_at, c.author_user_id, COALESCE(u.display_name, 'Unknown') AS author_name
-       FROM remediation_item_comments c
-       LEFT JOIN users u ON u.id = c.author_user_id
-       WHERE c.tenant_id = $1 AND c.remediation_item_id = $2
-       ORDER BY c.created_at ASC`,
-      [tenantId, id],
-    );
-    return { comments: result.rows };
-  }
-
-  @Get('remediations/:id/activity')
-  async remediationActivity(@Param('id') id: string) {
-    const tenantId = await this.db.tenantId();
-    const result = await this.db.query(
-      `SELECT h.id, h.event_type, h.payload, h.created_at, h.actor_user_id, COALESCE(u.display_name, 'System') AS actor_name
-       FROM remediation_item_activity h
-       LEFT JOIN users u ON u.id = h.actor_user_id
-       WHERE h.tenant_id = $1 AND h.remediation_item_id = $2
-       ORDER BY h.created_at ASC`,
-      [tenantId, id],
-    );
-    return { activity: result.rows };
-  }
-
-  @Patch('remediations/:id/status')
-  @Patch('remediation/:id/status')
-  async updateRemediationStatus(@Param('id') id: string, @Body() body: Record<string, unknown>) {
-    const tenantId = await this.db.tenantId();
-    const newStatus = typeof body.status === 'string' ? body.status.toLowerCase() : '';
-    const allowedStatuses = ['needs_review', 'in_progress', 'fixed', 'accepted_risk', 'open', 'accepted', 'ignored', 'resolved'];
-    if (!newStatus || !allowedStatuses.includes(newStatus)) {
-      throw new BadRequestException(`invalid status: ${newStatus}. allowed: ${allowedStatuses.join(', ')}`);
-    }
-    const current = await this.db.query('SELECT id, status, title FROM remediation_items WHERE tenant_id=$1 AND id=$2', [tenantId, id]);
-    if (!current.rows[0]) throw new NotFoundException('remediation item not found');
-    const updated = await this.db.query('UPDATE remediation_items SET status=$1, updated_at=now() WHERE tenant_id=$2 AND id=$3 RETURNING *', [newStatus, tenantId, id]);
-    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'remediation.status_changed', 'remediation_item', id, { from: current.rows[0].status, to: newStatus, title: current.rows[0].title }]);
-    await this.db.query('INSERT INTO remediation_item_activity (tenant_id, remediation_item_id, actor_user_id, event_type, payload) VALUES ($1,$2,$3,$4,$5)', [tenantId, id, null, 'remediation.status_changed', { from: current.rows[0].status, to: newStatus, title: current.rows[0].title }]);
-    return updated.rows[0];
-  }
-
-
-  @Get('targets') async targets() { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT t.*, e.name AS environment_name, e.slug AS environment_slug FROM targets t LEFT JOIN environments e ON e.id=t.environment_id WHERE t.tenant_id=$1 ORDER BY t.created_at DESC', [tenantId]); return result.rows; }
-  @Get('targets/:id') async target(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT t.*, e.name AS environment_name, e.slug AS environment_slug FROM targets t LEFT JOIN environments e ON e.id=t.environment_id WHERE t.tenant_id=$1 AND t.id=$2', [tenantId, id]); if (!result.rows[0]) throw new BadRequestException('target not found'); return result.rows[0]; }
-  @Get('targets/:id/scan-runs') async targetScanRuns(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query(`SELECT r.*, latest.event_type AS latest_event_type, latest.message AS latest_event_message, latest.progress_percent AS latest_progress_percent, latest.created_at AS latest_event_at, COALESCE(json_agg(jsonb_build_object('id', a.id, 'artifact_type', a.artifact_type, 'storage_uri', a.storage_uri, 'sha256', a.sha256, 'mime_type', a.mime_type, 'size_bytes', a.size_bytes, 'parse_status', a.parse_status, 'created_at', a.created_at) ORDER BY a.created_at DESC) FILTER (WHERE a.id IS NOT NULL), '[]'::json) AS artifacts FROM scan_runs r LEFT JOIN LATERAL (SELECT event_type, message, progress_percent, created_at FROM job_events e WHERE e.tenant_id=$1 AND e.run_id=r.id ORDER BY e.created_at DESC LIMIT 1) latest ON TRUE LEFT JOIN artifacts a ON a.tenant_id=$1 AND a.run_id=r.id WHERE r.tenant_id=$1 AND r.target_id=$2 GROUP BY r.id, latest.event_type, latest.message, latest.progress_percent, latest.created_at ORDER BY r.created_at DESC`, [tenantId, id]); return { runs: result.rows }; }
-  @Get('scan-runs/:id/artifacts') async runArtifacts(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT * FROM artifacts WHERE tenant_id=$1 AND run_id=$2 ORDER BY created_at DESC', [tenantId, id]); return { artifacts: result.rows }; }
-  @Patch('targets/:id') async updateTarget(@Param('id') id: string, @Body() body: Record<string, unknown>) { const tenantId = await this.db.tenantId(); const current = await this.db.query('SELECT * FROM targets WHERE tenant_id=$1 AND id=$2', [tenantId, id]); if (!current.rows[0]) throw new BadRequestException('target not found'); const fields = ['hostname', 'fqdn', 'ip_address', 'owner_team', 'platform', 'connection_mode', 'monitoring_enabled'] as const; const updates: string[] = []; const params: unknown[] = [tenantId, id]; for (const field of fields) { if (Object.prototype.hasOwnProperty.call(body, field)) { updates.push(`${field}=$${params.length + 1}`); params.push(body[field]); } } if (!updates.length) return current.rows[0]; const result = await this.db.query(`UPDATE targets SET ${updates.join(', ')}, updated_at=now() WHERE tenant_id=$1 AND id=$2 RETURNING *`, params); return result.rows[0]; }
-  @Delete('targets/:id') async deleteTarget(@Param('id') id: string) {
-    const tenantId = await this.db.tenantId();
-    const target = await this.db.query<{ id: string; hostname: string }>('SELECT id, hostname FROM targets WHERE tenant_id = $1 AND id = $2', [tenantId, id]);
-    if (!target.rows[0]) throw new BadRequestException('target not found');
-    const runs = await this.db.query<{ id: string }>('SELECT id FROM scan_runs WHERE tenant_id = $1 AND target_id = $2', [tenantId, id]);
-    const jobResult = await this.db.query<{ id: string }>('SELECT id FROM scan_jobs WHERE tenant_id = $1 AND target_id = $2', [tenantId, id]);
-    const runIds = runs.rows.map((row) => row.id);
-    const jobIds = jobResult.rows.map((row) => row.id);
-    const affected = { runs: runIds.length, jobs: jobIds.length, scheduled_target: target.rows[0].hostname };
-    if (runIds.length) {
-      await this.db.query('DELETE FROM job_events WHERE tenant_id=$1 AND run_id = ANY($2::uuid[])', [tenantId, runIds]);
-      await this.db.query('DELETE FROM artifacts WHERE tenant_id=$1 AND run_id = ANY($2::uuid[])', [tenantId, runIds]);
-      await this.db.query('DELETE FROM remediation_items WHERE tenant_id=$1 AND finding_instance_id IN (SELECT id FROM finding_instances WHERE tenant_id=$1 AND target_id=$2)', [tenantId, id]);
-      await this.db.query('DELETE FROM finding_instances WHERE tenant_id=$1 AND run_id = ANY($2::uuid[])', [tenantId, runIds]);
-      await this.db.query('DELETE FROM notification_events WHERE tenant_id=$1 AND run_id = ANY($2::uuid[])', [tenantId, runIds]);
-    }
-    await this.db.query('DELETE FROM job_events WHERE tenant_id=$1 AND job_id = ANY($2::uuid[])', [tenantId, jobIds]);
-    await this.db.query('DELETE FROM scan_runs WHERE tenant_id=$1 AND id = ANY($2::uuid[])', [tenantId, runIds]);
-    await this.db.query('DELETE FROM scan_jobs WHERE tenant_id=$1 AND id = ANY($2::uuid[])', [tenantId, jobIds]);
-    await this.db.query('DELETE FROM notification_events WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]);
-    await this.db.query('DELETE FROM target_status_checks WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]);
-    await this.db.query('DELETE FROM schedules WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]);
-    await this.db.query('DELETE FROM target_identities WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]);
-    await this.db.query('DELETE FROM target_group_members WHERE target_id=$1', [id]);
-    await this.db.query('DELETE FROM targets WHERE tenant_id=$1 AND id=$2', [tenantId, id]);
-    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'target.deleted', 'target', id, affected]);
-    return { deleted: true, id, affected };
-  }
-  @Get('one-time-audits') async oneTimeAudits() { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT * FROM one_time_audits WHERE tenant_id=$1 ORDER BY created_at DESC', [tenantId]); return result.rows; }
-  @Get('one-time-audits/:id') async oneTimeAudit(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT * FROM one_time_audits WHERE tenant_id=$1 AND id=$2', [tenantId, id]); if (!result.rows[0]) throw new BadRequestException('one-time audit not found'); return result.rows[0]; }
   @Post('one-time-audits') async createAudit(@Body() body: Record<string, unknown>) { const tenantId = await this.db.tenantId(); const result = await this.db.query('INSERT INTO one_time_audits (tenant_id,display_name,hostname,ip_address,connection_mode) VALUES ($1,$2,$3,$4,$5) RETURNING *', [tenantId, requireString(body, 'display_name'), body.hostname ?? null, body.ip_address ?? null, body.connection_mode ?? 'ssh_push']); return result.rows[0]; }
   @Post('targets') async createTarget(@Body() body: Record<string, unknown>) { const tenantId = await this.db.tenantId(); const env = await this.db.query<{ id: string }>('SELECT id FROM environments WHERE tenant_id=$1 ORDER BY created_at LIMIT 1', [tenantId]); const result = await this.db.query('INSERT INTO targets (tenant_id,hostname,fqdn,ip_address,environment_id,owner_team,platform,connection_mode) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *', [tenantId, requireString(body, 'hostname'), body.fqdn ?? null, body.ip_address ?? null, env.rows[0]?.id ?? null, body.owner_team ?? null, body.platform ?? null, body.connection_mode ?? 'ssh_push']); return result.rows[0]; }
   @Post('one-time-audits/:id/run') async runAudit(@Param('id') id: string, @Body() body: Record<string, unknown>) { return this.createJob('one_time_audit', null, id, body); }
@@ -511,55 +256,36 @@ export class AppController {
   @Get('scan-jobs/:id') async job(@Param('id') id: string) { const result = await this.db.query('SELECT * FROM scan_jobs WHERE id=$1', [id]); if (!result.rows[0]) throw new BadRequestException('scan job not found'); return result.rows[0]; }
   @Get('scan-runs/:id') async run(@Param('id') id: string) { const result = await this.db.query('SELECT * FROM scan_runs WHERE id=$1', [id]); if (!result.rows[0]) throw new BadRequestException('scan run not found'); return result.rows[0]; }
 
-  @Get('scan-runs/:id/findings') async runFindings(@Param('id') id: string) {
-    const tenantId = await this.db.tenantId();
-    const run = await this.db.query('SELECT id FROM scan_runs WHERE id=$1', [id]);
-    if (!run.rows[0]) throw new BadRequestException('scan run not found');
-    const result = await this.db.query(
-      `SELECT fi.id AS finding_instance_id, fi.status AS finding_status,
-              f.id AS finding_id, f.title, f.category, f.severity, f.description,
-              ri.id AS remediation_id, ri.title AS remediation_title, ri.action AS remediation_action,
-              ri.instructions AS remediation_instructions, ri.status AS remediation_status,
-              r.id AS run_id
-       FROM finding_instances fi
-       JOIN findings f ON f.id=fi.finding_id
-       JOIN scan_runs r ON r.id=fi.run_id
-       LEFT JOIN remediation_items ri ON ri.finding_instance_id=fi.id
-       WHERE fi.tenant_id=$1 AND fi.run_id=$2
-       ORDER BY CASE f.severity WHEN 'critical' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 WHEN 'low' THEN 4 ELSE 5 END, fi.created_at DESC`,
-      [tenantId, id],
-    );
-    return { findings: result.rows };
-  }
-
   @Post('runs/:id/events')
   async workerEvent(@Param('id') id: string, @Body() body: Record<string, unknown>) {
     const tenantId = await this.db.tenantId();
     const eventType = requireString(body, 'type');
     const message = typeof body.message === 'string' ? body.message : eventType;
-    const progressPercent = typeof body.progress_percent === 'number'
-      ? body.progress_percent
-      : typeof body.progressPercent === 'number'
-        ? body.progressPercent
-        : ({
-            'job.queued': 0,
-            'job.claimed': 10,
-            'job.running': 25,
-            'parse.started': 45,
-            'parse.succeeded': 60,
-            'artifact.upload_requested': 75,
-            'artifact.upload_succeeded': 85,
-            'job.retry_scheduled': 90,
-            'job.succeeded': 100,
-            'job.failed': 100,
-          } as Record<string, number | undefined>)[eventType] ?? null;
     await this.applyWorkerEventState(id, eventType);
-    await this.db.query('INSERT INTO job_events (tenant_id,run_id,event_type,message,progress_percent,payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, id, eventType, message, progressPercent, body]);
+    await this.db.query('INSERT INTO job_events (tenant_id,run_id,event_type,message,payload) VALUES ($1,$2,$3,$4,$5)', [tenantId, id, eventType, message, body]);
     return { accepted: true, run_id: id, event_type: eventType };
   }
 
   @Get('scan-runs/:id/events') async events(@Param('id') id: string) { const result = await this.db.query('SELECT * FROM job_events WHERE run_id=$1 ORDER BY created_at', [id]); return { events: result.rows }; }
   @Post('artifacts/upload-init') async uploadInit(@Body() body: Record<string, unknown>) { return this.artifacts.createUpload(requireString(body, 'run_id'), validateArtifactType(requireString(body, 'artifact_type')), typeof body.mime_type === 'string' ? body.mime_type : undefined); }
+
+  @Get('artifacts/:id/download')
+  async downloadArtifact(@Param('id') id: string, @Res() res: Response) {
+    const tenantId = await this.db.tenantId();
+    const result = await this.db.query('SELECT id, artifact_type, storage_uri, mime_type, size_bytes FROM artifacts WHERE tenant_id=$1 AND id=$2', [tenantId, id]);
+    const artifact = result.rows[0];
+    if (!artifact) throw new NotFoundException('artifact not found');
+    if (!String(artifact.storage_uri).startsWith('s3://')) throw new BadRequestException('artifact body is not downloadable');
+    const object = await this.artifacts.download(artifact.storage_uri);
+    const extension = artifact.artifact_type === 'markdown' ? 'md' : artifact.artifact_type === 'scanner.normalized_findings' || artifact.artifact_type === 'scanner.enrichment_summary' || artifact.artifact_type === 'scanner.raw_output' ? 'json' : artifact.artifact_type;
+    res.setHeader('Content-Type', artifact.mime_type || object.ContentType || 'application/octet-stream');
+    res.setHeader('Content-Length', String(artifact.size_bytes || object.ContentLength || ''));
+    res.setHeader('Content-Disposition', `inline; filename="shore-sentinel-${artifact.artifact_type}.${extension}"`);
+    const body = object.Body;
+    if (!body) throw new NotFoundException('artifact object body not found');
+    if (body instanceof Readable) return body.pipe(res);
+    return Readable.fromWeb(body as never).pipe(res);
+  }
 
   @Post('artifacts')
   async workerArtifact(@Body() body: Record<string, unknown>) {
@@ -569,95 +295,19 @@ export class AppController {
     const bodyBase64 = requireString(body, 'bodyBase64');
     const buffer = Buffer.from(bodyBase64, 'base64');
     const sha256 = createHash('sha256').update(buffer).digest('hex');
-    const stored = await this.artifacts.storeWorkerArtifact(runId, artifactType, buffer, typeof body.contentType === 'string' ? body.contentType : undefined);
-    const storageUri = stored.storage_uri;
-    const result = await this.db.query("INSERT INTO artifacts (tenant_id,run_id,artifact_type,storage_uri,sha256,mime_type,size_bytes,parse_status,retention_expires_at) VALUES ($1,$2,$3,$4,$5,$6,$7,'uploaded',now()+interval '90 days') ON CONFLICT(run_id,artifact_type,sha256) DO UPDATE SET parse_status='uploaded', storage_uri=EXCLUDED.storage_uri, mime_type=EXCLUDED.mime_type RETURNING *", [tenantId, runId, artifactType, storageUri, sha256, body.contentType ?? null, buffer.length]);
-    if (artifactType === 'scanner.normalized_findings') await this.persistNormalizedFindings(tenantId, runId, result.rows[0].id, buffer);
+    const storageUri = `api://worker-handoff/${runId}/${artifactType}/${sha256}`;
+    const result = await this.db.query("INSERT INTO artifacts (tenant_id,run_id,artifact_type,storage_uri,sha256,mime_type,size_bytes,parse_status,retention_expires_at) VALUES ($1,$2,$3,$4,$5,$6,$7,'uploaded',now()+interval '90 days') ON CONFLICT(run_id,artifact_type,sha256) DO UPDATE SET parse_status='uploaded' RETURNING *", [tenantId, runId, artifactType, storageUri, sha256, body.contentType ?? null, buffer.length]);
     await this.queue.enqueue('artifact_processing', { artifactId: result.rows[0].id, artifact_id: result.rows[0].id, runId, run_id: runId, artifactType, artifact_type: artifactType });
     await this.db.query("INSERT INTO job_events (tenant_id,run_id,event_type,message,payload) VALUES ($1,$2,'artifact.uploaded',$3,$4)", [tenantId, runId, `${artifactType} artifact uploaded through API handoff`, { artifact_id: result.rows[0].id, metadata: body.metadata ?? {} }]);
     return result.rows[0];
   }
 
-  @Get('artifacts/:id/download')
-  async downloadArtifact(@Param('id') id: string, @Res() res: Response) {
-    const tenantId = await this.db.tenantId();
-    const result = await this.db.query('SELECT * FROM artifacts WHERE tenant_id=$1 AND id=$2', [tenantId, id]);
-    const artifact = result.rows[0];
-    if (!artifact) throw new NotFoundException('artifact not found');
-    const stream = await this.artifacts.readArtifact(artifact.storage_uri);
-    const extension = artifact.artifact_type === 'markdown' ? 'md' : String(artifact.artifact_type).replace(/[^a-z0-9]/gi, '-');
-    res.setHeader('content-type', artifact.mime_type || 'application/octet-stream');
-    res.setHeader('content-disposition', `inline; filename="shore-sentinel-${artifact.run_id}-${artifact.artifact_type}.${extension}"`);
-    stream.pipe(res);
-  }
-
   @Post('artifacts/upload-complete') async uploadComplete(@Body() body: Record<string, unknown>) { const tenantId = await this.db.tenantId(); const runId = requireString(body, 'run_id'); const storageUri = requireString(body, 'storage_uri'); const { artifactType, sha256, sizeBytes } = validateArtifactComplete(body); const result = await this.db.query("INSERT INTO artifacts (tenant_id,run_id,artifact_type,storage_uri,sha256,mime_type,size_bytes,parse_status,retention_expires_at) VALUES ($1,$2,$3,$4,$5,$6,$7,'uploaded',now()+interval '90 days') ON CONFLICT(run_id,artifact_type,sha256) DO UPDATE SET parse_status='uploaded' RETURNING *", [tenantId, runId, artifactType, storageUri, sha256, body.mime_type ?? null, sizeBytes]); await this.queue.enqueue('artifact_processing', { artifactId: result.rows[0].id, artifact_id: result.rows[0].id, runId, run_id: runId, artifactType, artifact_type: artifactType }); await this.db.query("INSERT INTO job_events (tenant_id,run_id,event_type,message,payload) VALUES ($1,$2,'artifact.uploaded',$3,$4)", [tenantId, runId, `${artifactType} artifact uploaded`, { artifact_id: result.rows[0].id }]); return result.rows[0]; }
   @Get('events/stream') @Header('Content-Type', 'text/event-stream') async stream(@Res() res: Response) { res.write(`event: ready\ndata: ${JSON.stringify({ ok: true, at: new Date().toISOString() })}\n\n`); const timer = setInterval(() => res.write(`event: heartbeat\ndata: ${JSON.stringify({ at: new Date().toISOString() })}\n\n`), 15000); res.on('close', () => clearInterval(timer)); }
 
-  private normalizeFindingSeverity(value: unknown) {
-    const severity = String(value || 'informational').toLowerCase();
-    if (severity === 'critical' || severity === 'high' || severity === 'low' || severity === 'informational') return severity;
-    if (severity === 'moderate' || severity === 'medium' || severity === 'med') return 'medium';
-    if (severity === 'info') return 'informational';
-    if (severity === 'crit') return 'critical';
-    return 'informational';
-  }
-
-  private textValue(value: unknown, fallback = ''): string {
-    if (typeof value === 'string') return value;
-    if (value == null) return fallback;
-    if (Array.isArray(value)) return value.map((item) => this.textValue(item)).filter(Boolean).join('\n');
-    if (typeof value === 'object') {
-      const record = value as Record<string, unknown>;
-      const primary = record.instruction ?? record.action ?? record.recommendation ?? record.remediation ?? record.description ?? record.summary ?? record.title;
-      const parts = [this.textValue(primary, fallback)];
-      if (typeof record.file_path === 'string' && record.file_path) parts.push(`File: ${record.file_path}`);
-      if (typeof record.command === 'string' && record.command) parts.push(`Command: ${record.command}`);
-      return parts.filter((part) => part && part !== '[object Object]').join('\n') || fallback;
-    }
-    return String(value);
-  }
-
-  private evidenceSummary(value: unknown) {
-    if (Array.isArray(value)) return value.map((item) => this.textValue(item)).filter(Boolean).join('\n').slice(0, 4000);
-    return this.textValue(value).slice(0, 4000);
-  }
-
-  private async persistNormalizedFindings(tenantId: string, runId: string, artifactId: string, buffer: Buffer) {
-    const parsed = JSON.parse(buffer.toString('utf8')) as unknown;
-    const findings = Array.isArray(parsed) ? parsed : [];
-    const run = await this.db.query('SELECT id, target_id, one_time_audit_id FROM scan_runs WHERE tenant_id=$1 AND id=$2', [tenantId, runId]);
-    const runRow = run.rows[0];
-    if (!runRow) throw new BadRequestException('scan run not found');
-    await this.db.query('DELETE FROM remediation_items WHERE tenant_id=$1 AND finding_instance_id IN (SELECT id FROM finding_instances WHERE tenant_id=$1 AND run_id=$2)', [tenantId, runId]);
-    await this.db.query('DELETE FROM finding_instances WHERE tenant_id=$1 AND run_id=$2', [tenantId, runId]);
-    for (const raw of findings) {
-      if (!raw || typeof raw !== 'object') continue;
-      const finding = raw as Record<string, unknown>;
-      const scannerFindingId = this.textValue(finding.id || finding.findingId || finding.title || `finding-${runId}`).slice(0, 500);
-      const title = this.textValue(finding.title || finding.name || scannerFindingId, scannerFindingId).slice(0, 500);
-      const category = this.textValue(finding.category || 'agent-security-selfcheck', 'agent-security-selfcheck').slice(0, 200);
-      const severity = this.normalizeFindingSeverity(finding.severity);
-      const description = this.textValue(finding.description || finding.summary || '').slice(0, 4000);
-      const persisted = await this.db.query(
-        `INSERT INTO findings (tenant_id, scanner_finding_id, title, category, severity, description)
-         VALUES ($1,$2,$3,$4,$5,$6)
-         ON CONFLICT(tenant_id, scanner_finding_id) DO UPDATE SET title=EXCLUDED.title, category=EXCLUDED.category, severity=EXCLUDED.severity, description=EXCLUDED.description, updated_at=now()
-         RETURNING id`,
-        [tenantId, scannerFindingId, title, category, severity, description],
-      );
-      const instance = await this.db.query(
-        'INSERT INTO finding_instances (tenant_id,finding_id,run_id,target_id,one_time_audit_id,status,evidence_summary,source_artifact_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id',
-        [tenantId, persisted.rows[0].id, runId, runRow.target_id ?? null, runRow.one_time_audit_id ?? null, 'open', this.evidenceSummary(finding.evidence), artifactId],
-      );
-      const remediation = finding.remediation || finding.recommendation;
-      if (remediation) {
-        await this.db.query(
-          'INSERT INTO remediation_items (tenant_id,finding_instance_id,source,priority,category,title,action,instructions,status) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
-          [tenantId, instance.rows[0].id, 'scanner_generated', severity, category, `Remediate: ${title}`.slice(0, 500), this.textValue(remediation).slice(0, 1000), this.textValue(remediation).slice(0, 4000), 'needs_review'],
-        );
-      }
-    }
+  private rememberMe(body: Record<string, unknown>) {
+    const value = body.remember_me ?? body.rememberMe;
+    return value === true || value === 1 || value === '1' || value === 'true' || value === 'on';
   }
 
   private async createJob(subjectType: 'managed_target' | 'one_time_audit', targetId: string | null, oneTimeAuditId: string | null, body: Record<string, unknown>) {
@@ -688,7 +338,7 @@ export class AppController {
     const subjectId = targetId ?? oneTimeAuditId ?? 'unknown-subject';
     return {
       contractVersion: scannerBundleContractVersion(),
-      scanner: { name: 'shore-sentinel-bundled-scanner', version: body.scanner_version ?? '3.4.0' },
+      scanner: { name: 'shore-sentinel-api-placeholder', version: body.scanner_version ?? '0.1.0' },
       target: { assetId: subjectId, subjectType },
       findings: [],
       collectedAt: new Date().toISOString(),
@@ -717,231 +367,171 @@ export class AppController {
     }
   }
 
-  @Get('saved-views')
-  async listSavedViews() {
+  private setSessionCookie(res: Response, token: string, rememberMe = false) {
+    res.cookie('shore_session', token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: rememberMe ? THIRTY_DAYS_SECONDS * 1000 : undefined,
+    });
+  }
+
+  private async requireAdmin(req: Request) {
+    const user = await this.auth.me(this.token(req));
+    const roles = Array.isArray(user?.roles) ? user.roles : [];
+    if (!roles.includes('admin')) throw new ForbiddenException('Admin role required');
+    return user;
+  }
+
+  private token(req: Request) { const cookieToken = (req as Request & { cookies?: Record<string, string> }).cookies?.shore_session; const auth = req.header('authorization'); return cookieToken ?? (auth?.startsWith('Bearer ') ? auth.slice(7) : undefined); }
+
+  // ── User management ──────────────────────────────────────────────
+
+  @Get('users')
+  async listUsers(@Req() req: Request) {
     const tenantId = await this.db.tenantId();
     const result = await this.db.query(
-      `SELECT id, slug, title, view_type, filters, sort_by, is_pinned, created_at, updated_at
-       FROM saved_views WHERE tenant_id = $1
-       ORDER BY is_pinned DESC, updated_at DESC`,
+      `SELECT u.id, u.email, u.display_name, u.disabled_at, u.created_at, u.updated_at,
+              json_agg(r.name ORDER BY r.name) AS roles
+       FROM users u
+       LEFT JOIN user_roles ur ON ur.user_id = u.id
+       LEFT JOIN roles r ON r.id = ur.role_id
+       WHERE u.tenant_id = $1
+       GROUP BY u.id
+       ORDER BY u.created_at DESC`,
       [tenantId],
     );
-    const presetDefaults = this.savedViewPresets();
-    const existingSlugs = new Set(result.rows.map((r) => r.slug));
-    const missing = presetDefaults.filter((p) => !existingSlugs.has(p.slug));
-    if (missing.length) {
-      for (const preset of missing) {
-        await this.db.query(
-          `INSERT INTO saved_views (tenant_id, slug, title, view_type, filters, sort_by, is_pinned)
-           VALUES ($1, $2, $3, $4, $5, $6, $7)
-           ON CONFLICT (tenant_id, slug) DO NOTHING`,
-          [tenantId, preset.slug, preset.title, preset.view_type, JSON.stringify(preset.filters), preset.sort_by, preset.is_pinned],
-        );
-      }
-      const all = await this.db.query(
-        `SELECT id, slug, title, view_type, filters, sort_by, is_pinned, created_at, updated_at
-         FROM saved_views WHERE tenant_id = $1
-         ORDER BY is_pinned DESC, updated_at DESC`,
-        [tenantId],
-      );
-      return all.rows;
-    }
     return result.rows;
   }
 
-  @Get('saved-views/:slug')
-  async getSavedView(@Param('slug') slug: string) {
+  @Get('users/roles')
+  async listRoles() {
+    const result = await this.db.query('SELECT name, description FROM roles ORDER BY name');
+    return result.rows;
+  }
+
+  @Post('users')
+  async createUser(@Body() body: Record<string, unknown>) {
     const tenantId = await this.db.tenantId();
-    const result = await this.db.query(
-      `SELECT id, slug, title, view_type, filters, sort_by, is_pinned, created_at, updated_at
-       FROM saved_views WHERE tenant_id = $1 AND slug = $2`,
-      [tenantId, slug],
+    const email = requireString(body, 'email');
+    const displayName = requireString(body, 'display_name');
+    const password = requireString(body, 'password');
+    const roles = Array.isArray(body.roles) ? body.roles as string[] : ['operator'];
+
+    const existing = await this.db.query('SELECT id FROM users WHERE email = $1', [email]);
+    if (existing.rows[0]) throw new ConflictException('Email already exists');
+
+    const passwordHash = await bcrypt.hash(password, 12);
+    const created = await this.db.query<{ id: string }>(
+      'INSERT INTO users (tenant_id, email, display_name, password_hash) VALUES ($1,$2,$3,$4) RETURNING id',
+      [tenantId, email, displayName, passwordHash],
     );
-    if (!result.rows[0]) throw new NotFoundException('saved view not found');
+    const userId = created.rows[0].id;
+
+    for (const roleName of roles) {
+      await this.db.query(
+        'INSERT INTO user_roles (user_id, role_id) SELECT $1, id FROM roles WHERE name = $2 ON CONFLICT DO NOTHING',
+        [userId, roleName],
+      );
+    }
+
+    await this.db.query(
+      'INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)',
+      [tenantId, null, 'user.created', 'user', userId, { email, displayName, roles }],
+    );
+
+    return { id: userId, email, display_name: displayName, roles };
+  }
+
+  @Patch('users/:id')
+  async updateUser(@Param('id') id: string, @Body() body: Record<string, unknown>) {
+    const tenantId = await this.db.tenantId();
+    const fields: string[] = [];
+    const values: unknown[] = [];
+    let idx = 1;
+
+    if (typeof body.email === 'string') { fields.push(`email = $${idx++}`); values.push(body.email); }
+    if (typeof body.display_name === 'string') { fields.push(`display_name = $${idx++}`); values.push(body.display_name); }
+
+    if (fields.length > 0) {
+      fields.push(`updated_at = now()`);
+      values.push(id);
+      await this.db.query(`UPDATE users SET ${fields.join(', ')} WHERE id = $${idx}`, values);
+    }
+
+    if (Array.isArray(body.roles)) {
+      await this.db.query('DELETE FROM user_roles WHERE user_id = $1', [id]);
+      for (const roleName of body.roles as string[]) {
+        await this.db.query(
+          'INSERT INTO user_roles (user_id, role_id) SELECT $1, id FROM roles WHERE name = $2 ON CONFLICT DO NOTHING',
+          [id, roleName],
+        );
+      }
+    }
+
+    await this.db.query(
+      'INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)',
+      [tenantId, null, 'user.updated', 'user', id, { updated_fields: Object.keys(body) }],
+    );
+
+    const result = await this.db.query(
+      `SELECT u.id, u.email, u.display_name, u.disabled_at, u.created_at, u.updated_at,
+              json_agg(r.name ORDER BY r.name) AS roles
+       FROM users u
+       LEFT JOIN user_roles ur ON ur.user_id = u.id
+       LEFT JOIN roles r ON r.id = ur.role_id
+       WHERE u.id = $1
+       GROUP BY u.id`,
+      [id],
+    );
     return result.rows[0];
   }
 
-  @Get('saved-views/:slug/data')
-  async getSavedViewData(@Param('slug') slug: string) {
+  @Post('users/:id/reset-password')
+  async resetPassword(@Param('id') id: string, @Body() body: Record<string, unknown>) {
     const tenantId = await this.db.tenantId();
-    const view = await this.db.query('SELECT * FROM saved_views WHERE tenant_id=$1 AND slug=$2', [tenantId, slug]);
-    if (!view.rows[0]) throw new NotFoundException('saved view not found');
-    const preset = this.savedViewPresets().find((p) => p.slug === slug);
-    if (!preset) throw new BadRequestException(`unknown saved view: ${slug}`);
-    return preset.resolve(tenantId, this.db);
-  }
-
-  @Post('saved-views')
-  async createSavedView(@Body() body: Record<string, unknown>) {
-    const tenantId = await this.db.tenantId();
-    const slug = typeof body.slug === 'string' ? body.slug.trim() : '';
-    const title = typeof body.title === 'string' ? body.title.trim() : '';
-    const viewType = typeof body.view_type === 'string' ? body.view_type : '';
-    const allowedTypes = ['high_findings','unreviewed_remediation','failed_scans','recently_completed'];
-    if (!slug || !title || !allowedTypes.includes(viewType)) {
-      throw new BadRequestException('slug, title, and valid view_type are required');
-    }
-    const filters = typeof body.filters === 'object' && body.filters ? body.filters : {};
-    const sortBy = typeof body.sort_by === 'string' ? body.sort_by : 'default';
-    const result = await this.db.query(
-      `INSERT INTO saved_views (tenant_id, slug, title, view_type, filters, sort_by)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       ON CONFLICT (tenant_id, slug) DO UPDATE SET title=EXCLUDED.title, filters=EXCLUDED.filters, sort_by=EXCLUDED.sort_by, updated_at=now()
-       RETURNING *`,
-      [tenantId, slug.slice(0, 100), title.slice(0, 200), viewType, JSON.stringify(filters), sortBy],
+    const password = requireString(body, 'password');
+    const passwordHash = await bcrypt.hash(password, 12);
+    await this.db.query('UPDATE users SET password_hash = $1, updated_at = now() WHERE id = $2', [passwordHash, id]);
+    await this.db.query(
+      'INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)',
+      [tenantId, null, 'user.password_reset', 'user', id, {}],
     );
-    return result.rows[0];
+    return { ok: true };
   }
 
-  @Delete('saved-views/:slug')
-  async deleteSavedView(@Param('slug') slug: string) {
+  @Delete('users/:id')
+  async deleteUser(@Param('id') id: string) {
     const tenantId = await this.db.tenantId();
-    const presets = this.savedViewPresets().map((p) => p.slug);
-    if (presets.includes(slug)) throw new BadRequestException('cannot delete preset saved views');
-    const result = await this.db.query(
-      'DELETE FROM saved_views WHERE tenant_id = $1 AND slug = $2 RETURNING id',
-      [tenantId, slug],
+    await this.db.query(
+      'INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)',
+      [tenantId, null, 'user.deleted', 'user', id, { actor_user_id_detached: true }],
     );
-    if (!result.rows[0]) throw new NotFoundException('saved view not found');
-    return { deleted: true, slug };
+    await this.db.query('UPDATE audit_log SET actor_user_id = NULL WHERE actor_user_id = $1', [id]);
+    await this.db.query('DELETE FROM user_roles WHERE user_id = $1', [id]);
+    await this.db.query('DELETE FROM users WHERE id = $1', [id]);
+    return { ok: true };
   }
 
-  private savedViewPresets() {
-    return [
-      {
-        slug: 'high-findings',
-        title: 'High findings',
-        view_type: 'high_findings',
-        filters: { severity: 'critical,high' },
-        sort_by: 'severity',
-        is_pinned: false,
-        resolve: async (tenantId: string, db: { query: (sql: string, params: unknown[]) => Promise<{ rows: Record<string, unknown>[] }> }) => {
-          const result = await db.query(
-            `SELECT fi.id, fi.status, fi.evidence_summary, fi.created_at, f.title, f.category, f.severity, f.description,
-                    r.id AS run_id, r.status AS run_status,
-                    COALESCE(t.hostname, a.display_name, 'unknown subject') AS subject_name,
-                    ri.id AS remediation_id, ri.title AS remediation_title, ri.action AS remediation_action,
-                    ri.instructions AS remediation_instructions, ri.status AS remediation_status
-             FROM finding_instances fi
-             JOIN findings f ON f.id=fi.finding_id
-             JOIN scan_runs r ON r.id=fi.run_id
-             LEFT JOIN targets t ON t.id=fi.target_id
-             LEFT JOIN one_time_audits a ON a.id=fi.one_time_audit_id
-             LEFT JOIN remediation_items ri ON ri.finding_instance_id=fi.id
-             WHERE fi.tenant_id=$1 AND f.severity IN ('critical','high')
-             ORDER BY CASE f.severity WHEN 'critical' THEN 1 WHEN 'high' THEN 2 ELSE 3 END, fi.created_at DESC LIMIT 100`,
-            [tenantId],
-          );
-          return { view_type: 'high_findings', items: result.rows, total: result.rows.length };
-        },
-      },
-      {
-        slug: 'unreviewed-remediation',
-        title: 'Unreviewed remediation',
-        view_type: 'unreviewed_remediation',
-        filters: { status: 'needs_review' },
-        sort_by: 'date',
-        is_pinned: false,
-        resolve: async (tenantId: string, db: { query: (sql: string, params: unknown[]) => Promise<{ rows: Record<string, unknown>[] }> }) => {
-          const result = await db.query(
-            `SELECT ri.id, ri.status, ri.title, ri.action, ri.instructions, ri.priority, ri.category, ri.created_at, ri.updated_at,
-                    fi.id AS finding_instance_id, f.title AS finding_title, f.severity, f.category AS finding_category,
-                    r.id AS run_id, COALESCE(t.hostname, a.display_name, 'unknown subject') AS subject_name
-             FROM remediation_items ri
-             JOIN finding_instances fi ON fi.id = ri.finding_instance_id
-             JOIN findings f ON f.id = fi.finding_id
-             JOIN scan_runs r ON r.id = fi.run_id
-             LEFT JOIN targets t ON t.id = fi.target_id
-             LEFT JOIN one_time_audits a ON a.id = fi.one_time_audit_id
-             WHERE ri.tenant_id = $1 AND ri.status = 'needs_review'
-             ORDER BY ri.created_at DESC LIMIT 100`,
-            [tenantId],
-          );
-          return { view_type: 'unreviewed_remediation', items: result.rows, total: result.rows.length };
-        },
-      },
-      {
-        slug: 'failed-scans',
-        title: 'Failed scans',
-        view_type: 'failed_scans',
-        filters: { runStatus: 'failed' },
-        sort_by: 'date',
-        is_pinned: false,
-        resolve: async (tenantId: string, db: { query: (sql: string, params: unknown[]) => Promise<{ rows: Record<string, unknown>[] }> }) => {
-          const result = await db.query(
-            `SELECT r.id, r.status, r.subject_type, r.target_id, r.one_time_audit_id, r.created_at, r.started_at, r.completed_at, r.exit_code,
-                    COALESCE(t.hostname, a.display_name, 'unknown subject') AS subject_name,
-                    COALESCE(count(DISTINCT fi.id), 0)::int AS findings_count
-             FROM scan_runs r
-             LEFT JOIN targets t ON t.id=r.target_id
-             LEFT JOIN one_time_audits a ON a.id=r.one_time_audit_id
-             LEFT JOIN finding_instances fi ON fi.tenant_id=$1 AND fi.run_id=r.id
-             WHERE r.tenant_id=$1 AND r.status='failed'
-             GROUP BY r.id, t.hostname, a.display_name
-             ORDER BY r.completed_at DESC NULLS LAST, r.created_at DESC LIMIT 50`,
-            [tenantId],
-          );
-          return { view_type: 'failed_scans', items: result.rows, total: result.rows.length };
-        },
-      },
-      {
-        slug: 'recently-completed',
-        title: 'Recently completed scans',
-        view_type: 'recently_completed',
-        filters: { runStatus: 'completed', timeRange: 'Last 30 days' },
-        sort_by: 'date',
-        is_pinned: false,
-        resolve: async (tenantId: string, db: { query: (sql: string, params: unknown[]) => Promise<{ rows: Record<string, unknown>[] }> }) => {
-          const result = await db.query(
-            `SELECT r.id, r.status, r.subject_type, r.target_id, r.one_time_audit_id, r.created_at, r.started_at, r.completed_at, r.duration_seconds,
-                    COALESCE(t.hostname, a.display_name, 'unknown subject') AS subject_name,
-                    COALESCE(count(DISTINCT fi.id), 0)::int AS findings_count
-             FROM scan_runs r
-             LEFT JOIN targets t ON t.id=r.target_id
-             LEFT JOIN one_time_audits a ON a.id=r.one_time_audit_id
-             LEFT JOIN finding_instances fi ON fi.tenant_id=$1 AND fi.run_id=r.id
-             WHERE r.tenant_id=$1 AND r.status='completed'
-             GROUP BY r.id, t.hostname, a.display_name
-             ORDER BY r.completed_at DESC NULLS LAST, r.created_at DESC LIMIT 20`,
-            [tenantId],
-          );
-          return { view_type: 'recently_completed', items: result.rows, total: result.rows.length };
-        },
-      },
-    ];
-  }
-
-  @Get('audit-log')
-  async auditLog(@Query('action') action?: string, @Query('resource_type') resourceType?: string, @Query('limit') limit?: string) {
+  @Post('users/:id/disable')
+  async disableUser(@Param('id') id: string) {
     const tenantId = await this.db.tenantId();
-    const conditions: string[] = ['tenant_id = $1'];
-    const params: unknown[] = [tenantId];
-    if (action) { params.push(action); conditions.push(`action = $${params.length}`); }
-    if (resourceType) { params.push(resourceType); conditions.push(`resource_type = $${params.length}`); }
-    const limitNum = Math.min(Math.max(parseInt(limit ?? '50', 10) || 50, 1), 200);
-    params.push(limitNum);
-    const result = await this.db.query(
-      `SELECT id, action, resource_type, resource_id, payload, created_at
-       FROM audit_log
-       WHERE ${conditions.join(' AND ')}
-       ORDER BY created_at DESC
-       LIMIT $${params.length}`,
-      params,
+    await this.db.query("UPDATE users SET disabled_at = now(), updated_at = now() WHERE id = $1", [id]);
+    await this.db.query(
+      'INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)',
+      [tenantId, null, 'user.disabled', 'user', id, {}],
     );
-    return { events: result.rows.map((row) => ({ ...row, payload: this.redactAuditPayload(row.payload) })) };
+    return { ok: true };
   }
 
-  private redactAuditPayload(payload: unknown): unknown {
-    if (!payload || typeof payload !== 'object') return payload ?? {};
-    const source = payload as Record<string, unknown>;
-    const redacted: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(source)) {
-      if (/token|secret|password|key/i.test(key)) redacted[key] = '[REDACTED]';
-      else redacted[key] = value && typeof value === 'object' ? this.redactAuditPayload(value) : value;
-    }
-    return redacted;
+  @Post('users/:id/enable')
+  async enableUser(@Param('id') id: string) {
+    const tenantId = await this.db.tenantId();
+    await this.db.query('UPDATE users SET disabled_at = NULL, updated_at = now() WHERE id = $1', [id]);
+    await this.db.query(
+      'INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)',
+      [tenantId, null, 'user.enabled', 'user', id, {}],
+    );
+    return { ok: true };
   }
-
-  private setSessionCookie(res: Response, token: string, rememberMe = false) { res.cookie('shore_session', token, { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: rememberMe ? 1000 * 60 * 60 * 24 * 30 : undefined }); }
-  private token(req: Request) { const cookieToken = (req as Request & { cookies?: Record<string, string> }).cookies?.shore_session; const auth = req.header('authorization'); return cookieToken ?? (auth?.startsWith('Bearer ') ? auth.slice(7) : undefined); }
 }

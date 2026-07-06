@@ -1,156 +1,120 @@
-import Link from 'next/link';
+import { unstable_noStore as noStore } from 'next/cache';
 import { notFound } from 'next/navigation';
 import { Header, Pill } from '@/components/ui';
 import { apiBase } from '@/lib/data';
-import { routePath } from '@/lib/paths';
-
-const serverApiBase = () => (process.env.INTERNAL_API_URL || process.env.API_URL || 'http://api:4000').replace(/\/$/, '');
+import { apiGet } from '@/lib/api-data';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-export function generateStaticParams() { return []; }
-
-async function loadRun(id) {
-  try {
-    const response = await fetch(`${serverApiBase()}/scan-runs/${id}`, { cache: 'no-store' });
-    if (!response.ok) return null;
-    return await response.json();
-  } catch {
-    return null;
-  }
+function renderFinding(finding, index) {
+  const summary = finding.summary || finding.title || `Finding ${index + 1}`;
+  return (
+    <li key={finding.id || `${index}-${summary}`} className="finding-summary-row">
+      <span>
+        <b>{summary}</b>
+        <small>{finding.severity || 'informational'} · {finding.status || 'open'}</small>
+        {finding.evidence ? <small>{finding.evidence}</small> : null}
+      </span>
+    </li>
+  );
 }
 
-async function loadRunArtifacts(id) {
-  try {
-    const response = await fetch(`${serverApiBase()}/scan-runs/${id}/artifacts`, { cache: 'no-store' });
-    if (!response.ok) return [];
-    const payload = await response.json();
-    return payload.artifacts ?? [];
-  } catch {
-    return [];
-  }
+function artifactLabel(type) {
+  return ({
+    pdf: 'PDF report',
+    markdown: 'Markdown report',
+    sarif: 'SARIF results',
+    'scanner.raw_output': 'Raw scanner JSON',
+    'scanner.normalized_findings': 'Normalized findings JSON',
+    'scanner.enrichment_summary': 'CVE enrichment summary',
+  })[type] || type;
 }
 
-async function loadRunEvents(id) {
-  try {
-    const response = await fetch(`${serverApiBase()}/scan-runs/${id}/events`, { cache: 'no-store' });
-    if (!response.ok) return [];
-    const payload = await response.json();
-    return payload.events ?? [];
-  } catch {
-    return [];
-  }
-}
-
-async function loadRunFindings(id) {
-  try {
-    const response = await fetch(`${serverApiBase()}/scan-runs/${id}/findings`, { cache: 'no-store' });
-    if (!response.ok) return [];
-    const payload = await response.json();
-    return payload.findings ?? [];
-  } catch {
-    return [];
-  }
-}
-
-function readableTime(value) {
-  return value ? new Date(value).toLocaleString() : '—';
+function artifactDescription(artifact) {
+  const kb = Math.max(1, Math.round(Number(artifact.size_bytes || 0) / 1024));
+  return `${artifact.mime_type || 'artifact'} · ${kb} KB · ${artifact.parse_status}`;
 }
 
 export default async function Report({ params }) {
-  const [run, artifacts, events, findings] = await Promise.all([loadRun(params.id), loadRunArtifacts(params.id), loadRunEvents(params.id), loadRunFindings(params.id)]);
-  if (!run) notFound();
-
-  const severityTone = { critical: 'red', high: 'red', medium: 'amber', low: 'yellow', informational: 'blue' };
-  const statusTones = { needs_review: 'amber', in_progress: 'blue', fixed: 'green', accepted_risk: 'yellow' };
-  const statusLabels = { needs_review: 'Needs review', in_progress: 'In progress', fixed: 'Fixed', accepted_risk: 'Accepted risk' };
+  noStore();
+  const { id } = await params;
+  let report;
+  try {
+    report = await apiGet('/reports/' + id);
+  } catch (error) {
+    if (String(error.message || error).includes('400')) notFound();
+    throw error;
+  }
+  const findings = Array.isArray(report.findings) ? report.findings : [];
+  const artifacts = Array.isArray(report.artifacts) ? report.artifacts : [];
 
   return (
     <div className="stack">
-      <Header
-        eye="Scan report"
-        title={`Report ${run.id}`}
-        desc={`Status: ${run.status} · Completed: ${readableTime(run.completed_at || run.updated_at || run.created_at)}`}
-      >
-        {run.target_id ? <Link className="btn alt" href={routePath(`/inventory/machines/${run.target_id}`)}>Back to machine</Link> : null}
-        {findings.length ? <Link className="btn" href={routePath('/remediation')}>Open remediation</Link> : null}
-        <Link className="btn alt" href={routePath('/scans-reports')}>All reports</Link>
+      <Header eye="Report" title={`${report.title} scan report`} desc={`${report.source} report. Evidence, findings, and scanner-generated artifacts stay tied to the scanned subject.`}>
+        <details>
+          <summary>Actions</summary>
+          <a href="#artifacts">Open artifacts</a>
+          <a href="#compare">Compare reports</a>
+          <a href="#export">Import / export</a>
+        </details>
       </Header>
 
       <section className="grid">
         <article className="panel">
-          <h2>Run summary</h2>
-          <p>Subject type: {run.subject_type}</p>
-          <p>Target: {run.target_id ?? '—'}</p>
-          <p>Started: {readableTime(run.started_at || run.created_at)}</p>
-          <p>Finished: {readableTime(run.completed_at)}</p>
+          <h2>Report summary</h2>
+          <p>Environment: {report.env}</p>
+          <p>Findings: {report.finding_count || 0}</p>
+          <p>Artifacts: {artifacts.length}</p>
+          <Pill>{report.status}</Pill>
+          <Pill>{report.severity}</Pill>
         </article>
         <article className="panel">
-          <h2>Posture</h2>
-          <b className="score">{typeof run.latest_progress_percent === 'number' ? `${run.latest_progress_percent}%` : run.status}</b>
-          <Pill tone={run.status === 'succeeded' ? 'green' : 'amber'}>{run.status}</Pill>
+          <h2>Progress</h2>
+          <p className="ok">{report.status}</p>
+          <p>Started: {report.created_at}</p>
+          {report.completed_at ? <p>Completed: {report.completed_at}</p> : null}
         </article>
       </section>
 
-      <section className="panel">
-        <h2>Artifacts</h2>
-        {artifacts.length ? (
-          <div className="cards report-cards">
-            {artifacts.map((artifact) => (
-              <article className="card report-card" key={artifact.id}>
-                <h3>{artifact.artifact_type}</h3>
-                <p>{artifact.mime_type ?? 'unknown mime type'}</p>
-                <p>{artifact.size_bytes} bytes</p>
-                <a className="btn" href={`${apiBase}/artifacts/${artifact.id}/download`} target="_blank" rel="noreferrer">
-                  {artifact.artifact_type === 'pdf' ? 'Open PDF report' : 'Open artifact'}
-                </a>
-              </article>
-            ))}
-          </div>
+      <section id="artifacts" className="panel">
+        <h2>Generated scanner artifacts</h2>
+        <p className="note">Open the PDF report for review, Markdown for text evidence, SARIF for tooling, and normalized JSON for CVE-enriched findings.</p>
+        {artifacts.length === 0 ? (
+          <p className="note">No downloadable scanner artifacts were recorded for this run.</p>
         ) : (
-          <div className="empty"><p>No artifacts were recorded for this report.</p></div>
+          <div className="artifact-list">
+            {artifacts.map((artifact) => {
+              const href = artifact.download_path ? `${apiBase}${artifact.download_path}` : null;
+              return (
+                <article className="row" key={artifact.id}>
+                  <span>
+                    <b>{artifactLabel(artifact.artifact_type)}</b>
+                    <small>{artifactDescription(artifact)}</small>
+                  </span>
+                  <Pill>{artifact.artifact_type}</Pill>
+                  {href ? <a className="btn alt" href={href} target="_blank" rel="noreferrer">Open artifact</a> : <Pill>metadata only</Pill>}
+                </article>
+              );
+            })}
+          </div>
         )}
       </section>
 
       <section className="panel">
-        <header><div><h2>Findings &amp; remediation</h2><p>Scanner findings generated by this run and their remediation status. Jump to remediation to track progress or confirm resolution.</p></div><Pill tone={findings.length ? 'red' : 'green'}>{findings.length} finding{findings.length === 1 ? '' : 's'}</Pill></header>
-        {findings.length ? (
-          <div className="finding-list" data-testid="report-findings">
-            {findings.map((finding) => (
-              <article className="finding-row" key={finding.finding_instance_id} data-testid="report-finding-row" data-status={finding.remediation_status || 'open'}>
-                <div>
-                  <span className={`status-dot ${severityTone[finding.severity] || ''}`} aria-hidden="true" />
-                  <div>
-                    <h3>{finding.title}</h3>
-                    <p>{finding.description || 'Scanner evidence is available in the artifacts above.'}</p>
-                  </div>
-                </div>
-                <aside>
-                  <Pill tone={severityTone[finding.severity] || ''}>{finding.severity}</Pill>
-                  <Pill tone={statusTones[finding.remediation_status] || ''} data-testid="finding-remediation-status">{statusLabels[finding.remediation_status] || finding.remediation_status || 'open'}</Pill>
-                  {finding.remediation_id ? (
-                    <Link className="btn alt" href={routePath(`/remediation/${finding.remediation_id}`)}>View remediation</Link>
-                  ) : null}
-                </aside>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <div className="empty"><p>No findings were recorded for this run.</p></div>
-        )}
+        <h2>Findings and remediation</h2>
+        <p className="note">When scanner findings include vulnerability references, Shore Sentinel keeps evidence and remediation connected to the report.</p>
+        {findings.length === 0 ? <p className="note">No findings were recorded for this scan run.</p> : <ul className="finding-summary-list">{findings.map(renderFinding)}</ul>}
       </section>
 
-      <section className="panel">
-        <h2>Timeline</h2>
-        <div className="guide-list">
-          {events.length ? events.map((event) => (
-            <article key={event.id}>
-              <b>{event.event_type}</b>
-              <p>{event.message}</p>
-              <small>{readableTime(event.created_at)}</small>
-            </article>
-          )) : <div className="empty"><p>No timeline events were recorded for this run.</p></div>}
-        </div>
+      <section id="compare" className="panel soft">
+        <h2>Compare reports</h2>
+        <p>Side-by-side report comparison lives here so the primary toolbar can stay lean.</p>
+      </section>
+
+      <section id="export" className="panel soft">
+        <h2>Import / export</h2>
+        <p>Exporting report evidence and importing reference data live here as secondary actions.</p>
       </section>
     </div>
   );
