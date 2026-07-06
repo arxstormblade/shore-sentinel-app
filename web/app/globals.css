@@ -952,7 +952,7 @@ textarea:focus {
 
 .severity-content {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(10rem, auto) minmax(11rem, 1fr);
   align-items: center;
   gap: 1rem;
 }
@@ -983,6 +983,9 @@ textarea:focus {
 .severity-list {
   display: grid;
   gap: 0.55rem;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  min-width: 0;
 }
 
 .severity-list > div {
@@ -1004,7 +1007,7 @@ textarea:focus {
   display: grid;
   gap: 0.35rem;
   align-content: center;
-  min-width: 9rem;
+  width: min(100%, 11.25rem);
   padding: 1rem 1.05rem;
   border: 1px solid rgba(116, 168, 255, 0.18);
   border-radius: 18px;
