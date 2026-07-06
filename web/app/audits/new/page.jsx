@@ -28,10 +28,10 @@ export default function NewAudit() {
             <input name="ip_address" placeholder="10.10.4.18" />
           </label>
           <label>
-            Connection mode
+            How should this audit connect?
             <select name="connection_mode" defaultValue="ssh_push">
-              <option value="ssh_push">ssh_push</option>
-              <option value="pull_agent">pull_agent</option>
+              <option value="ssh_push">SSH push</option>
+              <option value="temporary_runner">Temporary runner</option>
             </select>
           </label>
           <button className="btn" type="submit">Create audit</button>

@@ -294,6 +294,9 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
           <p>Owner: {machine.owner}</p>
           <p>Hostname: {machine.name}</p>
           <p>Connection mode: {machine.connection_mode ?? 'ssh_push'}</p>
+          <p>SSH auth: {machine.ssh_auth_method ? (machine.ssh_auth_method === 'ssh_key' ? 'SSH key' : 'Password') : 'Not configured'}</p>
+          <p>SSH username: {machine.ssh_username ?? '—'}</p>
+          <p>SSH port: {machine.ssh_port ?? '—'}</p>
           <p>Asset mode: managed_machine</p>
         </article>
         <article className="panel">

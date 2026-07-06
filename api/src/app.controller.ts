@@ -1,6 +1,6 @@
 import { BadRequestException, Body, ConflictException, Controller, Delete, ForbiddenException, Get, Header, NotFoundException, Param, Patch, Post, Req, Res } from '@nestjs/common';
 import bcrypt from 'bcryptjs';
-import { createHash } from 'node:crypto';
+import { createCipheriv, createHash, randomBytes } from 'node:crypto';
 import { Readable } from 'node:stream';
 import type { Request, Response } from 'express';
 import { RUN_EVENT_TYPE, scannerBundleContractVersion } from '@shore-sentinel/shared';
@@ -12,6 +12,30 @@ import { UpdateService } from './update.service.js';
 import { assertExactlyOneSubject, requireString, validateArtifactComplete, validateArtifactType } from './validation.js';
 
 const THIRTY_DAYS_SECONDS = 60 * 60 * 24 * 30;
+
+function sshSeal(plaintext: string) {
+  const keySeed = process.env.SHORE_SENTINEL_SECRET_KEY || 'shore-sentinel-dev-secret-key';
+  const key = createHash('sha256').update(keySeed).digest();
+  const iv = randomBytes(12);
+  const cipher = createCipheriv('aes-256-gcm', key, iv);
+  const ciphertext = Buffer.concat([cipher.update(plaintext, 'utf8'), cipher.final()]);
+  const tag = cipher.getAuthTag();
+  return `v1:${iv.toString('base64url')}:${ciphertext.toString('base64url')}:${tag.toString('base64url')}`;
+}
+
+function sshFingerprint(plaintext: string) {
+  return createHash('sha256').update(plaintext).digest('hex');
+}
+
+function parseSshPort(body: Record<string, unknown>) {
+  const raw = body.ssh_port ?? body.sshPort ?? 22;
+  const port = typeof raw === 'number' ? raw : parseInt(String(raw), 10);
+  return Number.isFinite(port) && port > 0 && port <= 65535 ? port : 22;
+}
+
+function trimText(value: unknown) {
+  return typeof value === 'string' ? value.trim() : '';
+}
 
 @Controller()
 export class AppController {
@@ -58,7 +82,8 @@ export class AppController {
               COALESCE(t.owner_team, 'Unassigned owner') AS owner,
               COALESCE(t.platform, 'unknown') AS platform,
               COALESCE(t.status, 'unknown') AS status,
-              t.connection_mode, t.last_seen_at, t.last_successful_scan_at, t.created_at,
+              t.connection_mode, t.ssh_auth_method, t.ssh_port, t.ssh_username,
+              t.last_seen_at, t.last_successful_scan_at, t.created_at,
               COUNT(DISTINCT fi.id)::int AS finding_count,
               COUNT(DISTINCT ri.id) FILTER (WHERE ri.status IN ('open','accepted'))::int AS remediation_count,
               COALESCE(MAX(sr.created_at), t.created_at) AS latest_activity_at
@@ -84,7 +109,8 @@ export class AppController {
               COALESCE(t.owner_team, 'Unassigned owner') AS owner,
               COALESCE(t.platform, 'unknown') AS platform,
               COALESCE(t.status, 'unknown') AS status,
-              t.connection_mode, t.last_seen_at, t.last_successful_scan_at, t.created_at,
+              t.connection_mode, t.ssh_auth_method, t.ssh_port, t.ssh_username,
+              t.last_seen_at, t.last_successful_scan_at, t.created_at,
               COUNT(DISTINCT fi.id)::int AS finding_count,
               COUNT(DISTINCT ri.id) FILTER (WHERE ri.status IN ('open','accepted'))::int AS remediation_count
        FROM targets t
@@ -250,7 +276,58 @@ export class AppController {
   }
 
   @Post('one-time-audits') async createAudit(@Body() body: Record<string, unknown>) { const tenantId = await this.db.tenantId(); const result = await this.db.query('INSERT INTO one_time_audits (tenant_id,display_name,hostname,ip_address,connection_mode) VALUES ($1,$2,$3,$4,$5) RETURNING *', [tenantId, requireString(body, 'display_name'), body.hostname ?? null, body.ip_address ?? null, body.connection_mode ?? 'ssh_push']); return result.rows[0]; }
-  @Post('targets') async createTarget(@Body() body: Record<string, unknown>) { const tenantId = await this.db.tenantId(); const env = await this.db.query<{ id: string }>('SELECT id FROM environments WHERE tenant_id=$1 ORDER BY created_at LIMIT 1', [tenantId]); const result = await this.db.query('INSERT INTO targets (tenant_id,hostname,fqdn,ip_address,environment_id,owner_team,platform,connection_mode) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *', [tenantId, requireString(body, 'hostname'), body.fqdn ?? null, body.ip_address ?? null, env.rows[0]?.id ?? null, body.owner_team ?? null, body.platform ?? null, body.connection_mode ?? 'ssh_push']); return result.rows[0]; }
+  @Post('targets')
+  async createTarget(@Body() body: Record<string, unknown>) {
+    const tenantId = await this.db.tenantId();
+    const hostname = requireString(body, 'hostname');
+    const connectionMode = trimText(body.connection_mode) || 'ssh_push';
+    const env = await this.db.query<{ id: string }>('SELECT id FROM environments WHERE tenant_id=$1 ORDER BY created_at LIMIT 1', [tenantId]);
+
+    let sshAuthMethod: string | null = null;
+    let sshPort: number | null = null;
+    let sshUsername: string | null = null;
+    let sshCredentialId: string | null = null;
+
+    if (connectionMode === 'ssh_push') {
+      sshAuthMethod = trimText(body.ssh_auth_method) === 'ssh_key' ? 'ssh_key' : 'password';
+      sshPort = parseSshPort(body);
+      sshUsername = requireString(body, 'ssh_username');
+      const rawSecret = sshAuthMethod === 'ssh_key' ? requireString(body, 'ssh_private_key') : requireString(body, 'ssh_password');
+      const credentialType = sshAuthMethod === 'ssh_key' ? 'ssh_key' : 'ssh_password';
+      const sealedSecret = sshSeal(JSON.stringify({
+        auth_method: sshAuthMethod,
+        hostname,
+        port: sshPort,
+        username: sshUsername,
+        secret: rawSecret,
+      }));
+      const fingerprint = sshFingerprint(rawSecret);
+      const credential = await this.db.query<{ id: string }>(
+        'INSERT INTO credentials (tenant_id, label, credential_type, sealed_secret, fingerprint) VALUES ($1,$2,$3,$4,$5) RETURNING id',
+        [tenantId, `${hostname} SSH ${sshAuthMethod === 'ssh_key' ? 'key' : 'password'}`, credentialType, sealedSecret, fingerprint],
+      );
+      sshCredentialId = credential.rows[0].id;
+    }
+
+    const result = await this.db.query(
+      'INSERT INTO targets (tenant_id,hostname,fqdn,ip_address,environment_id,owner_team,platform,connection_mode,ssh_auth_method,ssh_port,ssh_username,ssh_credential_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *',
+      [
+        tenantId,
+        hostname,
+        body.fqdn ?? null,
+        body.ip_address ?? null,
+        env.rows[0]?.id ?? null,
+        body.owner_team ?? null,
+        body.platform ?? null,
+        connectionMode,
+        sshAuthMethod,
+        sshPort,
+        sshUsername,
+        sshCredentialId,
+      ],
+    );
+    return result.rows[0];
+  }
   @Post('one-time-audits/:id/run') async runAudit(@Param('id') id: string, @Body() body: Record<string, unknown>) { return this.createJob('one_time_audit', null, id, body); }
   @Post('targets/:id/scan-jobs') async runTarget(@Param('id') id: string, @Body() body: Record<string, unknown>) { return this.createJob('managed_target', id, null, body); }
   @Get('scan-jobs/:id') async job(@Param('id') id: string) { const result = await this.db.query('SELECT * FROM scan_jobs WHERE id=$1', [id]); if (!result.rows[0]) throw new BadRequestException('scan job not found'); return result.rows[0]; }

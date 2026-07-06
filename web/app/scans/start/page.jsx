@@ -60,13 +60,13 @@ export default function StartScan() {
           <p className="note" id="ip-help">The endpoint address that Shore Sentinel connects to.</p>
 
           <label>
-            Connection mode
+            How should this scan connect?
             <select name="connection_mode" defaultValue="ssh_push" aria-describedby="conn-help">
-              <option value="ssh_push">Shore Sentinel connects to the machine (SSH push)</option>
-              <option value="temporary_runner">Temporary runner (pull check-in)</option>
+              <option value="ssh_push">SSH push — Shore Sentinel connects to the machine</option>
+              <option value="temporary_runner">Pull check-in — the machine runs a temporary runner and sends results back</option>
             </select>
           </label>
-          <p className="note" id="conn-help">Not sure which connection method? <Link href={routePath('/knowledgebase')}>When to use one-time audit vs managed machine</Link>.</p>
+          <p className="note" id="conn-help">Use SSH push for a direct remote scan. Use pull check-in when the endpoint will execute a temporary runner locally.</p>
 
           <button className="btn" type="submit">Start scan</button>
         </form>

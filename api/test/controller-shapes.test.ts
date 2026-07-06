@@ -17,7 +17,8 @@ function controller() {
       if (sql.includes('INSERT INTO scan_runs')) return { rows: [{ id: 'run-1', job_id: params[1], subject_type: params[2], target_id: params[3], one_time_audit_id: params[4], status: 'pending' }] };
       if (sql.includes('INSERT INTO artifacts')) return { rows: [{ id: 'artifact-1', run_id: params[1], artifact_type: params[2], storage_uri: params[3], sha256: params[4], size_bytes: params[6] }] };
       if (sql.includes('INSERT INTO one_time_audits')) return { rows: [{ id: 'audit-1', display_name: params[1], status: 'draft' }] };
-      if (sql.includes('INSERT INTO targets')) return { rows: [{ id: 'target-1', hostname: params[1], status: 'unknown' }] };
+      if (sql.includes('INSERT INTO credentials')) return { rows: [{ id: 'credential-1' }] };
+      if (sql.includes('INSERT INTO targets')) return { rows: [{ id: 'target-1', hostname: params[1], status: 'unknown', ssh_auth_method: params[8], ssh_port: params[9], ssh_username: params[10], ssh_credential_id: params[11] }] };
       if (sql.includes('SELECT u.id, u.email, u.display_name, u.disabled_at')) return { rows: [{ id: 'user-1', email: 'admin@shore360.local', display_name: 'Initial Admin', disabled_at: null, roles: ['admin'] }] };
       if (sql.includes('FROM artifacts') && sql.includes('WHERE tenant_id = $1 AND run_id = $2')) return { rows: [{ id: 'artifact-pdf-1', artifact_type: 'pdf', storage_uri: 's3://shore-sentinel-artifacts/runs/run-1/report.pdf', mime_type: 'application/pdf', size_bytes: 25, parse_status: 'uploaded', download_path: '/artifacts/artifact-pdf-1/download' }] };
       if (sql.includes('FROM scan_runs sr') && sql.includes('sr.id = $2')) return { rows: [{ id: 'run-1', title: 'Managed host', source: 'Managed machine', env: 'Production', status: 'completed', severity: 'high', findings: [] }] };
@@ -205,6 +206,24 @@ test('update endpoints reject non-admin operators', async () => {
   const { app } = controller();
   const req = { cookies: { shore_session: 'operator-token' }, header: () => undefined } as never;
   await assert.rejects(() => app.updateStatus(req), /Admin role required/);
+});
+
+test('create target stores SSH credentials as sealed metadata references', async () => {
+  const { app, calls } = controller();
+  const result = await app.createTarget({
+    hostname: 'alpha-ws-01',
+    platform: 'linux',
+    connection_mode: 'ssh_push',
+    ssh_auth_method: 'password',
+    ssh_username: 'scanner',
+    ssh_port: '2222',
+    ssh_password: 'temporary-test-password',
+  });
+  assert.equal(result.ssh_auth_method, 'password');
+  assert.equal(result.ssh_port, 2222);
+  assert.equal(result.ssh_username, 'scanner');
+  assert.equal(result.ssh_credential_id, 'credential-1');
+  assert.ok(calls.some((sql) => sql.includes('INSERT INTO credentials')));
 });
 
 test('worker artifact handoff accepts canonical shared artifact kinds', async () => {

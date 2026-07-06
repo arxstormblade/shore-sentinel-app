@@ -30,6 +30,8 @@ export default async function Machine({ params }) {
           <p>Environment: {machine.env}</p>
           <p>Owner: {machine.owner}</p>
           <p>Connection: {machine.connection_mode}</p>
+          {machine.ssh_username ? <p>SSH user: {machine.ssh_username}{machine.ssh_port ? `:${machine.ssh_port}` : ''}</p> : null}
+          {machine.ssh_auth_method ? <p>SSH auth: {machine.ssh_auth_method === 'ssh_key' ? 'SSH key' : 'Password'}</p> : null}
           <p>Asset mode: managed_machine</p>
         </article>
         <article className="panel">
