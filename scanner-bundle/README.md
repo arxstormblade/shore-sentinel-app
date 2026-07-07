@@ -1,6 +1,33 @@
 # Shore Sentinel scanner bundle contract
 
-The scanner bundle is a packaged scanner plus a stable JSON contract consumed by `worker-node` and `worker-python`. Workers must treat the bundle as an untrusted producer: validate the manifest, parse stdout JSON, then hand artifacts to the API. Workers must not write directly to MinIO/S3.
+The scanner bundle is a packaged scanner plus a stable JSON contract consumed by `worker-node` and `worker-python` for managed-machine scans. It can also be pulled from GitHub and run directly for a one-time local audit.
+
+Workers must treat the bundle as an untrusted producer: validate the manifest, parse stdout JSON, then hand artifacts to the API. Workers must not write directly to MinIO/S3.
+
+---
+
+## One-time local audit from GitHub
+
+Use this mode when a client needs a standalone evidence package without enrolling the machine into Shore Sentinel managed monitoring.
+
+```bash
+git clone --depth 1 --branch v0.3.10 https://github.com/arxstormblade/shore-sentinel-app.git
+cd shore-sentinel-app
+python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py \
+  --target . \
+  --out-dir ./shore-sentinel-local-audit-reports \
+  --exit-zero
+```
+
+Reports and artifacts remain local on the client machine:
+
+```text
+./shore-sentinel-local-audit-reports
+```
+
+The local audit path does not create a managed target, does not store SSH credentials, and does not upload artifacts to Shore Sentinel by default. Treat the output folder as sensitive evidence because reports may include hostnames, inventory, versions, findings, and remediation guidance.
+
+---
 
 ## Bundle manifest
 
@@ -16,7 +43,7 @@ Each bundle includes `scanner-manifest.json` matching `schemas/scanner-manifest.
 }
 ```
 
-## Runtime interface
+## Runtime interface for managed-machine scans
 
 The Node orchestrator creates a BullMQ job on `shore-sentinel.scan.jobs`. A job carries:
 
@@ -26,7 +53,7 @@ The Node orchestrator creates a BullMQ job on `shore-sentinel.scan.jobs`. A job 
 
 The bundle output must match `schemas/scanner-output.schema.json` and use `contractVersion: shore-sentinel.scanner-output/v1`. See `examples/sample-output.json`.
 
-## Canonical artifact flow
+## Canonical managed-machine artifact flow
 
 1. `worker-node` claims the queue job and emits lifecycle events to `POST /runs/:runId/events`.
 2. `worker-node` sends scanner output to `worker-python` at `POST /parse`.

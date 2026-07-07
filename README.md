@@ -1,22 +1,99 @@
 # Shore Sentinel
 
-Dockerized security scanning, audit, inventory, reporting, and managed-machine control plane.
+Managed-machine security posture monitoring, inventory, remediation, and reporting — with a standalone one-time local audit option for machines that should not be enrolled.
 
-Shore Sentinel ships as a Docker Compose application that customers can install directly from the GitHub repository. The stack includes:
+Shore Sentinel has two supported usage paths:
+
+1. **One-Time Audit** — pull the scanner bundle from GitHub and run it locally on a client machine. Reports and artifacts stay on the client machine.
+2. **App Deployment** — install the full Shore Sentinel control plane with Docker Compose for managed-machine monitoring, recurring scan history, dashboards, and remediation tracking.
+
+---
+
+## Option 1 — One-Time Audit (pull the scanner script)
+
+Use this when you need quick evidence from a single machine without enrolling it into Shore Sentinel managed monitoring.
+
+### What this does
+
+- Pulls the scanner bundle from the Shore Sentinel GitHub repository.
+- Runs the read-only scanner locally on the client machine.
+- Saves JSON, Markdown, SARIF, PDF, and supporting artifacts locally.
+- Does **not** upload reports to Shore Sentinel by default.
+- Does **not** create a managed machine record.
+
+### Prerequisites
+
+Install these on the client machine:
+
+- Git
+- Python 3.10+
+
+Verify:
+
+```bash
+git --version
+python3 --version
+```
+
+### Run the local audit
+
+```bash
+git clone --depth 1 --branch v0.3.10 https://github.com/arxstormblade/shore-sentinel-app.git
+cd shore-sentinel-app
+python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py \
+  --target . \
+  --out-dir ./shore-sentinel-local-audit-reports \
+  --exit-zero
+```
+
+To audit a different local path, change `--target`:
+
+```bash
+python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py \
+  --target /path/to/audit \
+  --out-dir ./shore-sentinel-local-audit-reports \
+  --exit-zero
+```
+
+### Output location
+
+Reports and artifacts stay on the client machine:
+
+```text
+./shore-sentinel-local-audit-reports
+```
+
+Handle this folder as sensitive evidence. It may include hostnames, system inventory, package versions, findings, and remediation guidance.
+
+### When to use this option
+
+Use one-time local audit for:
+
+- vendor-owned machines
+- offline or temporary endpoints
+- quick evidence collection
+- client machines that should not be enrolled
+- environments where artifacts must stay local unless explicitly shared
+
+Use **App Deployment** instead if you need ongoing monitoring, dashboards, recurring scan history, and remediation tracking.
+
+---
+
+## Option 2 — App Deployment (install Shore Sentinel into Docker)
+
+Use this when you want the full Shore Sentinel application for managed-machine monitoring.
+
+### What this does
+
+The Docker Compose app provides:
 
 - Postgres for application state
 - Redis for queue/cache coordination
-- MinIO for scan artifacts and generated reports
+- MinIO for managed scan artifacts and generated reports
 - Node.js API on `http://localhost:4000`
 - Next.js web app on `http://localhost:3010/shore-sentinel`
 - Node worker for scan orchestration jobs
 - Python worker for parsing, normalization, and report enrichment
-
-See `../../documents/shore-sentinel-architecture.md` for the architecture and MVP scope.
-
----
-
-## Install from GitHub with Docker
 
 ### Prerequisites
 
@@ -37,8 +114,8 @@ docker compose version
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/arxstormblade/shore360-workspace.git
-cd shore360-workspace/apps/shore-sentinel
+git clone https://github.com/arxstormblade/shore-sentinel-app.git
+cd shore-sentinel-app
 ```
 
 ### 2. Configure environment values
@@ -105,6 +182,22 @@ Use `docker compose down -v` only when you intentionally want to delete the loca
 
 ---
 
+## Main app focus: managed machine monitoring
+
+The deployed app is optimized for enrolled machines:
+
+- managed inventory
+- SSH-push or pull-check-in connection modes
+- scheduled and manual scan jobs
+- last seen / stale machine tracking
+- scan history by machine
+- findings and remediation ownership
+- dashboard and fleet reporting
+
+A one-time local audit is intentionally separate. It produces local evidence and does not become part of fleet health unless a future import workflow is used.
+
+---
+
 ## Updating Shore Sentinel
 
 Shore Sentinel supports two update paths.
@@ -114,7 +207,7 @@ Shore Sentinel supports two update paths.
 From the Git checkout:
 
 ```bash
-cd shore360-workspace/apps/shore-sentinel
+cd shore-sentinel-app
 git fetch origin main
 git status --short
 git pull --ff-only origin main
@@ -144,9 +237,9 @@ By default, self-update is disabled because enabling it gives the API container 
 To enable in-app updates:
 
 ```bash
-cd shore360-workspace/apps/shore-sentinel
+cd shore-sentinel-app
 cp docker-compose.update.example.yml docker-compose.update.yml
-docker compose -f docker-compose.yml -f docker-compose.update.yml up -d --build
+docker compose -f docker-compose.yml -f docker-compose.update.example.yml up -d --build
 ```
 
 Then sign in as an admin and open:
@@ -168,31 +261,6 @@ SHORE_SENTINEL_UPDATE_ALLOW_DIRTY=true
 
 Use that override only if you understand that local changes may be overwritten or conflict with upstream updates.
 
-### Update safety behavior
-
-The updater script is:
-
-```text
-scripts/shore-sentinel-update.sh
-```
-
-Modes:
-
-```bash
-scripts/shore-sentinel-update.sh status
-scripts/shore-sentinel-update.sh check
-scripts/shore-sentinel-update.sh apply
-```
-
-Before applying an update, it:
-
-1. Confirms the app is inside a Git checkout.
-2. Checks for uncommitted local changes.
-3. Fetches the configured remote/branch.
-4. Requires a clean fast-forward path.
-5. Creates a backup branch named like `backup/pre-update-YYYYMMDDTHHMMSSZ`.
-6. Runs `docker compose up -d --build` from the app directory.
-
 ---
 
 ## Service wiring
@@ -211,8 +279,6 @@ Internal service names are the API contract for local Compose:
 | Node worker | n/a | n/a | Starts after Redis, API, and Python worker are ready. |
 
 The `minio-init` one-shot service waits for MinIO, creates `${MINIO_BUCKET:-shore-sentinel-artifacts}`, and exits successfully. Artifact-writing services should not assume the bucket exists until this bootstrap job has completed.
-
-If a local Postgres volume was initialized with an older password, `docker compose up` may fail API authentication even when the current Compose config is correct. For disposable local data only, reset the local state with `docker compose down -v`, then rerun `docker compose up -d --build`.
 
 ---
 

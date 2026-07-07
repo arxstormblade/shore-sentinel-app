@@ -1,5 +1,5 @@
 export const navItems = [
-  { href: '/inventory', label: 'Inventory', icon: 'IN' },
+  { href: '/inventory', label: 'Managed Machines', icon: 'MM' },
   { href: '/scans-reports', label: 'Scans & Reports', icon: 'SR' },
   { href: '/remediation', label: 'Remediation', icon: 'RM' },
   { href: '/users', label: 'Users', icon: 'US' },

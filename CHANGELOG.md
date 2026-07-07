@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.10
+- Repositioned Shore Sentinel around managed-machine monitoring as the primary product workflow, including updated scan-entry copy and main navigation labeling.
+- Converted one-time audit into a GitHub-pulled local scanner workflow where reports and artifacts stay on the client machine by default.
+- Updated GitHub README instructions with two clear options: One-Time Audit by pulling the scanner script, and App Deployment by installing Shore Sentinel with Docker Compose.
+- Added regression tests to preserve the managed-monitoring-first product direction and local-audit instructions.
+
 ## v0.3.9
 - Improved dashboard action affordance by converting secondary dashboard links and report-row open actions into compact pill controls with larger hit areas and clearer hover states.
 - Released managed-machine credential enrollment refinements, including SSH username, port, and authentication method capture with sealed credential storage and non-secret inventory metadata display.
