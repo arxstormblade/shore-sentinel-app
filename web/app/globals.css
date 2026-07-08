@@ -183,6 +183,7 @@ main {
   align-items: center;
   justify-content: center;
   gap: 0;
+  min-height: var(--target-min);
   padding: 0.66rem 1.08rem;
   border-radius: 999px;
   color: #c7d0df;
@@ -305,6 +306,9 @@ footer b {
 }
 
 footer a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
   padding: 0.38rem 0.65rem;
   border-radius: 999px;
   color: var(--muted);
@@ -1579,22 +1583,32 @@ textarea:focus {
     grid-column: 1 / -1;
     grid-row: 2;
     order: initial;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     width: 100%;
     max-width: 100%;
+    overflow: visible;
     border-radius: 22px;
     padding: 0.35rem;
   }
 
   .primary-nav a {
-    min-height: 2.65rem;
-    padding: 0.6rem 0.78rem;
-    font-size: 0.86rem;
+    min-height: var(--target-min);
+    padding: 0.58rem 0.72rem;
+    font-size: 0.84rem;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.2;
   }
 
-  .primary-nav a span {
-    max-width: 7.5rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .primary-nav a:nth-child(5) {
+    grid-column: 1 / -1;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.08rem, 10.5vw, 3.25rem);
+    line-height: 1.02;
+    max-width: 9.6ch;
   }
 
   .action-cards,
@@ -2145,5 +2159,24 @@ small {
 @media (max-width: 760px) {
   .update-meta {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Quality-gate refinement: word-only top nav remains fully tappable and readable. */
+.primary-nav a,
+.brand,
+footer a {
+  min-height: 44px;
+}
+
+@media (max-width: 680px) {
+  .primary-nav a {
+    min-height: 44px;
+    padding-block: 0.68rem;
+  }
+
+  .hero h1 {
+    max-width: 16ch;
+    font-size: clamp(1.92rem, 9.4vw, 3rem);
   }
 }
