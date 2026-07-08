@@ -19,32 +19,69 @@ export function Brand() {
   );
 }
 
+function UserStrip({ initials, user }) {
+  return (
+    <aside className="user-strip">
+      <span className="system-ok"><i />All Systems Operational</span>
+      <Link className="avatar-link" href={routePath('/users')}>
+        <span className="avatar">{initials}</span>
+        <span>{user?.display_name || 'Admin User'}</span>
+      </Link>
+    </aside>
+  );
+}
+
+function SideNavigation({ initials, user }) {
+  return (
+    <aside className="side-nav" aria-label="Application navigation">
+      <div className="side-nav-brand">
+        <Brand />
+        <span className="side-nav-kicker">Security operations</span>
+      </div>
+      <nav className="side-nav-links" aria-label="Primary navigation">
+        {navItems.map((item) => (
+          <Link key={item.href} href={routePath(item.href)}>{item.label}</Link>
+        ))}
+      </nav>
+      <div className="side-nav-status">
+        <span className="system-ok"><i />All Systems Operational</span>
+        <Link className="avatar-link" href={routePath('/users')}>
+          <span className="avatar">{initials}</span>
+          <span>{user?.display_name || 'Admin User'}</span>
+        </Link>
+      </div>
+    </aside>
+  );
+}
+
 export function Shell({ children, authenticated = false, user = null }) {
   const initials = user?.display_name ? user.display_name.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() : 'AD';
+
+  if (authenticated) {
+    return (
+      <div className="app-shell authenticated-shell">
+        <SideNavigation initials={initials} user={user} />
+        <div className="shell-main">
+          <header className="mobile-rail" aria-label="Mobile app status">
+            <Brand />
+            <UserStrip initials={initials} user={user} />
+          </header>
+          <main>{children}</main>
+          <footer><b>Knowledgebase</b><Link href={routePath('/knowledgebase')}>Reference guide</Link><Link href={routePath('/audits')}>Audit History</Link><Link href={routePath('/system/update')}>System Update</Link><Link href={routePath('/dashboard')}>Dashboard</Link></footer>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <header className="top">
         <Brand />
-        {authenticated ? (
-          <>
-            <nav className="primary-nav" aria-label="Primary navigation">
-              {navItems.map((item) => <Link key={item.href} href={routePath(item.href)}>{item.label}</Link>)}
-            </nav>
-            <aside className="user-strip">
-              <span className="system-ok"><i />All Systems Operational</span>
-              <Link className="avatar-link" href={routePath('/users')}><span className="avatar">{initials}</span><span>{user?.display_name || 'Admin User'}</span></Link>
-            </aside>
-          </>
-        ) : (
-          <aside className="user-strip">
-            <Link className="btn alt" href={routePath('/auth/login')}>Sign in</Link>
-          </aside>
-        )}
+        <aside className="user-strip">
+          <Link className="btn alt" href={routePath('/auth/login')}>Sign in</Link>
+        </aside>
       </header>
       <main>{children}</main>
-      {authenticated ? (
-        <footer><b>Knowledgebase</b><Link href={routePath('/knowledgebase')}>Reference guide</Link><Link href={routePath('/audits')}>Audit History</Link><Link href={routePath('/system/update')}>System Update</Link><Link href={routePath('/dashboard')}>Dashboard</Link></footer>
-      ) : null}
     </>
   );
 }
