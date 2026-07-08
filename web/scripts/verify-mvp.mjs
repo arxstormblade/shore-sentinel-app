@@ -61,8 +61,8 @@ if (/href=['"]\/shore-sentinel/.test(source) || /action=['"]\/shore-sentinel/.te
 if (/href=\{appPath\(/.test(source)) failures.push('Next Link hrefs must use routePath, not mounted appPath, when next.config basePath is active');
 if (/tenant selector/i.test(source)) failures.push('tenant selector text must not appear');
 if (/localhost:4000|127\.0\.0\.1:4000/.test(source)) failures.push('browser-rendered source must not expose localhost API URLs');
-const navCount = (readFileSync(join(root, 'lib/data.js'), 'utf8').match(/href:'\/(inventory|scans-reports|remediation)'/g) || []).length;
-if (navCount !== 3) failures.push(`expected 3 primary nav items, found ${navCount}`);
+const navCount = (readFileSync(join(root, 'lib/data.js'), 'utf8').match(/href:\s*'\/(inventory|scans-reports|remediation)'/g) || []).length;
+if (navCount !== 3) failures.push(`expected 3 core operator nav items, found ${navCount}`);
 
 if (failures.length) {
   console.error(failures.join('\n'));

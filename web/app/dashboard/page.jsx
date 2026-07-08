@@ -88,20 +88,20 @@ export default async function Dashboard() {
 
       <section className="hero-actions" aria-label="Primary operator actions">
         <article className="action-card panel">
-          <div className="round-icon">AUD</div>
-          <div>
-            <h2>Run one-time audit</h2>
-            <p>Start an on-demand scanner bundle and generate evidence artifacts for the target.</p>
-            <Link className="btn" href={routePath('/audits/new')}>Run audit</Link>
-          </div>
-        </article>
-
-        <article className="action-card panel">
           <div className="round-icon">ADD</div>
           <div>
             <h2>Add managed machine</h2>
             <p>Enroll an asset for ongoing inventory, report history, and machine-first remediation.</p>
             <Link className="btn" href={routePath('/inventory/new')}>Add machine</Link>
+          </div>
+        </article>
+
+        <article className="action-card panel">
+          <div className="round-icon">REP</div>
+          <div>
+            <h2>Review scanner reports</h2>
+            <p>Open generated evidence, findings, and remediation context from managed-machine scans.</p>
+            <Link className="btn alt" href={routePath('/scans-reports')}>View reports</Link>
           </div>
         </article>
       </section>
@@ -160,7 +160,7 @@ export default async function Dashboard() {
             <Link href={routePath('/scans-reports')}>View all reports</Link>
           </header>
           {latestReports.length === 0 ? (
-            <div className="empty-state">Run a one-time audit to generate PDF, Markdown, SARIF, and JSON artifacts.</div>
+            <div className="empty-state">Add a managed machine and run a managed scan to generate PDF, Markdown, SARIF, and JSON artifacts.</div>
           ) : (
             <table>
               <thead>
@@ -195,7 +195,7 @@ export default async function Dashboard() {
           <div className="guide-list">
             {[
               ['01', 'Enroll assets', 'Create a managed machine record before recurring review.'],
-              ['02', 'Generate evidence', 'Run scanner bundles and keep report artifacts attached.'],
+              ['02', 'Generate evidence', 'Run managed scans and keep report artifacts attached.'],
               ['03', 'Triage by machine', 'Work remediation per asset so ownership stays clear.'],
               ['04', 'Export and close', 'Use PDF, Markdown, SARIF, and JSON for audit packages.'],
             ].map(([icon, title, desc]) => (

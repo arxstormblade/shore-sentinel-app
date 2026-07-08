@@ -17,22 +17,20 @@ class ManagedMonitoringDirectionTests(unittest.TestCase):
         self.assertIn('docker compose up -d --build', readme)
         self.assertIn('Reports and artifacts stay on the client machine', readme)
 
-    def test_start_scan_page_prioritizes_managed_monitoring(self):
+    def test_start_scan_page_is_managed_monitoring_only(self):
         page = read('web/app/scans/start/page.jsx')
         self.assertIn('Managed machine monitoring', page)
         self.assertIn('Add managed machine', page)
-        self.assertIn('One-time local audit', page)
-        self.assertIn('reports stay on the client machine', page.lower())
-        self.assertLess(page.index('Managed machine monitoring'), page.index('One-time local audit'))
+        self.assertIn('GitHub README', page)
+        self.assertNotIn('One-time local audit', page)
+        self.assertNotIn("routePath('/audits/new')", page)
 
-    def test_one_time_audit_page_is_local_github_pull_workflow(self):
-        page = read('web/app/audits/new/page.jsx')
-        self.assertIn('Run a local one-time audit', page)
-        self.assertIn('git clone --depth 1', page)
-        self.assertIn('scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py', page)
-        self.assertIn('shore-sentinel-local-audit-reports', page)
-        self.assertNotIn('form action={appPath', page)
-        self.assertNotIn('Create audit', page)
+    def test_one_time_audit_runner_route_is_removed_from_app(self):
+        self.assertFalse((ROOT / 'web/app/audits/new/page.jsx').exists())
+        dashboard = read('web/app/dashboard/page.jsx')
+        reports = read('web/app/scans-reports/page.jsx')
+        self.assertNotIn("routePath('/audits/new')", dashboard + reports)
+        self.assertNotIn('Run One-Time Audit', dashboard + reports)
 
     def test_navigation_names_the_primary_feature(self):
         nav = read('web/lib/data.js')

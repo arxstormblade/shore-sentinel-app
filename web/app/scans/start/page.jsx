@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Header, Pill } from '@/components/ui';
+import { Header } from '@/components/ui';
 import { routePath } from '@/lib/paths';
 
 export default function StartScan() {
@@ -15,7 +15,7 @@ export default function StartScan() {
       </Header>
 
       <section className="panel choice-panel">
-        <h2>Choose the right operating mode</h2>
+        <h2>Managed monitoring is the app workflow</h2>
         <div className="action-cards">
           <article className="action-card panel">
             <div className="round-icon" aria-hidden="true">⊞</div>
@@ -28,12 +28,12 @@ export default function StartScan() {
           </article>
 
           <article className="action-card panel">
-            <div className="round-icon" aria-hidden="true">▣</div>
+            <div className="round-icon" aria-hidden="true">REP</div>
             <div>
-              <h3>One-time local audit</h3>
-              <p>Pull the scanner bundle from GitHub and run it directly on the client machine. The reports stay on the client machine unless you choose to share or import them later.</p>
-              <p className="note">Best for temporary evidence, offline machines, vendor-owned systems, or audits that should not enroll into fleet monitoring.</p>
-              <Link className="btn alt" href={routePath('/audits/new')}>View local audit instructions</Link>
+              <h3>Reports and remediation</h3>
+              <p>Review generated scan evidence, findings, and remediation work from managed-machine scans.</p>
+              <p className="note">Standalone scanner usage is distributed from the GitHub README, outside the app workflow.</p>
+              <Link className="btn alt" href={routePath('/scans-reports')}>View reports</Link>
             </div>
           </article>
         </div>
@@ -46,13 +46,13 @@ export default function StartScan() {
           <li><b>Run or schedule scans</b> — Shore Sentinel keeps scan history tied to the managed machine.</li>
           <li><b>Monitor posture</b> — dashboard, inventory, reports, and remediation views stay focused on fleet health.</li>
         </ol>
-        <p className="note">One-time local audits are intentionally separate: they create local evidence packages and do not become managed monitoring records by default.</p>
+        <p className="note">Standalone scanner runs remain a GitHub distribution path and do not create app records by default.</p>
       </section>
 
       <section className="panel" role="status" aria-live="polite">
         <h2>Need help deciding?</h2>
-        <p>Use managed machines when you want ongoing visibility. Use a one-time local audit when the machine should keep artifacts locally and stay outside recurring monitoring.</p>
-        <Link className="btn alt" href={routePath('/knowledgebase#managed-vs-local-audit')}>Read the decision guide</Link>
+        <p>Use the app when a machine should be part of recurring monitoring. Use the GitHub scanner instructions when a client only needs a local evidence package.</p>
+        <Link className="btn alt" href={routePath('/knowledgebase#managed-machine-monitoring')}>Read the monitoring guide</Link>
       </section>
     </div>
   );

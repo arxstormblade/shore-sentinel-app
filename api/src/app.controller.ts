@@ -275,7 +275,6 @@ export class AppController {
     return result.rows[0];
   }
 
-  @Post('one-time-audits') async createAudit(@Body() body: Record<string, unknown>) { const tenantId = await this.db.tenantId(); const result = await this.db.query('INSERT INTO one_time_audits (tenant_id,display_name,hostname,ip_address,connection_mode) VALUES ($1,$2,$3,$4,$5) RETURNING *', [tenantId, requireString(body, 'display_name'), body.hostname ?? null, body.ip_address ?? null, body.connection_mode ?? 'ssh_push']); return result.rows[0]; }
   @Post('targets')
   async createTarget(@Body() body: Record<string, unknown>) {
     const tenantId = await this.db.tenantId();
@@ -328,7 +327,6 @@ export class AppController {
     );
     return result.rows[0];
   }
-  @Post('one-time-audits/:id/run') async runAudit(@Param('id') id: string, @Body() body: Record<string, unknown>) { return this.createJob('one_time_audit', null, id, body); }
   @Post('targets/:id/scan-jobs') async runTarget(@Param('id') id: string, @Body() body: Record<string, unknown>) { return this.createJob('managed_target', id, null, body); }
   @Get('scan-jobs/:id') async job(@Param('id') id: string) { const result = await this.db.query('SELECT * FROM scan_jobs WHERE id=$1', [id]); if (!result.rows[0]) throw new BadRequestException('scan job not found'); return result.rows[0]; }
   @Get('scan-runs/:id') async run(@Param('id') id: string) { const result = await this.db.query('SELECT * FROM scan_runs WHERE id=$1', [id]); if (!result.rows[0]) throw new BadRequestException('scan run not found'); return result.rows[0]; }
@@ -387,7 +385,7 @@ export class AppController {
     return value === true || value === 1 || value === '1' || value === 'true' || value === 'on';
   }
 
-  private async createJob(subjectType: 'managed_target' | 'one_time_audit', targetId: string | null, oneTimeAuditId: string | null, body: Record<string, unknown>) {
+  private async createJob(subjectType: 'managed_target', targetId: string, oneTimeAuditId: null, body: Record<string, unknown>) {
     assertExactlyOneSubject(subjectType, targetId, oneTimeAuditId);
     const tenantId = await this.db.tenantId();
     const mode = body.mode ?? 'ssh_push';
@@ -410,7 +408,7 @@ export class AppController {
     return { job: job.rows[0], run: run.rows[0], queue };
   }
 
-  private scannerOutput(subjectType: 'managed_target' | 'one_time_audit', targetId: string | null, oneTimeAuditId: string | null, body: Record<string, unknown>) {
+  private scannerOutput(subjectType: 'managed_target', targetId: string, oneTimeAuditId: null, body: Record<string, unknown>) {
     if (body.scannerOutput && typeof body.scannerOutput === 'object') return body.scannerOutput;
     const subjectId = targetId ?? oneTimeAuditId ?? 'unknown-subject';
     return {

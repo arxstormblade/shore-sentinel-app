@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { unstable_noStore as noStore } from 'next/cache';
 import { Header, Filters, Pill, Empty } from '@/components/ui';
-import { apiBase } from '@/lib/data';
 import { routePath } from '@/lib/paths';
 import { apiGet } from '@/lib/api-data';
 
@@ -14,11 +13,10 @@ export default async function Scans() {
 
   return (
     <div className="stack">
-      <Header eye="Scans & Reports" title="Run scans, follow progress, review reports" desc="Execution, history, and report viewing share this surface. Comparison and import/export stay in secondary actions.">
-        <Link id="audit-entry" className="btn" href={routePath('/audits/new')}>Run One-Time Audit</Link>
+      <Header eye="Scans & Reports" title="Review managed scan evidence" desc="Execution history, findings, report artifacts, and remediation context stay tied to managed machines.">
+        <Link className="btn" href={routePath('/inventory/new')}>Add managed machine</Link>
       </Header>
       <Filters name="Scans & Reports" items={['Severity', 'Time range', 'Environment']} />
-      <p className="note">API list: {apiBase}/reports</p>
       {reports.length === 0 ? (
         <Empty />
       ) : (

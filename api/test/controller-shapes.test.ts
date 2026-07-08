@@ -16,7 +16,6 @@ function controller() {
       if (sql.includes('INSERT INTO scan_jobs')) return { rows: [{ id: 'job-1', tenant_id: params[0], subject_type: params[1], target_id: params[2], one_time_audit_id: params[3], status: 'queued' }] };
       if (sql.includes('INSERT INTO scan_runs')) return { rows: [{ id: 'run-1', job_id: params[1], subject_type: params[2], target_id: params[3], one_time_audit_id: params[4], status: 'pending' }] };
       if (sql.includes('INSERT INTO artifacts')) return { rows: [{ id: 'artifact-1', run_id: params[1], artifact_type: params[2], storage_uri: params[3], sha256: params[4], size_bytes: params[6] }] };
-      if (sql.includes('INSERT INTO one_time_audits')) return { rows: [{ id: 'audit-1', display_name: params[1], status: 'draft' }] };
       if (sql.includes('INSERT INTO credentials')) return { rows: [{ id: 'credential-1' }] };
       if (sql.includes('INSERT INTO targets')) return { rows: [{ id: 'target-1', hostname: params[1], status: 'unknown', ssh_auth_method: params[8], ssh_port: params[9], ssh_username: params[10], ssh_credential_id: params[11] }] };
       if (sql.includes('SELECT u.id, u.email, u.display_name, u.disabled_at')) return { rows: [{ id: 'user-1', email: 'admin@shore360.local', display_name: 'Initial Admin', disabled_at: null, roles: ['admin'] }] };
@@ -69,15 +68,6 @@ function controller() {
   return { app: new AppController(db as never, auth as never, queue as never, artifacts as never, updates as never), calls, queueCalls, authCalls, updateCalls };
 }
 
-test('one-time audit run endpoint returns job, run, and BullMQ queue envelope', async () => {
-  const { app } = controller();
-  const result = await app.runAudit('audit-1', { scanner_bundle_version: 'scanner-v1' });
-  assert.equal(result.job.subject_type, 'one_time_audit');
-  assert.equal(result.job.one_time_audit_id, 'audit-1');
-  assert.equal(result.run.status, 'pending');
-  assert.equal(result.queue.queued, true);
-  assert.equal(result.queue.queue, QUEUES.scanJobs);
-});
 
 test('managed target scan-job endpoint enqueues worker-compatible payload', async () => {
   const { app, queueCalls } = controller();
@@ -139,7 +129,7 @@ test('users endpoint lists accounts with disabled_at from the current schema', a
   assert.deepEqual(result[0].roles, ['admin']);
 });
 
-test('inventory, reports, audits, and remediation list endpoints are backed by database reads', async () => {
+test('inventory, reports, historical audits, and remediation list endpoints are backed by database reads', async () => {
   const { app, calls } = controller();
   await app.listTargets();
   await app.listReports();

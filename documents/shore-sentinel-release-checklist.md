@@ -27,7 +27,6 @@ Use this checklist for every feature release, bug fix, UI change, or operational
 ## 2) Product and design review
 - [ ] Confirm the change matches Shore Sentinel’s scope
 - [ ] Verify the change fits the two primary modes:
-  - [ ] Run One-Time Audit
   - [ ] Add Managed Machine
 - [ ] Review UI impact for clarity and restraint
 - [ ] Confirm the change does not add unnecessary clutter or motion

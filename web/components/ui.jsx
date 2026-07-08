@@ -60,5 +60,5 @@ export function Filters({ name, items }) {
 export function Pill({ children, tone = '' }) { return <span className={`pill ${tone}`}>{children}</span>; }
 
 export function Empty() {
-  return <section className="empty"><h2>Start with one operational choice</h2><p>Run an ad hoc audit for temporary evidence or enroll a managed machine for ongoing inventory, schedules, history, and fleet health.</p><Link className="btn" href={routePath('/scans-reports#audit-entry')}>Run One-Time Audit</Link><Link className="btn alt" href={routePath('/inventory#add-managed-machine')}>Add Managed Machine</Link><Link href={routePath('/knowledgebase')}>Read the knowledgebase</Link></section>;
+  return <section className="empty"><h2>Start with one operational choice</h2><p>Enroll a managed machine for ongoing inventory, schedules, history, and fleet health.</p><Link className="btn" href={routePath('/inventory/new')}>Add Managed Machine</Link><Link className="btn alt" href={routePath('/scans-reports')}>View Reports</Link><Link href={routePath('/knowledgebase')}>Read the knowledgebase</Link></section>;
 }

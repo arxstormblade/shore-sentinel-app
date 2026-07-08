@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Removed the in-app one-time audit runner entry points. Standalone local evidence collection remains documented as the GitHub scanner option.
+
 ## v0.3.10
 - Repositioned Shore Sentinel around managed-machine monitoring as the primary product workflow, including updated scan-entry copy and main navigation labeling.
 - Converted one-time audit into a GitHub-pulled local scanner workflow where reports and artifacts stay on the client machine by default.

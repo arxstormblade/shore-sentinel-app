@@ -21,7 +21,7 @@ The recommended design separates the **control plane** from the **scanner runtim
 
 At the product level, Shore Sentinel is a **security scanning, audit, and inventory app** with two primary operating paths:
 
-1. **Run One-Time Audit** — execute a one-off audit against a machine or target without permanently enrolling it for ongoing monitoring.
+1. **GitHub scanner option** — run standalone local evidence collection from the published scanner instructions outside the app workflow.
 2. **Add Managed Machine** — enroll a machine into Shore Sentinel so the system can track status, run scans, preserve inventory/history, schedule future runs, and generate recurring reports.
 
 ---
@@ -36,7 +36,7 @@ What do you want to do?
 2. Add a machine to Shore Sentinel
 ```
 
-### Mode 1: Run One-Time Audit
+### Mode 1: GitHub scanner option
 
 A one-time audit is for ad hoc validation, incident review, vendor/client evidence collection, or testing a host before deciding whether to enroll it.
 
@@ -113,7 +113,7 @@ In this document, **MVP** means **Minimum Viable Product**: the smallest product
 
 For this product, the MVP is not just a mockup. It should prove both operating paths:
 
-1. A user runs a **one-time audit** against a machine.
+1. A user uses the **GitHub scanner option** against a machine.
 2. A user adds a **managed machine** to Shore Sentinel inventory.
 3. A scan job is created from either path.
 4. The scanner runs through SSH push or an approved runner path.
@@ -355,7 +355,7 @@ Legend: `R` = read, `A` = add, `E` = edit, `D` = delete, `—` = no access by de
 | Central Dashboard | R/A/E/D | R | R | R |
 | Inventory / Managed Machines | R/A/E/D | R/A/E | R | R |
 | Environments / Grouping | R/A/E/D | R/A/E | R | R |
-| Run One-Time Audit | R/A/E/D | R/A | R/A | — |
+| GitHub scanner option | External docs | External docs | External docs | — |
 | Managed Machine Schedules | R/A/E/D | R/A/E | R | R |
 | Scan Jobs / Live Progress | R/A/E/D | R/A/E | R/A | R |
 | Reports / Artifacts | R/A/E/D | R/A/E | R | R |
@@ -447,7 +447,7 @@ flowchart TB
 
 Responsibilities:
 
-- first-action landing screen with two clear choices: `Run One-Time Audit` and `Add Managed Machine`
+- first-action landing screen focused on `Add Managed Machine`; standalone scanner usage remains in the GitHub README
 - single-tenant central dashboard
 - target inventory by environment
 - one-time audit history view
@@ -459,7 +459,7 @@ Responsibilities:
 - remediation summaries and filtering
 - import/export options for reports
 - knowledgebase and how-to area with guided documentation for one-time audits, managed-machine enrollment, scheduling, report review, and troubleshooting
-- contextual help links from the `Run One-Time Audit` and `Add Managed Machine` flows into the relevant how-to articles
+- contextual help links from managed-machine flows into the relevant how-to articles
 - UI/UX direction inspired by a modern dark SaaS dashboard: restrained glassmorphism panels, subtle neon accents, layered cards, soft shadows, faint grid texture, and premium high-contrast typography
 - dark mode is the default visual language; light mode can be added later if needed
 - visual effects must be restrained and never compete with operational data, findings, status, or calls to action
@@ -493,7 +493,7 @@ The original Web UI requirements above are directionally correct but contain unr
 
 ### What holds up as written
 
-- The two-path first-action screen (`Run One-Time Audit` / `Add Managed Machine`) is a strong piece of product UX — it resolves "is this a one-off audit tool or an asset inventory tool" before the user sees a dashboard.
+- The first-action screen should be managed-machine-first and avoid presenting local evidence runs as an in-app workflow.
 - Progressive disclosure (summaries first, drill-down second) is the correct default.
 - Minimizing modal usage in favor of inline panels and dedicated detail pages is correct for complex, multi-step operational tasks.
 - Dark-mode-default is reasonable for a tool used during long report-review sessions.
@@ -516,7 +516,7 @@ The original Web UI requirements above are directionally correct but contain unr
 | 2 | Dashboard structure | **Split the dashboard by asset mode.** Default post-login view = managed-machine fleet health only (the four dashboard questions apply to managed assets, where trend-over-time is meaningful). One-time audits get a separate **Audit History** list view with an explicit **Promote to Managed Machine** action; they do not appear in fleet trend charts unless promoted. |
 | 3 | Navigation | Collapse to **three primary nav items**: **Inventory** (managed machines + environments), **Scans & Reports** (execution, history, report viewer — shared by audit and managed scans), **Remediation** (cross-cutting findings view). **Knowledgebase** becomes a secondary/de-emphasized link (e.g., footer or help icon), not a primary tab. |
 | 4 | Filters | Scope filters to the view rather than applying all five everywhere: Inventory → environment + status. Scans & Reports / Remediation → severity + time range + environment. No tenant selector appears in MVP because the product is single-tenant. |
-| 5 | Empty state | New tenant with zero scans shows the two primary actions (`Run One-Time Audit` / `Add Managed Machine`) plus one knowledgebase link — nothing else. No placeholder charts, no empty trend graphs. |
+| 5 | Empty state | New tenant with zero scans shows the primary `Add Managed Machine` action, report guidance, and one knowledgebase link — nothing else. No placeholder charts, no empty trend graphs. |
 | 6 | Secondary actions | Move **report comparison** and **import/export** out of the primary report-viewer toolbar into a secondary **Actions** menu on the report detail page. The primary report view shows findings, severity, and remediation only. |
 | 7 | Motion | Replace "avoid excessive animation" with an enforceable rule: motion is permitted **only** for state transitions that convey real information (e.g., `uploaded → processing → ready`, live SSE progress), capped at roughly 200ms, with no decorative hover/load micro-animations. |
 
@@ -1695,11 +1695,11 @@ These do not block MVP design review, but they should become Kanban epics before
 - login/local auth for MVP
 - single deployment settings model with internal one-tenant seed
 - environment model
-- first-action landing screen: `Run One-Time Audit` or `Add Managed Machine`
+- first-action landing screen: `Add Managed Machine` as the app workflow
 - one-time audit record model
 - managed machine inventory CRUD
 - knowledgebase category/article model
-- seed initial how-to articles for `Run One-Time Audit` and `Add Managed Machine`
+- seed initial how-to articles for managed-machine setup and report review
 - audit log foundation
 
 ### Phase 2: One-time audit and SSH push scan vertical slice
@@ -1760,7 +1760,7 @@ These do not block MVP design review, but they should become Kanban epics before
 | Question | Decision |
 |---|---|
 | Product type | Security scanning, audit, and inventory app |
-| Primary operating modes | `Run One-Time Audit` and `Add Managed Machine` |
+| Primary operating mode | `Add Managed Machine` and managed-machine monitoring |
 | Managed machine capabilities | status monitoring, manual scans, scheduled scans/reports, history, and recurring reports |
 | Knowledgebase | Built-in searchable how-to collection, seeded with one-time audit and managed-machine setup guides |
 | Feature updates | Kanban-backed feature branches with Docker validation, changelog, knowledgebase update, and release checklist |
