@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/shore-sentinel-logo-transparent.png" alt="Shore Sentinel logo" width="120">
+</p>
+
 # Shore Sentinel
 
 Managed-machine security posture monitoring, inventory, remediation, and reporting — with a standalone one-time local audit option for machines that should not be enrolled.
