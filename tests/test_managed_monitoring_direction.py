@@ -34,8 +34,11 @@ class ManagedMonitoringDirectionTests(unittest.TestCase):
 
     def test_navigation_names_the_primary_feature(self):
         nav = read('web/lib/data.js')
+        shell = read('web/components/ui.jsx')
         self.assertIn("label: 'Managed Machines'", nav)
         self.assertIn("href: '/inventory'", nav)
+        self.assertNotIn('icon:', nav)
+        self.assertNotIn('item.icon', shell)
 
     def test_scanner_readme_documents_local_audit_output(self):
         doc = read('scanner-bundle/README.md')

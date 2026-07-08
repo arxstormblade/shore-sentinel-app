@@ -1,9 +1,9 @@
 export const navItems = [
-  { href: '/inventory', label: 'Managed Machines', icon: 'MM' },
-  { href: '/scans-reports', label: 'Scans & Reports', icon: 'SR' },
-  { href: '/remediation', label: 'Remediation', icon: 'RM' },
-  { href: '/users', label: 'Users', icon: 'US' },
-  { href: '/system/update', label: 'System', icon: 'SY' },
+  { href: '/inventory', label: 'Managed Machines' },
+  { href: '/scans-reports', label: 'Scans & Reports' },
+  { href: '/remediation', label: 'Remediation' },
+  { href: '/users', label: 'Users' },
+  { href: '/system/update', label: 'System' },
 ];
 
 export const apiBase = process.env.NEXT_PUBLIC_SHORE_SENTINEL_API_URL || process.env.NEXT_PUBLIC_API_URL || '/shore-sentinel-api';

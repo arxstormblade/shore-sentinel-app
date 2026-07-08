@@ -28,7 +28,7 @@ export function Shell({ children, authenticated = false, user = null }) {
         {authenticated ? (
           <>
             <nav className="primary-nav" aria-label="Primary navigation">
-              {navItems.map((item) => <Link key={item.href} href={routePath(item.href)}>{item.icon}<span>{item.label}</span></Link>)}
+              {navItems.map((item) => <Link key={item.href} href={routePath(item.href)}>{item.label}</Link>)}
             </nav>
             <aside className="user-strip">
               <span className="system-ok"><i />All Systems Operational</span>
