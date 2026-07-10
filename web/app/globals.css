@@ -289,6 +289,360 @@ footer a:hover,
   font-weight: 650;
 }
 
+<<<<<<< HEAD
+=======
+.avatar-link span:last-child b,
+.avatar-link span:last-child small {
+  display: block;
+  line-height: 1.1;
+}
+
+.avatar-link span:last-child small {
+  color: var(--green);
+  font-size: 0.72rem;
+}
+
+.choice-fieldset,
+.roles-fieldset {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.choice-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.choice-card small,
+.filter-hint {
+  display: block;
+  color: var(--muted);
+}
+
+.finding-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.finding-row,
+.severity-row {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.finding-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+}
+
+.finding-row aside {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+/* --- Grouped remediation layout --- */
+
+.finding-list--machine-first {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.machine-group--card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 0;
+  overflow: clip;
+}
+
+.machine-group--card[open] {
+  border-color: var(--border-strong);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.machine-group-header--card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: 0.75rem;
+  width: 100%;
+  list-style: none;
+  cursor: pointer;
+  padding: 0.9rem;
+}
+
+.machine-group-header--card::-webkit-details-marker {
+  display: none;
+}
+
+.machine-group-header--card h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.machine-group-header--card p {
+  margin: 0.15rem 0 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.machine-summary-findings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.65rem;
+}
+
+.machine-summary-finding {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  max-width: 100%;
+  padding: 0.18rem 0.3rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.machine-summary-finding span:last-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: min(30rem, 50vw);
+}
+
+.machine-group-body {
+  padding: 0 0.9rem 0.9rem;
+}
+
+.machine-severity-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0.25rem 0 0.75rem;
+}
+
+.machine-finding-stack {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.machine-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--blue);
+  box-shadow: 0 0 0 5px rgba(116, 168, 255, 0.08);
+  margin-top: 0.25rem;
+  flex-shrink: 0;
+}
+
+.machine-count {
+  margin-left: auto;
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.machine-finding-row {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 0.85rem;
+}
+
+.finding-row-kicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.55rem;
+}
+
+.machine-finding-row h4 {
+  margin: 0 0 0.25rem;
+  font-size: 0.97rem;
+  line-height: 1.2;
+}
+
+.machine-finding-row p {
+  margin-bottom: 0.55rem;
+}
+
+.machine-finding-row aside {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  align-items: center;
+  margin-top: 0.75rem;
+}
+
+.severity-row {
+  grid-template-columns: auto 1fr auto auto auto;
+  align-items: center;
+}
+
+.next-action-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+  border-color: var(--border-strong);
+  background: rgba(116, 168, 255, 0.05);
+}
+
+.next-action-content {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.next-action-copy h2 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.15rem;
+}
+
+.next-action-copy p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.next-action-why {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.next-action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.next-action-buttons .btn {
+  text-decoration: none;
+}
+
+.next-action-buttons .btn:hover,
+.next-action-buttons .btn:focus-visible {
+  text-decoration: underline;
+}
+
+.top-recommendation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-color: var(--border-strong);
+  background: rgba(116, 168, 255, 0.05);
+}
+
+.top-rec-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  flex: 1;
+  min-width: 16rem;
+}
+
+.top-rec-content h2 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.25rem;
+}
+
+.top-rec-title {
+  margin: 0 0 0.15rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.top-rec-subject {
+  margin: 0 0 0.4rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.top-rec-detail {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.top-rec-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.top-rec-actions .btn {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 0.08em;
+}
+
+.scans-panel td a {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 0.08em;
+}
+
+.next-action-panel .btn {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 0.08em;
+}
+
+.top-rec-actions .btn:hover,
+.top-rec-actions .btn:focus-visible {
+  text-decoration: underline;
+}
+
+.severity-row:focus-visible {
+  border-color: rgba(116, 168, 255, 0.48);
+  background: rgba(116, 168, 255, 0.08);
+}
+
+.severity-row em {
+  color: var(--blue);
+  font-style: normal;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+>>>>>>> 0f0fa96 (Add managed machine credential UI refinements)
 footer {
   display: flex;
   flex-wrap: wrap;

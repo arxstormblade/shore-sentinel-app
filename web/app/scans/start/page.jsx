@@ -40,6 +40,7 @@ export default function StartScan() {
       </section>
 
       <section className="panel">
+<<<<<<< HEAD
         <h2>What happens next for managed machines</h2>
         <ol className="guide-list">
           <li><b>Enroll the endpoint</b> — add machine metadata and the approved connection method.</li>
@@ -47,6 +48,47 @@ export default function StartScan() {
           <li><b>Monitor posture</b> — dashboard, inventory, reports, and remediation views stay focused on fleet health.</li>
         </ol>
         <p className="note">Standalone scanner runs remain a GitHub distribution path and do not create app records by default.</p>
+=======
+        <h2>Start a one-time audit now</h2>
+        <p>Submit below to create an ephemeral audit target, push the job into the scan pipeline, and land on the live progress page with the completed report.</p>
+
+        <form action={appPath('/api/scans/start')} method="post">
+          <label>
+            Display name
+            <input name="display_name" placeholder="Audit target name" required aria-describedby="name-help" />
+          </label>
+          <p className="note" id="name-help">A short label so you can find this report in Scans &amp; Reports later.</p>
+
+          <label>
+            Hostname or FQDN
+            <input name="hostname" placeholder="host.example.local" aria-describedby="host-help" />
+          </label>
+          <p className="note" id="host-help">Optional. The DNS name if you know it.</p>
+
+          <label>
+            IP address
+            <input name="ip_address" placeholder="10.0.0.25" required aria-describedby="ip-help" />
+          </label>
+          <p className="note" id="ip-help">The endpoint address that Shore Sentinel connects to.</p>
+
+          <label>
+            How should this scan connect?
+            <select name="connection_mode" defaultValue="ssh_push" aria-describedby="conn-help">
+              <option value="ssh_push">SSH push — Shore Sentinel connects to the machine</option>
+              <option value="temporary_runner">Pull check-in — the machine runs a temporary runner and sends results back</option>
+            </select>
+          </label>
+          <p className="note" id="conn-help">Use SSH push for a direct remote scan. Use pull check-in when the endpoint will execute a temporary runner locally.</p>
+
+          <button className="btn" type="submit">Start scan</button>
+        </form>
+      </section>
+
+      <section className="panel">
+        <h2>Or enroll a managed machine</h2>
+        <p>Add a managed machine to keep scan history, posture trends, and recurring reports in one place.</p>
+        <Link className="btn" href={routePath('/inventory/new')}>Add &amp; scan machine</Link>
+>>>>>>> 0f0fa96 (Add managed machine credential UI refinements)
       </section>
 
       <section className="panel" role="status" aria-live="polite">
