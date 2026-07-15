@@ -1,11 +1,7 @@
 import { BadRequestException, Body, ConflictException, Controller, Delete, ForbiddenException, Get, Header, NotFoundException, Param, Patch, Post, Req, Res } from '@nestjs/common';
 import bcrypt from 'bcryptjs';
-<<<<<<< HEAD
 import { createCipheriv, createHash, randomBytes } from 'node:crypto';
 import { Readable } from 'node:stream';
-=======
-import { createHash, randomBytes, randomUUID, createCipheriv } from 'node:crypto';
->>>>>>> 0f0fa96 (Add managed machine credential UI refinements)
 import type { Request, Response } from 'express';
 import { RUN_EVENT_TYPE, scannerBundleContractVersion } from '@shore-sentinel/shared';
 import { ArtifactService } from './artifact.service.js';
@@ -15,11 +11,8 @@ import { QueueService } from './queue.service.js';
 import { UpdateService } from './update.service.js';
 import { assertExactlyOneSubject, requireString, validateArtifactComplete, validateArtifactType } from './validation.js';
 
-<<<<<<< HEAD
 const THIRTY_DAYS_SECONDS = 60 * 60 * 24 * 30;
 
-=======
->>>>>>> 0f0fa96 (Add managed machine credential UI refinements)
 function sshSeal(plaintext: string) {
   const keySeed = process.env.SHORE_SENTINEL_SECRET_KEY || 'shore-sentinel-dev-secret-key';
   const key = createHash('sha256').update(keySeed).digest();
@@ -334,131 +327,6 @@ export class AppController {
     );
     return result.rows[0];
   }
-<<<<<<< HEAD
-=======
-
-  @Get('remediations/:id/activity')
-  async remediationActivity(@Param('id') id: string) {
-    const tenantId = await this.db.tenantId();
-    const result = await this.db.query(
-      `SELECT h.id, h.event_type, h.payload, h.created_at, h.actor_user_id, COALESCE(u.display_name, 'System') AS actor_name
-       FROM remediation_item_activity h
-       LEFT JOIN users u ON u.id = h.actor_user_id
-       WHERE h.tenant_id = $1 AND h.remediation_item_id = $2
-       ORDER BY h.created_at ASC`,
-      [tenantId, id],
-    );
-    return { activity: result.rows };
-  }
-
-  @Patch('remediations/:id/status')
-  @Patch('remediation/:id/status')
-  async updateRemediationStatus(@Param('id') id: string, @Body() body: Record<string, unknown>) {
-    const tenantId = await this.db.tenantId();
-    const newStatus = typeof body.status === 'string' ? body.status.toLowerCase() : '';
-    const allowedStatuses = ['needs_review', 'in_progress', 'fixed', 'accepted_risk', 'open', 'accepted', 'ignored', 'resolved'];
-    if (!newStatus || !allowedStatuses.includes(newStatus)) {
-      throw new BadRequestException(`invalid status: ${newStatus}. allowed: ${allowedStatuses.join(', ')}`);
-    }
-    const current = await this.db.query('SELECT id, status, title FROM remediation_items WHERE tenant_id=$1 AND id=$2', [tenantId, id]);
-    if (!current.rows[0]) throw new NotFoundException('remediation item not found');
-    const updated = await this.db.query('UPDATE remediation_items SET status=$1, updated_at=now() WHERE tenant_id=$2 AND id=$3 RETURNING *', [newStatus, tenantId, id]);
-    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'remediation.status_changed', 'remediation_item', id, { from: current.rows[0].status, to: newStatus, title: current.rows[0].title }]);
-    await this.db.query('INSERT INTO remediation_item_activity (tenant_id, remediation_item_id, actor_user_id, event_type, payload) VALUES ($1,$2,$3,$4,$5)', [tenantId, id, null, 'remediation.status_changed', { from: current.rows[0].status, to: newStatus, title: current.rows[0].title }]);
-    return updated.rows[0];
-  }
-
-
-  @Get('targets') async targets() { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT t.*, e.name AS environment_name, e.slug AS environment_slug FROM targets t LEFT JOIN environments e ON e.id=t.environment_id WHERE t.tenant_id=$1 ORDER BY t.created_at DESC', [tenantId]); return result.rows; }
-  @Get('targets/:id') async target(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT t.*, e.name AS environment_name, e.slug AS environment_slug FROM targets t LEFT JOIN environments e ON e.id=t.environment_id WHERE t.tenant_id=$1 AND t.id=$2', [tenantId, id]); if (!result.rows[0]) throw new BadRequestException('target not found'); return result.rows[0]; }
-  @Get('targets/:id/scan-runs') async targetScanRuns(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query(`SELECT r.*, latest.event_type AS latest_event_type, latest.message AS latest_event_message, latest.progress_percent AS latest_progress_percent, latest.created_at AS latest_event_at, COALESCE(json_agg(jsonb_build_object('id', a.id, 'artifact_type', a.artifact_type, 'storage_uri', a.storage_uri, 'sha256', a.sha256, 'mime_type', a.mime_type, 'size_bytes', a.size_bytes, 'parse_status', a.parse_status, 'created_at', a.created_at) ORDER BY a.created_at DESC) FILTER (WHERE a.id IS NOT NULL), '[]'::json) AS artifacts FROM scan_runs r LEFT JOIN LATERAL (SELECT event_type, message, progress_percent, created_at FROM job_events e WHERE e.tenant_id=$1 AND e.run_id=r.id ORDER BY e.created_at DESC LIMIT 1) latest ON TRUE LEFT JOIN artifacts a ON a.tenant_id=$1 AND a.run_id=r.id WHERE r.tenant_id=$1 AND r.target_id=$2 GROUP BY r.id, latest.event_type, latest.message, latest.progress_percent, latest.created_at ORDER BY r.created_at DESC`, [tenantId, id]); return { runs: result.rows }; }
-  @Get('scan-runs/:id/artifacts') async runArtifacts(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT * FROM artifacts WHERE tenant_id=$1 AND run_id=$2 ORDER BY created_at DESC', [tenantId, id]); return { artifacts: result.rows }; }
-  @Patch('targets/:id') async updateTarget(@Param('id') id: string, @Body() body: Record<string, unknown>) { const tenantId = await this.db.tenantId(); const current = await this.db.query('SELECT * FROM targets WHERE tenant_id=$1 AND id=$2', [tenantId, id]); if (!current.rows[0]) throw new BadRequestException('target not found'); const fields = ['hostname', 'fqdn', 'ip_address', 'owner_team', 'platform', 'connection_mode', 'monitoring_enabled'] as const; const updates: string[] = []; const params: unknown[] = [tenantId, id]; for (const field of fields) { if (Object.prototype.hasOwnProperty.call(body, field)) { updates.push(`${field}=$${params.length + 1}`); params.push(body[field]); } } if (!updates.length) return current.rows[0]; const result = await this.db.query(`UPDATE targets SET ${updates.join(', ')}, updated_at=now() WHERE tenant_id=$1 AND id=$2 RETURNING *`, params); return result.rows[0]; }
-  @Delete('targets/:id') async deleteTarget(@Param('id') id: string) {
-    const tenantId = await this.db.tenantId();
-    const target = await this.db.query<{ id: string; hostname: string }>('SELECT id, hostname FROM targets WHERE tenant_id = $1 AND id = $2', [tenantId, id]);
-    if (!target.rows[0]) throw new BadRequestException('target not found');
-    const runs = await this.db.query<{ id: string }>('SELECT id FROM scan_runs WHERE tenant_id = $1 AND target_id = $2', [tenantId, id]);
-    const jobResult = await this.db.query<{ id: string }>('SELECT id FROM scan_jobs WHERE tenant_id = $1 AND target_id = $2', [tenantId, id]);
-    const runIds = runs.rows.map((row) => row.id);
-    const jobIds = jobResult.rows.map((row) => row.id);
-    const affected = { runs: runIds.length, jobs: jobIds.length, scheduled_target: target.rows[0].hostname };
-    if (runIds.length) {
-      await this.db.query('DELETE FROM job_events WHERE tenant_id=$1 AND run_id = ANY($2::uuid[])', [tenantId, runIds]);
-      await this.db.query('DELETE FROM artifacts WHERE tenant_id=$1 AND run_id = ANY($2::uuid[])', [tenantId, runIds]);
-      await this.db.query('DELETE FROM remediation_items WHERE tenant_id=$1 AND finding_instance_id IN (SELECT id FROM finding_instances WHERE tenant_id=$1 AND target_id=$2)', [tenantId, id]);
-      await this.db.query('DELETE FROM finding_instances WHERE tenant_id=$1 AND run_id = ANY($2::uuid[])', [tenantId, runIds]);
-      await this.db.query('DELETE FROM notification_events WHERE tenant_id=$1 AND run_id = ANY($2::uuid[])', [tenantId, runIds]);
-    }
-    await this.db.query('DELETE FROM job_events WHERE tenant_id=$1 AND job_id = ANY($2::uuid[])', [tenantId, jobIds]);
-    await this.db.query('DELETE FROM scan_runs WHERE tenant_id=$1 AND id = ANY($2::uuid[])', [tenantId, runIds]);
-    await this.db.query('DELETE FROM scan_jobs WHERE tenant_id=$1 AND id = ANY($2::uuid[])', [tenantId, jobIds]);
-    await this.db.query('DELETE FROM notification_events WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]);
-    await this.db.query('DELETE FROM target_status_checks WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]);
-    await this.db.query('DELETE FROM schedules WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]);
-    await this.db.query('DELETE FROM target_identities WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]);
-    await this.db.query('DELETE FROM target_group_members WHERE target_id=$1', [id]);
-    await this.db.query('DELETE FROM targets WHERE tenant_id=$1 AND id=$2', [tenantId, id]);
-    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'target.deleted', 'target', id, affected]);
-    return { deleted: true, id, affected };
-  }
-  @Get('one-time-audits') async oneTimeAudits() { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT * FROM one_time_audits WHERE tenant_id=$1 ORDER BY created_at DESC', [tenantId]); return result.rows; }
-  @Get('one-time-audits/:id') async oneTimeAudit(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT * FROM one_time_audits WHERE tenant_id=$1 AND id=$2', [tenantId, id]); if (!result.rows[0]) throw new BadRequestException('one-time audit not found'); return result.rows[0]; }
-  @Post('one-time-audits') async createAudit(@Body() body: Record<string, unknown>) { const tenantId = await this.db.tenantId(); const result = await this.db.query('INSERT INTO one_time_audits (tenant_id,display_name,hostname,ip_address,connection_mode) VALUES ($1,$2,$3,$4,$5) RETURNING *', [tenantId, requireString(body, 'display_name'), body.hostname ?? null, body.ip_address ?? null, body.connection_mode ?? 'ssh_push']); return result.rows[0]; }
-  @Post('targets')
-  async createTarget(@Body() body: Record<string, unknown>) {
-    const tenantId = await this.db.tenantId();
-    const hostname = requireString(body, 'hostname');
-    const connectionMode = trimText(body.connection_mode) || 'ssh_push';
-    const env = await this.db.query<{ id: string }>('SELECT id FROM environments WHERE tenant_id=$1 ORDER BY created_at LIMIT 1', [tenantId]);
-
-    let sshAuthMethod: string | null = null;
-    let sshPort: number | null = null;
-    let sshUsername: string | null = null;
-    let sshCredentialId: string | null = null;
-
-    if (connectionMode === 'ssh_push') {
-      sshAuthMethod = trimText(body.ssh_auth_method) === 'ssh_key' ? 'ssh_key' : 'password';
-      sshPort = parseSshPort(body);
-      sshUsername = requireString(body, 'ssh_username');
-      const rawSecret = sshAuthMethod === 'ssh_key' ? requireString(body, 'ssh_private_key') : requireString(body, 'ssh_password');
-      const credentialType = sshAuthMethod === 'ssh_key' ? 'ssh_key' : 'ssh_password';
-      const sealedSecret = sshSeal(JSON.stringify({
-        auth_method: sshAuthMethod,
-        hostname,
-        port: sshPort,
-        username: sshUsername,
-        secret: rawSecret,
-      }));
-      const fingerprint = sshFingerprint(rawSecret);
-      const credential = await this.db.query<{ id: string }>(
-        'INSERT INTO credentials (tenant_id, label, credential_type, sealed_secret, fingerprint) VALUES ($1,$2,$3,$4,$5) RETURNING id',
-        [tenantId, `${hostname} SSH ${sshAuthMethod === 'ssh_key' ? 'key' : 'password'}`, credentialType, sealedSecret, fingerprint],
-      );
-      sshCredentialId = credential.rows[0].id;
-    }
-
-    const result = await this.db.query(
-      'INSERT INTO targets (tenant_id,hostname,fqdn,ip_address,environment_id,owner_team,platform,connection_mode,ssh_auth_method,ssh_port,ssh_username,ssh_credential_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *',
-      [
-        tenantId,
-        hostname,
-        body.fqdn ?? null,
-        body.ip_address ?? null,
-        env.rows[0]?.id ?? null,
-        body.owner_team ?? null,
-        body.platform ?? null,
-        connectionMode,
-        sshAuthMethod,
-        sshPort,
-        sshUsername,
-        sshCredentialId,
-      ],
-    );
-    return result.rows[0];
-  }
-  @Post('one-time-audits/:id/run') async runAudit(@Param('id') id: string, @Body() body: Record<string, unknown>) { return this.createJob('one_time_audit', null, id, body); }
->>>>>>> 0f0fa96 (Add managed machine credential UI refinements)
   @Post('targets/:id/scan-jobs') async runTarget(@Param('id') id: string, @Body() body: Record<string, unknown>) { return this.createJob('managed_target', id, null, body); }
   @Get('scan-jobs/:id') async job(@Param('id') id: string) { const result = await this.db.query('SELECT * FROM scan_jobs WHERE id=$1', [id]); if (!result.rows[0]) throw new BadRequestException('scan job not found'); return result.rows[0]; }
   @Get('scan-runs/:id') async run(@Param('id') id: string) { const result = await this.db.query('SELECT * FROM scan_runs WHERE id=$1', [id]); if (!result.rows[0]) throw new BadRequestException('scan run not found'); return result.rows[0]; }
@@ -484,7 +352,7 @@ export class AppController {
     if (!artifact) throw new NotFoundException('artifact not found');
     if (!String(artifact.storage_uri).startsWith('s3://')) throw new BadRequestException('artifact body is not downloadable');
     const object = await this.artifacts.download(artifact.storage_uri);
-    const extension = artifact.artifact_type === 'markdown' ? 'md' : artifact.artifact_type === 'scanner.normalized_findings' || artifact.artifact_type === 'scanner.enrichment_summary' || artifact.artifact_type === 'scanner.raw_output' ? 'json' : artifact.artifact_type;
+    const extension = artifact.artifact_type === 'markdown' ? 'md' : artifact.artifact_type === 'scanner.normalized_findings' || artifact.artifact_type === 'scanner.enrichment_summary' || artifact.artifact_type === 'scanner.raw_output' || artifact.artifact_type === 'scanner.agent_profile_security_assessment' ? 'json' : artifact.artifact_type;
     res.setHeader('Content-Type', artifact.mime_type || object.ContentType || 'application/octet-stream');
     res.setHeader('Content-Length', String(artifact.size_bytes || object.ContentLength || ''));
     res.setHeader('Content-Disposition', `inline; filename="shore-sentinel-${artifact.artifact_type}.${extension}"`);

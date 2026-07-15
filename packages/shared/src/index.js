@@ -31,6 +31,7 @@ export const RUN_EVENT_TYPE = Object.freeze({
 
 export const ARTIFACT_KIND = Object.freeze({
   scannerRawOutput: 'scanner.raw_output',
+  agentProfileSecurityAssessment: 'scanner.agent_profile_security_assessment',
   normalizedFindings: 'scanner.normalized_findings',
   enrichmentSummary: 'scanner.enrichment_summary',
 });

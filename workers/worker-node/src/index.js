@@ -1,10 +1,11 @@
 import { Queue, Worker, QueueEvents } from 'bullmq';
 import IORedis from 'ioredis';
-import { ARTIFACT_KIND, JOB_STATUS, QUEUES, RUN_EVENT_TYPE, scannerBundleContractVersion } from '@shore-sentinel/shared';
+import { JOB_STATUS, QUEUES, RUN_EVENT_TYPE, scannerBundleContractVersion } from '@shore-sentinel/shared';
 import { createApiClient } from './apiClient.js';
 import { readConfig } from './config.js';
-import { artifactUploadPayload, lifecycleEvent, retryDecision } from './lifecycle.js';
+import { lifecycleEvent, retryDecision } from './lifecycle.js';
 import { normalizeJobData } from './payload.js';
+import { buildScanArtifactUploads } from './scanArtifacts.js';
 
 const config = readConfig();
 const connection = new IORedis(config.redisUrl, { maxRetriesPerRequest: null });
@@ -57,29 +58,11 @@ const worker = new Worker(QUEUES.scanJobs, async (job) => {
     findings: parsed.normalizedFindings.length,
   });
 
-  const uploads = [
-    artifactUploadPayload({
-      runId: data.runId,
-      kind: ARTIFACT_KIND.scannerRawOutput,
-      contentType: 'application/json',
-      body: data.scannerOutput,
-      metadata: { contractVersion: scannerBundleContractVersion() },
-    }),
-    artifactUploadPayload({
-      runId: data.runId,
-      kind: ARTIFACT_KIND.normalizedFindings,
-      contentType: 'application/json',
-      body: parsed.normalizedFindings,
-      metadata: { parserVersion: parsed.parserVersion },
-    }),
-    artifactUploadPayload({
-      runId: data.runId,
-      kind: ARTIFACT_KIND.enrichmentSummary,
-      contentType: 'application/json',
-      body: parsed.enrichmentSummary,
-      metadata: { parserVersion: parsed.parserVersion },
-    }),
-  ];
+  const uploads = buildScanArtifactUploads({
+    runId: data.runId,
+    scannerOutput: data.scannerOutput,
+    parsed,
+  });
 
   for (const payload of uploads) {
     await emit(job, RUN_EVENT_TYPE.artifactUploadRequested, JOB_STATUS.artifactUploading, `Uploading ${payload.kind}`);

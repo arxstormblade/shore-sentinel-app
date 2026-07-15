@@ -5,8 +5,7 @@ DO $$ BEGIN CREATE TYPE subject_type AS ENUM ('managed_target','one_time_audit')
 DO $$ BEGIN CREATE TYPE connection_mode AS ENUM ('ssh_push','pull_checkin','both','temporary_runner'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN CREATE TYPE scan_job_status AS ENUM ('queued','leased','running','completed','failed','cancelled'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN CREATE TYPE scan_run_status AS ENUM ('pending','leased','running','completed','failed','stale','cancelled'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-DO $$ BEGIN CREATE TYPE artifact_type AS ENUM ('json','markdown','sarif','pdf','scanner.raw_output','scanner.normalized_findings','scanner.enrichment_summary'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-DO $$ BEGIN ALTER TYPE artifact_type ADD VALUE IF NOT EXISTS 'scanner.raw_output'; END $$;
+DO $$ BEGIN CREATE TYPE artifact_type AS ENUM ('json','markdown','sarif','pdf','scanner.raw_output','scanner.agent_profile_security_assessment','scanner.normalized_findings','scanner.enrichment_summary'); EXCEPTION WHEN dup...[truncated]
 DO $$ BEGIN ALTER TYPE artifact_type ADD VALUE IF NOT EXISTS 'scanner.normalized_findings'; END $$;
 DO $$ BEGIN ALTER TYPE artifact_type ADD VALUE IF NOT EXISTS 'scanner.enrichment_summary'; END $$;
 DO $$ BEGIN CREATE TYPE artifact_parse_status AS ENUM ('uploaded','processing','ready','failed','quarantined'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;

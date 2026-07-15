@@ -15,6 +15,10 @@ test('schema contains database-level exactly-one constraints for jobs and runs',
   assert.match(SCHEMA_SQL, /CONSTRAINT scan_jobs_exactly_one_subject CHECK/);
   assert.match(SCHEMA_SQL, /CONSTRAINT scan_runs_exactly_one_subject CHECK/);
 });
+
+test('schema supports the dedicated agent profile security assessment artifact kind', () => {
+  assert.match(SCHEMA_SQL, /scanner\.agent_profile_security_assessment/);
+});
 test('artifact completion validation accepts legacy upload types and canonical worker kinds', () => {
   const ok = validateArtifactComplete({ artifact_type: 'sarif', sha256: 'a'.repeat(64), size_bytes: 25 });
   assert.deepEqual(ok, { artifactType: 'sarif', sha256: 'a'.repeat(64), sizeBytes: 25 });

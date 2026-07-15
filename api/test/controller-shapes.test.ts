@@ -16,7 +16,6 @@ function controller() {
       if (sql.includes('INSERT INTO scan_jobs')) return { rows: [{ id: 'job-1', tenant_id: params[0], subject_type: params[1], target_id: params[2], one_time_audit_id: params[3], status: 'queued' }] };
       if (sql.includes('INSERT INTO scan_runs')) return { rows: [{ id: 'run-1', job_id: params[1], subject_type: params[2], target_id: params[3], one_time_audit_id: params[4], status: 'pending' }] };
       if (sql.includes('INSERT INTO artifacts')) return { rows: [{ id: 'artifact-1', run_id: params[1], artifact_type: params[2], storage_uri: params[3], sha256: params[4], size_bytes: params[6] }] };
-<<<<<<< HEAD
       if (sql.includes('INSERT INTO credentials')) return { rows: [{ id: 'credential-1' }] };
       if (sql.includes('INSERT INTO targets')) return { rows: [{ id: 'target-1', hostname: params[1], status: 'unknown', ssh_auth_method: params[8], ssh_port: params[9], ssh_username: params[10], ssh_credential_id: params[11] }] };
       if (sql.includes('SELECT u.id, u.email, u.display_name, u.disabled_at')) return { rows: [{ id: 'user-1', email: 'admin@shore360.local', display_name: 'Initial Admin', disabled_at: null, roles: ['admin'] }] };
@@ -24,15 +23,6 @@ function controller() {
       if (sql.includes('FROM scan_runs sr') && sql.includes('sr.id = $2')) return { rows: [{ id: 'run-1', title: 'Managed host', source: 'Managed machine', env: 'Production', status: 'completed', severity: 'high', findings: [] }] };
       if (sql.includes('SELECT id, artifact_type, storage_uri, mime_type, size_bytes FROM artifacts')) return { rows: [{ id: params[1], artifact_type: 'pdf', storage_uri: 's3://shore-sentinel-artifacts/runs/run-1/report.pdf', mime_type: 'application/pdf', size_bytes: 25 }] };
       if (sql.includes('u.deleted_at')) throw new Error('users query must not reference deleted_at; schema uses disabled_at');
-=======
-      if (sql.includes('SELECT id, target_id, one_time_audit_id FROM scan_runs')) return { rows: [{ id: 'run-1', target_id: 'target-1', one_time_audit_id: null }] };
-      if (sql.includes('INSERT INTO findings')) return { rows: [{ id: 'finding-1', scanner_finding_id: params[1], title: params[2], severity: params[4] }] };
-      if (sql.includes('INSERT INTO finding_instances')) return { rows: [{ id: 'finding-instance-1' }] };
-      if (sql.includes('INSERT INTO remediation_items')) return { rows: [{ id: 'remediation-1', finding_instance_id: params[1], title: params[5], status: params[8] }] };
-      if (sql.includes('INSERT INTO one_time_audits')) return { rows: [{ id: 'audit-1', display_name: params[1], status: 'draft' }] };
-      if (sql.includes('INSERT INTO credentials')) return { rows: [{ id: 'credential-1' }] };
-      if (sql.includes('INSERT INTO targets')) return { rows: [{ id: 'target-1', hostname: params[1], status: 'unknown', ssh_auth_method: params[8], ssh_port: params[9], ssh_username: params[10], ssh_credential_id: params[11] }] };
->>>>>>> 0f0fa96 (Add managed machine credential UI refinements)
       if (sql.includes('SELECT id FROM environments')) return { rows: [{ id: 'env-1' }] };
       rows.push({ sql, params });
       return { rows: [] };

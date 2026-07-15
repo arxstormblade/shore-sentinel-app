@@ -19,7 +19,7 @@ function severityFromRisk(risk) {
   return 'informational';
 }
 
-function toContract(raw, data) {
+export function toContract(raw, data) {
   const metadata = raw.metadata || {};
   return {
     contractVersion: scannerBundleContractVersion(),
@@ -35,6 +35,7 @@ function toContract(raw, data) {
     },
     score: raw.score,
     executiveSummary: raw.executive_summary,
+    agent_profile_assessment: raw.agent_profile_assessment ?? { status: 'not_detected', profile_count: 0, profiles: [] },
     findings: Array.isArray(raw.findings) ? raw.findings.map((finding, index) => ({
       id: finding.id || finding.check_id || `finding-${index + 1}`,
       title: finding.title || finding.check || `Finding ${index + 1}`,

@@ -19,6 +19,7 @@ From the live source, the script:
   - no secret printing
 - Reviews posture across these categories:
   - Framework Discovery
+  - Agent Profile Security Assessment — target-local Hermes, Claude, Codex, Cursor, and GitHub agent-profile definitions are inventoried and checked without reporting profile content
   - Access Control
   - Execution & Approvals
   - Secrets & Privacy
@@ -109,6 +110,16 @@ Examples from the live source:
   - `OWASP-AGT-A1`
 
 In practice, that means each finding is already tied to a control lens that can be used for audit review, remediation planning, or executive reporting.
+
+## Agent profile assessment artifacts
+
+When the target contains a supported local agent-profile layout, the scanner adds `agent_profile_assessment` to its JSON report and an **Agent Profile Security Assessment** section to Markdown. Each discovered profile is evaluated against the framework-mapped baseline for:
+
+- prompt-injection/instruction-override resistance;
+- explicit human approval for destructive actions; and
+- secret and credential non-disclosure guardrails.
+
+The assessment reports only target-local profile identifiers, evidence paths, boolean control outcomes, risk, and mapped controls. It never reports profile text or secret values. In managed scans, Shore Sentinel stores the same payload as the dedicated `scanner.agent_profile_security_assessment` artifact.
 
 ## Quick How To
 

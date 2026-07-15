@@ -21,6 +21,7 @@ export const RUN_EVENT_TYPE: Readonly<{
 
 export const ARTIFACT_KIND: Readonly<{
   scannerRawOutput: 'scanner.raw_output';
+  agentProfileSecurityAssessment: 'scanner.agent_profile_security_assessment';
   normalizedFindings: 'scanner.normalized_findings';
   enrichmentSummary: 'scanner.enrichment_summary';
 }>;

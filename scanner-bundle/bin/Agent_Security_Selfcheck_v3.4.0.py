@@ -54,6 +54,8 @@ SECRET_PATTERNS = [
 
 SECRET_FILE_NAMES = {".env", ".env.local", ".env.production", ".env.prod", "auth.json", "credentials.json"}
 INSTRUCTION_FILES = {"SOUL.md", "AGENTS.md", "CLAUDE.md", ".cursorrules", "SYSTEM.md"}
+AGENT_PROFILE_FILE_NAMES = INSTRUCTION_FILES | {"profile.yaml", "profile.yml", "profile.json", "MEMORY.md"}
+AGENT_PROFILE_CONTROL_BASELINE = ["OWASP-LLM-A1", "OWASP-AGT-A2", "OWASP-LLM-A7", "NIST-AC-3", "NIST-SI-10", "SOC2-CC6.1"]
 DEPLOY_FILE_HINTS = ("deploy", "release", "ship", "publish", "terraform", "ansible")
 DANGEROUS_COMMAND_HINTS = (
     "rm -rf", "chmod 777", "curl | sh", "curl -fsSL", "wget | sh", "sudo ",
@@ -67,6 +69,7 @@ FRAMEWORK_CONTROLS = {
     "Agent runtime detected": ["NIST-CM-8", "OWASP-AGT-A1"],
     "Framework project detected": ["NIST-CM-8", "OWASP-AGT-A1"],
     "Agent instruction boundaries present": ["OWASP-LLM-A1", "ATLAS-AML.T0051", "NIST-SI-10"],
+    "Agent profile security baseline assessed": AGENT_PROFILE_CONTROL_BASELINE,
     "Secret files metadata reviewed": ["CIS-v8-3.3", "NIST-IA-5", "SOC2-CC6.1"],
     "No obvious plaintext secrets in non-secret configs": ["OWASP-LLM-A7", "CIS-v8-3.11", "NIST-IA-5"],
     "Docker socket exposure reviewed": ["CIS-v8-4.6", "OWASP-AGT-A5", "NIST-CM-7"],
@@ -425,6 +428,120 @@ def metadata_for_secret_file(path: Path) -> str:
         return f"path={path}; metadata_error={redact(exc)}; content_not_read=true"
 
 
+def _profile_record(root: Path, runtime: str, profile_id: str, files: list[Path]) -> dict[str, Any]:
+    relevant = files
+    instructions = [
+        p for p in relevant
+        if p.name in INSTRUCTION_FILES or (runtime in {"claude", "codex", "cursor", "github"} and p.suffix.lower() in {".md", ".mdc", ".yaml", ".yml", ".json"})
+    ]
+    return {
+        "runtime": runtime,
+        "profile_id": profile_id,
+        "paths": rel_paths(relevant, root),
+        "instruction_paths": rel_paths(instructions, root),
+        "instruction_files": instructions,
+    }
+
+
+def discover_agent_profiles(root: Path) -> list[dict[str, Any]]:
+    """Discover supported target-local agent profiles without reading secret files.
+
+    This intentionally inspects only known profile layouts under the scan target;
+    it does not enumerate the scanner host's home directory or infer profiles from
+    generic source code. Evidence is path metadata plus boolean control results.
+    """
+    profiles: list[dict[str, Any]] = []
+    seen: set[tuple[str, str]] = set()
+
+    hermes_profiles = root / ".hermes" / "profiles"
+    if hermes_profiles.is_dir():
+        for profile_dir in sorted((p for p in hermes_profiles.iterdir() if p.is_dir()), key=lambda p: p.name)[:100]:
+            files = [p for p in profile_dir.rglob("*") if p.is_file() and p.name in AGENT_PROFILE_FILE_NAMES]
+            if files:
+                profiles.append(_profile_record(root, "hermes", profile_dir.name, files))
+                seen.add(("hermes", profile_dir.name))
+
+    layouts = [
+        ("claude", root / ".claude" / "agents", {".md", ".yaml", ".yml", ".json"}),
+        ("codex", root / ".codex" / "agents", {".md", ".yaml", ".yml", ".json"}),
+        ("cursor", root / ".cursor" / "rules", {".md", ".mdc", ".yaml", ".yml", ".json"}),
+        ("github", root / ".github" / "agents", {".md", ".yaml", ".yml", ".json"}),
+    ]
+    for runtime, directory, suffixes in layouts:
+        if not directory.is_dir():
+            continue
+        for profile_file in sorted((p for p in directory.rglob("*") if p.is_file() and p.suffix.lower() in suffixes), key=lambda p: str(p))[:100]:
+            profile_id = str(profile_file.relative_to(directory).with_suffix(""))
+            key = (runtime, profile_id)
+            if key in seen:
+                continue
+            profiles.append(_profile_record(root, runtime, profile_id, [profile_file]))
+            seen.add(key)
+
+    return profiles[:100]
+
+
+def assess_agent_profiles(ctx: dict[str, Any], findings: list[Finding]) -> dict[str, Any]:
+    """Assess discovered profiles against the agent-security control baseline.
+
+    Only instruction/profile files are read, secret-named files are excluded by
+    safe_read_text, and no profile contents are emitted into report artifacts.
+    """
+    profiles = ctx.get("agent_profiles", [])
+    if not profiles:
+        return {
+            "status": "not_detected",
+            "profile_count": 0,
+            "framework_controls": AGENT_PROFILE_CONTROL_BASELINE,
+            "profiles": [],
+            "evidence_policy": "target-local paths and boolean control results only; profile content and secret values are not reported",
+        }
+
+    profile_results = []
+    for profile in profiles:
+        instruction_text = "\n".join(safe_read_text(path, 80_000) for path in profile["instruction_files"])
+        controls = {
+            "instruction_override_resistance": text_has_any(instruction_text, ["ignore previous", "prompt injection", "untrusted", "external content", "system prompt", "instruction hierarchy"]),
+            "destructive_action_confirmation": text_has_any(instruction_text, ["destructive", "delete", "rm -rf", "approval", "confirm", "human approval", "explicit approval"]),
+            "secret_disclosure_guardrails": text_has_any(instruction_text, ["secret", "credential", "token", "private key", "do not reveal", "redact"]),
+        }
+        missing = [name for name, present in controls.items() if not present]
+        risk = "High" if any(name in missing for name in {"destructive_action_confirmation", "secret_disclosure_guardrails"}) else "Medium" if missing else "Low"
+        status = "WARN" if missing else "PASS"
+        profile_results.append({
+            "runtime": profile["runtime"],
+            "profile_id": profile["profile_id"],
+            "status": status,
+            "risk": risk,
+            "framework_controls": AGENT_PROFILE_CONTROL_BASELINE,
+            "paths": profile["paths"],
+            "controls": controls,
+            "missing_controls": missing,
+        })
+
+    worst_risk = max((item["risk"] for item in profile_results), key=lambda risk: RISK_ORDER[risk])
+    overall_status = "WARN" if any(item["status"] == "WARN" for item in profile_results) else "PASS"
+    evidence = f"profile_count={len(profile_results)}; profiles={[{'runtime': item['runtime'], 'profile_id': item['profile_id'], 'status': item['status']} for item in profile_results]}; contents_not_reported=true"
+    add(
+        findings,
+        "Agent Mesh / Subagents",
+        "Agent profile security baseline assessed",
+        overall_status,
+        worst_risk,
+        5 if overall_status == "WARN" else 2,
+        evidence,
+        "Keep each configured agent profile explicit about prompt-injection resistance, secret non-disclosure, and human approval for destructive actions.",
+        "profile",
+    )
+    return {
+        "status": "assessed",
+        "profile_count": len(profile_results),
+        "framework_controls": AGENT_PROFILE_CONTROL_BASELINE,
+        "profiles": profile_results,
+        "evidence_policy": "target-local paths and boolean control results only; profile content and secret values are not reported",
+    }
+
+
 def discover_context(target: Path) -> dict[str, Any]:
     root = find_repo_root(target)
     files = list_files(root)
@@ -464,6 +581,7 @@ def discover_context(target: Path) -> dict[str, Any]:
     policy_files = [p for p in files if p.name in {"mcp.json", "tools.json", "toolsets.yaml", "toolsets.yml", "permissions.json", "policy.yaml", "policy.yml"}]
     subagent_files = [p for p in files if "subagent" in p.name.lower() or "agents" in p.parts or p.name in {"AGENTS.md", "SOUL.md"}]
     persistence_files = [p for p in files if any(part in {"cron", "crontab", "systemd", "launchd"} for part in p.parts) or p.suffix == ".service"]
+    agent_profiles = discover_agent_profiles(root)
     return {
         "root": root,
         "files": files,
@@ -481,6 +599,7 @@ def discover_context(target: Path) -> dict[str, Any]:
         "policy_files": policy_files,
         "subagent_files": subagent_files,
         "persistence_files": persistence_files,
+        "agent_profiles": agent_profiles,
     }
 
 
@@ -1362,6 +1481,21 @@ def render_markdown(meta: dict[str, Any], res: dict[str, Any]) -> str:
     for cat, data in res["score"]["categories"].items():
         lines.append(f"| {cat} | {data['score']} | {data['checks']} | {data['pass']} | {data['warn']} | {data['fail']} | {data['skip']} |")
 
+    assessment = res.get("agent_profile_assessment", {"status": "not_detected", "profile_count": 0, "profiles": [], "framework_controls": []})
+    lines += ["", "## Agent Profile Security Assessment", ""]
+    lines.append(f"- Assessment status: `{assessment.get('status', 'not_detected')}`")
+    lines.append(f"- Configured profiles discovered: `{assessment.get('profile_count', 0)}`")
+    controls = " ".join(f"`{control}`" for control in assessment.get("framework_controls", []))
+    lines.append(f"- Framework controls: {controls or '`none`'}")
+    if assessment.get("profiles"):
+        lines += ["", "| Runtime | Profile | Status | Risk | Missing controls | Evidence paths |", "|---|---|---|---|---|---|"]
+        for profile in assessment["profiles"]:
+            missing = ", ".join(profile.get("missing_controls", [])) or "none"
+            paths = ", ".join(profile.get("paths", [])) or "metadata unavailable"
+            lines.append(f"| {profile.get('runtime', 'unknown')} | {profile.get('profile_id', 'unknown')} | {profile.get('status', 'SKIP')} | {profile.get('risk', 'Info')} | {missing} | {paths} |")
+    else:
+        lines.append("- No supported target-local agent profiles were detected. No scanner-host profile directories were inspected.")
+
     lines += ["", "## Findings Sorted by Severity", ""]
     if not sorted_findings:
         lines.append("No findings generated.")
@@ -1859,6 +1993,7 @@ def main() -> int:
     ctx = discover_context(target)
     findings: list[Finding] = []
     scan_universal(ctx, findings)
+    agent_profile_assessment = assess_agent_profiles(ctx, findings)
     scan_runtime_environment(ctx, findings)
     scan_system_resources(ctx, findings)
     scan_runtime(ctx, findings)
@@ -1899,6 +2034,7 @@ def main() -> int:
     res = {
         "score": score(findings),
         "executive_summary": executive_summary({"score": score(findings), "findings": findings_with_tasks}),
+        "agent_profile_assessment": agent_profile_assessment,
         "findings": findings_with_tasks,
     }
     paths = write_reports(Path(args.out_dir), meta, res)
