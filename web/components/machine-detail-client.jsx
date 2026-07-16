@@ -4,20 +4,8 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { appPath, routePath } from '@/lib/paths';
-
-const FINAL_STATUSES = new Set(['succeeded', 'completed', 'failed', 'cancelled']);
-const STATUS_PROGRESS = {
-  queued: 0,
-  claimed: 10,
-  running: 25,
-  parsing: 55,
-  artifact_uploading: 80,
-  retrying: 90,
-  succeeded: 100,
-  completed: 100,
-  failed: 100,
-  cancelled: 100,
-};
+import { isSuccessfulRun, isTerminalRun, progressForRun, toneForRun } from '@/lib/machine-run-status';
+import { openRemediationCount, openRemediationItems, scanLaunchBlocked } from '@/lib/machine-detail-data';
 
 function toReadableTime(value) {
   if (!value) return 'Not available';
@@ -39,13 +27,6 @@ function formatDuration(seconds) {
   return `${minutes}m ${remaining.toString().padStart(2, '0')}s`;
 }
 
-function deriveProgress(run) {
-  if (!run) return 0;
-  if (typeof run.latest_progress_percent === 'number') return run.latest_progress_percent;
-  if (typeof run.progress_percent === 'number') return run.progress_percent;
-  return STATUS_PROGRESS[run.status] ?? 0;
-}
-
 function deriveProgressMessage(run) {
   return run?.latest_event_message || run?.latest_event_type || run?.status || 'Idle';
 }
@@ -64,20 +45,20 @@ function remediationGuidance(item) {
     || item.action
     || item.guidance
     || item.evidence_summary
-    || 'Review the finding evidence, validate the affected control, and apply the recommended hardening change.';
+    || 'Detailed guidance is unavailable in this summary. Open the full record to review the finding and recommended action.';
 }
 
-export function MachineDetailClient({ machine, initialRuns = [], canManage = false }) {
+export function MachineDetailClient({ machine, initialRuns = [], canScan = false, canEdit = false, canDelete = false, runHistoryUnavailable = false }) {
   const router = useRouter();
   const [runs, setRuns] = useState(() => ensureArray(initialRuns));
-  const [activeRunId, setActiveRunId] = useState(() => ensureArray(initialRuns).find((run) => !FINAL_STATUSES.has(run.status))?.id ?? null);
+  const [activeRunId, setActiveRunId] = useState(() => ensureArray(initialRuns).find((run) => !isTerminalRun(run))?.id ?? null);
   const [notice, setNotice] = useState('');
   const [scanBusy, setScanBusy] = useState(false);
   const [saveBusy, setSaveBusy] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [deleteStatus, setDeleteStatus] = useState('');
-  const [adminCanManage, setAdminCanManage] = useState(Boolean(canManage));
-  const [permissionStatus, setPermissionStatus] = useState(canManage ? 'Admin permissions confirmed.' : 'Checking admin permissions…');
+  const [permissions, setPermissions] = useState({ scan: Boolean(canScan), edit: Boolean(canEdit), delete: Boolean(canDelete) });
+  const [permissionStatus, setPermissionStatus] = useState(canDelete ? 'Admin permissions confirmed.' : 'Checking permissions…');
   const [draft, setDraft] = useState(() => ({
     hostname: machine.name ?? '',
     fqdn: machine.fqdn ?? '',
@@ -90,12 +71,12 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
 
   useEffect(() => {
     setRuns(ensureArray(initialRuns));
-    setActiveRunId(ensureArray(initialRuns).find((run) => !FINAL_STATUSES.has(run.status))?.id ?? null);
+    setActiveRunId(ensureArray(initialRuns).find((run) => !isTerminalRun(run))?.id ?? null);
   }, [initialRuns]);
 
   useEffect(() => {
-    setAdminCanManage(Boolean(canManage));
-  }, [canManage]);
+    setPermissions({ scan: Boolean(canScan), edit: Boolean(canEdit), delete: Boolean(canDelete) });
+  }, [canScan, canEdit, canDelete]);
 
   useEffect(() => {
     let cancelled = false;
@@ -103,18 +84,25 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
       try {
         const response = await fetch(appPath('/api/auth/me'), { cache: 'no-store', credentials: 'same-origin' });
         if (!response.ok) {
-          if (!cancelled) setPermissionStatus('Sign in as an admin to enable deletion.');
+          if (!cancelled) {
+            setPermissions({ scan: false, edit: false, delete: false });
+            setPermissionStatus('Sign in with an authorized account to manage this machine.');
+          }
           return;
         }
         const user = await response.json();
         const roles = Array.isArray(user?.roles) ? user.roles.map((role) => String(role).toLowerCase()) : [];
-        const isAdmin = roles.includes('admin');
+        const nextPermissions = {
+          scan: roles.some((role) => ['admin', 'operator', 'analyst'].includes(role)),
+          edit: roles.some((role) => ['admin', 'operator'].includes(role)),
+          delete: roles.includes('admin'),
+        };
         if (!cancelled) {
-          setAdminCanManage(isAdmin);
-          setPermissionStatus(isAdmin ? 'Admin permissions confirmed.' : `Signed in as ${roles.join(', ') || 'non-admin'}; deletion is disabled.`);
+          setPermissions(nextPermissions);
+          setPermissionStatus(nextPermissions.delete ? 'Admin permissions confirmed.' : `Signed in as ${roles.join(', ') || 'non-admin'}; deletion is disabled.`);
         }
       } catch {
-        // leave server-provided permission state unchanged
+        // Leave the server-provided permission state unchanged if the refresh is unavailable.
       }
     };
     refreshCurrentUser();
@@ -138,14 +126,20 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
   useEffect(() => {
     if (!activeRunId) return undefined;
     let cancelled = false;
+    let timer = null;
+    let controller = null;
+    let consecutiveFailures = 0;
+
     const refresh = async () => {
+      controller = new AbortController();
       try {
+        const requestOptions = { cache: 'no-store', credentials: 'same-origin', signal: controller.signal };
         const [runResponse, eventsResponse, artifactsResponse] = await Promise.all([
-          fetch(appPath(`/api/scan-runs/${activeRunId}`), { cache: 'no-store', credentials: 'same-origin' }),
-          fetch(appPath(`/api/scan-runs/${activeRunId}/events`), { cache: 'no-store', credentials: 'same-origin' }),
-          fetch(appPath(`/api/scan-runs/${activeRunId}/artifacts`), { cache: 'no-store', credentials: 'same-origin' }),
+          fetch(appPath(`/api/scan-runs/${activeRunId}`), requestOptions),
+          fetch(appPath(`/api/scan-runs/${activeRunId}/events`), requestOptions),
+          fetch(appPath(`/api/scan-runs/${activeRunId}/artifacts`), requestOptions),
         ]);
-        if (!runResponse.ok) return;
+        if (!runResponse.ok) throw new Error(`Scan status request failed with HTTP ${runResponse.status}`);
         const run = await runResponse.json();
         const eventsPayload = eventsResponse.ok ? await eventsResponse.json() : { events: [] };
         const artifactsPayload = artifactsResponse.ok ? await artifactsResponse.json() : { artifacts: [] };
@@ -158,26 +152,35 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
           latest_progress_percent: ensureArray(eventsPayload.events).at(-1)?.progress_percent ?? run.latest_progress_percent,
         };
         if (cancelled) return;
+        consecutiveFailures = 0;
         setRuns((current) => {
           const remainder = current.filter((item) => item.id !== nextRun.id);
           return [nextRun, ...remainder].sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
         });
-        if (FINAL_STATUSES.has(nextRun.status)) setActiveRunId(null);
-      } catch {
-        // keep the previous live state; the next tick will retry
+        if (isTerminalRun(nextRun)) {
+          setActiveRunId(null);
+          return;
+        }
+      } catch (error) {
+        if (cancelled || error?.name === 'AbortError') return;
+        consecutiveFailures += 1;
+        if (consecutiveFailures >= 3) {
+          setNotice('Live scan updates are temporarily unavailable. The active scan remains locked to prevent a duplicate launch.');
+        }
       }
+      if (!cancelled) timer = setTimeout(refresh, 3000);
     };
 
     refresh();
-    const timer = setInterval(refresh, 3000);
     return () => {
       cancelled = true;
-      clearInterval(timer);
+      if (timer) clearTimeout(timer);
+      controller?.abort();
     };
   }, [activeRunId]);
 
-  const currentRun = useMemo(() => runs.find((run) => run.id === activeRunId) ?? runs.find((run) => !FINAL_STATUSES.has(run.status)) ?? runs[0] ?? null, [activeRunId, runs]);
-  const currentProgress = deriveProgress(currentRun);
+  const currentRun = useMemo(() => runs.find((run) => run.id === activeRunId) ?? runs.find((run) => !isTerminalRun(run)) ?? runs[0] ?? null, [activeRunId, runs]);
+  const currentProgress = progressForRun(currentRun);
   const currentEta = (() => {
     if (!currentRun || currentProgress <= 0 || currentProgress >= 100) return null;
     const elapsed = toElapsedSeconds(currentRun.started_at || currentRun.created_at);
@@ -186,6 +189,14 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
   })();
 
   async function runScan() {
+    if (!permissions.scan) {
+      setNotice('Your role does not permit launching managed-machine scans.');
+      return;
+    }
+    if (runHistoryUnavailable) {
+      setNotice('Live scan history is unavailable. Scan launch remains disabled to prevent duplicate jobs.');
+      return;
+    }
     setScanBusy(true);
     setNotice('');
     try {
@@ -197,21 +208,20 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
       });
       if (!response.ok) throw new Error('Scan launch failed');
       const payload = await response.json();
-      if (payload?.run?.id) {
-        setRuns((current) => {
-          const nextRun = {
-            ...payload.run,
-            artifacts: [],
-            events: [{ event_type: 'job.queued', message: 'Scan job queued', progress_percent: 0 }],
-            latest_event_type: 'job.queued',
-            latest_event_message: 'Scan job queued',
-            latest_progress_percent: 0,
-          };
-          const remainder = current.filter((item) => item.id !== nextRun.id);
-          return [nextRun, ...remainder].sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
-        });
-        setActiveRunId(payload.run.id);
-      }
+      if (!payload?.run?.id) throw new Error('Scan service returned an invalid launch response.');
+      setRuns((current) => {
+        const nextRun = {
+          ...payload.run,
+          artifacts: [],
+          events: [{ event_type: 'job.queued', message: 'Scan job queued', progress_percent: 0 }],
+          latest_event_type: 'job.queued',
+          latest_event_message: 'Scan job queued',
+          latest_progress_percent: 0,
+        };
+        const remainder = current.filter((item) => item.id !== nextRun.id);
+        return [nextRun, ...remainder].sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+      });
+      setActiveRunId(payload.run.id);
       setNotice('Scan launched. Live progress is now streaming.');
     } catch (error) {
       setNotice(error instanceof Error ? error.message : 'Unable to launch scan.');
@@ -226,6 +236,10 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
 
   async function saveMachine(event) {
     event.preventDefault();
+    if (!permissions.edit) {
+      setNotice('Your role does not permit editing managed machines.');
+      return;
+    }
     setSaveBusy(true);
     setNotice('');
     try {
@@ -256,7 +270,7 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
   }
 
   async function deleteMachine() {
-    if (!adminCanManage) {
+    if (!permissions.delete) {
       setDeleteStatus('Deletion is disabled because admin permissions are not confirmed. Sign out and sign back in with an admin account.');
       return;
     }
@@ -284,16 +298,26 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
     }
   }
 
-  const completedRuns = runs.filter((run) => FINAL_STATUSES.has(run.status) || run.latest_event_type === 'job.succeeded');
-  const remediationItems = ensureArray(machine.remediations);
-  const hasActiveRun = runs.some((run) => !FINAL_STATUSES.has(run.status));
+  const completedRuns = runs.filter(isSuccessfulRun);
+  const remediationItems = openRemediationItems(machine.remediations);
+  const hasActiveRun = runs.some((run) => !isTerminalRun(run));
+  const scanBlocked = !permissions.scan || scanLaunchBlocked(runs, runHistoryUnavailable);
   const activeStatus = currentRun ? deriveProgressMessage(currentRun) : 'Ready for a new scan';
   const lastScanAt = machine.last_successful_scan_at
     || completedRuns[0]?.completed_at
     || completedRuns[0]?.updated_at
     || completedRuns[0]?.created_at;
-  const openRemediationCount = Number(machine.remediation_count || remediationItems.length || 0);
-  const scanButtonLabel = scanBusy ? 'Launching scan…' : hasActiveRun ? 'Scan in progress' : 'Scan machine';
+  const remediationOpenCount = openRemediationCount(machine.remediation_count, machine.remediations);
+  const scanButtonLabel = scanBusy
+    ? 'Launching scan…'
+    : runHistoryUnavailable
+      ? 'Scan status unavailable'
+      : hasActiveRun
+        ? 'Scan in progress'
+        : permissions.scan
+          ? 'Scan machine'
+          : 'Scan permission required';
+  const actionNotice = notice || (runHistoryUnavailable ? 'Live scan history is unavailable. Scan launch is disabled to prevent duplicate jobs.' : '');
 
   return (
     <div className="machine-dossier">
@@ -307,11 +331,11 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
           <span className={`pill ${String(machine.status).toLowerCase() === 'online' ? 'green' : ''}`}>
             {humanize(machine.status)}
           </span>
-          <button className="btn machine-scan-action" type="button" onClick={runScan} disabled={scanBusy || hasActiveRun}>
+          <button className="btn machine-scan-action" type="button" onClick={runScan} disabled={scanBusy || scanBlocked}>
             {scanButtonLabel}
           </button>
         </div>
-        {notice ? <p className="machine-action-notice" role="status" aria-live="polite">{notice}</p> : <span className="sr-only" aria-live="polite" />}
+        {actionNotice ? <p className="machine-action-notice" role="status" aria-live="polite">{actionNotice}</p> : <span className="sr-only" aria-live="polite" />}
       </section>
 
       <dl className="machine-summary-strip" aria-label="Machine operational summary">
@@ -319,7 +343,7 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
         <div><dt>Owner</dt><dd>{machine.owner || 'Unassigned'}</dd></div>
         <div><dt>Connection</dt><dd>{humanize(machine.connection_mode)}</dd></div>
         <div><dt>Findings</dt><dd>{Number(machine.finding_count || 0)}</dd></div>
-        <div><dt>Open remediation</dt><dd>{openRemediationCount}</dd></div>
+        <div><dt>Open remediation</dt><dd>{remediationOpenCount}</dd></div>
         <div><dt>Last scan</dt><dd>{toReadableTime(lastScanAt)}</dd></div>
       </dl>
 
@@ -329,7 +353,7 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
             <p className="section-kicker">Current activity</p>
             <h2 id="machine-progress-title">{hasActiveRun ? 'Scan in progress' : currentRun ? 'Latest scan' : 'Scan readiness'}</h2>
           </div>
-          {currentRun ? <span className={`pill ${FINAL_STATUSES.has(currentRun.status) ? 'green' : 'amber'}`}>{humanize(currentRun.status)}</span> : null}
+          {currentRun ? <span className={`pill ${toneForRun(currentRun)}`}>{humanize(currentRun.status)}</span> : null}
         </div>
         <div className="machine-progress-line">
           <div className="progress-shell" role="progressbar" aria-label="Scan progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow={currentProgress}>
@@ -347,7 +371,7 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
       <section className="machine-section panel" aria-labelledby="machine-remediation-title">
         <div className="machine-section-heading">
           <div><p className="section-kicker">Prioritized work</p><h2 id="machine-remediation-title">Remediation</h2></div>
-          <span className="pill">{openRemediationCount} open</span>
+          <span className="pill">{remediationOpenCount} open</span>
         </div>
         {remediationItems.length ? (
           <div className="machine-remediation-list">
@@ -391,13 +415,13 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
             ))}
           </div>
         ) : (
-          <div className="machine-compact-empty"><p>No reports have been generated for this machine yet.</p><button className="btn alt" type="button" onClick={runScan} disabled={scanBusy || hasActiveRun}>Run first scan</button></div>
+          <div className="machine-compact-empty"><p>No reports have been generated for this machine yet.</p><button className="btn alt" type="button" onClick={runScan} disabled={scanBusy || scanBlocked}>Run first scan</button></div>
         )}
       </section>
 
-      {adminCanManage ? (
+      {permissions.edit ? (
         <details className="machine-admin-disclosure">
-          <summary className="machine-admin-summary"><span><b>Machine settings</b><small>Edit identity, ownership, connection, and monitoring.</small></span><span>Expand settings</span></summary>
+          <summary className="machine-admin-summary"><span><b>Machine settings</b><small>Edit identity, ownership, connection, and monitoring.</small></span><span className="machine-admin-expand-label"><span>Expand settings</span><span>Hide settings</span></span></summary>
           <div className="machine-admin-body auth-form">
             <form onSubmit={saveMachine}>
               <label>Hostname<input name="hostname" value={draft.hostname} onChange={(event) => updateField('hostname', event.target.value)} required /></label>
@@ -414,12 +438,12 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
       ) : null}
 
       <details className="machine-admin-disclosure danger-zone">
-        <summary className="machine-admin-summary"><span><b>Danger zone</b><small>Permanent machine removal and scan-history deletion.</small></span><span>Expand controls</span></summary>
+        <summary className="machine-admin-summary"><span><b>Danger zone</b><small>Permanent machine removal and scan-history deletion.</small></span><span className="machine-admin-expand-label"><span>Expand controls</span><span>Hide controls</span></span></summary>
         <div className="machine-admin-body">
           <p>Delete this managed machine and its related scan history. This cannot be undone.</p>
           <p className="note">{permissionStatus}</p>
           {deleteStatus ? <p className="note">{deleteStatus}</p> : null}
-          <button className="btn danger" type="button" onClick={deleteMachine} disabled={!adminCanManage || deleteBusy}>{deleteBusy ? 'Deleting managed machine…' : 'Delete managed machine'}</button>
+          <button className="btn danger" type="button" onClick={deleteMachine} disabled={!permissions.delete || deleteBusy}>{deleteBusy ? 'Deleting managed machine…' : 'Delete managed machine'}</button>
         </div>
       </details>
     </div>

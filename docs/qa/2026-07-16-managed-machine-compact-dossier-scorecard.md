@@ -6,9 +6,17 @@
 
 **Decision:** PASS
 
-## Hard blockers
+## Independent QA blockers and resolution
 
-None.
+Athena’s post-publication review initially blocked the branch. The earlier PASS was withdrawn until all findings were corrected and reverified.
+
+- **Proxy authorization:** resolved with fail-closed server-side authorization. Scan launch permits `admin`, `operator`, and `analyst`; machine edits permit `admin` and `operator`; deletion remains `admin` only; scan progress reads require an authenticated platform role. Unauthenticated and forbidden requests are rejected before reaching the API.
+- **Terminal scan semantics:** resolved by separating successful and terminal statuses, adding `stale`, using non-success tones, and clamping progress to `0–100`.
+- **Run-history degradation:** resolved by preserving fallback report data, surfacing an explicit warning, and disabling launch while run history is unavailable to prevent duplicate jobs.
+- **Remediation contract:** resolved by filtering to open workflow statuses, preserving a valid zero count, and hydrating summary items from the remediation-detail endpoint without fabricating guidance.
+- **Polling resilience:** replaced overlapping intervals with abortable recursive polling; repeated failures surface a visible warning while retaining the duplicate-launch lock.
+
+No unresolved hard blocker remains after the corrective verification.
 
 ## Soft refinements
 
@@ -26,9 +34,9 @@ None.
 | Interaction Quality | 10/10 |
 | Responsive Behaviour | 10/10 |
 | Accessibility | 10/10 |
-| Technical Frontend Quality | 9/10 |
+| Technical Frontend Quality | 10/10 |
 | Performance & Polish | 4/5 |
-| **Total** | **97/100** |
+| **Total** | **98/100** |
 
 ## Verified outcomes
 
@@ -50,11 +58,13 @@ None.
 
 ## Technical gates
 
-- `tests/test_managed_machine_dossier.py`: passed.
+- `tests/test_managed_machine_dossier.py`: **9/9 passed**.
+- Web behavior checks: mutation RBAC, terminal/stale statuses, progress bounds, fallback selection, remediation filtering/counting, and fail-closed launch state passed.
+- Browser role/degradation checks passed: viewer denied scan/edit/delete; unavailable history disabled launch with warning; stale run re-enabled launch with amber status at preserved progress.
 - Users proxy and side-navigation focused regressions: passed.
 - Phase 0 validation: passed.
 - Web production Docker build: passed.
-- Playwright authenticated interaction/responsive gate: passed.
+- Playwright authenticated interaction/responsive gate: passed at all three breakpoints with zero page/console errors, overflow, or undersized rendered targets.
 - Added-line static security scan: clean.
 
 ## Baseline note

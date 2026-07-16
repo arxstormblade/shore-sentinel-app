@@ -2803,6 +2803,18 @@ footer a {
   font-weight: 800;
 }
 
+.machine-admin-expand-label span:last-child {
+  display: none;
+}
+
+.machine-admin-disclosure[open] .machine-admin-expand-label span:first-child {
+  display: none;
+}
+
+.machine-admin-disclosure[open] .machine-admin-expand-label span:last-child {
+  display: inline;
+}
+
 .machine-admin-body {
   display: grid;
   gap: 0.8rem;

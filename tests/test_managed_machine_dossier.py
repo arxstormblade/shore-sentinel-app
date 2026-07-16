@@ -17,7 +17,7 @@ class ManagedMachineDossierTests(unittest.TestCase):
         self.assertIn("MachineDetailClient", page)
         self.assertIn("apiGet('/targets/' + id)", page)
         self.assertIn("apiGet('/targets/' + id + '/scan-runs')", page)
-        self.assertIn("remediations: live.remediations", page)
+        self.assertIn("remediations,", page)
 
     def test_scan_machine_is_primary_and_uses_managed_scan_job_endpoint(self):
         component = read("web/components/machine-detail-client.jsx")
@@ -25,7 +25,7 @@ class ManagedMachineDossierTests(unittest.TestCase):
         self.assertIn("/targets/${machine.id}/scan-jobs", component)
         self.assertIn('className="btn machine-scan-action"', component)
         self.assertIn("hasActiveRun", component)
-        self.assertIn("scanBusy || hasActiveRun", component)
+        self.assertIn("scanBusy || scanBlocked", component)
         self.assertIn('aria-live="polite"', component)
 
     def test_remediation_items_expand_inline(self):
@@ -47,10 +47,15 @@ class ManagedMachineDossierTests(unittest.TestCase):
 
     def test_admin_sections_are_collapsed_disclosures(self):
         component = read("web/components/machine-detail-client.jsx")
+        css = read("web/app/globals.css")
         self.assertIn('<details className="machine-admin-disclosure">', component)
         self.assertIn("Machine settings", component)
         self.assertIn('<details className="machine-admin-disclosure danger-zone">', component)
         self.assertIn("Danger zone", component)
+        self.assertIn("machine-admin-expand-label", component)
+        self.assertIn("Hide settings", component)
+        self.assertIn("Hide controls", component)
+        self.assertIn(".machine-admin-disclosure[open] .machine-admin-expand-label", css)
 
     def test_machine_actions_use_same_origin_proxy_routes(self):
         component = read("web/components/machine-detail-client.jsx")
@@ -63,6 +68,22 @@ class ManagedMachineDossierTests(unittest.TestCase):
         self.assertTrue(runs_proxy.exists())
         self.assertIn("serverApiBase()", targets_proxy.read_text(encoding="utf-8"))
         self.assertIn("serverApiBase()", runs_proxy.read_text(encoding="utf-8"))
+
+    def test_polling_is_abortable_and_does_not_overlap(self):
+        component = read("web/components/machine-detail-client.jsx")
+        self.assertIn("AbortController", component)
+        self.assertIn("setTimeout", component)
+        self.assertNotIn("setInterval(refresh", component)
+        self.assertIn("Live scan updates are temporarily unavailable", component)
+
+    def test_server_page_fails_closed_and_hydrates_remediation_details(self):
+        page = read("web/app/inventory/machines/[id]/page.jsx")
+        self.assertIn("runHistoryUnavailable = true", page)
+        self.assertIn("selectInitialRuns(runsPayload, machine.reports)", page)
+        self.assertIn("apiGet('/remediation/' + item.id)", page)
+        self.assertIn("canScan=", page)
+        self.assertIn("canEdit=", page)
+        self.assertIn("canDelete=", page)
 
     def test_dossier_css_has_compact_and_responsive_rules(self):
         css = read("web/app/globals.css")
