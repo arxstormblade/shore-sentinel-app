@@ -42,7 +42,7 @@ python3 --version
 ### Run the local audit
 
 ```bash
-git clone --depth 1 --branch v1.0.0 https://github.com/arxstormblade/shore-sentinel-app.git
+git clone --depth 1 --branch v1.1.0 https://github.com/arxstormblade/shore-sentinel-app.git
 cd shore-sentinel-app
 python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py \
   --target . \
@@ -199,6 +199,10 @@ The deployed app is optimized for enrolled machines:
 - dashboard and fleet reporting
 
 A one-time local audit is intentionally separate. It produces local evidence and does not become part of fleet health unless a future import workflow is used.
+
+### Managed-machine scan directory
+
+For an enrolled managed machine using the SSH-push connection mode, the machine page offers **Directory to scan** before a new scan is launched. This is the managed equivalent of the one-time-audit `--target` option: it scopes the packaged scanner on the enrolled remote machine, not inside the Shore Sentinel control-plane containers. The selected directory is recorded with that scan’s evidence and cannot be changed after launch; stop the active scan and launch a new one to use a different directory.
 
 ---
 
