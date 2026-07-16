@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { useId } from 'react';
 import { navItems } from '@/lib/data';
 import { appPath, routePath } from '@/lib/paths';
 
@@ -119,7 +120,8 @@ export function OperationsSummaryStrip({ items, label = 'Operational summary' })
 }
 
 export function OperationalSection({ id, eyebrow, title, status, actions, children }) {
-  const headingId = id ? `${id}-heading` : `${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-heading`;
+  const instanceId = useId();
+  const headingId = id ? `${id}-heading` : `operational-section-${instanceId}-heading`;
 
   return (
     <section className="operational-section" aria-labelledby={headingId}>

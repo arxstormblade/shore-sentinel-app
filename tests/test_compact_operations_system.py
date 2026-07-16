@@ -48,6 +48,18 @@ class CompactOperationsComponentTests(unittest.TestCase):
         for contract in semantic_contracts:
             self.assertIn(contract, self.ui)
 
+    def test_repeated_untagged_section_titles_receive_instance_scoped_heading_ids(self):
+        self.assertIn("import { useId } from 'react';", self.ui)
+        self.assertRegex(
+            self.ui,
+            r"export function OperationalSection\([^)]*\)\s*\{\s*const instanceId = useId\(\);",
+        )
+        self.assertIn(
+            "const headingId = id ? `${id}-heading` : `operational-section-${instanceId}-heading`;",
+            self.ui,
+        )
+        self.assertNotIn("title.toLowerCase().replace", self.ui)
+
     def test_summary_values_keep_terms_and_descriptions_paired(self):
         self.assertIn("items.map((item)", self.ui)
         self.assertIn("<dt>{item.label}</dt>", self.ui)
