@@ -90,6 +90,80 @@ export function Header({ eye, title, desc, children }) {
   return <section className="hero"><div><p className="eye">{eye}</p><h1>{title}</h1><p>{desc}</p></div><div className="actions">{children}</div></section>;
 }
 
+export function CompactPageHeader({ eyebrow, title, description, status, actions, children }) {
+  return (
+    <header className="compact-page-header">
+      <div className="compact-page-header-copy">
+        {eyebrow ? <p className="compact-page-header-eyebrow">{eyebrow}</p> : null}
+        <h1>{title}</h1>
+        {description ? <p>{description}</p> : null}
+      </div>
+      {(status || actions || children) ? <div className="compact-page-header-actions">{status}{actions || children}</div> : null}
+    </header>
+  );
+}
+
+export function OperationsSummaryStrip({ items, label = 'Operational summary' }) {
+  return (
+    <dl className="operations-summary-strip" aria-label={label}>
+      {items.map((item) => (
+        <div key={item.label}>
+          <dt>{item.label}</dt>
+          <dd>
+            {item.value}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+export function OperationalSection({ id, eyebrow, title, status, actions, children }) {
+  const headingId = id ? `${id}-heading` : `${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-heading`;
+
+  return (
+    <section className="operational-section" aria-labelledby={headingId}>
+      <div className="operational-section-heading">
+        <div>
+          {eyebrow ? <p className="operational-section-eyebrow">{eyebrow}</p> : null}
+          <h2 id={headingId}>{title}</h2>
+        </div>
+        {(status || actions) ? <div className="operational-section-actions">{status}{actions}</div> : null}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+export function OperationsLedger({ label, children }) {
+  return <ul className="operations-ledger" aria-label={label}>{children}</ul>;
+}
+
+export function OperationsLedgerRow({ children }) {
+  return <li className="operations-ledger-row">{children}</li>;
+}
+
+export function ComposedEmptyState({ title, description, tone = 'neutral', actions, children }) {
+  return (
+    <div className={`composed-empty-state ${tone}`} role={tone === 'error' ? 'alert' : 'status'} aria-live={tone === 'error' ? 'assertive' : 'polite'}>
+      <div>
+        <h3>{title}</h3>
+        {description ? <p>{description}</p> : null}
+      </div>
+      {(actions || children) ? <div className="composed-empty-state-actions">{actions || children}</div> : null}
+    </div>
+  );
+}
+
+export function OperationsDisclosure({ summary, children, defaultOpen = false }) {
+  return (
+    <details className="operations-disclosure" open={defaultOpen || undefined}>
+      <summary className="operations-disclosure-summary">{summary}</summary>
+      <div className="operations-disclosure-body">{children}</div>
+    </details>
+  );
+}
+
 export function Filters({ name, items }) {
   return <section className="filters"><b>{name} filters</b>{items.map((f) => <label key={f}><span>{f}</span><select><option>All {f.toLowerCase()}</option><option>Production</option><option>High</option><option>Last 30 days</option></select></label>)}</section>;
 }
