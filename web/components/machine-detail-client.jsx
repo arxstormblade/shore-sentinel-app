@@ -3,10 +3,9 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { apiBase } from '@/lib/data';
 import { appPath, routePath } from '@/lib/paths';
 
-const FINAL_STATUSES = new Set(['succeeded', 'failed']);
+const FINAL_STATUSES = new Set(['succeeded', 'completed', 'failed', 'cancelled']);
 const STATUS_PROGRESS = {
   queued: 0,
   claimed: 10,
@@ -15,11 +14,13 @@ const STATUS_PROGRESS = {
   artifact_uploading: 80,
   retrying: 90,
   succeeded: 100,
+  completed: 100,
   failed: 100,
+  cancelled: 100,
 };
 
 function toReadableTime(value) {
-  if (!value) return '—';
+  if (!value) return 'Not available';
   return new Date(value).toLocaleString();
 }
 
@@ -53,10 +54,23 @@ function ensureArray(value) {
   return Array.isArray(value) ? value : [];
 }
 
+function humanize(value, fallback = 'Not available') {
+  if (value == null || value === '') return fallback;
+  return String(value).replaceAll('_', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function remediationGuidance(item) {
+  return item.instructions
+    || item.action
+    || item.guidance
+    || item.evidence_summary
+    || 'Review the finding evidence, validate the affected control, and apply the recommended hardening change.';
+}
+
 export function MachineDetailClient({ machine, initialRuns = [], canManage = false }) {
   const router = useRouter();
   const [runs, setRuns] = useState(() => ensureArray(initialRuns));
-  const [activeRunId, setActiveRunId] = useState(() => ensureArray(initialRuns).find((run) => !FINAL_STATUSES.has(run.status))?.id ?? ensureArray(initialRuns)[0]?.id ?? null);
+  const [activeRunId, setActiveRunId] = useState(() => ensureArray(initialRuns).find((run) => !FINAL_STATUSES.has(run.status))?.id ?? null);
   const [notice, setNotice] = useState('');
   const [scanBusy, setScanBusy] = useState(false);
   const [saveBusy, setSaveBusy] = useState(false);
@@ -76,7 +90,7 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
 
   useEffect(() => {
     setRuns(ensureArray(initialRuns));
-    setActiveRunId(ensureArray(initialRuns).find((run) => !FINAL_STATUSES.has(run.status))?.id ?? ensureArray(initialRuns)[0]?.id ?? null);
+    setActiveRunId(ensureArray(initialRuns).find((run) => !FINAL_STATUSES.has(run.status))?.id ?? null);
   }, [initialRuns]);
 
   useEffect(() => {
@@ -127,9 +141,9 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
     const refresh = async () => {
       try {
         const [runResponse, eventsResponse, artifactsResponse] = await Promise.all([
-          fetch(`${apiBase}/scan-runs/${activeRunId}`, { cache: 'no-store' }),
-          fetch(`${apiBase}/scan-runs/${activeRunId}/events`, { cache: 'no-store' }),
-          fetch(`${apiBase}/scan-runs/${activeRunId}/artifacts`, { cache: 'no-store' }),
+          fetch(appPath(`/api/scan-runs/${activeRunId}`), { cache: 'no-store', credentials: 'same-origin' }),
+          fetch(appPath(`/api/scan-runs/${activeRunId}/events`), { cache: 'no-store', credentials: 'same-origin' }),
+          fetch(appPath(`/api/scan-runs/${activeRunId}/artifacts`), { cache: 'no-store', credentials: 'same-origin' }),
         ]);
         if (!runResponse.ok) return;
         const run = await runResponse.json();
@@ -175,9 +189,10 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
     setScanBusy(true);
     setNotice('');
     try {
-      const response = await fetch(`${apiBase}/targets/${machine.id}/scan-jobs`, {
+      const response = await fetch(appPath(`/api/targets/${machine.id}/scan-jobs`), {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
+        credentials: 'same-origin',
         body: JSON.stringify({ mode: machine.connection_mode ?? 'ssh_push' }),
       });
       if (!response.ok) throw new Error('Scan launch failed');
@@ -214,9 +229,10 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
     setSaveBusy(true);
     setNotice('');
     try {
-      const response = await fetch(`${apiBase}/targets/${machine.id}`, {
+      const response = await fetch(appPath(`/api/targets/${machine.id}`), {
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
+        credentials: 'same-origin',
         body: JSON.stringify(draft),
       });
       if (!response.ok) throw new Error('Unable to save machine details.');
@@ -252,7 +268,7 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
     setNotice('');
     setDeleteStatus('Deleting managed machine…');
     try {
-      const response = await fetch(`${apiBase}/targets/${machine.id}`, { method: 'DELETE' });
+      const response = await fetch(appPath(`/api/targets/${machine.id}`), { method: 'DELETE', credentials: 'same-origin' });
       if (!response.ok) {
         const errorPayload = await response.json().catch(() => ({}));
         throw new Error(errorPayload.message || `Delete failed with HTTP ${response.status}`);
@@ -269,138 +285,143 @@ export function MachineDetailClient({ machine, initialRuns = [], canManage = fal
   }
 
   const completedRuns = runs.filter((run) => FINAL_STATUSES.has(run.status) || run.latest_event_type === 'job.succeeded');
-  const activeStatus = currentRun ? deriveProgressMessage(currentRun) : 'Waiting for a scan to start';
+  const remediationItems = ensureArray(machine.remediations);
+  const hasActiveRun = runs.some((run) => !FINAL_STATUSES.has(run.status));
+  const activeStatus = currentRun ? deriveProgressMessage(currentRun) : 'Ready for a new scan';
+  const lastScanAt = machine.last_successful_scan_at
+    || completedRuns[0]?.completed_at
+    || completedRuns[0]?.updated_at
+    || completedRuns[0]?.created_at;
+  const openRemediationCount = Number(machine.remediation_count || remediationItems.length || 0);
+  const scanButtonLabel = scanBusy ? 'Launching scan…' : hasActiveRun ? 'Scan in progress' : 'Scan machine';
 
   return (
-    <div className="stack">
-      <section className="hero">
-        <div>
+    <div className="machine-dossier">
+      <section className="machine-dossier-header panel">
+        <div className="machine-identity">
           <p className="eye">Managed machine</p>
           <h1>{machine.name}</h1>
           <p>{machine.summary}</p>
         </div>
-        <div className="actions">
-          <span className="pill">{machine.status}</span>
-          <button className="btn" type="button" onClick={runScan} disabled={scanBusy}>
-            {scanBusy ? 'Launching scan…' : 'Scan machine'}
+        <div className="machine-header-actions">
+          <span className={`pill ${String(machine.status).toLowerCase() === 'online' ? 'green' : ''}`}>
+            {humanize(machine.status)}
+          </span>
+          <button className="btn machine-scan-action" type="button" onClick={runScan} disabled={scanBusy || hasActiveRun}>
+            {scanButtonLabel}
           </button>
+        </div>
+        {notice ? <p className="machine-action-notice" role="status" aria-live="polite">{notice}</p> : <span className="sr-only" aria-live="polite" />}
+      </section>
+
+      <dl className="machine-summary-strip" aria-label="Machine operational summary">
+        <div><dt>Environment</dt><dd>{machine.env || 'Unassigned'}</dd></div>
+        <div><dt>Owner</dt><dd>{machine.owner || 'Unassigned'}</dd></div>
+        <div><dt>Connection</dt><dd>{humanize(machine.connection_mode)}</dd></div>
+        <div><dt>Findings</dt><dd>{Number(machine.finding_count || 0)}</dd></div>
+        <div><dt>Open remediation</dt><dd>{openRemediationCount}</dd></div>
+        <div><dt>Last scan</dt><dd>{toReadableTime(lastScanAt)}</dd></div>
+      </dl>
+
+      <section className="machine-progress-band panel" aria-labelledby="machine-progress-title">
+        <div className="machine-section-heading">
+          <div>
+            <p className="section-kicker">Current activity</p>
+            <h2 id="machine-progress-title">{hasActiveRun ? 'Scan in progress' : currentRun ? 'Latest scan' : 'Scan readiness'}</h2>
+          </div>
+          {currentRun ? <span className={`pill ${FINAL_STATUSES.has(currentRun.status) ? 'green' : 'amber'}`}>{humanize(currentRun.status)}</span> : null}
+        </div>
+        <div className="machine-progress-line">
+          <div className="progress-shell" role="progressbar" aria-label="Scan progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow={currentProgress}>
+            <div className="progress-fill" style={{ width: `${currentProgress}%` }} />
+          </div>
+          <strong>{currentProgress}%</strong>
+        </div>
+        <div className="machine-progress-meta">
+          <span>{activeStatus}</span>
+          <span>Started {toReadableTime(currentRun?.started_at || currentRun?.created_at)}</span>
+          {hasActiveRun ? <span>ETA {currentEta == null ? 'Calculating…' : formatDuration(currentEta)}</span> : null}
         </div>
       </section>
 
-      <section className="grid">
-        <article className="panel">
-          <h2>Asset details</h2>
-          <p>Environment: {machine.env}</p>
-          <p>Owner: {machine.owner}</p>
-          <p>Hostname: {machine.name}</p>
-          <p>Connection mode: {machine.connection_mode ?? 'ssh_push'}</p>
-          <p>SSH auth: {machine.ssh_auth_method ? (machine.ssh_auth_method === 'ssh_key' ? 'SSH key' : 'Password') : 'Not configured'}</p>
-          <p>SSH username: {machine.ssh_username ?? '—'}</p>
-          <p>SSH port: {machine.ssh_port ?? '—'}</p>
-          <p>Asset mode: managed_machine</p>
-        </article>
-        <article className="panel">
-          <h2>Live scan progress</h2>
-          <b className="score">{currentProgress}%</b>
-          <div className="progress-shell" aria-label="Scan progress">
-            <div className="progress-fill" style={{ width: `${currentProgress}%` }} />
-          </div>
-          <p>{activeStatus}</p>
-          <p>Started: {toReadableTime(currentRun?.started_at || currentRun?.created_at)}</p>
-          <p>ETA: {currentEta == null ? 'Calculating…' : formatDuration(currentEta)}</p>
-          {currentRun ? <span className={`pill ${FINAL_STATUSES.has(currentRun.status) ? 'green' : 'amber'}`}>{currentRun.status}</span> : null}
-        </article>
-      </section>
-
-      {adminCanManage ? (
-        <section className="panel auth-form">
-          <h2>Admin machine settings</h2>
-          <form onSubmit={saveMachine}>
-            <label>
-              Hostname
-              <input name="hostname" value={draft.hostname} onChange={(event) => updateField('hostname', event.target.value)} required />
-            </label>
-            <label>
-              FQDN
-              <input name="fqdn" value={draft.fqdn} onChange={(event) => updateField('fqdn', event.target.value)} />
-            </label>
-            <label>
-              IP address
-              <input name="ip_address" value={draft.ip_address} onChange={(event) => updateField('ip_address', event.target.value)} />
-            </label>
-            <label>
-              Owner team
-              <input name="owner_team" value={draft.owner_team} onChange={(event) => updateField('owner_team', event.target.value)} />
-            </label>
-            <label>
-              Platform
-              <select name="platform" value={draft.platform} onChange={(event) => updateField('platform', event.target.value)}>
-                <option value="windows">windows</option>
-                <option value="linux">linux</option>
-                <option value="macos">macos</option>
-              </select>
-            </label>
-            <label>
-              Connection mode
-              <select name="connection_mode" value={draft.connection_mode} onChange={(event) => updateField('connection_mode', event.target.value)}>
-                <option value="ssh_push">ssh_push</option>
-                <option value="pull_checkin">pull_checkin</option>
-                <option value="both">both</option>
-              </select>
-            </label>
-            <label className="remember-me">
-              <input
-                name="monitoring_enabled"
-                type="checkbox"
-                checked={draft.monitoring_enabled}
-                onChange={(event) => updateField('monitoring_enabled', event.target.checked)}
-              />
-              <span>Monitoring enabled</span>
-            </label>
-            <div className="actions-row">
-              <button className="btn" type="submit" disabled={saveBusy}>{saveBusy ? 'Saving…' : 'Save changes'}</button>
-            </div>
-          </form>
-        </section>
-      ) : null}
-
-      <section className="panel danger-zone">
-        <h2>Admin danger zone</h2>
-        <p>Delete this managed machine and its related scan history. This cannot be undone.</p>
-        <p className="note">{permissionStatus}</p>
-        {deleteStatus ? <p className="note">{deleteStatus}</p> : null}
-        <button className="btn danger" type="button" onClick={deleteMachine} disabled={!adminCanManage || deleteBusy}>
-          {deleteBusy ? 'Deleting managed machine…' : 'Delete managed machine'}
-        </button>
-      </section>
-
-      <section className="panel">
-        <h2>Reports</h2>
-        {completedRuns.length ? (
-          <div className="cards report-cards">
-            {completedRuns.map((run) => (
-              <Link className="card report-card" href={routePath(`/scans-reports/reports/${run.id}`)} key={run.id}>
-                <h3>{run.subject_type === 'managed_target' ? 'Managed machine scan' : 'Audit report'}</h3>
-                <p>Run: {run.id}</p>
-                <p>Status: {run.status}</p>
-                <p>Completed: {toReadableTime(run.completed_at || run.updated_at || run.created_at)}</p>
-                <div className="chip-row">
-                  {ensureArray(run.artifacts).map((artifact) => (
-                    <span key={artifact.id ?? artifact.artifact_type} className="pill green">{artifact.artifact_type}</span>
-                  ))}
+      <section className="machine-section panel" aria-labelledby="machine-remediation-title">
+        <div className="machine-section-heading">
+          <div><p className="section-kicker">Prioritized work</p><h2 id="machine-remediation-title">Remediation</h2></div>
+          <span className="pill">{openRemediationCount} open</span>
+        </div>
+        {remediationItems.length ? (
+          <div className="machine-remediation-list">
+            {remediationItems.map((item) => (
+              <details className="machine-remediation-item" key={item.id}>
+                <summary>
+                  <span className="machine-remediation-title"><b>{item.title}</b><small>{humanize(item.status, 'Open')}</small></span>
+                  <span className="machine-remediation-meta">
+                    <span className={`pill severity-${String(item.severity || 'informational').toLowerCase()}`}>{humanize(item.severity, 'Informational')}</span>
+                    <span className="machine-expand-label"><span>Expand details</span><span>Hide details</span></span>
+                  </span>
+                </summary>
+                <div className="machine-remediation-detail">
+                  <div><span>Recommended action</span><p>{remediationGuidance(item)}</p></div>
+                  <Link className="btn alt" prefetch={false} href={routePath(`/remediation/${item.id}`)}>Open full record</Link>
                 </div>
-              </Link>
+              </details>
             ))}
           </div>
         ) : (
-          <div className="empty">
-            <p>No reports have been generated for this machine yet.</p>
-            <button className="btn" type="button" onClick={runScan} disabled={scanBusy}>Run first scan</button>
-          </div>
+          <div className="machine-compact-empty"><p>No remediation is currently open for this machine.</p><span>Run a new scan to refresh its security posture.</span></div>
         )}
       </section>
 
-      <p className="note">{notice}</p>
+      <section className="machine-section panel" aria-labelledby="machine-reports-title">
+        <div className="machine-section-heading">
+          <div><p className="section-kicker">Evidence history</p><h2 id="machine-reports-title">Recent reports</h2></div>
+          <span className="pill">{completedRuns.length}</span>
+        </div>
+        {completedRuns.length ? (
+          <div className="machine-report-list">
+            {completedRuns.map((run) => (
+              <article className="machine-report-row" key={run.id}>
+                <div><b>{run.subject_type === 'managed_target' ? 'Managed machine scan' : 'Security report'}</b><small>{toReadableTime(run.completed_at || run.updated_at || run.created_at)}</small></div>
+                <div className="machine-report-meta">
+                  <span className="pill green">{humanize(run.status)}</span>
+                  <span>{ensureArray(run.artifacts).length} artifact{ensureArray(run.artifacts).length === 1 ? '' : 's'}</span>
+                  <Link className="machine-report-link" prefetch={false} href={routePath(`/scans-reports/reports/${run.id}`)}>Open report</Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="machine-compact-empty"><p>No reports have been generated for this machine yet.</p><button className="btn alt" type="button" onClick={runScan} disabled={scanBusy || hasActiveRun}>Run first scan</button></div>
+        )}
+      </section>
+
+      {adminCanManage ? (
+        <details className="machine-admin-disclosure">
+          <summary className="machine-admin-summary"><span><b>Machine settings</b><small>Edit identity, ownership, connection, and monitoring.</small></span><span>Expand settings</span></summary>
+          <div className="machine-admin-body auth-form">
+            <form onSubmit={saveMachine}>
+              <label>Hostname<input name="hostname" value={draft.hostname} onChange={(event) => updateField('hostname', event.target.value)} required /></label>
+              <label>FQDN<input name="fqdn" value={draft.fqdn} onChange={(event) => updateField('fqdn', event.target.value)} /></label>
+              <label>IP address<input name="ip_address" value={draft.ip_address} onChange={(event) => updateField('ip_address', event.target.value)} /></label>
+              <label>Owner team<input name="owner_team" value={draft.owner_team} onChange={(event) => updateField('owner_team', event.target.value)} /></label>
+              <label>Platform<select name="platform" value={draft.platform} onChange={(event) => updateField('platform', event.target.value)}><option value="windows">Windows</option><option value="linux">Linux</option><option value="macos">macOS</option></select></label>
+              <label>Connection mode<select name="connection_mode" value={draft.connection_mode} onChange={(event) => updateField('connection_mode', event.target.value)}><option value="ssh_push">SSH push</option><option value="pull_checkin">Pull check-in</option><option value="both">Both</option></select></label>
+              <label className="remember-me"><input name="monitoring_enabled" type="checkbox" checked={draft.monitoring_enabled} onChange={(event) => updateField('monitoring_enabled', event.target.checked)} /><span>Monitoring enabled</span></label>
+              <div className="actions-row"><button className="btn" type="submit" disabled={saveBusy}>{saveBusy ? 'Saving…' : 'Save changes'}</button></div>
+            </form>
+          </div>
+        </details>
+      ) : null}
+
+      <details className="machine-admin-disclosure danger-zone">
+        <summary className="machine-admin-summary"><span><b>Danger zone</b><small>Permanent machine removal and scan-history deletion.</small></span><span>Expand controls</span></summary>
+        <div className="machine-admin-body">
+          <p>Delete this managed machine and its related scan history. This cannot be undone.</p>
+          <p className="note">{permissionStatus}</p>
+          {deleteStatus ? <p className="note">{deleteStatus}</p> : null}
+          <button className="btn danger" type="button" onClick={deleteMachine} disabled={!adminCanManage || deleteBusy}>{deleteBusy ? 'Deleting managed machine…' : 'Delete managed machine'}</button>
+        </div>
+      </details>
     </div>
   );
 }
