@@ -1,5 +1,14 @@
 import Link from 'next/link';
 import { unstable_noStore as noStore } from 'next/cache';
+import {
+  CompactPageHeader,
+  ComposedEmptyState,
+  OperationsLedger,
+  OperationsLedgerRow,
+  OperationsSummaryStrip,
+  OperationalSection,
+  Pill,
+} from '@/components/ui';
 import { routePath } from '@/lib/paths';
 import { apiGet } from '@/lib/api-data';
 
@@ -7,17 +16,12 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 const severityOrder = ['critical', 'high', 'medium', 'low'];
-const severityTone = {
-  critical: 'red',
-  high: 'orange',
-  medium: 'yellow',
-  low: 'green',
+const severityColors = {
+  critical: '#ff6677',
+  high: '#ffad66',
+  medium: '#f4d35e',
+  low: '#5bd6a2',
 };
-
-function pct(part, total) {
-  if (!total) return '0%';
-  return `${Math.round((part / total) * 100)}%`;
-}
 
 function formatDate(value) {
   if (!value) return 'Not recorded';
@@ -36,181 +40,130 @@ export default async function Dashboard() {
     apiGet('/remediation'),
   ]);
 
-  const managedCount = targets.length;
-  const reportCount = reports.length;
-  const remediationCount = remediations.length;
   const latestReports = reports.slice(0, 5);
   const severityCounts = severityOrder.map((severity) => ({
     label: severity[0].toUpperCase() + severity.slice(1),
     key: severity,
     value: remediations.filter((item) => String(item.severity || '').toLowerCase() === severity).length,
-    tone: severityTone[severity],
   }));
   const totalFindings = severityCounts.reduce((sum, item) => sum + item.value, 0);
   const openRemediations = remediations.filter((item) => !['resolved', 'closed', 'accepted'].includes(String(item.status || '').toLowerCase())).length;
-  const latestReport = latestReports[0];
+  const priorityMachines = targets.filter((target) => Number(target.remediation_count || 0) > 0).slice(0, 5);
+  let severityCursor = 0;
+  const severitySegments = severityCounts.map((item) => {
+    const start = totalFindings ? Math.round((severityCursor / totalFindings) * 100) : 0;
+    severityCursor += item.value;
+    const end = totalFindings ? Math.round((severityCursor / totalFindings) * 100) : 100;
+    return `${severityColors[item.key]} ${start}% ${end}%`;
+  }).join(', ');
 
   return (
-    <div className="dashboard-shell" data-view="Managed-machine dashboard">
-      <section className="panel dashboard-hero">
-        <div className="hero-copy">
-          <p className="eye">Single-tenant security operations</p>
-          <h1>Calm control for machines, scans, evidence, and remediation.</h1>
-          <p>
-            Shore Sentinel keeps the operator path direct: enroll assets, run scanner bundles, review generated
-            artifacts, and close remediation work from the same focused surface.
-          </p>
-          <div className="hero-chipbar">
-            <span className="chip green">Tailnet secure</span>
-            <span className="chip">Live scanner data</span>
-            <span className="chip">Machine-first triage</span>
-          </div>
-        </div>
-
-        <div className="signal-board" aria-label="Operational summary">
-          <div className="signal-card accent">
-            <span>Managed assets</span>
-            <strong>{managedCount}</strong>
-            <small>{managedCount === 1 ? 'machine enrolled' : 'machines enrolled'}</small>
-          </div>
-          <div className="signal-card">
-            <span>Scanner reports</span>
-            <strong>{reportCount}</strong>
-            <small>{latestReport ? `Latest ${formatDate(latestReport.completed_at || latestReport.started_at)}` : 'No generated reports yet'}</small>
-          </div>
-          <div className="signal-card wide">
-            <span>Open remediation</span>
-            <strong>{openRemediations}</strong>
-            <small>{remediationCount} total remediation records tracked from scanner output.</small>
-          </div>
-        </div>
-      </section>
-
-      <section className="hero-actions" aria-label="Primary operator actions">
-        <article className="action-card panel">
-          <div className="round-icon">ADD</div>
-          <div>
-            <h2>Add managed machine</h2>
-            <p>Enroll an asset for ongoing inventory, report history, and machine-first remediation.</p>
-            <Link className="btn" href={routePath('/inventory/new')}>Add machine</Link>
-          </div>
-        </article>
-
-        <article className="action-card panel">
-          <div className="round-icon">REP</div>
-          <div>
-            <h2>Review scanner reports</h2>
-            <p>Open generated evidence, findings, and remediation context from managed-machine scans.</p>
+    <div className="operations-page dashboard-operations-page" data-view="Managed-machine dashboard">
+      <CompactPageHeader
+        eyebrow="Fleet operations"
+        title="Managed machine briefing"
+        description="Review current fleet risk, prioritize machines needing attention, and keep evidence moving."
+        actions={(
+          <>
+            <Link className="btn" href={routePath('/inventory/new')}>Add managed machine</Link>
             <Link className="btn alt" href={routePath('/scans-reports')}>View reports</Link>
-          </div>
-        </article>
-      </section>
+          </>
+        )}
+      />
 
-      <section className="dashboard-grid">
-        <article className="panel data-panel fleet-panel">
-          <header>
-            <h2>Managed machine fleet</h2>
-            <Link href={routePath('/inventory')}>View inventory</Link>
-          </header>
-          <div className="fleet-cards">
-            {targets.slice(0, 3).map((target) => (
-              <Link className="fleet-card" href={routePath(`/inventory/machines/${target.id}`)} key={target.id}>
-                <span className="status-dot green" />
-                <b>{target.name || target.hostname || 'Managed machine'}</b>
-                <strong>{target.status || 'Active'}</strong>
-                <small>{target.os || target.platform || target.env || 'Endpoint'}</small>
-              </Link>
-            ))}
-            {targets.length === 0 ? (
-              <div className="fleet-card muted-card">
-                <span className="status-dot gray" />
-                <b>No managed machines</b>
-                <strong>0</strong>
-                <small>Add a machine to populate fleet status.</small>
-              </div>
-            ) : null}
-          </div>
-        </article>
+      <OperationsSummaryStrip
+        items={[
+          { label: 'Managed machines', value: targets.length },
+          { label: 'Open remediation', value: openRemediations },
+          { label: 'Findings', value: totalFindings },
+          { label: 'Reports', value: reports.length },
+          { label: 'Latest report', value: latestReports[0] ? formatDate(latestReports[0].completed_at || latestReports[0].started_at) : 'Not recorded' },
+          { label: 'Priority machines', value: priorityMachines.length },
+        ]}
+      />
 
-        <article className="panel data-panel severity-panel">
-          <h2>Findings by severity</h2>
-          <div className="severity-content">
-            <div className="donut" aria-label="Findings by severity chart" />
-            <div className="severity-list">
-              {severityCounts.map((item) => (
-                <div key={item.key}>
-                  <span className={`status-dot ${item.tone}`} />
-                  <span>{item.label}</span>
-                  <b>{item.value}</b>
-                  <small>{pct(item.value, totalFindings)}</small>
+      <OperationalSection
+        id="priority-machines"
+        eyebrow="Triage queue"
+        title="Machines needing attention"
+        status={<Pill tone={openRemediations ? 'red' : 'green'}>{openRemediations ? `${openRemediations} open items` : 'No open items'}</Pill>}
+        actions={<Link href={routePath('/inventory')}>Open inventory</Link>}
+      >
+        {priorityMachines.length ? (
+          <OperationsLedger label="Priority managed machines">
+            {priorityMachines.map((machine) => (
+              <OperationsLedgerRow key={machine.id}>
+                <div className="operations-row-copy">
+                  <b>{machine.name || machine.hostname || 'Managed machine'}</b>
+                  <span>{machine.owner || 'Unassigned owner'} · {machine.env || 'Unassigned environment'}</span>
                 </div>
-              ))}
-            </div>
-            <div className="total-findings">
-              <span>Total findings</span>
-              <strong>{totalFindings}</strong>
-              <small>Across generated remediation records</small>
-            </div>
-          </div>
-        </article>
-
-        <article className="panel data-panel scans-panel">
-          <header>
-            <h2>Recent scanner reports</h2>
-            <Link href={routePath('/scans-reports')}>View all reports</Link>
-          </header>
-          {latestReports.length === 0 ? (
-            <div className="empty-state">Add a managed machine and run a managed scan to generate PDF, Markdown, SARIF, and JSON artifacts.</div>
-          ) : (
-            <table>
-              <thead>
-                <tr>
-                  <th>Report</th>
-                  <th>Status</th>
-                  <th>Findings</th>
-                  <th>Last run</th>
-                  <th>Open</th>
-                </tr>
-              </thead>
-              <tbody>
-                {latestReports.map((report) => (
-                  <tr key={report.id}>
-                    <td data-label="Report">{report.title || report.source || 'Scanner report'}</td>
-                    <td data-label="Status"><span className={String(report.status).toLowerCase() === 'failed' ? 'failed' : 'completed'}>{statusLabel(report.status)}</span></td>
-                    <td data-label="Findings">{report.finding_count || 0}</td>
-                    <td data-label="Last run">{formatDate(report.completed_at || report.started_at)}</td>
-                    <td data-label="Open"><Link href={routePath(`/scans-reports/reports/${report.id}`)}>View</Link></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </article>
-
-        <article className="panel data-panel kb-panel">
-          <header>
-            <h2>Operator workflow</h2>
-            <Link href={routePath('/knowledgebase')}>Open guide</Link>
-          </header>
-          <div className="guide-list">
-            {[
-              ['01', 'Enroll assets', 'Create a managed machine record before recurring review.'],
-              ['02', 'Generate evidence', 'Run managed scans and keep report artifacts attached.'],
-              ['03', 'Triage by machine', 'Work remediation per asset so ownership stays clear.'],
-              ['04', 'Export and close', 'Use PDF, Markdown, SARIF, and JSON for audit packages.'],
-            ].map(([icon, title, desc]) => (
-              <Link href={routePath('/knowledgebase')} key={title}>
-                <span>{icon}</span>
-                <div>
-                  <b>{title}</b>
-                  <small>{desc}</small>
+                <div className="operations-row-actions">
+                  <Pill tone="red">{machine.remediation_count} open remediation</Pill>
+                  <Link href={routePath(`/inventory/machines/${machine.id}`)}>Open dossier</Link>
                 </div>
-                <i>›</i>
-              </Link>
+              </OperationsLedgerRow>
             ))}
-          </div>
-        </article>
-      </section>
+          </OperationsLedger>
+        ) : (
+          <ComposedEmptyState
+            title="No machines currently need remediation"
+            description="Enroll a machine or review the latest reports to keep the fleet posture current."
+            actions={<Link className="btn alt" href={routePath('/inventory')}>View inventory</Link>}
+          />
+        )}
+      </OperationalSection>
+
+      <OperationalSection
+        id="severity-summary"
+        eyebrow="Live risk mix"
+        title="Findings by severity"
+        status={<Pill>{totalFindings} total findings</Pill>}
+      >
+        <div className="severity-briefing">
+          <div className="severity-chart" role="img" aria-label={`Live severity distribution: ${severityCounts.map((item) => `${item.label} ${item.value}`).join(', ')}`} style={{ background: totalFindings ? `conic-gradient(${severitySegments})` : 'var(--panel)' }} />
+          <OperationsLedger label="Severity counts">
+            {severityCounts.map((item) => (
+              <OperationsLedgerRow key={item.key}>
+                <div className="operations-row-copy">
+                  <b>{item.label}</b>
+                  <span>{totalFindings ? `${Math.round((item.value / totalFindings) * 100)}% of current findings` : 'No current findings'}</span>
+                </div>
+                <Pill tone={item.key === 'critical' ? 'red' : item.key === 'high' ? 'orange' : item.key === 'medium' ? 'yellow' : 'green'}>{item.value} findings</Pill>
+              </OperationsLedgerRow>
+            ))}
+          </OperationsLedger>
+        </div>
+      </OperationalSection>
+
+      <OperationalSection
+        id="recent-reports"
+        eyebrow="Evidence activity"
+        title="Recent scanner reports"
+        actions={<Link href={routePath('/scans-reports')}>View all reports</Link>}
+      >
+        {latestReports.length ? (
+          <OperationsLedger label="Recent scanner reports">
+            {latestReports.map((report) => (
+              <OperationsLedgerRow key={report.id}>
+                <div className="operations-row-copy">
+                  <b>{report.title || report.source || 'Scanner report'}</b>
+                  <span>{formatDate(report.completed_at || report.started_at)} · {report.finding_count || 0} findings</span>
+                </div>
+                <div className="operations-row-actions">
+                  <Pill tone={String(report.status || '').toLowerCase() === 'failed' ? 'red' : 'green'}>{statusLabel(report.status)}</Pill>
+                  <Link href={routePath(`/scans-reports/reports/${report.id}`)}>Open report</Link>
+                </div>
+              </OperationsLedgerRow>
+            ))}
+          </OperationsLedger>
+        ) : (
+          <ComposedEmptyState
+            title="No managed scan reports yet"
+            description="Enroll a managed machine, then launch its first scan to generate evidence."
+            actions={<Link className="btn" href={routePath('/inventory/new')}>Add managed machine</Link>}
+          />
+        )}
+      </OperationalSection>
     </div>
   );
 }

@@ -15,6 +15,14 @@ test('schema contains database-level exactly-one constraints for jobs and runs',
   assert.match(SCHEMA_SQL, /CONSTRAINT scan_jobs_exactly_one_subject CHECK/);
   assert.match(SCHEMA_SQL, /CONSTRAINT scan_runs_exactly_one_subject CHECK/);
 });
+
+test('targets is created before schema migration statements alter it on a fresh database', () => {
+  const createTargetsIndex = SCHEMA_SQL.indexOf('CREATE TABLE IF NOT EXISTS targets');
+  const alterTargetsIndex = SCHEMA_SQL.indexOf('DO $$ BEGIN ALTER TABLE targets ADD COLUMN IF NOT EXISTS ssh_auth_method text;');
+  assert.ok(createTargetsIndex >= 0, 'targets table creation should exist in schema');
+  assert.ok(alterTargetsIndex >= 0, 'targets migration block should exist in schema');
+  assert.ok(createTargetsIndex < alterTargetsIndex, 'targets must be created before ALTER TABLE targets statements run');
+});
 test('artifact completion validation accepts legacy upload types and canonical worker kinds', () => {
   const ok = validateArtifactComplete({ artifact_type: 'sarif', sha256: 'a'.repeat(64), size_bytes: 25 });
   assert.deepEqual(ok, { artifactType: 'sarif', sha256: 'a'.repeat(64), sizeBytes: 25 });
