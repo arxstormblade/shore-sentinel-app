@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.0.0 - 2026-07-16
+
+### Changed
+- Promoted the compact operations UI across dashboard, inventory, reports, remediation, audits, administration, preferences, saved views, knowledgebase, and system update views.
+- Restricted managed-machine enrollment and remediation-status controls to authorized roles while preserving clear read-only states.
+
+### Security
+- Added fail-closed role checks to same-origin enrollment and remediation-status proxy routes, including credential forwarding only after authorization succeeds.
+- Added direct regression coverage for unauthenticated, unauthorized, permitted, and authorization-service failure paths.
+
+### Verification
+- Release validation is recorded in the root release gate packet; live deployment is intentionally deferred pending separate authorization.
+
 ## v0.3.2 - 2026-06-26
 
 ### Security

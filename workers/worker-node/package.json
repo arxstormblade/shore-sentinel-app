@@ -1,6 +1,6 @@
 {
   "name": "@shore-sentinel/worker-node",
-  "version": "0.3.10",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {

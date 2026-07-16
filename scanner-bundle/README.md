@@ -11,7 +11,7 @@ Workers must treat the bundle as an untrusted producer: validate the manifest, p
 Use this mode when a client needs a standalone evidence package without enrolling the machine into Shore Sentinel managed monitoring.
 
 ```bash
-git clone --depth 1 --branch v0.3.10 https://github.com/arxstormblade/shore-sentinel-app.git
+git clone --depth 1 --branch v1.0.0 https://github.com/arxstormblade/shore-sentinel-app.git
 cd shore-sentinel-app
 python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py \
   --target . \

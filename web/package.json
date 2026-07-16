@@ -1,13 +1,13 @@
 {
   "name": "@shore-sentinel/web",
-  "version": "0.3.10",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "next dev -H 0.0.0.0 -p ${PORT:-3010}",
     "build": "next build",
     "start": "next start -H 0.0.0.0 -p ${PORT:-3010}",
-    "test": "node scripts/verify-mvp.mjs && node scripts/verify-machine-dossier.mjs && node scripts/verify-machine-status.mjs && node scripts/verify-machine-data.mjs",
+    "test": "node --test test/*.test.mjs && node scripts/verify-mvp.mjs && node scripts/verify-machine-dossier.mjs && node scripts/verify-machine-status.mjs && node scripts/verify-machine-data.mjs",
     "check": "npm run build && npm run test"
   },
   "dependencies": {

@@ -10,8 +10,18 @@ import { DatabaseService } from './database.service.js';
 import { QueueService } from './queue.service.js';
 import { UpdateService } from './update.service.js';
 import { assertExactlyOneSubject, requireString, validateArtifactComplete, validateArtifactType } from './validation.js';
+import { ROLE_MATRIX } from './config.js';
 
 const THIRTY_DAYS_SECONDS = 60 * 60 * 24 * 30;
+const ARTIFACT_CONTENT_TYPES: Record<string, string> = {
+  json: 'application/json',
+  markdown: 'text/markdown; charset=utf-8',
+  sarif: 'application/sarif+json',
+  pdf: 'application/pdf',
+  'scanner.raw_output': 'application/json',
+  'scanner.normalized_findings': 'application/json',
+  'scanner.enrichment_summary': 'application/json',
+};
 
 function sshSeal(plaintext: string) {
   const keySeed = process.env.SHORE_SENTINEL_SECRET_KEY || 'shore-sentinel-dev-secret-key';
@@ -49,7 +59,7 @@ export class AppController {
 
   @Get('health') health() { return { ok: true, service: 'shore-sentinel-api' }; }
   @Get('ready') async ready() { await this.db.query('SELECT 1'); return { ok: this.db.isReady(), database: 'ok', redis: await this.queue.health().catch((error) => ({ configured: true, error: error.message })) }; }
-  @Post('auth/register') async register(@Body() body: Record<string, unknown>, @Res({ passthrough: true }) res: Response) { const rememberMe = this.rememberMe(body); const result = await this.auth.register(requireString(body, 'name'), requireString(body, 'email'), requireString(body, 'password'), rememberMe); this.setSessionCookie(res, result.token, rememberMe); return { user: result.user }; }
+  @Post('auth/register') async register(@Body() body: Record<string, unknown>, @Res({ passthrough: true }) res: Response) { if (process.env.SHORE_SENTINEL_ALLOW_PUBLIC_REGISTRATION !== 'true') throw new ForbiddenException('Public registration is disabled'); const rememberMe = this.rememberMe(body); const result = await this.auth.register(requireString(body, 'name'), requireString(body, 'email'), requireString(body, 'password'), rememberMe); this.setSessionCookie(res, result.token, rememberMe); return { user: result.user }; }
   @Post('auth/login') async login(@Body() body: Record<string, unknown>, @Res({ passthrough: true }) res: Response) { const rememberMe = this.rememberMe(body); const result = await this.auth.login(requireString(body, 'email'), requireString(body, 'password'), rememberMe); this.setSessionCookie(res, result.token, rememberMe); return { user: result.user }; }
   @Post('auth/logout') logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) { this.auth.logout(this.token(req)); res.clearCookie('shore_session'); return { ok: true }; }
   @Get('auth/me') async me(@Req() req: Request) { return this.auth.me(this.token(req)); }
@@ -218,7 +228,7 @@ export class AppController {
        END, created_at DESC`,
       [tenantId, id],
     );
-    return { ...result.rows[0], artifacts: artifacts.rows };
+    return { ...result.rows[0], artifacts: artifacts.rows.map((artifact) => this.publicArtifact(artifact)) };
   }
 
   @Get('remediation')
@@ -276,7 +286,8 @@ export class AppController {
   }
 
   @Post('targets')
-  async createTarget(@Body() body: Record<string, unknown>) {
+  async createTarget(@Body() body: Record<string, unknown>, @Req() req: Request) {
+    await this.requirePermission(req, 'inventory_managed_machines', 'add');
     const tenantId = await this.db.tenantId();
     const hostname = requireString(body, 'hostname');
     const connectionMode = trimText(body.connection_mode) || 'ssh_push';
@@ -343,7 +354,8 @@ export class AppController {
 
   @Patch('remediations/:id/status')
   @Patch('remediation/:id/status')
-  async updateRemediationStatus(@Param('id') id: string, @Body() body: Record<string, unknown>) {
+  async updateRemediationStatus(@Param('id') id: string, @Body() body: Record<string, unknown>, @Req() req: Request) {
+    const actor = await this.requirePermission(req, 'remediation_workflows', 'edit');
     const tenantId = await this.db.tenantId();
     const newStatus = typeof body.status === 'string' ? body.status.toLowerCase() : '';
     const allowedStatuses = ['open', 'accepted', 'ignored', 'resolved'];
@@ -353,15 +365,16 @@ export class AppController {
     const current = await this.db.query('SELECT id, status, title FROM remediation_items WHERE tenant_id=$1 AND id=$2', [tenantId, id]);
     if (!current.rows[0]) throw new NotFoundException('remediation item not found');
     const updated = await this.db.query('UPDATE remediation_items SET status=$1, updated_at=now() WHERE tenant_id=$2 AND id=$3 RETURNING *', [newStatus, tenantId, id]);
-    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'remediation.status_changed', 'remediation_item', id, { from: current.rows[0].status, to: newStatus, title: current.rows[0].title }]);
-    await this.db.query('INSERT INTO remediation_item_activity (tenant_id, remediation_item_id, actor_user_id, event_type, payload) VALUES ($1,$2,$3,$4,$5)', [tenantId, id, null, 'remediation.status_changed', { from: current.rows[0].status, to: newStatus, title: current.rows[0].title }]);
+    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, actor.id, 'remediation.status_changed', 'remediation_item', id, { from: current.rows[0].status, to: newStatus, title: current.rows[0].title }]);
+    await this.db.query('INSERT INTO remediation_item_activity (tenant_id, remediation_item_id, actor_user_id, event_type, payload) VALUES ($1,$2,$3,$4,$5)', [tenantId, id, actor.id, 'remediation.status_changed', { from: current.rows[0].status, to: newStatus, title: current.rows[0].title }]);
     return updated.rows[0];
   }
 
-  @Get('targets/:id/scan-runs') async targetScanRuns(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query(`SELECT r.*, latest.event_type AS latest_event_type, latest.message AS latest_event_message, latest.progress_percent AS latest_progress_percent, latest.created_at AS latest_event_at, COALESCE(json_agg(jsonb_build_object('id', a.id, 'artifact_type', a.artifact_type, 'storage_uri', a.storage_uri, 'sha256', a.sha256, 'mime_type', a.mime_type, 'size_bytes', a.size_bytes, 'parse_status', a.parse_status, 'created_at', a.created_at) ORDER BY a.created_at DESC) FILTER (WHERE a.id IS NOT NULL), '[]'::json) AS artifacts FROM scan_runs r LEFT JOIN LATERAL (SELECT event_type, message, progress_percent, created_at FROM job_events e WHERE e.tenant_id=$1 AND e.run_id=r.id ORDER BY e.created_at DESC LIMIT 1) latest ON TRUE LEFT JOIN artifacts a ON a.tenant_id=$1 AND a.run_id=r.id WHERE r.tenant_id=$1 AND r.target_id=$2 GROUP BY r.id, latest.event_type, latest.message, latest.progress_percent, latest.created_at ORDER BY r.created_at DESC`, [tenantId, id]); return { runs: result.rows }; }
-  @Get('scan-runs/:id/artifacts') async runArtifacts(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT * FROM artifacts WHERE tenant_id=$1 AND run_id=$2 ORDER BY created_at DESC', [tenantId, id]); return { artifacts: result.rows }; }
-  @Patch('targets/:id') async updateTarget(@Param('id') id: string, @Body() body: Record<string, unknown>) { const tenantId = await this.db.tenantId(); const current = await this.db.query('SELECT * FROM targets WHERE tenant_id=$1 AND id=$2', [tenantId, id]); if (!current.rows[0]) throw new BadRequestException('target not found'); const fields = ['hostname', 'fqdn', 'ip_address', 'owner_team', 'platform', 'connection_mode', 'monitoring_enabled'] as const; const updates: string[] = []; const params: unknown[] = [tenantId, id]; for (const field of fields) { if (Object.prototype.hasOwnProperty.call(body, field)) { updates.push(`${field}=$${params.length + 1}`); params.push(body[field]); } } if (!updates.length) return current.rows[0]; const result = await this.db.query(`UPDATE targets SET ${updates.join(', ')}, updated_at=now() WHERE tenant_id=$1 AND id=$2 RETURNING *`, params); return result.rows[0]; }
-  @Delete('targets/:id') async deleteTarget(@Param('id') id: string) {
+  @Get('targets/:id/scan-runs') async targetScanRuns(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query(`SELECT r.id, r.job_id, r.subject_type, r.target_id, r.status, r.exit_code, r.started_at, r.completed_at, r.duration_seconds, r.created_at, r.updated_at, latest.event_type AS latest_event_type, latest.message AS latest_event_message, latest.progress_percent AS latest_progress_percent, latest.created_at AS latest_event_at, COALESCE(json_agg(jsonb_build_object('id', a.id, 'artifact_type', a.artifact_type, 'content_type', CASE a.artifact_type WHEN 'pdf' THEN 'application/pdf' WHEN 'markdown' THEN 'text/markdown; charset=utf-8' WHEN 'sarif' THEN 'application/sarif+json' ELSE 'application/json' END, 'size_bytes', a.size_bytes, 'parse_status', a.parse_status, 'created_at', a.created_at, 'download_path', CASE WHEN a.storage_uri LIKE 's3://%' THEN '/artifacts/' || a.id || '/download' ELSE NULL END) ORDER BY a.created_at DESC) FILTER (WHERE a.id IS NOT NULL), '[]'::json) AS artifacts FROM scan_runs r LEFT JOIN LATERAL (SELECT event_type, message, progress_percent, created_at FROM job_events e WHERE e.tenant_id=$1 AND e.run_id=r.id ORDER BY e.created_at DESC LIMIT 1) latest ON TRUE LEFT JOIN artifacts a ON a.tenant_id=$1 AND a.run_id=r.id WHERE r.tenant_id=$1 AND r.target_id=$2 GROUP BY r.id, latest.event_type, latest.message, latest.progress_percent, latest.created_at ORDER BY r.created_at DESC`, [tenantId, id]); return { runs: result.rows }; }
+  @Get('scan-runs/:id/artifacts') async runArtifacts(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT id, artifact_type, storage_uri, size_bytes, parse_status, created_at FROM artifacts WHERE tenant_id=$1 AND run_id=$2 ORDER BY created_at DESC', [tenantId, id]); return { artifacts: result.rows.map((artifact) => this.publicArtifact(artifact)) }; }
+  @Patch('targets/:id') async updateTarget(@Param('id') id: string, @Body() body: Record<string, unknown>, @Req() req: Request) { await this.requirePermission(req, 'inventory_managed_machines', 'edit'); const tenantId = await this.db.tenantId(); const current = await this.db.query('SELECT * FROM targets WHERE tenant_id=$1 AND id=$2', [tenantId, id]); if (!current.rows[0]) throw new BadRequestException('target not found'); const fields = ['hostname', 'fqdn', 'ip_address', 'owner_team', 'platform', 'connection_mode', 'monitoring_enabled'] as const; const updates: string[] = []; const params: unknown[] = [tenantId, id]; for (const field of fields) { if (Object.prototype.hasOwnProperty.call(body, field)) { updates.push(`${field}=$${params.length + 1}`); params.push(body[field]); } } if (!updates.length) return current.rows[0]; const result = await this.db.query(`UPDATE targets SET ${updates.join(', ')}, updated_at=now() WHERE tenant_id=$1 AND id=$2 RETURNING *`, params); return result.rows[0]; }
+  @Delete('targets/:id') async deleteTarget(@Param('id') id: string, @Req() req: Request) {
+    const actor = await this.requireAdmin(req);
     const tenantId = await this.db.tenantId();
     const target = await this.db.query<{ id: string; hostname: string }>('SELECT id, hostname FROM targets WHERE tenant_id = $1 AND id = $2', [tenantId, id]);
     if (!target.rows[0]) throw new BadRequestException('target not found');
@@ -386,13 +399,13 @@ export class AppController {
     await this.db.query('DELETE FROM target_identities WHERE tenant_id=$1 AND target_id=$2', [tenantId, id]);
     await this.db.query('DELETE FROM target_group_members WHERE target_id=$1', [id]);
     await this.db.query('DELETE FROM targets WHERE tenant_id=$1 AND id=$2', [tenantId, id]);
-    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, null, 'target.deleted', 'target', id, affected]);
+    await this.db.query('INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)', [tenantId, actor.id, 'target.deleted', 'target', id, affected]);
     return { deleted: true, id, affected };
   }
   @Get('one-time-audits/:id') async oneTimeAudit(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT * FROM one_time_audits WHERE tenant_id=$1 AND id=$2', [tenantId, id]); if (!result.rows[0]) throw new BadRequestException('one-time audit not found'); return result.rows[0]; }
-  @Post('targets/:id/scan-jobs') async runTarget(@Param('id') id: string, @Body() body: Record<string, unknown>) { return this.createJob('managed_target', id, null, body); }
+  @Post('targets/:id/scan-jobs') async runTarget(@Param('id') id: string, @Body() body: Record<string, unknown>, @Req() req: Request) { await this.requirePermission(req, 'scan_jobs_live_progress', 'add'); return this.createJob('managed_target', id, null, body); }
   @Get('scan-jobs/:id') async job(@Param('id') id: string) { const result = await this.db.query('SELECT * FROM scan_jobs WHERE id=$1', [id]); if (!result.rows[0]) throw new BadRequestException('scan job not found'); return result.rows[0]; }
-  @Get('scan-runs/:id') async run(@Param('id') id: string) { const result = await this.db.query('SELECT * FROM scan_runs WHERE id=$1', [id]); if (!result.rows[0]) throw new BadRequestException('scan run not found'); return result.rows[0]; }
+  @Get('scan-runs/:id') async run(@Param('id') id: string) { const result = await this.db.query('SELECT id, job_id, subject_type, target_id, one_time_audit_id, status, exit_code, started_at, completed_at, duration_seconds, created_at, updated_at FROM scan_runs WHERE id=$1', [id]); if (!result.rows[0]) throw new BadRequestException('scan run not found'); return result.rows[0]; }
 
   @Post('runs/:id/events')
   async workerEvent(@Param('id') id: string, @Body() body: Record<string, unknown>) {
@@ -416,9 +429,11 @@ export class AppController {
     if (!String(artifact.storage_uri).startsWith('s3://')) throw new BadRequestException('artifact body is not downloadable');
     const object = await this.artifacts.download(artifact.storage_uri);
     const extension = artifact.artifact_type === 'markdown' ? 'md' : artifact.artifact_type === 'scanner.normalized_findings' || artifact.artifact_type === 'scanner.enrichment_summary' || artifact.artifact_type === 'scanner.raw_output' ? 'json' : artifact.artifact_type;
-    res.setHeader('Content-Type', artifact.mime_type || object.ContentType || 'application/octet-stream');
+    res.setHeader('Content-Type', ARTIFACT_CONTENT_TYPES[artifact.artifact_type] ?? 'application/octet-stream');
     res.setHeader('Content-Length', String(artifact.size_bytes || object.ContentLength || ''));
-    res.setHeader('Content-Disposition', `inline; filename="shore-sentinel-${artifact.artifact_type}.${extension}"`);
+    res.setHeader('Content-Disposition', `attachment; filename="shore-sentinel-${artifact.artifact_type}.${extension}"`);
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Content-Security-Policy', 'sandbox');
     const body = object.Body;
     if (!body) throw new NotFoundException('artifact object body not found');
     if (body instanceof Readable) return body.pipe(res);
@@ -521,12 +536,34 @@ export class AppController {
     return user;
   }
 
+  private async requirePermission(req: Request, feature: string, action: string) {
+    const user = await this.auth.me(this.token(req));
+    const roles = Array.isArray(user?.roles) ? user.roles.map((role) => String(role).toLowerCase()) : [];
+    const permitted = roles.some((role) => ROLE_MATRIX[role]?.[feature]?.includes(action));
+    if (!permitted) throw new ForbiddenException('Insufficient permissions');
+    return user;
+  }
+
+  private publicArtifact(artifact: Record<string, unknown>) {
+    const artifactType = String(artifact.artifact_type);
+    return {
+      id: artifact.id,
+      artifact_type: artifactType,
+      content_type: ARTIFACT_CONTENT_TYPES[artifactType] ?? 'application/octet-stream',
+      size_bytes: artifact.size_bytes,
+      parse_status: artifact.parse_status,
+      created_at: artifact.created_at,
+      download_path: String(artifact.storage_uri ?? '').startsWith('s3://') ? `/artifacts/${artifact.id}/download` : null,
+    };
+  }
+
   private token(req: Request) { const cookieToken = (req as Request & { cookies?: Record<string, string> }).cookies?.shore_session; const auth = req.header('authorization'); return cookieToken ?? (auth?.startsWith('Bearer ') ? auth.slice(7) : undefined); }
 
   // ── User management ──────────────────────────────────────────────
 
   @Get('users')
   async listUsers(@Req() req: Request) {
+    await this.requireAdmin(req);
     const tenantId = await this.db.tenantId();
     const result = await this.db.query(
       `SELECT u.id, u.email, u.display_name, u.disabled_at, u.created_at, u.updated_at,
@@ -543,13 +580,15 @@ export class AppController {
   }
 
   @Get('users/roles')
-  async listRoles() {
+  async listRoles(@Req() req: Request) {
+    await this.requireAdmin(req);
     const result = await this.db.query('SELECT name, description FROM roles ORDER BY name');
     return result.rows;
   }
 
   @Post('users')
-  async createUser(@Body() body: Record<string, unknown>) {
+  async createUser(@Body() body: Record<string, unknown>, @Req() req: Request) {
+    const actor = await this.requireAdmin(req);
     const tenantId = await this.db.tenantId();
     const email = requireString(body, 'email');
     const displayName = requireString(body, 'display_name');
@@ -575,14 +614,15 @@ export class AppController {
 
     await this.db.query(
       'INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)',
-      [tenantId, null, 'user.created', 'user', userId, { email, displayName, roles }],
+      [tenantId, actor.id, 'user.created', 'user', userId, { email, displayName, roles }],
     );
 
     return { id: userId, email, display_name: displayName, roles };
   }
 
   @Patch('users/:id')
-  async updateUser(@Param('id') id: string, @Body() body: Record<string, unknown>) {
+  async updateUser(@Param('id') id: string, @Body() body: Record<string, unknown>, @Req() req: Request) {
+    const actor = await this.requireAdmin(req);
     const tenantId = await this.db.tenantId();
     const fields: string[] = [];
     const values: unknown[] = [];
@@ -609,7 +649,7 @@ export class AppController {
 
     await this.db.query(
       'INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)',
-      [tenantId, null, 'user.updated', 'user', id, { updated_fields: Object.keys(body) }],
+      [tenantId, actor.id, 'user.updated', 'user', id, { updated_fields: Object.keys(body) }],
     );
 
     const result = await this.db.query(
@@ -626,24 +666,26 @@ export class AppController {
   }
 
   @Post('users/:id/reset-password')
-  async resetPassword(@Param('id') id: string, @Body() body: Record<string, unknown>) {
+  async resetPassword(@Param('id') id: string, @Body() body: Record<string, unknown>, @Req() req: Request) {
+    const actor = await this.requireAdmin(req);
     const tenantId = await this.db.tenantId();
     const password = requireString(body, 'password');
     const passwordHash = await bcrypt.hash(password, 12);
     await this.db.query('UPDATE users SET password_hash = $1, updated_at = now() WHERE id = $2', [passwordHash, id]);
     await this.db.query(
       'INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)',
-      [tenantId, null, 'user.password_reset', 'user', id, {}],
+      [tenantId, actor.id, 'user.password_reset', 'user', id, {}],
     );
     return { ok: true };
   }
 
   @Delete('users/:id')
-  async deleteUser(@Param('id') id: string) {
+  async deleteUser(@Param('id') id: string, @Req() req: Request) {
+    const actor = await this.requireAdmin(req);
     const tenantId = await this.db.tenantId();
     await this.db.query(
       'INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)',
-      [tenantId, null, 'user.deleted', 'user', id, { actor_user_id_detached: true }],
+      [tenantId, actor.id, 'user.deleted', 'user', id, { actor_user_id_detached: true }],
     );
     await this.db.query('UPDATE audit_log SET actor_user_id = NULL WHERE actor_user_id = $1', [id]);
     await this.db.query('DELETE FROM user_roles WHERE user_id = $1', [id]);
@@ -652,23 +694,25 @@ export class AppController {
   }
 
   @Post('users/:id/disable')
-  async disableUser(@Param('id') id: string) {
+  async disableUser(@Param('id') id: string, @Req() req: Request) {
+    const actor = await this.requireAdmin(req);
     const tenantId = await this.db.tenantId();
     await this.db.query("UPDATE users SET disabled_at = now(), updated_at = now() WHERE id = $1", [id]);
     await this.db.query(
       'INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)',
-      [tenantId, null, 'user.disabled', 'user', id, {}],
+      [tenantId, actor.id, 'user.disabled', 'user', id, {}],
     );
     return { ok: true };
   }
 
   @Post('users/:id/enable')
-  async enableUser(@Param('id') id: string) {
+  async enableUser(@Param('id') id: string, @Req() req: Request) {
+    const actor = await this.requireAdmin(req);
     const tenantId = await this.db.tenantId();
     await this.db.query('UPDATE users SET disabled_at = NULL, updated_at = now() WHERE id = $1', [id]);
     await this.db.query(
       'INSERT INTO audit_log (tenant_id, actor_user_id, action, resource_type, resource_id, payload) VALUES ($1,$2,$3,$4,$5,$6)',
-      [tenantId, null, 'user.enabled', 'user', id, {}],
+      [tenantId, actor.id, 'user.enabled', 'user', id, {}],
     );
     return { ok: true };
   }

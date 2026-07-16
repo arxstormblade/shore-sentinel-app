@@ -22,6 +22,7 @@
   --shadow: 0 26px 70px rgba(0, 0, 0, 0.38);
   --radius: 22px;
   --radius-sm: 16px;
+  --target-min: 44px;
 }
 
 * {
@@ -570,9 +571,15 @@ button.btn:focus-visible {
   display: flex;
   align-items: center;
   gap: 0.65rem;
+  min-height: var(--operations-target-min);
+  padding: 0.55rem 0.8rem;
+  border: 1px solid rgba(128, 152, 199, 0.16);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.018);
   color: var(--muted);
   font-size: 0.9rem;
   font-weight: 600;
+  cursor: pointer;
 }
 
 .auth-form .remember-me input[type='checkbox'] {
@@ -3004,10 +3011,13 @@ footer a {
 
 .compact-page-header-actions a,
 .operations-ledger-row a,
-.operations-disclosure-summary {
+.operations-disclosure-summary,
+.operational-section-actions a,
+.enrollment-submit-row a {
   display: inline-flex;
   align-items: center;
   min-height: var(--operations-target-min);
+  padding: 0.7rem 0.9rem;
 }
 
 .operations-summary-strip {

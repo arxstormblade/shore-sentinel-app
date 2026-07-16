@@ -4,6 +4,14 @@
 
 - Removed the in-app one-time audit runner entry points. Standalone local evidence collection remains documented as the GitHub scanner option.
 
+## v1.0.0 - 2026-07-16
+
+- Promoted the compact operations rollout to the first major Shore Sentinel release, covering the dashboard, managed-machine inventory and enrollment, scan reports, remediation, audit archive, administration, preferences, saved views, knowledgebase, and system update workflows.
+- Added authoritative API role enforcement for user administration, managed-machine mutations, scan launches, and remediation-status updates; public registration is deny-by-default.
+- Added fail-closed same-origin authorization proxies and direct regression coverage for managed-machine enrollment and remediation-status mutations.
+- Restricted browser-facing artifact and scan-run data to public DTOs and hardened artifact downloads with fixed content types, attachment delivery, `nosniff`, and a sandboxed content-security policy.
+- Kept this release deployment-neutral: merging and staged/live deployment remain separately approval-gated.
+
 ## v0.3.10
 - Repositioned Shore Sentinel around managed-machine monitoring as the primary product workflow, including updated scan-entry copy and main navigation labeling.
 - Converted one-time audit into a GitHub-pulled local scanner workflow where reports and artifacts stay on the client machine by default.

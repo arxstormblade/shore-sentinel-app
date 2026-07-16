@@ -28,7 +28,7 @@ function artifactLabel(type) {
 
 function artifactDescription(artifact) {
   const kb = Math.max(1, Math.round(Number(artifact.size_bytes || 0) / 1024));
-  return `${artifact.mime_type || 'artifact'} · ${kb} KB · ${artifact.parse_status}`;
+  return `${artifact.content_type || 'artifact'} · ${kb} KB · ${artifact.parse_status}`;
 }
 
 export default async function Report({ params }) {
