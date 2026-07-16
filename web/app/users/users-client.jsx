@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { CompactPageHeader, ComposedEmptyState, OperationalSection, OperationsLedger, OperationsLedgerRow, OperationsSummaryStrip, Pill } from '@/components/ui';
 import { routePath } from '@/lib/paths';
 import {
   fetchUsers,
@@ -172,24 +173,15 @@ export default function UsersPage() {
     return map[role] || 'gray';
   }
 
+  const activeUsers = users.filter((user) => !user.disabled_at).length;
+  const disabledUsers = users.length - activeUsers;
+
   return (
-    <div className="stack users-page">
-      {/* Header */}
-      <section className="hero">
-        <div>
-          <p className="eye">User management</p>
-          <h1>Users & access</h1>
-          <p>Manage operator accounts, roles, and access permissions for this Shore Sentinel tenant.</p>
-        </div>
-        <div className="actions">
-          <button className="btn" onClick={openAdd}>+ Add user</button>
-        </div>
-      </section>
+    <div className="operations-page users-page">
+      <CompactPageHeader eyebrow="Access administration" title="Users and access" description="Manage tenant accounts, roles, passwords, and account status without losing the operational context." status={<Pill>{users.length} user{users.length === 1 ? '' : 's'}</Pill>} actions={<button className="btn" onClick={openAdd}>Add user</button>} />
+      <OperationsSummaryStrip items={[{ label: 'Users', value: users.length }, { label: 'Active', value: activeUsers }, { label: 'Disabled', value: disabledUsers }, { label: 'Roles available', value: roles.length }]} />
 
-      {/* Toast */}
       {toast ? <div className="toast">{toast}</div> : null}
-
-      {/* Error */}
       {error ? (
         <div className="error-banner">
           <span>{error}</span>
@@ -197,78 +189,33 @@ export default function UsersPage() {
         </div>
       ) : null}
 
-      {/* Users table */}
-      <section className="panel users-panel">
-        <header>
-          <h2>Tenant users</h2>
-          <span className="user-count">{users.length} user{users.length !== 1 ? 's' : ''}</span>
-        </header>
-
+      <OperationalSection eyebrow="Directory" title="Tenant users" status={<Pill>{loading ? 'Loading' : `${users.length} listed`}</Pill>}>
         {loading ? (
-          <div className="loading-row">Loading users…</div>
+          <p className="compact-empty-note">Loading users…</p>
         ) : users.length === 0 ? (
-          <div className="empty-state">
-            <p>No users found. Add the first operator account to get started.</p>
-          </div>
+          <ComposedEmptyState title="No tenant users found" description="Add the first operator account to begin managing access." actions={<button className="btn" onClick={openAdd}>Add user</button>} />
         ) : (
-          <table className="users-table">
-            <thead>
-              <tr>
-                <th>User</th>
-                <th>Roles</th>
-                <th>Status</th>
-                <th>Created</th>
-                <th className="actions-col">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => (
-                <tr key={user.id} className={user.disabled_at ? 'row-disabled' : ''}>
-                  <td>
-                    <div className="user-cell">
-                      <span className="avatar">{getInitials(user.display_name)}</span>
-                      <div>
-                        <b>{user.display_name}</b>
-                        <small>{user.email}</small>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="role-pills">
-                      {(user.roles || []).filter(Boolean).map((role) => (
-                        <span key={role} className={`pill ${roleColor(role)}`}>{role}</span>
-                      ))}
-                    </div>
-                  </td>
-                  <td>
-                    {user.disabled_at ? (
-                      <span className="pill red">Disabled</span>
-                    ) : (
-                      <span className="pill green">Active</span>
-                    )}
-                  </td>
-                  <td>
-                    <small>{formatDate(user.created_at)}</small>
-                  </td>
-                  <td className="actions-col">
-                    <div className="row-actions">
-                      <button className="btn ghost" title="Edit" onClick={() => openEdit(user)}>✎</button>
-                      <button className="btn ghost" title="Reset password" onClick={() => openResetPassword(user)}>🔑</button>
-                      <button className="btn ghost" title="Permissions" onClick={() => openPermissions(user)}>⚙</button>
-                      {user.disabled_at ? (
-                        <button className="btn ghost" title="Enable" onClick={() => handleToggleStatus(user)}>✓</button>
-                      ) : (
-                        <button className="btn ghost" title="Disable" onClick={() => handleToggleStatus(user)}>⊘</button>
-                      )}
-                      <button className="btn ghost danger" title="Delete" onClick={() => openDelete(user)}>✕</button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <OperationsLedger label="Tenant users">
+            {users.map((user) => (
+              <OperationsLedgerRow key={user.id}>
+                <div className="operations-row-copy">
+                  <b>{user.display_name || user.email}</b>
+                  <span>{user.email} · Created {formatDate(user.created_at)}</span>
+                  <div className="role-pills">{(user.roles || []).filter(Boolean).map((role) => <Pill key={role} tone={roleColor(role)}>{role}</Pill>)}</div>
+                </div>
+                <div className="operations-row-actions">
+                  <Pill tone={user.disabled_at ? 'red' : 'green'}>{user.disabled_at ? 'Disabled' : 'Active'}</Pill>
+                  <button className="btn ghost" onClick={() => openEdit(user)}>Edit</button>
+                  <button className="btn ghost" onClick={() => openResetPassword(user)}>Reset password</button>
+                  <button className="btn ghost" onClick={() => openPermissions(user)}>Permissions</button>
+                  <button className="btn ghost" onClick={() => handleToggleStatus(user)}>{user.disabled_at ? 'Enable' : 'Disable'}</button>
+                  <button className="btn ghost danger" onClick={() => openDelete(user)}>Delete</button>
+                </div>
+              </OperationsLedgerRow>
+            ))}
+          </OperationsLedger>
         )}
-      </section>
+      </OperationalSection>
 
       {/* ── Modals ── */}
 

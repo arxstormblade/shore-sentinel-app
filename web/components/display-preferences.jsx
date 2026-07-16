@@ -88,7 +88,7 @@ export function DisplayPreferencesPanel() {
     <section className="panel display-preferences-panel" data-testid="display-preferences-panel" aria-labelledby="display-preferences-title">
       <header>
         <div>
-          <h2 id="display-preferences-title">Display preferences</h2>
+          <h3 id="display-preferences-title">Display controls</h3>
           <p>Tune density, contrast, and visual effects for this browser. The controls apply across the whole control plane.</p>
         </div>
         <span className="pill" data-testid="display-preferences-summary">{summary}</span>

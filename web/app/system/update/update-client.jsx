@@ -1,23 +1,16 @@
 'use client';
 
 import { useState } from 'react';
+import { CompactPageHeader, ComposedEmptyState, OperationalSection, OperationsDisclosure, OperationsSummaryStrip, Pill } from '@/components/ui';
 import { applyUpdate, checkUpdate } from '@/lib/update-api';
 
 function OutputBlock({ result }) {
   if (!result) return null;
   return (
-    <section className="panel update-output" aria-live="polite">
-      <header>
-        <h2>Update output</h2>
-        <span className={`pill ${result.ok ? 'green' : 'amber'}`}>{result.mode || 'status'}</span>
-      </header>
-      <dl className="update-meta">
-        <div><dt>Enabled</dt><dd>{result.enabled ? 'Yes' : 'No'}</dd></div>
-        <div><dt>Exit code</dt><dd>{result.exitCode ?? 'n/a'}</dd></div>
-        <div><dt>Script</dt><dd>{result.script || 'not configured'}</dd></div>
-      </dl>
-      <pre>{[result.stdout, result.stderr].filter(Boolean).join('\n\n') || 'No output returned.'}</pre>
-    </section>
+    <OperationalSection eyebrow="Execution result" title="Update output" status={<Pill tone={result.ok ? 'green' : 'amber'}>{result.mode || 'status'}</Pill>}>
+      <OperationsSummaryStrip label="Update result metadata" items={[{ label: 'Enabled', value: result.enabled ? 'Yes' : 'No' }, { label: 'Exit code', value: result.exitCode ?? 'n/a' }, { label: 'Script', value: result.script || 'Not configured' }]} />
+      <OperationsDisclosure summary="View execution output" defaultOpen><div className="update-output"><pre>{[result.stdout, result.stderr].filter(Boolean).join('\n\n') || 'No output returned.'}</pre></div></OperationsDisclosure>
+    </OperationalSection>
   );
 }
 
@@ -40,31 +33,17 @@ export default function UpdateClient({ initialStatus }) {
   }
 
   return (
-    <div className="stack update-page">
-      <section className="hero">
-        <div>
-          <p className="eye">System update</p>
-          <h1>Update Shore Sentinel from GitHub</h1>
-          <p>Check for new commits and apply fast-forward Docker Compose updates from the configured remote repository.</p>
-        </div>
-        <div className="actions">
-          <button className="btn alt" disabled={Boolean(busy)} onClick={() => run('check')}>{busy === 'check' ? 'Checking…' : 'Check for updates'}</button>
-          <button className="btn" disabled={Boolean(busy) || !result?.enabled} onClick={() => run('apply')}>{busy === 'apply' ? 'Updating…' : 'Apply update'}</button>
-        </div>
-      </section>
-
-      <section className="panel update-warning">
-        <header>
-          <h2>Operational safety</h2>
-          <span className={`pill ${result?.enabled ? 'green' : 'amber'}`}>{result?.enabled ? 'Enabled' : 'Disabled by default'}</span>
-        </header>
+    <div className="operations-page update-page">
+      <CompactPageHeader eyebrow="System maintenance" title="Update Shore Sentinel" description="Check release readiness and apply an approved fast-forward Docker Compose update from the configured repository." status={<Pill tone={result?.enabled ? 'green' : 'amber'}>{result?.enabled ? 'Enabled' : 'Disabled by default'}</Pill>} actions={<><button className="btn alt" disabled={Boolean(busy)} onClick={() => run('check')}>{busy === 'check' ? 'Checking…' : 'Check for updates'}</button><button className="btn" disabled={Boolean(busy) || !result?.enabled} onClick={() => run('apply')}>{busy === 'apply' ? 'Updating…' : 'Apply update'}</button></>} />
+      <OperationsSummaryStrip items={[{ label: 'Update control', value: result?.enabled ? 'Enabled' : 'Disabled' }, { label: 'Last action', value: result?.mode || 'Status' }, { label: 'Exit code', value: result?.exitCode ?? 'n/a' }]} />
+      <OperationalSection eyebrow="Safety gate" title="Operational safety" status={<Pill tone={result?.enabled ? 'green' : 'amber'}>{result?.enabled ? 'Enabled' : 'Disabled'}</Pill>}>
         <p>
           Self-update is intentionally disabled unless the host mounts the Git checkout, update script, and Docker socket into the API container. Applying an update can rebuild and restart services, so only administrators should use this control.
         </p>
-      </section>
+      </OperationalSection>
 
-      {error ? <div className="error-banner"><span>{error}</span><button className="btn ghost" onClick={() => setError('')}>Dismiss</button></div> : null}
-      <OutputBlock result={result} />
+      {error ? <ComposedEmptyState tone="error" title="Update request failed" description={error} actions={<button className="btn ghost" onClick={() => setError('')}>Dismiss</button>} /> : null}
+      {result ? <OutputBlock result={result} /> : <ComposedEmptyState title="No update output yet" description="Check for updates to retrieve the current release readiness and command output." />}
     </div>
   );
 }
