@@ -1,52 +1,22 @@
 import Link from 'next/link';
-import { Header, Pill } from '@/components/ui';
+import { CompactPageHeader, OperationalSection, OperationsDisclosure, OperationsLedger, OperationsLedgerRow, Pill } from '@/components/ui';
 import { routePath } from '@/lib/paths';
 
 export default function KB() {
   return (
-    <div className="stack">
-      <Header
-        eye="Operational reference"
+    <div className="operations-page knowledgebase-page">
+      <CompactPageHeader
+        eyebrow="Operational reference"
         title="Knowledgebase"
-        desc="Use this guide to operate managed-machine monitoring and interpret scan evidence."
-      >
-        <Pill>managed monitoring first</Pill>
-      </Header>
+        description="Use this guide to operate managed-machine monitoring and interpret scan evidence."
+        status={<Pill>managed monitoring first</Pill>}
+      />
 
-      <section className="panel" id="managed-machine-monitoring">
-        <h2>Managed machine monitoring</h2>
-        <p><b>Managed machines</b> are endpoints Shore Sentinel monitors over time. Use them for recurring scan history, stale-machine visibility, remediation ownership, and fleet-level reporting.</p>
-        <div className="action-cards">
-          <article className="action-card panel">
-            <h3>Use managed machines when…</h3>
-            <ul className="guide-list">
-              <li>The endpoint belongs in recurring monitoring.</li>
-              <li>You need scheduled scans or scan history.</li>
-              <li>You want dashboard trends and remediation tracking.</li>
-            </ul>
-            <Link className="btn" href={routePath('/inventory/new')}>Add managed machine</Link>
-          </article>
-          <article className="action-card panel">
-            <h3>Use reports when…</h3>
-            <ul className="guide-list">
-              <li>You need evidence generated from managed scans.</li>
-              <li>You want findings, artifacts, and remediation in one place.</li>
-              <li>You need business-ready scan history for enrolled machines.</li>
-            </ul>
-            <Link className="btn alt" href={routePath('/scans-reports')}>View reports</Link>
-          </article>
-        </div>
-      </section>
+      <OperationalSection id="managed-machine-monitoring" eyebrow="Monitoring" title="Managed machine monitoring"><p><b>Managed machines</b> are endpoints Shore Sentinel monitors over time. Use them for recurring scan history, stale-machine visibility, remediation ownership, and fleet-level reporting.</p><OperationsLedger label="Monitoring choices"><OperationsLedgerRow><div className="operations-row-copy"><b>Use managed machines when…</b><span>The endpoint needs recurring monitoring, scan history, dashboard trends, or remediation tracking.</span></div><Link className="btn" href={routePath('/inventory/new')}>Add managed machine</Link></OperationsLedgerRow><OperationsLedgerRow><div className="operations-row-copy"><b>Use reports when…</b><span>You need generated evidence, findings, artifacts, and remediation in one place.</span></div><Link className="btn alt" href={routePath('/scans-reports')}>View reports</Link></OperationsLedgerRow></OperationsLedger></OperationalSection>
 
-      <section className="panel" id="managed-check-in">
-        <h2>How managed machines check in</h2>
-        <p>Managed machines use approved pull-agent or SSH-push flows and feed fleet health views. Their scan runs, findings, artifacts, and remediation records stay tied to a managed inventory record.</p>
-      </section>
+      <OperationalSection id="managed-check-in" eyebrow="Connectivity" title="How managed machines check in"><OperationsDisclosure summary="Approved check-in flows"><p>Managed machines use approved pull-agent or SSH-push flows and feed fleet health views. Their scan runs, findings, artifacts, and remediation records stay tied to a managed inventory record.</p></OperationsDisclosure></OperationalSection>
 
-      <section className="panel" id="remediation">
-        <h2>Reading remediation severity and evidence</h2>
-        <p>Severity colors support triage while operational panels stay solid and high contrast. Managed-machine remediation should be reviewed by owner, due date, business impact, and evidence artifact.</p>
-      </section>
+      <OperationalSection id="remediation" eyebrow="Triage" title="Reading remediation severity and evidence"><OperationsDisclosure summary="Evidence-first remediation"><p>Severity colors support triage while operational panels stay solid and high contrast. Managed-machine remediation should be reviewed by owner, due date, business impact, and evidence artifact.</p></OperationsDisclosure></OperationalSection>
     </div>
   );
 }

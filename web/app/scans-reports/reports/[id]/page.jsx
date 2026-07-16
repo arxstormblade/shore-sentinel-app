@@ -1,6 +1,7 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { notFound } from 'next/navigation';
-import { Header, Pill } from '@/components/ui';
+import Link from 'next/link';
+import { CompactPageHeader, ComposedEmptyState, OperationalSection, OperationsDisclosure, OperationsLedger, OperationsLedgerRow, OperationsSummaryStrip, Pill } from '@/components/ui';
 import { apiBase } from '@/lib/data';
 import { apiGet } from '@/lib/api-data';
 
@@ -10,13 +11,7 @@ export const revalidate = 0;
 function renderFinding(finding, index) {
   const summary = finding.summary || finding.title || `Finding ${index + 1}`;
   return (
-    <li key={finding.id || `${index}-${summary}`} className="finding-summary-row">
-      <span>
-        <b>{summary}</b>
-        <small>{finding.severity || 'informational'} · {finding.status || 'open'}</small>
-        {finding.evidence ? <small>{finding.evidence}</small> : null}
-      </span>
-    </li>
+    <OperationsDisclosure key={finding.id || `${index}-${summary}`} summary={`${summary} · ${finding.severity || 'informational'}`}><div className="operations-row-copy"><b>Finding evidence</b><span>{finding.status || 'open'}{finding.evidence ? ` · ${finding.evidence}` : ' · No additional evidence summary recorded.'}</span></div></OperationsDisclosure>
   );
 }
 
@@ -50,72 +45,16 @@ export default async function Report({ params }) {
   const artifacts = Array.isArray(report.artifacts) ? report.artifacts : [];
 
   return (
-    <div className="stack">
-      <Header eye="Report" title={`${report.title} scan report`} desc={`${report.source} report. Evidence, findings, and scanner-generated artifacts stay tied to the scanned subject.`}>
-        <details>
-          <summary>Actions</summary>
-          <a href="#artifacts">Open artifacts</a>
-          <a href="#compare">Compare reports</a>
-          <a href="#export">Import / export</a>
-        </details>
-      </Header>
-
-      <section className="grid">
-        <article className="panel">
-          <h2>Report summary</h2>
-          <p>Environment: {report.env}</p>
-          <p>Findings: {report.finding_count || 0}</p>
-          <p>Artifacts: {artifacts.length}</p>
-          <Pill>{report.status}</Pill>
-          <Pill>{report.severity}</Pill>
-        </article>
-        <article className="panel">
-          <h2>Progress</h2>
-          <p className="ok">{report.status}</p>
-          <p>Started: {report.created_at}</p>
-          {report.completed_at ? <p>Completed: {report.completed_at}</p> : null}
-        </article>
-      </section>
-
-      <section id="artifacts" className="panel">
-        <h2>Generated scanner artifacts</h2>
-        <p className="note">Open the PDF report for review, Markdown for text evidence, SARIF for tooling, and normalized JSON for CVE-enriched findings.</p>
-        {artifacts.length === 0 ? (
-          <p className="note">No downloadable scanner artifacts were recorded for this run.</p>
-        ) : (
-          <div className="artifact-list">
-            {artifacts.map((artifact) => {
-              const href = artifact.download_path ? `${apiBase}${artifact.download_path}` : null;
-              return (
-                <article className="row" key={artifact.id}>
-                  <span>
-                    <b>{artifactLabel(artifact.artifact_type)}</b>
-                    <small>{artifactDescription(artifact)}</small>
-                  </span>
-                  <Pill>{artifact.artifact_type}</Pill>
-                  {href ? <a className="btn alt" href={href} target="_blank" rel="noreferrer">Open artifact</a> : <Pill>metadata only</Pill>}
-                </article>
-              );
-            })}
-          </div>
-        )}
-      </section>
-
-      <section className="panel">
-        <h2>Findings and remediation</h2>
-        <p className="note">When scanner findings include vulnerability references, Shore Sentinel keeps evidence and remediation connected to the report.</p>
-        {findings.length === 0 ? <p className="note">No findings were recorded for this scan run.</p> : <ul className="finding-summary-list">{findings.map(renderFinding)}</ul>}
-      </section>
-
-      <section id="compare" className="panel soft">
-        <h2>Compare reports</h2>
-        <p>Side-by-side report comparison lives here so the primary toolbar can stay lean.</p>
-      </section>
-
-      <section id="export" className="panel soft">
-        <h2>Import / export</h2>
-        <p>Exporting report evidence and importing reference data live here as secondary actions.</p>
-      </section>
+    <div className="operations-page report-dossier-page">
+      <CompactPageHeader eyebrow="Evidence dossier" title={`${report.title} scan report`} description={`${report.source} report. Findings and scanner-generated artifacts remain tied to the scanned subject.`} status={<><Pill>{report.status}</Pill><Pill>{report.severity}</Pill></>} actions={<Link className="btn alt" href="/scans-reports">All reports</Link>} />
+      <OperationsSummaryStrip items={[{ label: 'Environment', value: report.env }, { label: 'Findings', value: report.finding_count || 0 }, { label: 'Artifacts', value: artifacts.length }, { label: 'Status', value: report.status }]} />
+      <OperationalSection id="artifacts" eyebrow="Downloads" title="Generated scanner artifacts" status={<Pill>{artifacts.length}</Pill>}>
+        {artifacts.length === 0 ? <ComposedEmptyState title="No downloadable artifacts" description="This scan did not record downloadable scanner artifacts." /> : <OperationsLedger label="Generated scanner artifacts">{artifacts.map((artifact) => { const href = artifact.download_path ? `${apiBase}${artifact.download_path}` : null; return <OperationsLedgerRow key={artifact.id}><div className="operations-row-copy"><b>{artifactLabel(artifact.artifact_type)}</b><span>{artifactDescription(artifact)}</span></div><div className="operations-row-actions"><Pill>{artifact.artifact_type}</Pill>{href ? <a className="btn alt" href={href} target="_blank" rel="noreferrer">Open artifact</a> : <Pill>metadata only</Pill>}</div></OperationsLedgerRow>; })}</OperationsLedger>}
+      </OperationalSection>
+      <OperationalSection eyebrow="Finding evidence" title="Findings and remediation" status={<Pill>{findings.length}</Pill>}>
+        {findings.length === 0 ? <ComposedEmptyState title="No findings recorded" description="This scan completed without findings." /> : <div className="compact-disclosure-stack">{findings.map(renderFinding)}</div>}
+      </OperationalSection>
+      <OperationalSection eyebrow="Related workflow" title="Compare and export"><OperationsDisclosure summary="Compare reports"><p>Compare evidence by opening another report from the report ledger.</p></OperationsDisclosure><OperationsDisclosure summary="Import and export"><p>Download the available scanner artifacts above for formal review, tooling, or evidence retention.</p></OperationsDisclosure></OperationalSection>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Header } from '@/components/ui';
+import { CompactPageHeader, OperationalSection } from '@/components/ui';
 import { SavedViewContent } from '@/components/saved-views';
 import { routePath } from '@/lib/paths';
 
@@ -27,21 +27,19 @@ export default async function SavedViewSlugPage({ params }) {
   const title = VIEW_TITLES[slug] || slug;
 
   return (
-    <div className="stack">
-      <Header
-        eye="Saved views"
+    <div className="operations-page saved-view-detail-page">
+      <CompactPageHeader
+        eyebrow="Saved views"
         title={title}
-        desc="Curated operational view with preset filters for immediate triage."
-      >
-        <Link className="btn" href={routePath('/saved-views')}>All saved views</Link>
-        <Link className="btn alt" href={routePath('/dashboard')}>Dashboard</Link>
-      </Header>
+        description="Curated operational view with preset filters for immediate triage."
+        actions={<><Link className="btn" href={routePath('/saved-views')}>All saved views</Link><Link className="btn alt" href={routePath('/dashboard')}>Dashboard</Link></>}
+      />
       <nav className="saved-view-breadcrumb" aria-label="Breadcrumb">
         <Link href={routePath('/saved-views')}>Saved views</Link>
         <span aria-hidden="true">›</span>
         <span>{title}</span>
       </nav>
-      <SavedViewContent slug={slug} />
+      <OperationalSection eyebrow="Preset results" title={title}><SavedViewContent slug={slug} /></OperationalSection>
     </div>
   );
 }

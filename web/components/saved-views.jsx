@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { OperationalSection, OperationsLedger, OperationsLedgerRow } from '@/components/ui';
 import { routePath } from '@/lib/paths';
 
 const serverApiBase = () => (process.env.INTERNAL_API_URL || process.env.API_URL || 'http://api:4000').replace(/\/$/, '');
@@ -40,6 +41,19 @@ const VIEW_META = {
 
 const ALL_VIEW_SLUGS = Object.keys(VIEW_META);
 
+function SavedViewRows({ items, renderAction, statusClass = '' }) {
+  return (
+    <OperationsLedger label="Saved view results">
+      {items.map((run) => (
+        <OperationsLedgerRow key={run.id}>
+          <div className="operations-row-copy compact-table-row"><b>{run.subject_name || run.id}</b><span>Status: {run.status} · Findings: {run.findings_count ?? 0} · Completed: {formatTime(run.completed_at || run.started_at)}</span></div>
+          <div className="operations-row-actions"><span className={statusClass}>{run.status}</span>{renderAction(run)}</div>
+        </OperationsLedgerRow>
+      ))}
+    </OperationsLedger>
+  );
+}
+
 function formatTime(value) {
   if (!value) return '—';
   try { return new Date(value).toLocaleString(); } catch { return '—'; }
@@ -80,7 +94,7 @@ export async function SavedViewsPanel() {
   const views = await getJson('/saved-views', []);
   const visible = views.filter((v) => ALL_VIEW_SLUGS.includes(v.slug));
   return (
-    <section className="panel saved-views-panel" data-testid="saved-views-panel" aria-label="Saved operational views">
+    <OperationalSection eyebrow="Saved views" title="Saved operational views" data-testid="saved-views-panel">
       <header>
         <div>
           <h2>Saved views</h2>
@@ -125,7 +139,7 @@ export async function SavedViewsPanel() {
           })
         )}
       </div>
-    </section>
+    </OperationalSection>
   );
 }
 
@@ -238,26 +252,7 @@ async function FailedScansView() {
             <Link className="btn" href={routePath('/scans-reports')}>View all scans</Link>
           </div>
         </div>
-      ) : (
-        <table data-testid="saved-view-table">
-          <thead>
-            <tr><th>Subject</th><th>Status</th><th>Findings</th><th>Completed</th><th>Next</th></tr>
-          </thead>
-          <tbody>
-            {items.map((run) => (
-              <tr key={run.id} data-testid="saved-view-row">
-                <td data-label="Subject">{run.subject_name || run.id}</td>
-                <td data-label="Status"><span className="failed">{run.status}</span></td>
-                <td data-label="Findings">{run.findings_count ?? 0}</td>
-                <td data-label="Completed">{formatTime(run.completed_at || run.started_at)}</td>
-                <td data-label="Next">
-                  <Link href={routePath(`/scans-reports/reports/${run.id}`)}>Investigate</Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      ) : <SavedViewRows items={items} statusClass="failed" renderAction={(run) => <Link className="btn alt" href={routePath(`/scans-reports/reports/${run.id}`)}>Investigate</Link>} />}
     </section>
   );
 }
@@ -282,28 +277,7 @@ async function RecentlyCompletedView() {
             <Link className="btn" href={routePath('/scans/start')}>Start scan</Link>
           </div>
         </div>
-      ) : (
-        <table data-testid="saved-view-table">
-          <thead>
-            <tr><th>Subject</th><th>Status</th><th>Findings</th><th>Completed</th><th>Next</th></tr>
-          </thead>
-          <tbody>
-            {items.map((run) => (
-              <tr key={run.id} data-testid="saved-view-row">
-                <td data-label="Subject">{run.subject_name || run.id}</td>
-                <td data-label="Status"><span className="completed">{run.status}</span></td>
-                <td data-label="Findings">{run.findings_count ?? 0}</td>
-                <td data-label="Completed">{formatTime(run.completed_at)}</td>
-                <td data-label="Next">
-                  <Link href={routePath(`/scans-reports/reports/${run.id}`)}>Open report</Link>
-                  {' · '}
-                  <Link href={routePath('/remediation')}>Remediation</Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      ) : <SavedViewRows items={items} statusClass="completed" renderAction={(run) => <><Link className="btn alt" href={routePath(`/scans-reports/reports/${run.id}`)}>Open report</Link><Link className="btn ghost" href={routePath('/remediation')}>Remediation</Link></>} />}
     </section>
   );
 }

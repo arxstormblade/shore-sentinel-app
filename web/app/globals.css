@@ -3229,6 +3229,78 @@ footer a {
   gap: 0.5rem;
 }
 
+.compact-filter-bar {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  padding: 0.75rem;
+  border: 1px solid rgba(128, 152, 199, 0.14);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.compact-filter-bar label,
+.compact-inline-form {
+  display: grid;
+  gap: 0.35rem;
+  min-width: min(100%, 170px);
+  color: #dbe7fa;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.compact-filter-bar select,
+.compact-inline-form select {
+  min-height: var(--operations-target-min);
+}
+
+.compact-inline-form {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.compact-empty-note {
+  margin: 0;
+  padding: 0.8rem;
+  border: 1px dashed rgba(128, 152, 199, 0.2);
+  border-radius: 14px;
+}
+
+.compact-disclosure-stack,
+.compact-finding-list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.compact-finding-list li,
+.compact-finding-row {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.7rem;
+  border: 1px solid rgba(128, 152, 199, 0.13);
+  border-radius: 12px;
+}
+
+.compact-finding-list span,
+.compact-finding-row span {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.compact-finding-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.compact-table-row {
+  min-width: 0;
+}
+
 .severity-briefing {
   display: grid;
   grid-template-columns: minmax(160px, 0.35fr) minmax(0, 1fr);
@@ -3315,6 +3387,16 @@ footer a {
 
   .operations-row-actions {
     justify-content: flex-start;
+  }
+
+  .compact-filter-bar,
+  .compact-inline-form,
+  .compact-finding-row {
+    align-items: stretch;
+  }
+
+  .compact-filter-bar label {
+    width: 100%;
   }
 
   .inventory-filters label {
