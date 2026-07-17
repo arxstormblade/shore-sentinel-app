@@ -9,7 +9,7 @@ import { AuthService } from './auth.service.js';
 import { DatabaseService } from './database.service.js';
 import { QueueService } from './queue.service.js';
 import { UpdateService } from './update.service.js';
-import { assertExactlyOneSubject, requireString, validateArtifactComplete, validateArtifactType } from './validation.js';
+import { assertExactlyOneSubject, requireString, validateArtifactComplete, validateArtifactType, validateScanTarget } from './validation.js';
 import { ROLE_MATRIX } from './config.js';
 
 const THIRTY_DAYS_SECONDS = 60 * 60 * 24 * 30;
@@ -370,7 +370,21 @@ export class AppController {
     return updated.rows[0];
   }
 
-  @Get('targets/:id/scan-runs') async targetScanRuns(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query(`SELECT r.id, r.job_id, r.subject_type, r.target_id, r.status, r.exit_code, r.started_at, r.completed_at, r.duration_seconds, r.created_at, r.updated_at, latest.event_type AS latest_event_type, latest.message AS latest_event_message, latest.progress_percent AS latest_progress_percent, latest.created_at AS latest_event_at, COALESCE(json_agg(jsonb_build_object('id', a.id, 'artifact_type', a.artifact_type, 'content_type', CASE a.artifact_type WHEN 'pdf' THEN 'application/pdf' WHEN 'markdown' THEN 'text/markdown; charset=utf-8' WHEN 'sarif' THEN 'application/sarif+json' ELSE 'application/json' END, 'size_bytes', a.size_bytes, 'parse_status', a.parse_status, 'created_at', a.created_at, 'download_path', CASE WHEN a.storage_uri LIKE 's3://%' THEN '/artifacts/' || a.id || '/download' ELSE NULL END) ORDER BY a.created_at DESC) FILTER (WHERE a.id IS NOT NULL), '[]'::json) AS artifacts FROM scan_runs r LEFT JOIN LATERAL (SELECT event_type, message, progress_percent, created_at FROM job_events e WHERE e.tenant_id=$1 AND e.run_id=r.id ORDER BY e.created_at DESC LIMIT 1) latest ON TRUE LEFT JOIN artifacts a ON a.tenant_id=$1 AND a.run_id=r.id WHERE r.tenant_id=$1 AND r.target_id=$2 GROUP BY r.id, latest.event_type, latest.message, latest.progress_percent, latest.created_at ORDER BY r.created_at DESC`, [tenantId, id]); return { runs: result.rows }; }
+  @Get('targets/:id/scan-runs')
+  async targetScanRuns(@Param('id') id: string) {
+    const tenantId = await this.db.tenantId();
+    const result = await this.db.query(`SELECT r.id, r.job_id, r.subject_type, r.target_id, r.one_time_audit_id, r.status, r.exit_code, r.started_at, r.completed_at, r.duration_seconds, r.created_at, r.updated_at, r.runtime_context, latest.event_type AS latest_event_type, latest.message AS latest_event_message, latest.progress_percent AS latest_progress_percent, latest.created_at AS latest_event_at, COALESCE(json_agg(jsonb_build_object('id', a.id, 'artifact_type', a.artifact_type, 'content_type', CASE a.artifact_type WHEN 'pdf' THEN 'application/pdf' WHEN 'markdown' THEN 'text/markdown; charset=utf-8' WHEN 'sarif' THEN 'application/sarif+json' ELSE 'application/json' END, 'size_bytes', a.size_bytes, 'parse_status', a.parse_status, 'created_at', a.created_at, 'download_path', CASE WHEN a.storage_uri LIKE 's3://%' THEN '/artifacts/' || a.id || '/download' ELSE NULL END) ORDER BY a.created_at DESC) FILTER (WHERE a.id IS NOT NULL), '[]'::json) AS artifacts FROM scan_runs r LEFT JOIN LATERAL (SELECT event_type, message, progress_percent, created_at FROM job_events e WHERE e.tenant_id=$1 AND e.run_id=r.id ORDER BY created_at DESC LIMIT 1) latest ON TRUE LEFT JOIN artifacts a ON a.tenant_id=$1 AND a.run_id=r.id WHERE r.tenant_id=$1 AND r.target_id=$2 GROUP BY r.id, r.runtime_context, latest.event_type, latest.message, latest.progress_percent, latest.created_at ORDER BY r.created_at DESC`, [tenantId, id]);
+    return {
+      runs: result.rows.map((run) => ({
+        ...this.publicRun(run),
+        latest_event_type: run.latest_event_type,
+        latest_event_message: run.latest_event_message,
+        latest_progress_percent: run.latest_progress_percent,
+        latest_event_at: run.latest_event_at,
+        artifacts: run.artifacts,
+      })),
+    };
+  }
   @Get('scan-runs/:id/artifacts') async runArtifacts(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT id, artifact_type, storage_uri, size_bytes, parse_status, created_at FROM artifacts WHERE tenant_id=$1 AND run_id=$2 ORDER BY created_at DESC', [tenantId, id]); return { artifacts: result.rows.map((artifact) => this.publicArtifact(artifact)) }; }
   @Patch('targets/:id') async updateTarget(@Param('id') id: string, @Body() body: Record<string, unknown>, @Req() req: Request) { await this.requirePermission(req, 'inventory_managed_machines', 'edit'); const tenantId = await this.db.tenantId(); const current = await this.db.query('SELECT * FROM targets WHERE tenant_id=$1 AND id=$2', [tenantId, id]); if (!current.rows[0]) throw new BadRequestException('target not found'); const fields = ['hostname', 'fqdn', 'ip_address', 'owner_team', 'platform', 'connection_mode', 'monitoring_enabled'] as const; const updates: string[] = []; const params: unknown[] = [tenantId, id]; for (const field of fields) { if (Object.prototype.hasOwnProperty.call(body, field)) { updates.push(`${field}=$${params.length + 1}`); params.push(body[field]); } } if (!updates.length) return current.rows[0]; const result = await this.db.query(`UPDATE targets SET ${updates.join(', ')}, updated_at=now() WHERE tenant_id=$1 AND id=$2 RETURNING *`, params); return result.rows[0]; }
   @Delete('targets/:id') async deleteTarget(@Param('id') id: string, @Req() req: Request) {
@@ -405,7 +419,7 @@ export class AppController {
   @Get('one-time-audits/:id') async oneTimeAudit(@Param('id') id: string) { const tenantId = await this.db.tenantId(); const result = await this.db.query('SELECT * FROM one_time_audits WHERE tenant_id=$1 AND id=$2', [tenantId, id]); if (!result.rows[0]) throw new BadRequestException('one-time audit not found'); return result.rows[0]; }
   @Post('targets/:id/scan-jobs') async runTarget(@Param('id') id: string, @Body() body: Record<string, unknown>, @Req() req: Request) { await this.requirePermission(req, 'scan_jobs_live_progress', 'add'); return this.createJob('managed_target', id, null, body); }
   @Get('scan-jobs/:id') async job(@Param('id') id: string) { const result = await this.db.query('SELECT * FROM scan_jobs WHERE id=$1', [id]); if (!result.rows[0]) throw new BadRequestException('scan job not found'); return result.rows[0]; }
-  @Get('scan-runs/:id') async run(@Param('id') id: string) { const result = await this.db.query('SELECT id, job_id, subject_type, target_id, one_time_audit_id, status, exit_code, started_at, completed_at, duration_seconds, created_at, updated_at FROM scan_runs WHERE id=$1', [id]); if (!result.rows[0]) throw new BadRequestException('scan run not found'); return result.rows[0]; }
+  @Get('scan-runs/:id') async run(@Param('id') id: string) { const result = await this.db.query('SELECT id, job_id, subject_type, target_id, one_time_audit_id, status, exit_code, started_at, completed_at, duration_seconds, created_at, updated_at, runtime_context FROM scan_runs WHERE id=$1', [id]); if (!result.rows[0]) throw new BadRequestException('scan run not found'); return this.publicRun(result.rows[0]); }
 
   @Post('runs/:id/events')
   async workerEvent(@Param('id') id: string, @Body() body: Record<string, unknown>) {
@@ -467,8 +481,9 @@ export class AppController {
     assertExactlyOneSubject(subjectType, targetId, oneTimeAuditId);
     const tenantId = await this.db.tenantId();
     const mode = body.mode ?? 'ssh_push';
+    const runtimeContext = { scan_target: validateScanTarget(body.scan_target) };
     const job = await this.db.query('INSERT INTO scan_jobs (tenant_id,subject_type,target_id,one_time_audit_id,mode,priority,scanner_version,status) VALUES ($1,$2,$3,$4,$5,$6,$7,\'queued\') RETURNING *', [tenantId, subjectType, targetId, oneTimeAuditId, mode, body.priority ?? 50, body.scanner_version ?? null]);
-    const run = await this.db.query('INSERT INTO scan_runs (tenant_id,job_id,subject_type,target_id,one_time_audit_id,status,runtime_context,app_version,scanner_bundle_version,scanner_script_sha256) VALUES ($1,$2,$3,$4,$5,\'pending\',$6,$7,$8,$9) RETURNING *', [tenantId, job.rows[0].id, subjectType, targetId, oneTimeAuditId, body.runtime_context ?? {}, '0.1.0', body.scanner_bundle_version ?? null, body.scanner_script_sha256 ?? null]);
+    const run = await this.db.query('INSERT INTO scan_runs (tenant_id,job_id,subject_type,target_id,one_time_audit_id,status,runtime_context,app_version,scanner_bundle_version,scanner_script_sha256) VALUES ($1,$2,$3,$4,$5,\'pending\',$6,$7,$8,$9) RETURNING *', [tenantId, job.rows[0].id, subjectType, targetId, oneTimeAuditId, runtimeContext, '0.1.0', body.scanner_bundle_version ?? null, body.scanner_script_sha256 ?? null]);
     await this.db.query("INSERT INTO job_events (tenant_id,job_id,run_id,event_type,message,progress_percent) VALUES ($1,$2,$3,'job.queued','Scan job queued',0)", [tenantId, job.rows[0].id, run.rows[0].id]);
     const queue = await this.queue.enqueue('scan_jobs', {
       id: job.rows[0].id,
@@ -483,7 +498,7 @@ export class AppController {
       one_time_audit_id: oneTimeAuditId,
       scannerOutput: this.scannerOutput(subjectType, targetId, oneTimeAuditId, body),
     });
-    return { job: job.rows[0], run: run.rows[0], queue };
+    return { job: job.rows[0], run: this.publicRun(run.rows[0]), queue };
   }
 
   private scannerOutput(subjectType: 'managed_target', targetId: string, oneTimeAuditId: null, body: Record<string, unknown>) {
@@ -542,6 +557,28 @@ export class AppController {
     const permitted = roles.some((role) => ROLE_MATRIX[role]?.[feature]?.includes(action));
     if (!permitted) throw new ForbiddenException('Insufficient permissions');
     return user;
+  }
+
+  private publicRun(run: Record<string, unknown>) {
+    const context = run.runtime_context;
+    const rawScanTarget = context && typeof context === 'object' && !Array.isArray(context) ? (context as Record<string, unknown>).scan_target : undefined;
+    let scanTarget: string | undefined;
+    try { scanTarget = validateScanTarget(rawScanTarget); } catch { scanTarget = undefined; }
+    return {
+      id: run.id,
+      job_id: run.job_id,
+      subject_type: run.subject_type,
+      target_id: run.target_id,
+      one_time_audit_id: run.one_time_audit_id,
+      status: run.status,
+      exit_code: run.exit_code,
+      started_at: run.started_at,
+      completed_at: run.completed_at,
+      duration_seconds: run.duration_seconds,
+      created_at: run.created_at,
+      updated_at: run.updated_at,
+      scan_target: scanTarget,
+    };
   }
 
   private publicArtifact(artifact: Record<string, unknown>) {

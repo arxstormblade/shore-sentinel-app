@@ -1,6 +1,18 @@
 import { BadRequestException } from '@nestjs/common';
 import { ALLOWED_ARTIFACT_TYPES, MAX_ARTIFACT_BYTES } from './config.js';
 
+export const MAX_SCAN_TARGET_LENGTH = 1024;
+
+export function validateScanTarget(value?: unknown) {
+  if (value === undefined || (typeof value === 'string' && value.trim() === '')) return '.';
+  if (typeof value !== 'string') throw new BadRequestException('scan_target must be a string');
+  if (value.length > MAX_SCAN_TARGET_LENGTH) throw new BadRequestException(`scan_target is too long (maximum ${MAX_SCAN_TARGET_LENGTH} characters)`);
+  if (/[\u0000-\u001f\u007f\\]/.test(value)) throw new BadRequestException('scan_target contains invalid characters');
+  if (value.split('/').includes('..')) throw new BadRequestException('scan_target contains a relative traversal segment');
+  if (value !== '.' && !value.startsWith('/')) throw new BadRequestException('scan_target must be "." or an absolute POSIX directory');
+  return value;
+}
+
 export function assertExactlyOneSubject(subjectType: string, targetId?: string | null, oneTimeAuditId?: string | null) {
   const hasTarget = Boolean(targetId);
   const hasAudit = Boolean(oneTimeAuditId);

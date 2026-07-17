@@ -7,6 +7,7 @@ import { AppController } from '../src/app.controller.js';
 function controller() {
   const calls: string[] = [];
   const queueCalls: { queueName: string; payload: Record<string, unknown> }[] = [];
+  const scanRunInserts: unknown[][] = [];
   const rows: Record<string, unknown>[] = [];
   const db = {
     isReady: () => true,
@@ -14,7 +15,10 @@ function controller() {
     query: async (sql: string, params: unknown[] = []) => {
       calls.push(sql);
       if (sql.includes('INSERT INTO scan_jobs')) return { rows: [{ id: 'job-1', tenant_id: params[0], subject_type: params[1], target_id: params[2], one_time_audit_id: params[3], status: 'queued' }] };
-      if (sql.includes('INSERT INTO scan_runs')) return { rows: [{ id: 'run-1', job_id: params[1], subject_type: params[2], target_id: params[3], one_time_audit_id: params[4], status: 'pending' }] };
+      if (sql.includes('INSERT INTO scan_runs')) {
+        scanRunInserts.push(params);
+        return { rows: [{ id: 'run-1', job_id: params[1], subject_type: params[2], target_id: params[3], one_time_audit_id: params[4], status: 'pending', runtime_context: params[5] }] };
+      }
       if (sql.includes('INSERT INTO artifacts')) return { rows: [{ id: 'artifact-1', run_id: params[1], artifact_type: params[2], storage_uri: params[3], sha256: params[4], size_bytes: params[6] }] };
       if (sql.includes('INSERT INTO credentials')) return { rows: [{ id: 'credential-1' }] };
       if (sql.includes('INSERT INTO targets')) return { rows: [{ id: 'target-1', hostname: params[1], status: 'unknown', ssh_auth_method: params[8], ssh_port: params[9], ssh_username: params[10], ssh_credential_id: params[11] }] };
@@ -69,7 +73,7 @@ function controller() {
       return { enabled: mode !== 'status', mode, ok: true, stdout: `${mode} complete`, stderr: '', exitCode: 0, script: '/app/scripts/shore-sentinel-update.sh' };
     },
   };
-  return { app: new AppController(db as never, auth as never, queue as never, artifacts as never, updates as never), calls, queueCalls, authCalls, updateCalls };
+  return { app: new AppController(db as never, auth as never, queue as never, artifacts as never, updates as never), calls, queueCalls, scanRunInserts, authCalls, updateCalls };
 }
 
 
@@ -84,6 +88,17 @@ test('managed target scan-job endpoint enqueues worker-compatible payload', asyn
   assert.equal(queueCalls[0].payload.run_id, 'run-1');
   assert.equal(queueCalls[0].payload.jobId, 'job-1');
   assert.equal((queueCalls[0].payload.scannerOutput as Record<string, unknown>).contractVersion, scannerBundleContractVersion());
+});
+
+test('managed target scan stores an allowlisted directory scope only', async () => {
+  const { app, scanRunInserts } = controller();
+  const result = await app.runTarget('target-1', {
+    scan_target: '/srv/app',
+    runtime_context: { credential: 'do-not-store', raw_output: 'do-not-store' },
+  }, { cookies: { shore_session: 'operator-token' }, header: () => undefined } as never);
+  assert.deepEqual(scanRunInserts[0][5], { scan_target: '/srv/app' });
+  assert.equal(result.run.scan_target, '/srv/app');
+  assert.equal('runtime_context' in result.run, false);
 });
 
 test('artifact upload init response exposes object key, storage uri, and upload url field', async () => {
