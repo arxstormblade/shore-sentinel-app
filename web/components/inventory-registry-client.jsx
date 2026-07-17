@@ -69,7 +69,7 @@ export function InventoryRegistry({ machines }) {
                 <div className="operations-row-actions">
                   <Pill tone={Number(machine.remediation_count || 0) ? 'red' : 'green'}>{machine.remediation_count || 0} open remediation</Pill>
                   <Pill>{readableStatus(machine.status)}</Pill>
-                  <Link href={routePath(`/inventory/machines/${machine.id}`)}>Open dossier</Link>
+                  <Link href={routePath(`/inventory/machines/${machine.id}`)}>Open Machine</Link>
                 </div>
               </OperationsLedgerRow>
             ))}

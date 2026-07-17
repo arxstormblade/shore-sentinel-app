@@ -35,6 +35,15 @@ function ensureArray(value) {
   return Array.isArray(value) ? value : [];
 }
 
+function validateScanTarget(value) {
+  const target = String(value ?? '');
+  if (!target.trim()) return 'Enter a directory to scan.';
+  if (target.length > 1024) return 'Directory paths must be 1024 characters or fewer.';
+  if (/[\u0000-\u001F\u007F]/.test(target)) return 'Directory paths cannot contain control characters.';
+  if (/(^|[\\/])\.\.([\\/]|$)/.test(target)) return 'Directory paths cannot include relative traversal.';
+  return '';
+}
+
 function humanize(value, fallback = 'Not available') {
   if (value == null || value === '') return fallback;
   return String(value).replaceAll('_', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
@@ -54,6 +63,8 @@ export function MachineDetailClient({ machine, initialRuns = [], canScan = false
   const [activeRunId, setActiveRunId] = useState(() => ensureArray(initialRuns).find((run) => !isTerminalRun(run))?.id ?? null);
   const [notice, setNotice] = useState('');
   const [scanBusy, setScanBusy] = useState(false);
+  const [scanTarget, setScanTarget] = useState('.');
+  const [scanTargetError, setScanTargetError] = useState('');
   const [saveBusy, setSaveBusy] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [deleteStatus, setDeleteStatus] = useState('');
@@ -197,14 +208,21 @@ export function MachineDetailClient({ machine, initialRuns = [], canScan = false
       setNotice('Live scan history is unavailable. Scan launch remains disabled to prevent duplicate jobs.');
       return;
     }
+    const targetError = validateScanTarget(scanTarget);
+    if (targetError) {
+      setScanTargetError(targetError);
+      setNotice('Correct the directory before launching a scan.');
+      return;
+    }
     setScanBusy(true);
+    setScanTargetError('');
     setNotice('');
     try {
       const response = await fetch(appPath(`/api/targets/${machine.id}/scan-jobs`), {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         credentials: 'same-origin',
-        body: JSON.stringify({ mode: machine.connection_mode ?? 'ssh_push' }),
+        body: JSON.stringify({ mode: machine.connection_mode ?? 'ssh_push', scan_target: scanTarget.trim() }),
       });
       if (!response.ok) throw new Error('Scan launch failed');
       const payload = await response.json();
@@ -331,9 +349,30 @@ export function MachineDetailClient({ machine, initialRuns = [], canScan = false
           <span className={`pill ${String(machine.status).toLowerCase() === 'online' ? 'green' : ''}`}>
             {humanize(machine.status)}
           </span>
-          <button className="btn machine-scan-action" type="button" onClick={runScan} disabled={scanBusy || scanBlocked}>
-            {scanButtonLabel}
-          </button>
+          <div className="machine-scan-controls">
+            <label className="machine-scan-target-label" htmlFor="machine-scan-target">Directory to scan</label>
+            <div className="machine-scan-target-action-row">
+              <input
+                id="machine-scan-target"
+                name="scan_target"
+                type="text"
+                value={scanTarget}
+                maxLength={1024}
+                onChange={(event) => {
+                  setScanTarget(event.target.value);
+                  setScanTargetError('');
+                }}
+                disabled={scanBusy || hasActiveRun}
+                aria-invalid={Boolean(scanTargetError)}
+                aria-describedby={scanTargetError ? 'machine-scan-target-error' : 'machine-scan-target-help'}
+              />
+              <button className="btn machine-scan-action" type="button" onClick={runScan} disabled={scanBusy || scanBlocked}>
+                {scanButtonLabel}
+              </button>
+            </div>
+            <p className="machine-scan-target-helper" id="machine-scan-target-help">Choose the directory this scan should review.</p>
+            {scanTargetError ? <p className="machine-scan-target-error" id="machine-scan-target-error" role="alert">{scanTargetError}</p> : null}
+          </div>
         </div>
         {actionNotice ? <p className="machine-action-notice" role="status" aria-live="polite">{actionNotice}</p> : <span className="sr-only" aria-live="polite" />}
       </section>
@@ -342,9 +381,9 @@ export function MachineDetailClient({ machine, initialRuns = [], canScan = false
         <div><dt>Environment</dt><dd>{machine.env || 'Unassigned'}</dd></div>
         <div><dt>Owner</dt><dd>{machine.owner || 'Unassigned'}</dd></div>
         <div><dt>Connection</dt><dd>{humanize(machine.connection_mode)}</dd></div>
-        <div><dt>Findings</dt><dd>{Number(machine.finding_count || 0)}</dd></div>
-        <div><dt>Open remediation</dt><dd>{remediationOpenCount}</dd></div>
-        <div><dt>Last scan</dt><dd>{toReadableTime(lastScanAt)}</dd></div>
+        <div><dt>Findings</dt><dd className="machine-metric">{Number(machine.finding_count || 0)}</dd></div>
+        <div><dt>Open remediation</dt><dd className="machine-metric">{remediationOpenCount}</dd></div>
+        <div><dt>Last scan</dt><dd className="machine-timestamp">{toReadableTime(lastScanAt)}</dd></div>
       </dl>
 
       <section className="machine-progress-band panel" aria-labelledby="machine-progress-title">
@@ -359,12 +398,13 @@ export function MachineDetailClient({ machine, initialRuns = [], canScan = false
           <div className="progress-shell" role="progressbar" aria-label="Scan progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow={currentProgress}>
             <div className="progress-fill" style={{ width: `${currentProgress}%` }} />
           </div>
-          <strong>{currentProgress}%</strong>
+          <strong className="machine-metric">{currentProgress}%</strong>
         </div>
         <div className="machine-progress-meta">
           <span>{activeStatus}</span>
           <span>Started {toReadableTime(currentRun?.started_at || currentRun?.created_at)}</span>
           {hasActiveRun ? <span>ETA {currentEta == null ? 'Calculating…' : formatDuration(currentEta)}</span> : null}
+          {hasActiveRun ? <span className="machine-scan-scope"><span>Directory in scope</span><code>{currentRun?.scan_target || '.'}</code></span> : null}
         </div>
       </section>
 
