@@ -99,7 +99,7 @@ export default async function Dashboard() {
                 </div>
                 <div className="operations-row-actions">
                   <Pill tone="red">{machine.remediation_count} open remediation</Pill>
-                  <Link href={routePath(`/inventory/machines/${machine.id}`)}>Open dossier</Link>
+                  <Link href={routePath(`/inventory/machines/${machine.id}`)}>Open Machine</Link>
                 </div>
               </OperationsLedgerRow>
             ))}

@@ -65,6 +65,7 @@ export default async function Machine({ params }) {
     remediations,
     last_seen_at: live.last_seen_at || null,
     last_successful_scan_at: live.last_successful_scan_at || null,
+    hardware_summary: live.hardware_summary ?? null,
     summary: live.fqdn
       ? `${live.fqdn} · ${live.platform || 'Managed endpoint'}`
       : `${live.platform || 'Managed endpoint'} monitored by ${live.owner || live.owner_team || 'the security team'}`,

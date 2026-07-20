@@ -45,8 +45,7 @@ def main() -> int:
         return 0
 
     commands = [
-        ["docker", "compose", "config"],
-        ["docker", "compose", "ps"],
+        ["docker", "compose", "--env-file", ".env.example", "-f", "docker-compose.yml", "-f", "docker-compose.dev.yml", "config", "--quiet"],
     ]
     for cmd in commands:
         proc = run(cmd)

@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.1.0 - Release candidate (unreleased)
+
+### Verification
+- Added release-evidence metadata and a QA scorecard template covering authenticated fixture, browser/viewport, security-review, staged deployment, and rollback evidence.
+- The release tag is created only at promotion after release gates pass; install guidance uses the reviewed default branch or approved commit SHA until then.
+
 ## v1.0.0 - 2026-07-16
 
 ### Changed

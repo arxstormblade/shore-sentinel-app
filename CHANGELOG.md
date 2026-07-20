@@ -4,6 +4,13 @@
 
 - Removed the in-app one-time audit runner entry points. Standalone local evidence collection remains documented as the GitHub scanner option.
 
+## v1.1.0 - Release candidate (unreleased)
+
+- Added a least-privilege CI quality/security gate for locked dependency installation, tests, project checks, production dependency auditing, and repository secret scanning without cloud credentials.
+- Added a release QA scorecard template that requires fixture, browser/viewport, security-review, staged deployment, and rollback evidence before promotion.
+- Updated release and install guidance: the release tag is created only at promotion, so pre-promotion documentation uses the reviewed default branch or an approved immutable commit SHA instead of an uncreated tag.
+- Added release-checklist gates for pinned SSH host verification, disposable SSH fixtures, independent SSH security review, and rollback rehearsal.
+
 ## v1.0.0 - 2026-07-16
 
 - Promoted the compact operations rollout to the first major Shore Sentinel release, covering the dashboard, managed-machine inventory and enrollment, scan reports, remediation, audit archive, administration, preferences, saved views, knowledgebase, and system update workflows.

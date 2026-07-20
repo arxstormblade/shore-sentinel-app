@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ARTIFACT_KIND } from '@shore-sentinel/shared';
-import { assertExactlyOneSubject, validateArtifactComplete } from '../src/validation.js';
+import { assertExactlyOneSubject, validateArtifactComplete, validateCanonicalWorkerArtifactBase64 } from '../src/validation.js';
+import { WORKER_ARTIFACT_MAX_BYTES } from '../src/config.js';
 import { SCHEMA_SQL } from '../src/schema.js';
 
 test('subject validation accepts canonical one-time audit subject only', () => assert.doesNotThrow(() => assertExactlyOneSubject('one_time_audit', null, 'audit-id')));
@@ -31,4 +32,11 @@ test('artifact completion validation accepts legacy upload types and canonical w
   assert.throws(() => validateArtifactComplete({ artifact_type: 'exe', sha256: 'a'.repeat(64), size_bytes: 25 }), /artifact_type/);
   assert.throws(() => validateArtifactComplete({ artifact_type: 'json', sha256: 'nope', size_bytes: 25 }), /sha256/);
   assert.throws(() => validateArtifactComplete({ artifact_type: 'json', sha256: 'a'.repeat(64), size_bytes: 0 }), /size_bytes/);
+});
+
+test('worker artifact handoff accepts at most the shared one-megabyte canonical base64 contract', () => {
+  const atLimit = Buffer.alloc(WORKER_ARTIFACT_MAX_BYTES, 0x61).toString('base64');
+  assert.equal(validateCanonicalWorkerArtifactBase64(atLimit), WORKER_ARTIFACT_MAX_BYTES);
+  const overLimit = Buffer.alloc(WORKER_ARTIFACT_MAX_BYTES + 1, 0x61).toString('base64');
+  assert.throws(() => validateCanonicalWorkerArtifactBase64(overLimit), /canonical base64|artifact body/);
 });

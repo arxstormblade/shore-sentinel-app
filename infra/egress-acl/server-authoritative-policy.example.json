@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "source": "unverified-local-schema-input",
+  "worker_identity": {
+    "compose_project": "shore-sentinel",
+    "compose_service": "worker-node",
+    "egress_network": "worker-egress"
+  },
+  "target_authorizations": [
+    {
+      "enrollment_id": "123e4567-e89b-12d3-a456-426614174000",
+      "cidr": "192.0.2.44/32",
+      "protocol": "tcp",
+      "port": 22
+    }
+  ],
+  "optional_resolvers": [],
+  "optional_https": []
+}

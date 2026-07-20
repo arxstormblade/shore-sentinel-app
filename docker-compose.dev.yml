@@ -1,0 +1,13 @@
+# Explicit local-development override. Production uses docker-compose.yml alone.
+services:
+  api:
+    environment:
+      NODE_ENV: development
+
+  web:
+    environment:
+      NODE_ENV: development
+
+  worker-node:
+    environment:
+      NODE_ENV: development

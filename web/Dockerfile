@@ -1,17 +1,17 @@
-FROM node:20-alpine AS deps
+FROM node:20.18.0-alpine3.20 AS deps
 WORKDIR /app
-COPY package.json ./
+COPY package.json package-lock.json ./
 COPY web/package.json ./web/package.json
-RUN npm install
+RUN npm ci
 
-FROM node:20-alpine AS builder
+FROM node:20.18.0-alpine3.20 AS builder
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build -w web
 
-FROM node:20-alpine AS runner
+FROM node:20.18.0-alpine3.20 AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1

@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+# Root-owned session leader for the fixed remote scanner implementation. It waits
+# for run-scan to publish a matching lifetime record before it can scan, then
+# stays alive while inherited process-group members survive.
+set -euo pipefail
+
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+readonly SCAN_IMPLEMENTATION=/usr/local/lib/shore-sentinel/run-scan-impl
+readonly REQUEST_ROOT=/var/lib/shore-sentinel/requests
+readonly STATE_ROOT=/var/lib/shore-sentinel/runner-state
+readonly MAX_STARTUP_WAIT_SECONDS=1
+
+reject() {
+  exit 64
+}
+
+is_uuid() {
+  [[ "$1" =~ ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$ ]]
+}
+
+read_process_identity() {
+  local pid=$1 stat tail
+  local -a fields
+  [[ "$pid" =~ ^[1-9][0-9]*$ && -r "/proc/$pid/stat" ]] || return 1
+  IFS= read -r stat < "/proc/$pid/stat" || return 1
+  tail=${stat##*) }
+  read -r -a fields <<< "$tail"
+  [[ ${#fields[@]} -gt 19 && "${fields[2]}" =~ ^[1-9][0-9]*$ && "${fields[3]}" =~ ^[1-9][0-9]*$ && "${fields[19]}" =~ ^[1-9][0-9]*$ ]] || return 1
+  printf '%s %s %s\n' "${fields[19]}" "${fields[2]}" "${fields[3]}"
+}
+
+state_authorizes_self() {
+  local request_path=$1 request_id state_file identity start_ticks pgid session current_epoch
+  local -a fields
+  request_id=${request_path#"$REQUEST_ROOT/"}
+  request_id=${request_id%/request.json}
+  [[ "$request_path" == "$REQUEST_ROOT/$request_id/request.json" ]] || return 1
+  is_uuid "$request_id" || return 1
+  state_file="$STATE_ROOT/$request_id/state"
+  [[ -f "$state_file" && ! -L "$state_file" ]] || return 1
+  IFS=' ' read -r -a fields < "$state_file" || return 1
+  [[ ${#fields[@]} -eq 5 && "${fields[0]}" == "$$" && "${fields[1]}" =~ ^[1-9][0-9]*$ && "${fields[2]}" == "$$" && "${fields[3]}" == "$$" && "${fields[4]}" =~ ^[1-9][0-9]*$ ]] || return 1
+  current_epoch=$(/usr/bin/date +%s) || return 1
+  [[ "$current_epoch" =~ ^[1-9][0-9]*$ && "${fields[4]}" -gt "$current_epoch" ]] || return 1
+  identity=$(read_process_identity "$$") || return 1
+  read -r start_ticks pgid session <<< "$identity"
+  [[ "$start_ticks" == "${fields[1]}" && "$pgid" == "$$" && "$session" == "$$" ]]
+}
+
+has_group_member_other_than_self() {
+  local candidate pid stat tail
+  local -a fields
+  for candidate in /proc/[0-9]*; do
+    pid=${candidate##*/}
+    [[ "$pid" != "$$" && -r "$candidate/stat" ]] || continue
+    IFS= read -r stat < "$candidate/stat" || continue
+    tail=${stat##*) }
+    read -r -a fields <<< "$tail"
+    [[ ${#fields[@]} -gt 3 && "${fields[2]}" == "$$" ]] && return 0
+  done
+  return 1
+}
+
+[[ $# -eq 2 && "$1" == "--request" && "$2" == "$REQUEST_ROOT"/*/request.json ]] || reject
+[[ -x "$SCAN_IMPLEMENTATION" && ! -L "$SCAN_IMPLEMENTATION" ]] || reject
+
+startup_deadline=$((SECONDS + MAX_STARTUP_WAIT_SECONDS))
+until state_authorizes_self "$2"; do
+  if (( SECONDS >= startup_deadline )); then
+    reject
+  fi
+  sleep 0.05
+done
+
+trap ':' HUP INT TERM
+"$SCAN_IMPLEMENTATION" --request "$2" &
+implementation_pid=$!
+if wait "$implementation_pid"; then
+  implementation_status=0
+else
+  implementation_status=$?
+fi
+
+while has_group_member_other_than_self; do
+  sleep 1
+done
+
+exit "$implementation_status"

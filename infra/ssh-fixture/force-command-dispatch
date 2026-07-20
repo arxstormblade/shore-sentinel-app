@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Root-owned SSH ForceCommand adapter. OpenSSH puts the client command in
+# SSH_ORIGINAL_COMMAND; this adapter never interprets it as shell syntax.
+set -euo pipefail
+
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+readonly RUNNER=/usr/local/lib/shore-sentinel/run-scan
+readonly UUID_REGEX='[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'
+readonly REQUEST_REGEX="^${RUNNER} --request (${UUID_REGEX})$"
+readonly CANCEL_REGEX="^${RUNNER} --cancel-request (${UUID_REGEX})$"
+readonly STAGE_REGEX="^${RUNNER} --stage-request (${UUID_REGEX})$"
+
+reject() {
+  printf '%s\n' REJECTED
+  exit 64
+}
+
+# sshd invokes ForceCommand without arguments. Do not expose an alternate
+# direct invocation interface for this adapter.
+[[ $# -eq 0 ]] || reject
+original_command=${SSH_ORIGINAL_COMMAND-}
+
+if [[ "$original_command" =~ $REQUEST_REGEX ]]; then
+  request_id=${BASH_REMATCH[1]}
+  exec /usr/bin/sudo -n "$RUNNER" --request "$request_id"
+elif [[ "$original_command" =~ $CANCEL_REGEX ]]; then
+  request_id=${BASH_REMATCH[1]}
+  exec /usr/bin/sudo -n "$RUNNER" --cancel-request "$request_id"
+elif [[ "$original_command" =~ $STAGE_REGEX ]]; then
+  request_id=${BASH_REMATCH[1]}
+  exec /usr/bin/sudo -n "$RUNNER" --stage-request "$request_id"
+fi
+
+reject

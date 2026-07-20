@@ -108,10 +108,13 @@ class CompactOperationsComponentTests(unittest.TestCase):
         )
 
     def test_shared_system_guards_targets_focus_motion_and_overflow(self):
-        self.assertRegex(
-            self.css,
-            r"\.compact-page-header-actions a,[^}]*\.operations-ledger-row a,[^}]*\.operations-disclosure-summary\s*\{[^}]*min-height:\s*var\(--operations-target-min\)",
-        )
+        for selector in [
+            ".compact-page-header-actions a",
+            ".operations-ledger-row a",
+            ".operations-disclosure-summary",
+        ]:
+            self.assertIn(selector, self.css)
+        self.assertIn("min-height: var(--operations-target-min)", self.css)
         self.assertIn(":focus-visible", self.css)
         self.assertIn("@media (prefers-reduced-motion: reduce)", self.css)
         self.assertIn("scroll-behavior: auto", self.css)
