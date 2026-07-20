@@ -9,4 +9,7 @@ export const ROLE_MATRIX: Record<string, Record<string, string[]>> = {
 };
 export const DEFAULT_TENANT_SLUG = 'shore360';
 export const ALLOWED_ARTIFACT_TYPES = ['json', 'markdown', 'sarif', 'pdf', ...Object.values(ARTIFACT_KIND)] as const;
-export const MAX_ARTIFACT_BYTES = 100 * 1024 * 1024;
+// This is the API/worker handoff contract limit. Keep worker emitters at or below it;
+// scanner output must be streamed to object storage rather than held as a huge JSON body.
+export const WORKER_ARTIFACT_MAX_BYTES = 1024 * 1024;
+export const MAX_ARTIFACT_BYTES = WORKER_ARTIFACT_MAX_BYTES;

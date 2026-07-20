@@ -2509,6 +2509,76 @@ footer a {
   font-size: 0.95rem;
 }
 
+.machine-hardware-summary {
+  margin-top: 0.8rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid rgba(128, 152, 199, 0.2);
+  border-radius: 10px;
+  background: rgba(4, 10, 18, 0.34);
+}
+
+.machine-hardware-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.machine-hardware-heading h2 {
+  margin: 0;
+  color: var(--faint);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.machine-hardware-summary dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.9rem;
+  margin: 0.45rem 0 0;
+}
+
+.machine-hardware-summary dl > div {
+  display: grid;
+  gap: 0.1rem;
+  min-width: min(10rem, 100%);
+}
+
+.machine-hardware-summary dt,
+.machine-hardware-summary dd {
+  margin: 0;
+}
+
+.machine-hardware-summary dt {
+  color: var(--faint);
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.machine-hardware-summary dd {
+  color: #eaf2ff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.machine-hardware-empty,
+.machine-hardware-stale {
+  margin: 0.45rem 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.machine-hardware-stale {
+  margin: 0;
+  color: #ffd18b;
+  font-weight: 750;
+}
+
 .machine-header-actions {
   display: grid;
   grid-template-columns: auto minmax(17rem, 31rem);

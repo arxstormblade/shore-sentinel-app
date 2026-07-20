@@ -27,5 +27,8 @@
     "check": "python3 scripts/validate_phase0.py && npm run scanner:validate && npm run compose:smoke && npm run worker:test && npm --workspace @shore-sentinel/api run check && npm run web:test",
     "compose:smoke": "python3 scripts/compose_smoke.py",
     "token:efficiency": "python3 scripts/token_efficiency.py"
+  },
+  "overrides": {
+    "postcss": "8.5.10"
   }
 }

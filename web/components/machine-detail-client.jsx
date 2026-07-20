@@ -9,7 +9,23 @@ import { openRemediationCount, openRemediationItems, scanLaunchBlocked } from '@
 
 function toReadableTime(value) {
   if (!value) return 'Not available';
-  return new Date(value).toLocaleString();
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? 'Not available' : date.toLocaleString();
+}
+
+function hardwareSummaryState(summary) {
+  if (!summary || typeof summary !== 'object') return 'Hardware summary unavailable';
+  return null;
+}
+
+function hardwareSummaryIsStale(summary) {
+  const lastContact = summary?.heartbeat_at || summary?.last_seen_at;
+  const contactTime = new Date(lastContact).getTime();
+  return Number.isFinite(contactTime) && Date.now() - contactTime > 24 * 60 * 60 * 1000;
+}
+
+function hardwareValue(value) {
+  return value == null || value === '' ? 'Not available' : String(value);
 }
 
 function toElapsedSeconds(value) {
@@ -63,6 +79,7 @@ export function MachineDetailClient({ machine, initialRuns = [], canScan = false
   const [activeRunId, setActiveRunId] = useState(() => ensureArray(initialRuns).find((run) => !isTerminalRun(run))?.id ?? null);
   const [notice, setNotice] = useState('');
   const [scanBusy, setScanBusy] = useState(false);
+  const [cancelBusy, setCancelBusy] = useState(false);
   const [scanTarget, setScanTarget] = useState('.');
   const [scanTargetError, setScanTargetError] = useState('');
   const [saveBusy, setSaveBusy] = useState(false);
@@ -191,6 +208,7 @@ export function MachineDetailClient({ machine, initialRuns = [], canScan = false
   }, [activeRunId]);
 
   const currentRun = useMemo(() => runs.find((run) => run.id === activeRunId) ?? runs.find((run) => !isTerminalRun(run)) ?? runs[0] ?? null, [activeRunId, runs]);
+  const activeRun = useMemo(() => runs.find((run) => !isTerminalRun(run)) ?? null, [runs]);
   const currentProgress = progressForRun(currentRun);
   const currentEta = (() => {
     if (!currentRun || currentProgress <= 0 || currentProgress >= 100) return null;
@@ -245,6 +263,55 @@ export function MachineDetailClient({ machine, initialRuns = [], canScan = false
       setNotice(error instanceof Error ? error.message : 'Unable to launch scan.');
     } finally {
       setScanBusy(false);
+    }
+  }
+
+  async function cancelScan() {
+    if (!permissions.edit || !activeRun?.id) {
+      setNotice('Your role does not permit stopping this scan.');
+      return;
+    }
+    setCancelBusy(true);
+    setNotice('');
+    try {
+      const response = await fetch(appPath(`/api/scan-runs/${activeRun.id}/cancel`), {
+        method: 'POST',
+        credentials: 'same-origin',
+      });
+      if (!response.ok) throw new Error('Scan cancellation failed');
+      const cancellation = await response.json();
+      if (cancellation?.id !== activeRun.id || cancellation?.status !== 'cancelled') {
+        throw new Error('Scan cancellation response was invalid');
+      }
+      const requestOptions = { cache: 'no-store', credentials: 'same-origin' };
+      const [runResponse, eventsResponse] = await Promise.all([
+        fetch(appPath(`/api/scan-runs/${activeRun.id}`), requestOptions),
+        fetch(appPath(`/api/scan-runs/${activeRun.id}/events`), requestOptions),
+      ]);
+      if (!runResponse.ok || !eventsResponse.ok) throw new Error('Scan cancellation confirmation failed');
+      const [confirmedRun, eventsPayload] = await Promise.all([runResponse.json(), eventsResponse.json()]);
+      const events = ensureArray(eventsPayload.events);
+      if (!events.some((event) => event?.event_type === 'scan.cancelled')) {
+        throw new Error('Scan cancellation event was not confirmed');
+      }
+      const latestEvent = events.at(-1);
+      setRuns((current) => {
+        const nextRun = {
+          ...confirmedRun,
+          events: ensureArray(eventsPayload.events),
+          latest_event_type: latestEvent?.event_type ?? confirmedRun.latest_event_type,
+          latest_event_message: latestEvent?.message ?? confirmedRun.latest_event_message,
+          latest_progress_percent: latestEvent?.progress_percent ?? confirmedRun.latest_progress_percent,
+        };
+        const remainder = current.filter((run) => run.id !== nextRun.id);
+        return [nextRun, ...remainder].sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+      });
+      setActiveRunId(null);
+      setNotice('Scan cancellation confirmed.');
+    } catch {
+      setNotice('Unable to stop scan. Please try again.');
+    } finally {
+      setCancelBusy(false);
     }
   }
 
@@ -336,6 +403,9 @@ export function MachineDetailClient({ machine, initialRuns = [], canScan = false
           ? 'Scan machine'
           : 'Scan permission required';
   const actionNotice = notice || (runHistoryUnavailable ? 'Live scan history is unavailable. Scan launch is disabled to prevent duplicate jobs.' : '');
+  const hardwareSummary = machine.hardware_summary;
+  const hardwareSummaryUnavailable = hardwareSummaryState(hardwareSummary);
+  const hardwareSummaryStale = !hardwareSummaryUnavailable && hardwareSummaryIsStale(hardwareSummary);
 
   return (
     <div className="machine-dossier">
@@ -343,6 +413,25 @@ export function MachineDetailClient({ machine, initialRuns = [], canScan = false
         <div className="machine-identity">
           <p className="eye">Managed machine</p>
           <h1>{machine.name}</h1>
+          <section className="machine-hardware-summary" aria-label="Hardware summary">
+            <div className="machine-hardware-heading">
+              <h2>Hardware summary</h2>
+              {hardwareSummaryStale ? <span className="machine-hardware-stale" role="status">Hardware details may be stale</span> : null}
+            </div>
+            {hardwareSummaryUnavailable ? (
+              <p className="machine-hardware-empty" role="status">{hardwareSummaryUnavailable}</p>
+            ) : (
+              <dl>
+                <div><dt>Status</dt><dd>{hardwareValue(hardwareSummary.status)}</dd></div>
+                <div><dt>Platform</dt><dd>{hardwareValue(hardwareSummary.platform)}</dd></div>
+                <div><dt>Agent version</dt><dd>{hardwareValue(hardwareSummary.agent_version)}</dd></div>
+                <div><dt>Scanner version</dt><dd>{hardwareValue(hardwareSummary.scanner_bundle_version)}</dd></div>
+                <div><dt>Last contact</dt><dd className="machine-timestamp">{toReadableTime(hardwareSummary.heartbeat_at || hardwareSummary.last_seen_at)}</dd></div>
+                <div><dt>SSH port</dt><dd className="machine-metric">{hardwareValue(hardwareSummary.ssh_port)}</dd></div>
+                <div><dt>Authentication</dt><dd>{humanize(hardwareSummary.ssh_auth_method)}</dd></div>
+              </dl>
+            )}
+          </section>
           <p>{machine.summary}</p>
         </div>
         <div className="machine-header-actions">
@@ -369,6 +458,11 @@ export function MachineDetailClient({ machine, initialRuns = [], canScan = false
               <button className="btn machine-scan-action" type="button" onClick={runScan} disabled={scanBusy || scanBlocked}>
                 {scanButtonLabel}
               </button>
+              {hasActiveRun && permissions.edit ? (
+                <button className="btn danger machine-scan-stop" type="button" onClick={cancelScan} disabled={cancelBusy} aria-label="Stop active scan">
+                  {cancelBusy ? 'Stopping scan…' : 'Stop Scan'}
+                </button>
+              ) : null}
             </div>
             <p className="machine-scan-target-helper" id="machine-scan-target-help">Choose the directory this scan should review.</p>
             {scanTargetError ? <p className="machine-scan-target-error" id="machine-scan-target-error" role="alert">{scanTargetError}</p> : null}

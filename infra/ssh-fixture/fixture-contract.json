@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "execution": "external-approved-only",
+  "host_key": {
+    "verification": "fixed-sha256-fingerprint-no-tofu",
+    "required_fingerprint_pattern": "SHA256:<43-unpadded-base64-characters>",
+    "known_hosts": "dedicated-ephemeral-file",
+    "forbidden_modes": ["accept-new", "off", "ask"]
+  },
+  "account": {
+    "name": "scanner",
+    "root_group_membership": "forbidden",
+    "force_command": "/usr/local/lib/shore-sentinel/force-command-dispatch",
+    "interactive_shell": "disabled",
+    "port_forwarding": "disabled",
+    "agent_forwarding": "disabled",
+    "x11_forwarding": "disabled"
+  },
+  "privilege_adapter": {
+    "sudoers_file": "/etc/sudoers.d/shore-sentinel-scanner-runner",
+    "sudoers_ownership": "root:root:0440",
+    "environment_reset": "required",
+    "setenv": "forbidden",
+    "adapter": "/usr/local/lib/shore-sentinel/force-command-dispatch",
+    "adapter_ownership": "root:root:0755",
+    "sudo_binary": "/usr/bin/sudo",
+    "exact_command": "/usr/local/lib/shore-sentinel/run-scan",
+    "sudoers_asset": "infra/ssh-fixture/shore-sentinel-scanner-runner.sudoers",
+    "sudoers_arguments": "^(--request|--cancel-request|--stage-request) [0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+  },
+  "ownership": {
+    "force_command_adapter": "root:root:0755",
+    "runner": "root:root:0750",
+    "supervisor": "root:root:0750",
+    "implementation": "root:root:0750",
+    "runner_state": "root:root:0700",
+    "request_root": "root:root:0700"
+  },
+  "stage_input": {
+    "maximum_bytes": 8192,
+    "maximum_seconds": 5,
+    "timeout_status": "REJECTED",
+    "timeout_cleanup": "remove-partial-request-state"
+  },
+  "protected_parent_directories": {
+    "/etc": "root:root:0755:directory:not-symlink:non-scanner-writable",
+    "/etc/sudoers.d": "root:root:0750:directory:not-symlink:non-scanner-writable",
+    "/usr": "root:root:0755:directory:not-symlink:non-scanner-writable",
+    "/usr/local": "root:root:0755:directory:not-symlink:non-scanner-writable",
+    "/usr/local/lib": "root:root:0755:directory:not-symlink:non-scanner-writable",
+    "/usr/local/lib/shore-sentinel": "root:root:0755:directory:not-symlink:non-scanner-writable",
+    "/var": "root:root:0755:directory:not-symlink:non-scanner-writable",
+    "/var/lib": "root:root:0755:directory:not-symlink:non-scanner-writable",
+    "/var/lib/shore-sentinel": "root:root:0755:directory:not-symlink:non-scanner-writable"
+  },
+  "scan_implementations": ["allowed-scope", "term-resistant-child"],
+  "test_cases": [
+    "allowed-scope",
+    "disallowed-scope",
+    "symlink-rejection",
+    "cancel-term-kill-deadline",
+    "duplicate-cancel",
+    "client-disconnect",
+    "host-key-mismatch",
+    "cleanup"
+  ],
+  "cleanup": [
+    "remove-disposable-fixture",
+    "revoke-fixture-key",
+    "erase-ephemeral-known-hosts",
+    "record-terminal-statuses"
+  ]
+}

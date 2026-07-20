@@ -42,3 +42,24 @@ test('artifact upload payload encodes body for API handoff', () => {
   assert.equal(payload.runId, 'run-1');
   assert.equal(JSON.parse(Buffer.from(payload.bodyBase64, 'base64').toString('utf8'))[0].id, 'finding-1');
 });
+
+test('artifact upload payload rejects bytes beyond its explicit pre-encoding limit', () => {
+  const boundary = artifactUploadPayload({
+    runId: 'run-1',
+    kind: ARTIFACT_KIND.normalizedFindings,
+    contentType: 'application/json',
+    body: 'abcd',
+    maxBytes: 4,
+  });
+  assert.equal(Buffer.from(boundary.bodyBase64, 'base64').toString('utf8'), 'abcd');
+  assert.throws(
+    () => artifactUploadPayload({
+      runId: 'run-1',
+      kind: ARTIFACT_KIND.normalizedFindings,
+      contentType: 'application/json',
+      body: 'abcde',
+      maxBytes: 4,
+    }),
+    /artifact body exceeds configured byte limit/i,
+  );
+});

@@ -1,0 +1,305 @@
+#!/usr/bin/env bash
+# Root-owned Shore Sentinel remote request runner. This program deliberately has
+# no general command, path, PID, process-group, or signal interface.
+set -euo pipefail
+
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+REQUEST_ROOT=/var/lib/shore-sentinel/requests
+STATE_ROOT=/var/lib/shore-sentinel/runner-state
+SCAN_IMPLEMENTATION=/usr/local/lib/shore-sentinel/run-scan-impl
+SCAN_SUPERVISOR=/usr/local/lib/shore-sentinel/run-scan-supervisor
+MAX_RUNTIME_SECONDS=100
+MAX_STARTUP_IDENTITY_ATTEMPTS=100
+MAX_GRACE_SECONDS=8
+MAX_KILL_WAIT_SECONDS=2
+MAX_REQUEST_BYTES=8192
+MAX_STAGE_STDIN_SECONDS=5
+umask 077
+
+status() {
+  printf '%s\n' "$1"
+}
+
+reject() {
+  status REJECTED
+  exit 64
+}
+
+is_uuid() {
+  [[ "$1" =~ ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$ ]]
+}
+
+require_root() {
+  [[ "$(id -u)" == "0" ]] || reject
+}
+
+state_directory_for() {
+  printf '%s/%s' "$STATE_ROOT" "$1"
+}
+
+read_state() {
+  local state_directory=$1 state_file
+  local -a fields
+  state_file="$state_directory/state"
+  [[ -d "$state_directory" && ! -L "$state_directory" && -f "$state_file" && ! -L "$state_file" ]] || return 1
+  IFS=' ' read -r -a fields < "$state_file" || return 1
+  case "${#fields[@]}" in
+    3)
+      # A state written before lifetime identities existed is deliberately
+      # untrusted: callers retain it for audit but must never signal it.
+      [[ "${fields[0]}" =~ ^[1-9][0-9]*$ && "${fields[1]}" == "${fields[0]}" && "${fields[2]}" =~ ^[1-9][0-9]*$ ]] || return 1
+      printf 'legacy %s %s %s\n' "${fields[0]}" "${fields[1]}" "${fields[2]}"
+      ;;
+    5)
+      [[ "${fields[0]}" =~ ^[1-9][0-9]*$ && "${fields[1]}" =~ ^[1-9][0-9]*$ && "${fields[2]}" == "${fields[0]}" && "${fields[3]}" == "${fields[0]}" && "${fields[4]}" =~ ^[1-9][0-9]*$ ]] || return 1
+      printf 'live %s %s %s %s %s\n' "${fields[0]}" "${fields[1]}" "${fields[2]}" "${fields[3]}" "${fields[4]}"
+      ;;
+    *) return 1 ;;
+  esac
+}
+
+read_process_identity() {
+  local pid=$1 stat tail
+  local -a fields
+  [[ "$pid" =~ ^[1-9][0-9]*$ && -r "/proc/$pid/stat" ]] || return 1
+  IFS= read -r stat < "/proc/$pid/stat" || return 1
+  tail=${stat##*) }
+  read -r -a fields <<< "$tail"
+  [[ ${#fields[@]} -gt 19 && "${fields[2]}" =~ ^[1-9][0-9]*$ && "${fields[3]}" =~ ^[1-9][0-9]*$ && "${fields[19]}" =~ ^[1-9][0-9]*$ ]] || return 1
+  printf '%s %s %s\n' "${fields[19]}" "${fields[2]}" "${fields[3]}"
+}
+
+process_identity_matches() {
+  local pid=$1 expected_start_ticks=$2 expected_pgid=$3 expected_session=$4 identity start_ticks pgid session
+  identity=$(read_process_identity "$pid") || return 1
+  read -r start_ticks pgid session <<< "$identity"
+  [[ "$start_ticks" == "$expected_start_ticks" && "$pgid" == "$expected_pgid" && "$session" == "$expected_session" ]]
+}
+
+process_group_running() {
+  local pgid=$1
+  kill -0 -- "-$pgid" 2>/dev/null
+}
+
+terminate_process_group() {
+  local pid=$1 start_ticks=$2 pgid=$3 session=$4 stop_at
+  process_identity_matches "$pid" "$start_ticks" "$pgid" "$session" || return 2
+  process_group_running "$pgid" || return 0
+  process_identity_matches "$pid" "$start_ticks" "$pgid" "$session" || return 2
+  kill -TERM -- "-$pgid" 2>/dev/null || true
+  stop_at=$((SECONDS + MAX_GRACE_SECONDS))
+  while process_group_running "$pgid"; do
+    if (( SECONDS >= stop_at )); then
+      process_identity_matches "$pid" "$start_ticks" "$pgid" "$session" || return 2
+      kill -KILL -- "-$pgid" 2>/dev/null || true
+      break
+    fi
+    sleep 1
+  done
+  stop_at=$((SECONDS + MAX_KILL_WAIT_SECONDS))
+  while process_group_running "$pgid"; do
+    if (( SECONDS >= stop_at )); then
+      return 1
+    fi
+    sleep 1
+  done
+}
+
+mark_state_status() {
+  local state_directory=$1 marker=$2
+  printf '%s\n' "$marker" > "$state_directory/status"
+  chmod 600 "$state_directory/status"
+}
+
+mark_cleanup_failed_state() {
+  mark_state_status "$1" CLEANUP_FAILED
+}
+
+mark_stale_authority_state() {
+  mark_state_status "$1" STALE_AUTHORITY
+}
+
+cancel_request() {
+  local request_id=$1 state_directory state kind pid start_ticks pgid session deadline result
+  state_directory=$(state_directory_for "$request_id")
+  state=$(read_state "$state_directory") || {
+    status NOT_RUNNING
+    return 0
+  }
+  read -r kind pid start_ticks pgid session deadline <<< "$state"
+  if [[ "$kind" != live ]] || ! process_identity_matches "$pid" "$start_ticks" "$pgid" "$session"; then
+    mark_stale_authority_state "$state_directory"
+    status NOT_RUNNING
+    return 0
+  fi
+  if (( $(date +%s) >= deadline )); then
+    mark_stale_authority_state "$state_directory"
+    status NOT_RUNNING
+    return 0
+  fi
+  if ! process_group_running "$pgid"; then
+    status NOT_RUNNING
+    return 0
+  fi
+  if terminate_process_group "$pid" "$start_ticks" "$pgid" "$session"; then
+    status CANCELLED
+    return 0
+  else
+    result=$?
+  fi
+  if (( result == 2 )); then
+    mark_stale_authority_state "$state_directory"
+    status NOT_RUNNING
+    return 0
+  fi
+  mark_cleanup_failed_state "$state_directory"
+  status CLEANUP_FAILED
+  return 70
+}
+
+validated_request_path_for() {
+  local request_id=$1 canonical_root request_directory canonical_directory request_path canonical_path
+  [[ -d "$REQUEST_ROOT" && ! -L "$REQUEST_ROOT" ]] || return 1
+  canonical_root=$(realpath -e -- "$REQUEST_ROOT") || return 1
+  [[ "$canonical_root" == "$REQUEST_ROOT" ]] || return 1
+  request_directory="$REQUEST_ROOT/$request_id"
+  [[ -d "$request_directory" && ! -L "$request_directory" ]] || return 1
+  canonical_directory=$(realpath -e -- "$request_directory") || return 1
+  [[ "$canonical_directory" == "$canonical_root/$request_id" ]] || return 1
+  request_path="$request_directory/request.json"
+  [[ -f "$request_path" && ! -L "$request_path" ]] || return 1
+  canonical_path=$(realpath -e -- "$request_path") || return 1
+  [[ "$canonical_path" == "$canonical_directory/request.json" && "$canonical_path" == "$canonical_root/$request_id/request.json" ]] || return 1
+  printf '%s\n' "$canonical_path"
+}
+
+stage_request() {
+  local request_id=$1 canonical_root request_directory canonical_directory temporary_path request_path canonical_path bytes
+  [[ -d "$REQUEST_ROOT" && ! -L "$REQUEST_ROOT" ]] || reject
+  canonical_root=$(realpath -e -- "$REQUEST_ROOT") || reject
+  [[ "$canonical_root" == "$REQUEST_ROOT" ]] || reject
+  request_directory="$REQUEST_ROOT/$request_id"
+  mkdir -m 700 -- "$request_directory" 2>/dev/null || reject
+  canonical_directory=$(realpath -e -- "$request_directory") || { rmdir -- "$request_directory" 2>/dev/null || true; reject; }
+  [[ "$canonical_directory" == "$canonical_root/$request_id" && ! -L "$request_directory" ]] || { rmdir -- "$request_directory" 2>/dev/null || true; reject; }
+  request_path="$request_directory/request.json"
+  [[ ! -e "$request_path" && ! -L "$request_path" ]] || { rmdir -- "$request_directory" 2>/dev/null || true; reject; }
+  temporary_path=$(mktemp "$request_directory/.request.json.XXXXXX") || { rmdir -- "$request_directory" 2>/dev/null || true; reject; }
+  chmod 600 "$temporary_path"
+  "/usr/bin/timeout" --foreground "$MAX_STAGE_STDIN_SECONDS" "/usr/bin/head" -c "$((MAX_REQUEST_BYTES + 1))" > "$temporary_path" || { rm -f -- "$temporary_path"; rmdir -- "$request_directory" 2>/dev/null || true; reject; }
+  bytes=$(wc -c < "$temporary_path")
+  [[ "$bytes" =~ ^[1-9][0-9]*$ && "$bytes" -le "$MAX_REQUEST_BYTES" ]] || { rm -f -- "$temporary_path"; rmdir -- "$request_directory" 2>/dev/null || true; reject; }
+  [[ -f "$temporary_path" && ! -L "$temporary_path" ]] || { rm -f -- "$temporary_path"; rmdir -- "$request_directory" 2>/dev/null || true; reject; }
+  mv -T -- "$temporary_path" "$request_path" || { rm -f -- "$temporary_path"; rmdir -- "$request_directory" 2>/dev/null || true; reject; }
+  canonical_path=$(realpath -e -- "$request_path") || reject
+  [[ "$canonical_path" == "$canonical_directory/request.json" && "$canonical_path" == "$canonical_root/$request_id/request.json" && ! -L "$request_path" ]] || reject
+  chmod 600 "$request_path"
+}
+
+run_request() {
+  local request_id=$1 request_path state_directory state_file pid start_ticks pgid session deadline_epoch deadline_guard exit_code guard_exit_code state kind result identity attempt
+  request_path=$(validated_request_path_for "$request_id") || reject
+  state_directory=$(state_directory_for "$request_id")
+  state_file="$state_directory/state"
+  [[ -x "$SCAN_IMPLEMENTATION" && ! -L "$SCAN_IMPLEMENTATION" && -x "$SCAN_SUPERVISOR" && ! -L "$SCAN_SUPERVISOR" ]] || reject
+
+  if ! mkdir "$state_directory" 2>/dev/null; then
+    status REJECTED
+    return 64
+  fi
+  chmod 700 "$state_directory"
+
+  deadline_epoch=$(( $(date +%s) + MAX_RUNTIME_SECONDS ))
+  # The fixed root-owned supervisor is the setsid leader and remains present
+  # while implementation children survive, so the state can prove one lifetime.
+  "/usr/bin/setsid" "$SCAN_SUPERVISOR" --request "$request_path" 2>/dev/null &
+  pid=$!
+  # Bound failed /proc reads: command substitution creates a child shell, so an
+  # unbounded retry count can delay fail-closed cleanup past the caller timeout.
+  for ((attempt = 0; attempt < MAX_STARTUP_IDENTITY_ATTEMPTS; attempt++)); do
+    identity=$(read_process_identity "$pid") || continue
+    read -r start_ticks pgid session <<< "$identity"
+    [[ "$pgid" == "$pid" && "$session" == "$pid" ]] && break
+  done
+  if [[ "${pgid:-}" != "$pid" || "${session:-}" != "$pid" || ! "${start_ticks:-}" =~ ^[1-9][0-9]*$ ]]; then
+    # The supervisor has no authority to scan without this record and exits on
+    # its own fixed startup deadline. Reap it before returning so startup
+    # observation failure cannot leave an untracked remote process behind.
+    wait "$pid" 2>/dev/null || true
+    mark_cleanup_failed_state "$state_directory"
+    status CLEANUP_FAILED
+    return 70
+  fi
+  printf '%s %s %s %s %s\n' "$pid" "$start_ticks" "$pgid" "$session" "$deadline_epoch" > "$state_file"
+  chmod 600 "$state_file"
+
+  (
+    sleep "$MAX_RUNTIME_SECONDS"
+    state=$(read_state "$state_directory") || exit 0
+    read -r kind pid start_ticks pgid session deadline_epoch <<< "$state"
+    if (( $(date +%s) >= deadline_epoch )); then
+      if [[ "$kind" != live ]] || ! process_identity_matches "$pid" "$start_ticks" "$pgid" "$session"; then
+        mark_stale_authority_state "$state_directory"
+        exit 0
+      fi
+      if terminate_process_group "$pid" "$start_ticks" "$pgid" "$session"; then
+        :
+      else
+        result=$?
+        if (( result == 2 )); then
+          mark_stale_authority_state "$state_directory"
+          exit 0
+        fi
+        mark_cleanup_failed_state "$state_directory"
+        exit 70
+      fi
+    fi
+  ) &
+  deadline_guard=$!
+
+  if wait "$pid" 2>/dev/null; then
+    exit_code=0
+  else
+    exit_code=$?
+  fi
+  # A fixed supervisor exits only after its implementation and every inherited
+  # group member have gone. No numeric group operation is needed or permitted
+  # after its lifetime identity is gone.
+  if (( $(date +%s) >= deadline_epoch )); then
+    if wait "$deadline_guard"; then
+      guard_exit_code=0
+    else
+      guard_exit_code=$?
+    fi
+    if (( guard_exit_code == 70 )); then
+      status CLEANUP_FAILED
+      return 70
+    fi
+  else
+    kill "$deadline_guard" 2>/dev/null || true
+    wait "$deadline_guard" 2>/dev/null || true
+  fi
+  rm -rf -- "$state_directory"
+  return "$exit_code"
+}
+
+[[ $# -eq 2 ]] || reject
+is_uuid "$2" || reject
+require_root
+# A disconnected SSH channel must not defeat the runner-owned deadline guard.
+trap '' HUP
+
+case "$1" in
+  --request)
+    run_request "$2"
+    ;;
+  --cancel-request)
+    cancel_request "$2"
+    ;;
+  --stage-request)
+    stage_request "$2"
+    ;;
+  *)
+    reject
+    ;;
+esac

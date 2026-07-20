@@ -10,6 +10,7 @@
   "dependencies": {
     "@shore-sentinel/shared": "file:../../packages/shared",
     "bullmq": "^5.8.0",
-    "ioredis": "^5.4.1"
+    "ioredis": "^5.4.1",
+    "ssh2": "1.17.0"
   }
 }

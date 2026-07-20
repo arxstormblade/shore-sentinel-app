@@ -12,14 +12,15 @@ export const serverApiBase = () => (
   || publicApiBase()
 ).replace(/\/$/, '');
 
-export function sessionCookieHeader() {
-  const token = cookies().get('shore_session')?.value;
+export async function sessionCookieHeader() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('shore_session')?.value;
   return token ? { cookie: `shore_session=${token}` } : {};
 }
 
 export async function apiGet(path) {
   const url = `${serverApiBase()}${path.startsWith('/') ? path : `/${path}`}`;
-  const res = await fetch(url, { cache: 'no-store', headers: sessionCookieHeader() });
+  const res = await fetch(url, { cache: 'no-store', headers: await sessionCookieHeader() });
   if (!res.ok) {
     const body = await res.text().catch(() => '');
     throw new Error(`API ${path} failed with ${res.status}${body ? `: ${body.slice(0, 160)}` : ''}`);

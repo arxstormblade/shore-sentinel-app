@@ -1,0 +1,118 @@
+name: Quality and Security
+
+on:
+  push:
+    branches: [main, "release/**"]
+    tags: ["v*"]
+  pull_request:
+    branches: [main, "release/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  quality-security:
+    name: Quality and security gates
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      # Immutable refs resolved directly from the upstream action tags on 2026-07-20:
+      # git ls-remote https://github.com/actions/checkout.git refs/tags/v4.3.1
+      # git ls-remote https://github.com/actions/setup-node.git refs/tags/v4.4.0
+      - name: Check out complete source history without persisted credentials
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify production Compose fails closed without operator input
+        # Quiet validation only: do not reveal missing-variable output or start services.
+        run: |
+          if docker compose config --quiet >/dev/null 2>&1; then
+            echo "Compose unexpectedly accepted missing production input."
+            exit 1
+          fi
+
+      - name: Create ephemeral production Compose validation input
+        # These random, runner-local values only permit interpolation/configuration and image builds.
+        # They are never printed, persisted, or used to start a service.
+        run: |
+          umask 077
+          COMPOSE_CI_ENV="$RUNNER_TEMP/shore-sentinel-compose-ci.env"
+          : > "$COMPOSE_CI_ENV"
+          for variable in POSTGRES_PASSWORD MINIO_ACCESS_KEY MINIO_SECRET_KEY SEED_ADMIN_PASSWORD SHORE_SENTINEL_SECRET_KEY INTERNAL_WORKER_TOKEN; do
+            printf '%s=%s\n' "$variable" "$(openssl rand -hex 32)" >> "$COMPOSE_CI_ENV"
+          done
+          printf 'COMPOSE_CI_ENV=%s\n' "$COMPOSE_CI_ENV" >> "$GITHUB_ENV"
+
+      - name: Validate production Compose configuration
+        # `config --quiet` interpolates and validates only; it neither builds nor deploys services.
+        run: docker compose --env-file "$COMPOSE_CI_ENV" config --quiet
+
+      - name: Scan reachable repository history for committed secrets
+        run: |
+          # Scan the reviewed Git graph before npm ci adds dependency files. Do not
+          # exempt .env.example by path: an accidental real secret in that file must
+          # still fail. These exact full-line development placeholders are safe.
+          # Generic-api-key is the one default rule that matches these
+          # historical/current development placeholders. Extending that rule
+          # preserves a line-target allowlist; a global line target is lost
+          # when Gitleaks v8.21.2 merges the default configuration.
+          printf '%s\n' \
+            '[extend]' \
+            'useDefault = true' \
+            '' \
+            '[[rules]]' \
+            'id = "generic-api-key"' \
+            '' \
+            '  [[rules.allowlists]]' \
+            'description = "Known non-secret development placeholders; exact full lines only"' \
+            'regexTarget = "line"' \
+            'regexes = [' \
+            "  '''(?m)^\+?POSTGRES_PASSWORD=replace-me-postgres-password$'''," \
+            "  '''(?m)^\+?MINIO_ACCESS_KEY=replace-me-minio-access$'''," \
+            "  '''(?m)^\+?MINIO_SECRET_KEY=replace-me-minio-secret$'''," \
+            "  '''(?m)^\+?SEED_ADMIN_PASSWORD=replace-me-seed-admin-password$'''," \
+            "  '''(?m)^\+?SHORE_SENTINEL_SECRET_KEY=replace-me-32-byte-application-secret$'''," \
+            "  '''(?m)^\+?INTERNAL_WORKER_TOKEN=replace-me-internal-worker-token$'''," \
+            "  '''(?m)^\+?SESSION_COOKIE_SECRET=replace-me-session-cookie-secret$'''," \
+            "  '''(?m)^\+?SMTP_USERNAME=replace-me-smtp-username$'''," \
+            "  '''(?m)^\+?SMTP_PASSWORD=replace-me-smtp-password$'''," \
+            ']' > /tmp/shore-sentinel-gitleaks.toml
+          # Immutable OCI index digest verified on 2026-07-20 with:
+          # docker buildx imagetools inspect zricethezav/gitleaks:v8.21.2
+          docker run --rm \
+            -v "${{ github.workspace }}:/repo:ro" \
+            -v /tmp/shore-sentinel-gitleaks.toml:/gitleaks.toml:ro \
+            zricethezav/gitleaks:v8.21.2@sha256:0e99e8821643ea5b235718642b93bb32486af9c8162c8b8731f7cbdc951a7f46 \
+            detect --source=/repo --log-opts="--all" --redact --exit-code=1 --config=/gitleaks.toml
+
+      - name: Build all deployable application images without deploying services
+        # `build` exercises Dockerfiles only; it does not create or start containers.
+        run: docker compose --env-file "$COMPOSE_CI_ENV" build api web worker-node worker-python
+
+      # Immutable ref resolved directly from the upstream action tag on 2026-07-20:
+      # git ls-remote https://github.com/actions/setup-node.git refs/tags/v4.4.0
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Build web production bundle
+        run: npm run web:build
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Validate release metadata and documentation
+        run: python3 -m unittest discover -s tests
+
+      - name: Run quality checks
+        run: npm run check
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high

@@ -1,6 +1,6 @@
 const SUCCESS_STATUSES = new Set(['succeeded', 'completed']);
 const TERMINAL_STATUSES = new Set(['succeeded', 'completed', 'failed', 'cancelled', 'stale']);
-const TERMINAL_EVENTS = new Set(['job.succeeded', 'job.failed', 'job.cancelled', 'job.stale']);
+const TERMINAL_EVENTS = new Set(['job.succeeded', 'job.failed', 'job.cancelled', 'scan.cancelled', 'job.stale']);
 const STATUS_PROGRESS = {
   queued: 0,
   pending: 0,

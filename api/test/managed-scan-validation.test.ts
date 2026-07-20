@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import { validateScanTarget } from '../src/validation.js';
 import { AppController } from '../src/app.controller.js';
 
+const viewerRequest = { principal: { userId: 'viewer-1', tenantId: 'tenant-1', roles: ['viewer'] }, header: () => undefined } as never;
+
 test('scan target validation accepts only default or absolute POSIX directories', () => {
   assert.equal(validateScanTarget(), '.');
   assert.equal(validateScanTarget('   '), '.');
@@ -37,7 +39,7 @@ test('target scan run lists project scan target without runtime context', async 
     },
   };
   const app = new AppController(db as never, {} as never, {} as never, {} as never, {} as never);
-  const result = await app.targetScanRuns('target-1');
+  const result = await app.targetScanRuns('target-1', viewerRequest);
   assert.equal(result.runs[0].scan_target, '/srv/app');
   assert.equal('runtime_context' in result.runs[0], false);
   assert.equal('credential' in result.runs[0], false);
@@ -47,7 +49,7 @@ test('target scan run lists project scan target without runtime context', async 
 test('public scan run projection exposes only safe metadata and scan target', async () => {
   const db = {
     query: async (sql: string) => {
-      if (sql.includes('FROM scan_runs WHERE id=$1') && sql.includes('runtime_context')) {
+      if (sql.includes('FROM scan_runs WHERE tenant_id=$1 AND id=$2') && sql.includes('runtime_context')) {
         return {
           rows: [{
             id: 'run-1', job_id: 'job-1', subject_type: 'managed_target', target_id: 'target-1', one_time_audit_id: null,
@@ -64,7 +66,7 @@ test('public scan run projection exposes only safe metadata and scan target', as
     },
   };
   const app = new AppController(db as never, {} as never, {} as never, {} as never, {} as never);
-  const result = await app.run('run-1');
+  const result = await app.run('run-1', viewerRequest);
   assert.deepEqual(Object.keys(result).sort(), [
     'completed_at', 'created_at', 'duration_seconds', 'exit_code', 'id', 'job_id', 'one_time_audit_id', 'scan_target',
     'started_at', 'status', 'subject_type', 'target_id', 'updated_at',

@@ -67,9 +67,13 @@ export class AuthService {
     }
 
     const result = await this.db.query(
-      'SELECT u.id, u.email, u.display_name, json_agg(r.name ORDER BY r.name) AS roles FROM users u JOIN user_roles ur ON ur.user_id=u.id JOIN roles r ON r.id=ur.role_id WHERE u.id=$1 GROUP BY u.id',
-      [session.userId],
+      'SELECT u.id, u.tenant_id, u.email, u.display_name, json_agg(r.name ORDER BY r.name) AS roles FROM users u JOIN user_roles ur ON ur.user_id=u.id JOIN roles r ON r.id=ur.role_id WHERE u.id=$1 AND u.tenant_id=$2 AND u.disabled_at IS NULL GROUP BY u.id',
+      [session.userId, session.tenantId],
     );
+    if (!result.rows[0]) {
+      this.sessions.delete(token!);
+      throw new UnauthorizedException('Session principal is no longer valid');
+    }
     return result.rows[0];
   }
 

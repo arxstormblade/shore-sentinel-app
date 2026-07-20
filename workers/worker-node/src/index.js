@@ -1,108 +1,68 @@
 import { Queue, Worker, QueueEvents } from 'bullmq';
 import IORedis from 'ioredis';
-import { ARTIFACT_KIND, JOB_STATUS, QUEUES, RUN_EVENT_TYPE, scannerBundleContractVersion } from '@shore-sentinel/shared';
+import { QUEUES, scannerBundleContractVersion } from '@shore-sentinel/shared';
 import { createApiClient } from './apiClient.js';
 import { readConfig } from './config.js';
-import { artifactUploadPayload, lifecycleEvent, retryDecision } from './lifecycle.js';
-import { normalizeJobData } from './payload.js';
+import { emitManagedSshFailure, processManagedSshJob } from './managedSshProcessor.js';
+import { handleManagedSshFailure } from './failureHandling.js';
+import { createParserClient } from './parserClient.js';
+import { executePinnedScan } from './sshExecutor.js';
 
 const config = readConfig();
 const connection = new IORedis(config.redisUrl, { maxRetriesPerRequest: null });
 const queue = new Queue(QUEUES.scanJobs, { connection });
 const events = new QueueEvents(QUEUES.scanJobs, { connection });
-const api = createApiClient(config.apiUrl);
+const api = createApiClient(config.apiUrl, config.internalWorkerToken);
 
+const parseWithPython = createParserClient({
+  pythonWorkerUrl: config.pythonWorkerUrl,
+  internalWorkerToken: config.internalWorkerToken,
+});
 
-async function emit(job, type, status, message, metadata = {}) {
-  const data = normalizeJobData(job.data);
-  const event = lifecycleEvent({
-    runId: data.runId,
-    jobId: job.id,
-    type,
-    status,
-    attempt: job.attemptsMade + 1,
-    message,
-    metadata,
-  });
-  await api.emitRunEvent(event);
-}
-
-async function parseWithPython(job) {
-  const data = normalizeJobData(job.data);
-  const response = await fetch(`${config.pythonWorkerUrl}/parse`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({
-      runId: data.runId,
-      scannerOutput: data.scannerOutput,
-      contractVersion: scannerBundleContractVersion(),
-    }),
-  });
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`Python parser failed: ${response.status} ${text}`);
-  }
-  return response.json();
-}
 
 const worker = new Worker(QUEUES.scanJobs, async (job) => {
-  const data = normalizeJobData(job.data);
-  await emit(job, RUN_EVENT_TYPE.jobClaimed, JOB_STATUS.claimed, 'Node worker claimed scan job');
-  await emit(job, RUN_EVENT_TYPE.jobRunning, JOB_STATUS.running, 'Scan job orchestration started');
-  await emit(job, RUN_EVENT_TYPE.parseStarted, JOB_STATUS.parsing, 'Python parser requested');
-
-  const parsed = await parseWithPython(job);
-
-  await emit(job, RUN_EVENT_TYPE.parseSucceeded, JOB_STATUS.artifactUploading, 'Python parser completed', {
-    findings: parsed.normalizedFindings.length,
-  });
-
-  const uploads = [
-    artifactUploadPayload({
-      runId: data.runId,
-      kind: ARTIFACT_KIND.scannerRawOutput,
-      contentType: 'application/json',
-      body: data.scannerOutput,
-      metadata: { contractVersion: scannerBundleContractVersion() },
-    }),
-    artifactUploadPayload({
-      runId: data.runId,
-      kind: ARTIFACT_KIND.normalizedFindings,
-      contentType: 'application/json',
-      body: parsed.normalizedFindings,
-      metadata: { parserVersion: parsed.parserVersion },
-    }),
-    artifactUploadPayload({
-      runId: data.runId,
-      kind: ARTIFACT_KIND.enrichmentSummary,
-      contentType: 'application/json',
-      body: parsed.enrichmentSummary,
-      metadata: { parserVersion: parsed.parserVersion },
-    }),
-  ];
-
-  for (const payload of uploads) {
-    await emit(job, RUN_EVENT_TYPE.artifactUploadRequested, JOB_STATUS.artifactUploading, `Uploading ${payload.kind}`);
-    await api.uploadArtifact(payload);
-    await emit(job, RUN_EVENT_TYPE.artifactUploadSucceeded, JOB_STATUS.artifactUploading, `Uploaded ${payload.kind}`);
+  try {
+    return await processManagedSshJob(job, {
+      api,
+      execute: (context) => executePinnedScan(context, { timeoutMs: config.sshTimeoutMs }),
+      parse: parseWithPython,
+      contractVersion: scannerBundleContractVersion,
+      parserTimeoutMs: config.parserTimeoutMs,
+      artifactHandoffTimeoutMs: config.artifactHandoffTimeoutMs,
+      lifecycleEventTimeoutMs: config.lifecycleEventTimeoutMs,
+    });
+  } catch (error) {
+    const failure = await handleManagedSshFailure({ job, error, api, lifecycleEventTimeoutMs: config.lifecycleEventTimeoutMs });
+    if (failure.cancelled) return { cancelled: true };
+    throw error;
   }
-
-  await emit(job, RUN_EVENT_TYPE.jobSucceeded, JOB_STATUS.succeeded, 'Scan job completed');
-  return { artifacts: uploads.length, findings: parsed.normalizedFindings.length };
 }, {
   connection,
   concurrency: config.concurrency,
-  attempts: config.maxAttempts,
-  backoff: { type: 'exponential', delay: config.backoffMs },
+
+});
+
+async function processArtifactCleanupJob(job) {
+  const { type, tenantId, runId } = job.data ?? {};
+  if (type !== 'artifact.cleanup' || typeof tenantId !== 'string' || typeof runId !== 'string') {
+    throw new Error('Invalid artifact cleanup job');
+  }
+  const result = await api.reconcileArtifactCleanup({ tenantId, runId });
+  if (result.failed > 0) throw new Error('Artifact cleanup reconciliation incomplete');
+  return result;
+}
+
+const artifactCleanupWorker = new Worker(QUEUES.artifactProcessing, processArtifactCleanupJob, {
+  connection,
+  concurrency: config.concurrency,
 });
 
 worker.on('failed', async (job, error) => {
   if (!job) return;
-  const decision = retryDecision({ attemptsMade: job.attemptsMade, maxAttempts: config.maxAttempts, error });
   try {
-    await emit(job, decision.eventType, decision.status, decision.message, decision.metadata);
+    await emitManagedSshFailure(job, api, { error, lifecycleEventTimeoutMs: config.lifecycleEventTimeoutMs });
   } catch (emitError) {
-    console.error(JSON.stringify({ component: 'worker-node', failedEventEmit: emitError.message }));
+    console.error(JSON.stringify({ component: 'worker-node', lifecycleDeliveryPending: true, failedEventEmit: emitError.message }));
   }
 });
 
@@ -110,24 +70,12 @@ events.on('waiting', ({ jobId }) => {
   console.log(JSON.stringify({ component: 'worker-node', queue: QUEUES.scanJobs, jobId, status: 'waiting' }));
 });
 
-if (process.env.SEED_DEMO_JOB === 'true') {
-  await queue.add('demo-scan', {
-    runId: `demo-${Date.now()}`,
-    scannerOutput: {
-      contractVersion: scannerBundleContractVersion(),
-      scanner: { name: 'demo-scanner', version: '0.1.0' },
-      target: { assetId: 'demo-host', hostname: 'demo-host.local' },
-      findings: [],
-      collectedAt: new Date().toISOString(),
-    },
-  });
-}
-
 console.log(JSON.stringify({ component: 'worker-node', status: 'started', queue: QUEUES.scanJobs, redisUrl: config.redisUrl.replace(/:\/\/.*@/, '://***@') }));
 
 async function shutdown(signal) {
   console.log(JSON.stringify({ component: 'worker-node', status: 'stopping', signal }));
   await worker.close();
+  await artifactCleanupWorker.close();
   await events.close();
   await queue.close();
   await connection.quit();

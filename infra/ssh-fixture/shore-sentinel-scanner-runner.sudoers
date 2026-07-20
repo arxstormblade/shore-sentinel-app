@@ -1,0 +1,5 @@
+# Install as /etc/sudoers.d/shore-sentinel-scanner-runner (root:root 0440).
+# Native sudo 1.9.10+ command-argument regular expression: only the three fixed
+# runner protocol forms with one UUID argument are authorized.
+Defaults:scanner env_reset
+scanner ALL=(root) NOSETENV: NOPASSWD: /usr/local/lib/shore-sentinel/run-scan ^(--request|--cancel-request|--stage-request) [0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$

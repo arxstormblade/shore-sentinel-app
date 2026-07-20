@@ -49,6 +49,8 @@ class CompactCoreOperationsPageTests(unittest.TestCase):
 
     def test_enrollment_groups_fields_and_keeps_connection_details_progressive(self):
         page = read("web/app/inventory/new/page.jsx")
+        form = read("web/components/new-machine-form.jsx")
+        self.assertIn("NewMachineForm", page)
         for contract in [
             "CompactPageHeader",
             "OperationsDisclosure",
@@ -60,7 +62,7 @@ class CompactCoreOperationsPageTests(unittest.TestCase):
             'summary="Advanced connection settings"',
             'className="operations-page enrollment-page"',
         ]:
-            self.assertIn(contract, page)
+            self.assertIn(contract, form)
 
     def test_scan_start_is_a_compact_managed_monitoring_command_center(self):
         page = read("web/app/scans/start/page.jsx")

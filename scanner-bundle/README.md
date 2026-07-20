@@ -10,8 +10,10 @@ Workers must treat the bundle as an untrusted producer: validate the manifest, p
 
 Use this mode when a client needs a standalone evidence package without enrolling the machine into Shore Sentinel managed monitoring.
 
+Until v1.1.0 is promoted, clone the reviewed default branch (or an approved immutable commit SHA). The release tag is created only at promotion after CI, security review, QA evidence, and staged rollback validation are approved; do not use an uncreated tag in installation instructions.
+
 ```bash
-git clone --depth 1 --branch v1.0.0 https://github.com/arxstormblade/shore-sentinel-app.git
+git clone --depth 1 https://github.com/arxstormblade/shore-sentinel-app.git
 cd shore-sentinel-app
 python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py \
   --target . \

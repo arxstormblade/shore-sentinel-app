@@ -56,6 +56,16 @@ export default function NewMachineForm() {
                 {authMethod === 'ssh_key' ? <label>SSH private key<textarea name="ssh_private_key" rows={7} placeholder="-----BEGIN OPENSSH PRIVATE KEY-----" required={usesSsh} /></label> : <label>SSH password<input name="ssh_password" type="password" placeholder="Stored encrypted by Shore Sentinel" required={usesSsh} /></label>}
                 <small className="filter-hint">Credentials are sealed before storage and only the fingerprint is exposed in inventory metadata.</small>
               </fieldset>
+              <fieldset className="choice-fieldset">
+                <legend>SSH enrollment controls</legend>
+                <div className="enrollment-field-grid">
+                  <label>Host key algorithm<select name="ssh_host_key_algorithm" defaultValue="ssh-ed25519" required={usesSsh}><option value="ssh-ed25519">ssh-ed25519</option></select></label>
+                  <label>Host key SHA256 fingerprint<input name="ssh_host_key_fingerprint" placeholder="SHA256:nThbg6kXUpJWGl7eW5ekUu6ktAi8GpmKgsBbBKuPd0Q" required={usesSsh} /></label>
+                  <label>Allowed IPv4 CIDR<input name="ssh_allowed_cidr" placeholder="10.20.0.0/16" required={usesSsh} /></label>
+                  <label>Enrolled scan root<input name="ssh_root_path" placeholder="/srv/shore-sentinel" required={usesSsh} /></label>
+                </div>
+                <small className="filter-hint">Provide the verified host-key pin, the worker egress CIDR, and the approved absolute scan root. Use SHA256: followed by the unpadded 43-character OpenSSH fingerprint.</small>
+              </fieldset>
             </OperationsDisclosure>
           ) : <p className="note">Pull check-in machines can be enrolled without storing SSH credentials.</p>}
 
