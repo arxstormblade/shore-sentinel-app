@@ -460,8 +460,8 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1784596399.7697241,
-    "ast_hash": "e7666a9c77685184ad25ac1050b8915e",
+    "mtime": 1784652130.3339522,
+    "ast_hash": "b8e7abddc46ddc3873dec858158bf706",
     "semantic_hash": ""
   },
   "api/README.md": {
@@ -1065,8 +1065,8 @@
     "semantic_hash": ""
   },
   "docs/superpowers/specs/shore-sentinel-rearchitecture-a.md": {
-    "mtime": 1784642555.8428805,
-    "ast_hash": "208a100e606dfbddda8ab46303338692",
+    "mtime": 1784652057.994236,
+    "ast_hash": "b6105f947fefc8e53aac91a2ea50d0ec",
     "semantic_hash": ""
   },
   "tests/test_rearchitecture_navigation_compliance.py": {
@@ -1242,6 +1242,16 @@
   "web/app/icon.png": {
     "mtime": 1784648460.3837838,
     "ast_hash": "bd50e7e088ab2b4a140c9880ed230724",
+    "semantic_hash": ""
+  },
+  "docs/qa/2026-07-22-enterprise-single-container-requirements.json": {
+    "mtime": 1784652148.0546942,
+    "ast_hash": "ae9ca7e73c57b054d606da264baea8aa",
+    "semantic_hash": ""
+  },
+  "docs/plans/2026-07-22-enterprise-single-container-completion.md": {
+    "mtime": 1784652058.0471146,
+    "ast_hash": "293afbc8bf63cce8f324534637c553fb",
     "semantic_hash": ""
   }
 }
