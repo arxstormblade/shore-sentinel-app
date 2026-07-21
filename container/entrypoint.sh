@@ -43,11 +43,16 @@ chown shore-minio:shore-minio "$DATA_ROOT/object-storage"
 chown shore-parser:shore-parser "$DATA_ROOT/evidence"
 
 if ! su-exec shore-postgres test -s "$PGDATA/PG_VERSION"; then
+  if su-exec shore-postgres find "$PGDATA" -mindepth 1 -maxdepth 1 -print -quit | grep -q .; then
+    # An interrupted initdb may leave an owned, partial cluster. Remove only
+    # that incomplete cluster as the database user; never touch a valid one.
+    su-exec shore-postgres sh -c 'find "$1" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +' sh "$PGDATA"
+  fi
   password_file=/run/shore-sentinel-postgres-password
   umask 077
   printf '%s' "$POSTGRES_PASSWORD" > "$password_file"
   chown shore-postgres:shore-postgres "$password_file"
-  su-exec shore-postgres initdb --username="${POSTGRES_USER:-shore_sentinel}" --pwfile="$password_file" -D "$PGDATA" >/dev/null
+  su-exec shore-postgres initdb --auth-local=scram-sha-256 --auth-host=scram-sha-256 --username="${POSTGRES_USER:-shore_sentinel}" --pwfile="$password_file" -D "$PGDATA" >/dev/null
   rm -f "$password_file"
 fi
 cat > "$REDIS_CONFIG" <<EOF
@@ -72,7 +77,7 @@ trap cleanup_bootstrap EXIT INT TERM
 umask 022
 : > /run/shore-sentinel-postgres.log
 chown shore-postgres:shore-postgres /run/shore-sentinel-postgres.log
-su-exec shore-postgres pg_ctl -D "$PGDATA" -l /run/shore-sentinel-postgres.log -o "-c listen_addresses=127.0.0.1 -p 5432" -w start >/dev/null || { cat /run/shore-sentinel-postgres.log >&2; exit 1; }
+su-exec shore-postgres pg_ctl -D "$PGDATA" -l /run/shore-sentinel-postgres.log -o "-c listen_addresses=127.0.0.1 -p 5432 -c unix_socket_directories=/run/postgresql" -w start >/dev/null || { cat /run/shore-sentinel-postgres.log >&2; exit 1; }
 su-exec shore-redis redis-server "$REDIS_CONFIG" --daemonize yes
 su-exec shore-minio env MINIO_ROOT_USER="$MINIO_ACCESS_KEY" MINIO_ROOT_PASSWORD="$MINIO_SECRET_KEY" minio server "$MINIO_DATA_DIR" --address 127.0.0.1:9000 >/dev/null 2>&1 &
 MINIO_PID=$!
@@ -95,14 +100,14 @@ wait_for redis redis-cli -h 127.0.0.1 ping
 wait_for minio curl -fsS http://127.0.0.1:9000/minio/health/live
 
 ensure_postgres_database() {
-  if ! su-exec shore-postgres psql --username="$POSTGRES_USER" --dbname=postgres -Atqc "SELECT 1 FROM pg_database WHERE datname = '$POSTGRES_DB'" | grep -qx 1; then
-    su-exec shore-postgres createdb --username="$POSTGRES_USER" --owner="$POSTGRES_USER" "$POSTGRES_DB"
+  if ! su-exec shore-postgres env PGPASSWORD="$POSTGRES_PASSWORD" psql --username="$POSTGRES_USER" --dbname=postgres -Atqc "SELECT 1 FROM pg_database WHERE datname = '$POSTGRES_DB'" | grep -qx 1; then
+    su-exec shore-postgres env PGPASSWORD="$POSTGRES_PASSWORD" createdb --username="$POSTGRES_USER" --owner="$POSTGRES_USER" "$POSTGRES_DB"
   fi
-  owner=$(su-exec shore-postgres psql --username="$POSTGRES_USER" --dbname=postgres -Atqc "SELECT pg_get_userbyid(datdba) FROM pg_database WHERE datname = '$POSTGRES_DB'")
+  owner=$(su-exec shore-postgres env PGPASSWORD="$POSTGRES_PASSWORD" psql --username="$POSTGRES_USER" --dbname=postgres -Atqc "SELECT pg_get_userbyid(datdba) FROM pg_database WHERE datname = '$POSTGRES_DB'")
   if [ "$owner" != "$POSTGRES_USER" ]; then
-    su-exec shore-postgres psql --username="$POSTGRES_USER" --dbname=postgres -Atqc "ALTER DATABASE \"$POSTGRES_DB\" OWNER TO \"$POSTGRES_USER\""
+    su-exec shore-postgres env PGPASSWORD="$POSTGRES_PASSWORD" psql --username="$POSTGRES_USER" --dbname=postgres -Atqc "ALTER DATABASE \"$POSTGRES_DB\" OWNER TO \"$POSTGRES_USER\""
   fi
-  owner=$(su-exec shore-postgres psql --username="$POSTGRES_USER" --dbname=postgres -Atqc "SELECT pg_get_userbyid(datdba) FROM pg_database WHERE datname = '$POSTGRES_DB'")
+  owner=$(su-exec shore-postgres env PGPASSWORD="$POSTGRES_PASSWORD" psql --username="$POSTGRES_USER" --dbname=postgres -Atqc "SELECT pg_get_userbyid(datdba) FROM pg_database WHERE datname = '$POSTGRES_DB'")
   [ "$owner" = "$POSTGRES_USER" ] || { echo "configured PostgreSQL database has unexpected owner" >&2; return 1; }
 }
 

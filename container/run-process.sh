@@ -40,7 +40,7 @@ wait_for_redis() {
 
 case "$process" in
   postgres)
-    exec su-exec shore-postgres env -i PATH="$PATH" PGDATA="${PGDATA:?}" postgres -D "$PGDATA" -c listen_addresses=127.0.0.1 -c port=5432
+    exec su-exec shore-postgres env -i PATH="$PATH" PGDATA="${PGDATA:?}" postgres -D "$PGDATA" -c listen_addresses=127.0.0.1 -c port=5432 -c unix_socket_directories=/run/postgresql
     ;;
   redis)
     exec su-exec shore-redis env -i PATH="$PATH" redis-server "$REDIS_CONFIG"

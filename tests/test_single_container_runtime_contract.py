@@ -37,9 +37,16 @@ class SingleContainerRuntimeContractTests(unittest.TestCase):
         return json.loads(result.stdout)
 
     def test_production_has_one_application_service_and_one_volume(self):
-        services = re.findall(r"^  ([a-z][a-z0-9-]*):\n", self.compose.split("volumes:", 1)[0], flags=re.MULTILINE)
-        self.assertEqual(services, ["shore-sentinel"])
-        self.assertIn("shore-sentinel-data:/var/lib/shore-sentinel", self.compose)
+        model = self.parsed_compose()
+        self.assertEqual(set(model["services"]), {"shore-sentinel"})
+        service = model["services"]["shore-sentinel"]
+        self.assertEqual(service["volumes"], [{
+            "type": "volume",
+            "source": "shore-sentinel-data",
+            "target": "/var/lib/shore-sentinel",
+            "volume": {},
+        }])
+        self.assertEqual(set(model["volumes"]), {"shore-sentinel-data"})
         for path in ("postgres", "redis", "object-storage", "evidence"):
             self.assertIn(f"/var/lib/shore-sentinel/{path}", self.dockerfile)
 
@@ -65,6 +72,20 @@ class SingleContainerRuntimeContractTests(unittest.TestCase):
         for dependency in ("postgres", "redis", "minio", "api", "worker-node", "worker-python", "web"):
             self.assertIn(dependency, self.healthcheck)
         self.assertNotIn("exit 0", self.healthcheck)
+
+    def test_postgres_bootstrap_is_scram_socket_explicit_and_recovers_partial_init(self):
+        run_process = (ROOT / "container" / "run-process.sh").read_text(encoding="utf-8")
+        self.assertIn("--auth-local=scram-sha-256", self.entrypoint)
+        self.assertIn("--auth-host=scram-sha-256", self.entrypoint)
+        self.assertIn("unix_socket_directories=/run/postgresql", self.entrypoint)
+        self.assertIn("unix_socket_directories=/run/postgresql", run_process)
+        self.assertIn('test -s "$PGDATA/PG_VERSION"', self.entrypoint)
+        self.assertIn('find "$PGDATA" -mindepth 1 -maxdepth 1', self.entrypoint)
+        self.assertIn('rm -rf -- {} +', self.entrypoint)
+
+    def test_bootstrap_database_checks_use_password_authentication(self):
+        self.assertIn("PGPASSWORD=\"$POSTGRES_PASSWORD\"", self.entrypoint)
+        self.assertIn("--owner=\"$POSTGRES_USER\"", self.entrypoint)
 
     def test_no_docker_socket_or_privileged_runtime(self):
         service = self.parsed_compose()["services"]["shore-sentinel"]

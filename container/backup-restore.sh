@@ -3,11 +3,11 @@ set -eu
 umask 077
 
 DATA_ROOT=${SHORE_SENTINEL_DATA_ROOT:-/var/lib/shore-sentinel}
-BACKUP_DIR=${1:?usage: backup-restore.sh backup|restore|rollback <directory>}
-MODE=${2:-}
+MODE=${1:-}
+BACKUP_DIR=${2:?usage: backup-restore.sh backup|restore|rollback <directory>}
 
 usage() {
-  echo "usage: backup-restore.sh <backup|restore|rollback> <directory>" >&2
+  echo "usage: backup-restore.sh backup|restore|rollback <directory>" >&2
   exit 64
 }
 

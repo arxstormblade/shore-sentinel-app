@@ -24,6 +24,11 @@ class SingleContainerPersistenceContractTests(unittest.TestCase):
         self.assertIn("sha256sum", script)
         self.assertNotIn("POSTGRES_PASSWORD=", script)
 
+    def test_runtime_backup_script_matches_documented_mode_first_interface(self):
+        script = (ROOT / "container" / "backup-restore.sh").read_text(encoding="utf-8")
+        self.assertRegex(script, r"(?m)^MODE=\$\{1:-\}$")
+        self.assertRegex(script, r"(?m)^BACKUP_DIR=\$\{2:\?usage: backup-restore\.sh backup\|restore\|rollback <directory>\}$")
+
     def test_migrations_are_versioned_and_have_checksums(self):
         migrations = sorted((ROOT / "api/migrations").glob("*.sql"))
         self.assertEqual([p.name for p in migrations], [

@@ -93,14 +93,14 @@ class V110ReleaseGateTests(unittest.TestCase):
             "CI Compose validation must not deploy services",
         )
 
-    def test_quality_security_workflow_builds_every_runtime_image_without_deploying(self):
+    def test_quality_security_workflow_builds_the_single_runtime_image_without_deploying(self):
         workflow = WORKFLOW.read_text(encoding="utf-8")
-        image_build = 'docker compose --env-file "$COMPOSE_CI_ENV" build api web worker-node worker-python'
+        image_build = 'docker compose --env-file "$COMPOSE_CI_ENV" build shore-sentinel'
 
         self.assertIn(
             image_build,
             workflow,
-            "CI must build every deployable Compose application image without starting services",
+            "CI must build the single deployable Compose application image without starting services",
         )
         self.assertNotRegex(
             workflow,
