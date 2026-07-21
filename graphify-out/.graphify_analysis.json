@@ -422,23 +422,29 @@
       "workers_worker_node_test_sshexecutor_test_stageclient_sftp"
     ],
     "8": [
-      "api_src_app_controller_appcontroller",
-      "api_src_app_controller_appcontroller_createjob",
-      "api_src_app_controller_appcontroller_health",
-      "api_src_app_controller_appcontroller_login",
-      "api_src_app_controller_appcontroller_logout",
-      "api_src_app_controller_appcontroller_machinehardwaresummary",
-      "api_src_app_controller_appcontroller_me",
-      "api_src_app_controller_appcontroller_principal",
-      "api_src_app_controller_appcontroller_publicrun",
-      "api_src_app_controller_appcontroller_publicrunevent",
-      "api_src_app_controller_appcontroller_register",
-      "api_src_app_controller_appcontroller_rememberme",
-      "api_src_app_controller_appcontroller_setsessioncookie",
-      "api_src_app_controller_appcontroller_stream",
-      "api_src_app_controller_appcontroller_token",
-      "api_src_auth_service_authservice_me",
-      "api_src_validation_validatescantarget",
+      "api_src_app_controller",
+      "api_src_app_controller_appcontroller_createtarget",
+      "api_src_app_controller_artifact_content_types",
+      "api_src_app_controller_assertsshenrollment",
+      "api_src_app_controller_parsesshport",
+      "api_src_app_controller_public_scan_run_event",
+      "api_src_app_controller_sshenrollment",
+      "api_src_app_controller_sshfingerprint",
+      "api_src_app_controller_sshseal",
+      "api_src_app_controller_trimtext",
+      "api_src_config",
+      "api_src_config_allowed_artifact_types",
+      "api_src_config_feature_areas",
+      "api_src_config_max_artifact_bytes",
+      "api_src_config_role_matrix",
+      "api_src_validation",
+      "api_src_validation_assertexactlyonesubject",
+      "api_src_validation_positivetimebudget",
+      "api_src_validation_requirestring",
+      "api_src_validation_validateartifactcomplete",
+      "api_src_validation_validateartifacttype",
+      "api_src_validation_validatecanonicalworkerartifactbase64",
+      "api_src_validation_workerexecutiontimebudget",
       "api_test_admin_tenant_mutations_test",
       "api_test_admin_tenant_mutations_test_appwithcrosstenanttarget",
       "api_test_admin_tenant_mutations_test_crosstenantadmin",
@@ -448,14 +454,13 @@
       "api_test_machine_hardware_summary_test_viewerrequest",
       "api_test_managed_scan_validation_test",
       "api_test_managed_scan_validation_test_viewerrequest",
+      "api_test_requester_attribution_test",
       "api_test_scan_run_events_test",
       "api_test_scan_run_events_test_eventendpoint",
       "api_test_scan_run_events_test_eventsendpoint",
-      "api_test_tenant_controller_test",
-      "api_test_tenant_controller_test_appwithrecordedqueries",
-      "api_test_tenant_controller_test_tenantrequest",
-      "controller",
-      "res"
+      "api_test_validation_test",
+      "docref_rfc_4648",
+      "packages_shared_src_index_artifact_kind"
     ],
     "9": [
       "api_src_app_controller_appcontroller_deletetarget",
@@ -698,33 +703,34 @@
       "hermes_skills_graphify_skill_what_you_must_do_when_invoked"
     ],
     "16": [
-      "api_src_app_controller",
-      "api_src_app_controller_appcontroller_createtarget",
-      "api_src_app_controller_artifact_content_types",
-      "api_src_app_controller_assertsshenrollment",
-      "api_src_app_controller_parsesshport",
-      "api_src_app_controller_public_scan_run_event",
-      "api_src_app_controller_sshenrollment",
-      "api_src_app_controller_sshfingerprint",
-      "api_src_app_controller_sshseal",
-      "api_src_app_controller_trimtext",
-      "api_src_config",
-      "api_src_config_allowed_artifact_types",
-      "api_src_config_feature_areas",
-      "api_src_config_max_artifact_bytes",
-      "api_src_config_role_matrix",
-      "api_src_validation",
-      "api_src_validation_assertexactlyonesubject",
-      "api_src_validation_positivetimebudget",
-      "api_src_validation_requirestring",
-      "api_src_validation_validateartifactcomplete",
-      "api_src_validation_validateartifacttype",
-      "api_src_validation_validatecanonicalworkerartifactbase64",
-      "api_src_validation_workerexecutiontimebudget",
-      "api_test_requester_attribution_test",
-      "api_test_validation_test",
-      "docref_rfc_4648",
-      "packages_shared_src_index_artifact_kind"
+      "api_src_app_controller_appcontroller",
+      "api_src_app_controller_appcontroller_discardreservedartifact",
+      "api_src_app_controller_appcontroller_enqueueartifactcleanup",
+      "api_src_app_controller_appcontroller_health",
+      "api_src_app_controller_appcontroller_login",
+      "api_src_app_controller_appcontroller_logout",
+      "api_src_app_controller_appcontroller_machinehardwaresummary",
+      "api_src_app_controller_appcontroller_me",
+      "api_src_app_controller_appcontroller_publicrunevent",
+      "api_src_app_controller_appcontroller_reconcileartifactcleanup",
+      "api_src_app_controller_appcontroller_register",
+      "api_src_app_controller_appcontroller_rememberme",
+      "api_src_app_controller_appcontroller_requireinternalworker",
+      "api_src_app_controller_appcontroller_requireworkercapability",
+      "api_src_app_controller_appcontroller_setsessioncookie",
+      "api_src_app_controller_appcontroller_stream",
+      "api_src_app_controller_appcontroller_token",
+      "api_src_app_controller_appcontroller_workerartifact",
+      "api_src_app_controller_appcontroller_workercapability",
+      "api_src_app_controller_appcontroller_workerevent",
+      "api_src_app_controller_appcontroller_workereventtransition",
+      "api_src_app_controller_appcontroller_workersshgrant",
+      "api_src_app_controller_assertsshgrantcontrols",
+      "api_src_app_controller_sshunseal",
+      "api_src_auth_service_authservice_me",
+      "api_src_validation_requireworkerattempt",
+      "controller",
+      "res"
     ],
     "17": [
       "api_src_artifact_service",
@@ -807,31 +813,6 @@
       "web_lib_paths_routepath"
     ],
     "20": [
-      "api_src_app_controller_appcontroller_cancelrun",
-      "api_src_app_controller_appcontroller_createuser",
-      "api_src_app_controller_appcontroller_discardreservedartifact",
-      "api_src_app_controller_appcontroller_enqueueartifactcleanup",
-      "api_src_app_controller_appcontroller_reconcileartifactcleanup",
-      "api_src_app_controller_appcontroller_requireinternalworker",
-      "api_src_app_controller_appcontroller_requirepermission",
-      "api_src_app_controller_appcontroller_requireworkercapability",
-      "api_src_app_controller_appcontroller_runtarget",
-      "api_src_app_controller_appcontroller_updateremediationstatus",
-      "api_src_app_controller_appcontroller_updatetarget",
-      "api_src_app_controller_appcontroller_updateuser",
-      "api_src_app_controller_appcontroller_workerartifact",
-      "api_src_app_controller_appcontroller_workercapability",
-      "api_src_app_controller_appcontroller_workerevent",
-      "api_src_app_controller_appcontroller_workereventtransition",
-      "api_src_app_controller_appcontroller_workersshgrant",
-      "api_src_app_controller_assertsshgrantcontrols",
-      "api_src_app_controller_sshunseal",
-      "api_src_validation_requireworkerattempt",
-      "body",
-      "patch",
-      "post"
-    ],
-    "21": [
       "argumentparser",
       "namespace",
       "scripts_token_efficiency",
@@ -856,7 +837,7 @@
       "tests_test_token_efficiency_tokenefficiencytests_test_log_entry_computes_saved_tokens_and_percent",
       "tests_test_token_efficiency_tokenefficiencytests_test_summary_reports_totals_and_top_savings"
     ],
-    "22": [
+    "21": [
       "eslint",
       "eslint_config_next",
       "next",
@@ -881,7 +862,7 @@
       "web_package_type",
       "web_package_version"
     ],
-    "23": [
+    "22": [
       "api_src_queue_service",
       "api_src_queue_service_positiveinteger",
       "api_src_queue_service_queue_names",
@@ -904,7 +885,7 @@
       "api_test_scan_dispatch_outbox_test_querycall",
       "packages_shared_src_index_queues"
     ],
-    "24": [
+    "23": [
       "scanner_bundle_bin_envdetect",
       "scanner_bundle_bin_envdetect_cgroup_indicates_container",
       "scanner_bundle_bin_envdetect_cpuinfo_hypervisor_flag",
@@ -927,7 +908,7 @@
       "scanner_bundle_bin_envdetect_rationale_99",
       "scanner_bundle_bin_envdetect_systemd_detect_virt"
     ],
-    "25": [
+    "24": [
       "container_entrypoint",
       "container_entrypoint_api_url",
       "container_entrypoint_cleanup_bootstrap",
@@ -949,7 +930,7 @@
       "container_entrypoint_worker_concurrency",
       "container_entrypoint_worker_max_attempts"
     ],
-    "26": [
+    "25": [
       "docs_plans_2026_07_22_enterprise_single_container_completion",
       "docs_plans_2026_07_22_enterprise_single_container_completion_95_evidence_matrix",
       "docs_plans_2026_07_22_enterprise_single_container_completion_accepted_deviation_records",
@@ -971,7 +952,7 @@
       "docs_plans_2026_07_22_enterprise_single_container_completion_test_command_catalog",
       "docs_plans_2026_07_22_enterprise_single_container_completion_threat_control_matrix"
     ],
-    "27": [
+    "26": [
       "docs_security_2026_07_17_v1_1_ssh_push_security_decision",
       "docs_security_2026_07_17_v1_1_ssh_push_security_decision_allowed_data_flow",
       "docs_security_2026_07_17_v1_1_ssh_push_security_decision_bundle_and_command_integrity",
@@ -992,7 +973,7 @@
       "docs_security_remote_runner_install_rollout_verification_not_performed_locally",
       "docs_security_remote_runner_install_runtime_cancellation_and_deadline_behavior"
     ],
-    "28": [
+    "27": [
       "infra_remote_runner_run_scan",
       "infra_remote_runner_run_scan__entry",
       "infra_remote_runner_run_scan_cancel_request",
@@ -1013,7 +994,7 @@
       "infra_remote_runner_run_scan_terminate_process_group",
       "infra_remote_runner_run_scan_validated_request_path_for"
     ],
-    "29": [
+    "28": [
       "tests_test_ssh_remote_runner_contract",
       "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests",
       "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_cancel_does_not_signal_mismatched_lifetime_identity_or_expired_state",
@@ -1034,7 +1015,7 @@
       "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_supervisor_requires_runner_startup_release_before_invoking_fixed_implementation",
       "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_write_sandboxed_runner"
     ],
-    "30": [
+    "29": [
       "web_changelog",
       "web_changelog_added",
       "web_changelog_changed",
@@ -1055,7 +1036,7 @@
       "web_changelog_verification_44",
       "web_changelog_verification_64"
     ],
-    "31": [
+    "30": [
       "tests_test_compact_operations_system",
       "tests_test_compact_operations_system_compactoperationscomponenttests",
       "tests_test_compact_operations_system_compactoperationscomponenttests_setupclass",
@@ -1075,7 +1056,7 @@
       "tests_test_compact_operations_system_compactoperationsqualityartifacttests_test_scorecard_is_blocker_gated_and_totals_one_hundred_points",
       "tests_test_compact_operations_system_read"
     ],
-    "32": [
+    "31": [
       "web_app_audits_id_page",
       "web_app_audits_id_page_audit",
       "web_app_audits_page",
@@ -1095,7 +1076,7 @@
       "web_lib_api_data_serverapibase",
       "web_lib_api_data_sessioncookieheader"
     ],
-    "33": [
+    "32": [
       "web_app_users_page",
       "web_app_users_page_userspage",
       "web_app_users_users_client",
@@ -1115,7 +1096,7 @@
       "web_lib_users_api_resetpassword",
       "web_lib_users_api_updateuser"
     ],
-    "34": [
+    "33": [
       "docs_qa_app_wide_compact_operations_test_guide",
       "docs_qa_app_wide_compact_operations_test_guide_app_wide_compact_operations_test_guide",
       "docs_qa_app_wide_compact_operations_test_guide_evidence_record",
@@ -1134,7 +1115,7 @@
       "policies_templates_qa_scorecard_template_hard_blocker_gate",
       "policies_templates_qa_scorecard_template_scoring_guidance"
     ],
-    "35": [
+    "34": [
       "documents_shore_sentinel_architecture_artifacts",
       "documents_shore_sentinel_architecture_core_tables",
       "documents_shore_sentinel_architecture_key_fields",
@@ -1153,7 +1134,7 @@
       "documents_shore_sentinel_architecture_target_identities",
       "documents_shore_sentinel_architecture_targets"
     ],
-    "36": [
+    "35": [
       "documents_shore_sentinel_uiux_qa_loop",
       "documents_shore_sentinel_uiux_qa_loop_1_copy_paste_hermes_prompt",
       "documents_shore_sentinel_uiux_qa_loop_2_qa_checklist",
@@ -1172,7 +1153,7 @@
       "documents_shore_sentinel_uiux_qa_loop_shore_sentinel_ui_ux_qa_loop",
       "documents_shore_sentinel_uiux_qa_loop_verify"
     ],
-    "37": [
+    "36": [
       "ssh2",
       "workers_worker_node_package",
       "workers_worker_node_package_dependencies",
@@ -1191,7 +1172,7 @@
       "workers_worker_node_package_type",
       "workers_worker_node_package_version"
     ],
-    "38": [
+    "37": [
       "web_components_saved_views",
       "web_components_saved_views_all_view_slugs",
       "web_components_saved_views_failedscansview",
@@ -1210,25 +1191,25 @@
       "web_components_saved_views_unreviewedremediationview",
       "web_components_saved_views_view_meta"
     ],
-    "39": [
+    "38": [
       "documents_shore_sentinel_architecture",
       "documents_shore_sentinel_architecture_1_web_ui_next_js",
       "documents_shore_sentinel_architecture_component_breakdown",
       "documents_shore_sentinel_architecture_conclusion",
       "documents_shore_sentinel_architecture_decisions_captured",
       "documents_shore_sentinel_architecture_executive_summary",
-      "documents_shore_sentinel_architecture_flow_671",
       "documents_shore_sentinel_architecture_full_dockerized_system_diagram",
-      "documents_shore_sentinel_architecture_intent_667",
       "documents_shore_sentinel_architecture_mvp_definition",
       "documents_shore_sentinel_architecture_mvp_excludes",
       "documents_shore_sentinel_architecture_mvp_includes",
-      "documents_shore_sentinel_architecture_pull_agent_check_in_flow",
+      "documents_shore_sentinel_architecture_offline_resilience_best_practice",
+      "documents_shore_sentinel_architecture_pull_agent_behavior",
       "documents_shore_sentinel_architecture_resolved_build_decisions_and_future_deferrals",
       "documents_shore_sentinel_architecture_shore_sentinel_control_plane_architecture_proposal",
+      "documents_shore_sentinel_architecture_ssh_push_behavior",
       "documents_shore_sentinel_architecture_workspace_location_and_app_folder"
     ],
-    "40": [
+    "39": [
       "documents_shore_sentinel_release_checklist",
       "documents_shore_sentinel_release_checklist_10_rollback_readiness",
       "documents_shore_sentinel_release_checklist_11_closeout",
@@ -1246,9 +1227,9 @@
       "documents_shore_sentinel_release_checklist_shore_sentinel_release_checklist",
       "documents_shore_sentinel_release_checklist_ssh_push_changes_required_when_ssh_execution_or_credentials_are_affected"
     ],
-    "41": [
+    "40": [
       "api_package_dependencies",
-      "api_package_dependencies_aws_sdk_s3_request_presigner",
+      "api_package_dependencies_aws_sdk_client_s3",
       "api_package_dependencies_nestjs_common",
       "api_package_dependencies_nestjs_core",
       "api_package_dependencies_nestjs_platform_express",
@@ -1256,14 +1237,14 @@
       "api_package_dependencies_rxjs",
       "api_package_dependencies_shore_sentinel_shared",
       "api_package_json_shore_sentinel_shared",
-      "aws_sdk_s3_request_presigner",
+      "aws_sdk_client_s3",
       "nestjs_common",
       "nestjs_core",
       "nestjs_platform_express",
       "pg",
       "rxjs"
     ],
-    "42": [
+    "41": [
       "api_package_devdependencies",
       "api_package_devdependencies_tsx",
       "api_package_devdependencies_types_bcryptjs",
@@ -1280,7 +1261,7 @@
       "types_pg",
       "typescript"
     ],
-    "43": [
+    "42": [
       "api_src_artifact_service_artifactservice_constructor",
       "api_src_auth_service_authservice_constructor",
       "api_src_database_service",
@@ -1297,7 +1278,7 @@
       "api_test_migration_and_production_secrets_test_fixturesecret",
       "api_test_migration_and_production_secrets_test_productionsecrets"
     ],
-    "44": [
+    "43": [
       "docs_superpowers_specs_2026_07_16_managed_machine_compact_dossier_design",
       "docs_superpowers_specs_2026_07_16_managed_machine_compact_dossier_design_acceptance_criteria",
       "docs_superpowers_specs_2026_07_16_managed_machine_compact_dossier_design_accessibility",
@@ -1314,7 +1295,7 @@
       "docs_superpowers_specs_2026_07_16_managed_machine_compact_dossier_design_responsive_behavior",
       "docs_superpowers_specs_2026_07_16_managed_machine_compact_dossier_design_scan_progress"
     ],
-    "45": [
+    "44": [
       "documents_shore_sentinel_architecture_archon_protocol_visibility_and_approval_layer",
       "documents_shore_sentinel_architecture_branch_and_release_model",
       "documents_shore_sentinel_architecture_ci_cd_target_state",
@@ -1331,7 +1312,7 @@
       "documents_shore_sentinel_architecture_trend_analysis_and_posture_benchmarking",
       "documents_shore_sentinel_architecture_update_flow"
     ],
-    "46": [
+    "45": [
       "scanner_bundle_tools_arx_agent_security_remediation",
       "scanner_bundle_tools_arx_agent_security_remediation_config_path",
       "scanner_bundle_tools_arx_agent_security_remediation_env_path",
@@ -1348,7 +1329,7 @@
       "scanner_bundle_tools_arx_agent_security_remediation_run",
       "scanner_bundle_tools_arx_agent_security_remediation_setv"
     ],
-    "47": [
+    "46": [
       "web_app_auth_login_page",
       "web_app_auth_login_page_login",
       "web_app_inventory_new_page",
@@ -1365,7 +1346,7 @@
       "web_lib_session_remembermemaxageseconds",
       "web_lib_session_serverapibase"
     ],
-    "48": [
+    "47": [
       "web_lib_filters",
       "web_lib_filters_env_values",
       "web_lib_filters_filter_defaults",
@@ -1381,6 +1362,22 @@
       "web_lib_filters_severity_levels",
       "web_lib_filters_status_values",
       "web_lib_filters_summarizeruns"
+    ],
+    "48": [
+      "api_src_app_controller_appcontroller_applyupdate",
+      "api_src_app_controller_appcontroller_checkupdate",
+      "api_src_app_controller_appcontroller_createuser",
+      "api_src_app_controller_appcontroller_requireadmin",
+      "api_src_app_controller_appcontroller_updatestatus",
+      "api_src_update_service",
+      "api_src_update_service_ts_injectable",
+      "api_src_update_service_updatemode",
+      "api_src_update_service_updateresult",
+      "api_src_update_service_updateservice",
+      "api_src_update_service_updateservice_isenabled",
+      "api_src_update_service_updateservice_run",
+      "api_src_update_service_updateservice_scriptpath",
+      "post"
     ],
     "49": [
       "api_tsconfig",
@@ -1490,18 +1487,18 @@
       "web_app_api_users_route_serverapibase"
     ],
     "56": [
-      "api_src_app_controller_appcontroller_applyupdate",
-      "api_src_app_controller_appcontroller_checkupdate",
-      "api_src_app_controller_appcontroller_requireadmin",
-      "api_src_app_controller_appcontroller_updatestatus",
-      "api_src_update_service",
-      "api_src_update_service_ts_injectable",
-      "api_src_update_service_updatemode",
-      "api_src_update_service_updateresult",
-      "api_src_update_service_updateservice",
-      "api_src_update_service_updateservice_isenabled",
-      "api_src_update_service_updateservice_run",
-      "api_src_update_service_updateservice_scriptpath"
+      "api_src_app_controller_appcontroller_cancelrun",
+      "api_src_app_controller_appcontroller_createjob",
+      "api_src_app_controller_appcontroller_principal",
+      "api_src_app_controller_appcontroller_publicrun",
+      "api_src_app_controller_appcontroller_requirepermission",
+      "api_src_app_controller_appcontroller_runtarget",
+      "api_src_app_controller_appcontroller_updateremediationstatus",
+      "api_src_app_controller_appcontroller_updatetarget",
+      "api_src_app_controller_appcontroller_updateuser",
+      "api_src_validation_validatescantarget",
+      "body",
+      "patch"
     ],
     "57": [
       "api_src_app_controller_appcontroller_constructor",
@@ -2345,159 +2342,164 @@
       "web_test_machine_stop_scan_test_runstatus"
     ],
     "145": [
+      "api_test_tenant_controller_test",
+      "api_test_tenant_controller_test_appwithrecordedqueries",
+      "api_test_tenant_controller_test_tenantrequest"
+    ],
+    "146": [
       "container_backup_restore",
       "container_backup_restore_sh__entry",
       "container_backup_restore_usage"
     ],
-    "146": [
+    "147": [
       "container_healthcheck",
       "container_healthcheck_check_process",
       "container_healthcheck_sh__entry"
     ],
-    "147": [
+    "148": [
       "documents_shore_sentinel_architecture_canonical_job_run_and_artifact_path",
       "documents_shore_sentinel_architecture_chosen_technology_stack",
       "documents_shore_sentinel_architecture_important_stack_decision"
     ],
-    "148": [
-      "documents_shore_sentinel_architecture_offline_resilience_best_practice",
-      "documents_shore_sentinel_architecture_pull_agent_behavior",
-      "documents_shore_sentinel_architecture_ssh_push_behavior"
-    ],
     "149": [
+      "documents_shore_sentinel_architecture_flow_671",
+      "documents_shore_sentinel_architecture_intent_667",
+      "documents_shore_sentinel_architecture_pull_agent_check_in_flow"
+    ],
+    "150": [
       "web_app_api_auth_me_route",
       "web_app_api_auth_me_route_get",
       "web_app_api_auth_me_route_serverapibase"
     ],
-    "150": [
+    "151": [
       "web_app_preferences_page",
       "web_app_preferences_page_metadata",
       "web_app_preferences_page_preferencespage"
     ],
-    "151": [
+    "152": [
       "web_components_filters",
       "web_components_filters_filteroptions",
       "web_components_filters_filters"
     ],
-    "152": [
+    "153": [
       "web_test_async_cookie_server_helpers_test",
       "web_test_async_cookie_server_helpers_test_source",
       "web_test_async_cookie_server_helpers_test_webroot"
     ],
-    "153": [
+    "154": [
       "web_test_machine_directory_selection_test",
       "web_test_machine_directory_selection_test_read",
       "web_test_machine_directory_selection_test_webroot"
     ],
-    "154": [
+    "155": [
       "web_test_machine_hardware_summary_test",
       "web_test_machine_hardware_summary_test_read",
       "web_test_machine_hardware_summary_test_webroot"
     ],
-    "155": [
-      "api_package_dependencies_aws_sdk_client_s3",
-      "aws_sdk_client_s3"
-    ],
     "156": [
+      "api_package_dependencies_aws_sdk_s3_request_presigner",
+      "aws_sdk_s3_request_presigner"
+    ],
+    "157": [
       "api_package_dependencies_bcryptjs",
       "bcryptjs"
     ],
-    "157": [
+    "158": [
       "api_package_dependencies_bullmq",
       "api_package_json_bullmq"
     ],
-    "158": [
+    "159": [
       "api_package_dependencies_cookie_parser",
       "cookie_parser"
     ],
-    "159": [
+    "160": [
       "api_package_dependencies_ioredis",
       "api_package_json_ioredis"
     ],
-    "160": [
+    "161": [
       "api_package_dependencies_reflect_metadata",
       "reflect_metadata"
     ],
-    "161": [
+    "162": [
       "api_readme",
       "api_readme_shore_sentinel_api"
     ],
-    "162": [
+    "163": [
       "container_capability_check",
       "container_capability_check_sh__entry"
     ],
-    "163": [
+    "164": [
       "container_object_storage_bootstrap",
       "container_object_storage_bootstrap_client"
     ],
-    "164": [
+    "165": [
       "container_shore_sentinel",
       "container_shore_sentinel__entry"
     ],
-    "165": [
+    "166": [
       "packages_shared_readme",
       "packages_shared_readme_shared_package_scaffold"
     ],
-    "166": [
+    "167": [
       "scripts_refresh_graphify",
       "scripts_refresh_graphify_sh__entry"
     ],
-    "167": [
+    "168": [
       "web_app_error",
       "web_app_error_errorstate"
     ],
-    "168": [
+    "169": [
       "web_app_loading",
       "web_app_loading_loading"
     ],
-    "169": [
+    "170": [
       "web_app_scans_start_page",
       "web_app_scans_start_page_startscanredirect"
     ],
-    "170": [
+    "171": [
       "web_components_mobile_navigation",
       "web_components_mobile_navigation_mobilenavigation"
     ],
-    "171": [
+    "172": [
       "web_next_config",
       "web_next_config_nextconfig"
     ],
-    "172": [
+    "173": [
       "web_readme",
       "web_readme_web_ui_scaffold"
     ],
-    "173": [
+    "174": [
       "web_scripts_verify_machine_status",
       "web_scripts_verify_machine_status_root"
     ],
-    "174": [
+    "175": [
       "web_test_new_machine_enrollment_test",
       "web_test_new_machine_enrollment_test_form"
     ],
-    "175": [
+    "176": [
       "workers_worker_node_readme",
       "workers_worker_node_readme_worker_node"
     ],
-    "176": [
+    "177": [
       "workers_worker_python_readme",
       "workers_worker_python_readme_worker_python"
     ],
-    "177": [
+    "178": [
       "packages_shared_src_index_d"
     ],
-    "178": [
+    "179": [
       "scripts_validate_phase0"
     ],
-    "179": [
+    "180": [
       "scripts_validate_scanner_bundle"
     ],
-    "180": [
+    "181": [
       "workers_worker_node_src_sshexecutor_default_remote_output_max_bytes"
     ],
-    "181": [
+    "182": [
       "workers_worker_node_src_sshexecutor_default_remote_stderr_max_bytes"
     ],
-    "182": [
+    "183": [
       "workers_worker_node_test_artifact_cleanup_worker_test"
     ]
   },
@@ -2510,7 +2512,7 @@
     "5": 0.045454545454545456,
     "6": 0.09146341463414634,
     "7": 0.0782051282051282,
-    "8": 0.08199643493761141,
+    "8": 0.08367071524966262,
     "9": 0.2215909090909091,
     "10": 0.06060606060606061,
     "11": 0.06060606060606061,
@@ -2518,39 +2520,39 @@
     "13": 0.0625,
     "14": 0.12903225806451613,
     "15": 0.06666666666666667,
-    "16": 0.1396011396011396,
+    "16": 0.12962962962962962,
     "17": 0.11076923076923077,
     "18": 0.08333333333333333,
     "19": 0.09782608695652174,
-    "20": 0.16205533596837945,
-    "21": 0.18181818181818182,
-    "22": 0.08695652173913043,
-    "23": 0.12380952380952381,
-    "24": 0.15714285714285714,
-    "25": 0.11578947368421053,
-    "26": 0.1,
-    "27": 0.10526315789473684,
-    "28": 0.25146198830409355,
-    "29": 0.1286549707602339,
-    "30": 0.10526315789473684,
-    "31": 0.11764705882352941,
-    "32": 0.1437908496732026,
-    "33": 0.23529411764705882,
+    "20": 0.18181818181818182,
+    "21": 0.08695652173913043,
+    "22": 0.12380952380952381,
+    "23": 0.15714285714285714,
+    "24": 0.11578947368421053,
+    "25": 0.1,
+    "26": 0.10526315789473684,
+    "27": 0.25146198830409355,
+    "28": 0.1286549707602339,
+    "29": 0.10526315789473684,
+    "30": 0.11764705882352941,
+    "31": 0.1437908496732026,
+    "32": 0.23529411764705882,
+    "33": 0.11764705882352941,
     "34": 0.11764705882352941,
     "35": 0.11764705882352941,
     "36": 0.11764705882352941,
-    "37": 0.11764705882352941,
-    "38": 0.19117647058823528,
+    "37": 0.19117647058823528,
+    "38": 0.125,
     "39": 0.125,
-    "40": 0.125,
+    "40": 0.13333333333333333,
     "41": 0.13333333333333333,
-    "42": 0.13333333333333333,
-    "43": 0.1619047619047619,
+    "42": 0.1619047619047619,
+    "43": 0.13333333333333333,
     "44": 0.13333333333333333,
-    "45": 0.13333333333333333,
-    "46": 0.3904761904761905,
-    "47": 0.14285714285714285,
-    "48": 0.21904761904761905,
+    "45": 0.3904761904761905,
+    "46": 0.14285714285714285,
+    "47": 0.21904761904761905,
+    "48": 0.2087912087912088,
     "49": 0.14285714285714285,
     "50": 0.14285714285714285,
     "51": 0.15384615384615385,
@@ -2558,7 +2560,7 @@
     "53": 0.15384615384615385,
     "54": 0.28205128205128205,
     "55": 0.32051282051282054,
-    "56": 0.22727272727272727,
+    "56": 0.2727272727272727,
     "57": 0.22727272727272727,
     "58": 0.5454545454545454,
     "59": 0.2727272727272727,
@@ -2647,17 +2649,17 @@
     "142": 0.5,
     "143": 0.5,
     "144": 0.5,
-    "145": 1.0,
+    "145": 0.6666666666666666,
     "146": 1.0,
-    "147": 0.6666666666666666,
+    "147": 1.0,
     "148": 0.6666666666666666,
-    "149": 1.0,
-    "150": 0.6666666666666666,
+    "149": 0.6666666666666666,
+    "150": 1.0,
     "151": 0.6666666666666666,
     "152": 0.6666666666666666,
     "153": 0.6666666666666666,
     "154": 0.6666666666666666,
-    "155": 1.0,
+    "155": 0.6666666666666666,
     "156": 1.0,
     "157": 1.0,
     "158": 1.0,
@@ -2684,7 +2686,8 @@
     "179": 1.0,
     "180": 1.0,
     "181": 1.0,
-    "182": 1.0
+    "182": 1.0,
+    "183": 1.0
   },
   "gods": [
     {
@@ -2798,7 +2801,7 @@
   "questions": [
     {
       "type": "bridge_node",
-      "question": "Why does `AppController` connect `AppController` to `index.js`, `.query`, `app.module.ts`, `app.controller.ts`, `ArtifactService`, `Post`, `queue.service.ts`, `.requireAdmin`, `QueueService`, `worker-ssh-grant.test.ts`?",
+      "question": "Why does `AppController` connect `AppController` to `index.js`, `app.controller.ts`, `.query`, `app.module.ts`, `Post`, `ArtifactService`, `tenant-controller.test.ts`, `queue.service.ts`, `Body`, `QueueService`, `worker-ssh-grant.test.ts`?",
       "why": "High betweenness centrality (0.047) - this node is a cross-community bridge."
     },
     {
@@ -2808,7 +2811,7 @@
     },
     {
       "type": "bridge_node",
-      "question": "Why does `routePath()` connect `routePath` to `apiGet`, `appPath`, `page.jsx`, `ReportsLedger`, `saved-views.jsx`, `InventoryRegistry`, `MachineDetailClient`, `getAuthenticatedUser`, `page.jsx`, `RemediationQueue`, `display-preferences.js`?",
+      "question": "Why does `routePath()` connect `routePath` to `appPath`, `page.jsx`, `ReportsLedger`, `saved-views.jsx`, `InventoryRegistry`, `getAuthenticatedUser`, `MachineDetailClient`, `page.jsx`, `RemediationQueue`, `display-preferences.js`, `apiGet`?",
       "why": "High betweenness centrality (0.032) - this node is a cross-community bridge."
     },
     {
