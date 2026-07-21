@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "processes": {
+    "migration": {"user": "shore-api", "allowed": ["DATABASE_URL", "NODE_ENV", "MIGRATION_LOCK_TIMEOUT_MS"]},
+    "postgres": {"user": "shore-postgres", "allowed": ["PGDATA", "POSTGRES_DB", "POSTGRES_USER", "POSTGRES_PASSWORD"]},
+    "redis": {"user": "shore-redis", "allowed": ["REDIS_CONFIG", "REDIS_DATA_DIR"]},
+    "minio": {"user": "shore-minio", "allowed": ["MINIO_ACCESS_KEY", "MINIO_SECRET_KEY", "MINIO_DATA_DIR"]},
+    "api": {"user": "shore-api", "allowed": ["NODE_ENV", "PORT", "DATABASE_URL", "POSTGRES_PASSWORD", "SEED_ADMIN_PASSWORD", "REDIS_URL", "MINIO_ENDPOINT", "MINIO_BUCKET", "MINIO_ACCESS_KEY", "MINIO_SECRET_KEY", "SHORE_SENTINEL_SECRET_KEY", "INTERNAL_WORKER_TOKEN"]},
+    "worker-node": {"user": "shore-worker", "allowed": ["NODE_ENV", "REDIS_URL", "API_URL", "PYTHON_WORKER_URL", "INTERNAL_WORKER_TOKEN", "WORKER_CONCURRENCY", "WORKER_MAX_ATTEMPTS", "WORKER_BACKOFF_MS"]},
+    "worker-python": {"user": "shore-parser", "allowed": ["PYTHONPATH", "PYTHON_WORKER_PORT", "INTERNAL_WORKER_TOKEN"]},
+    "web": {"user": "shore-web", "allowed": ["NODE_ENV", "PORT", "HOSTNAME", "NEXT_TELEMETRY_DISABLED"]}
+  },
+  "forbidden": ["TARGET_PASSWORD", "TARGET_PRIVATE_KEY", "MINIO_ROOT_PASSWORD", "DOCKER_HOST", "SSH_AUTH_SOCK"]
+}

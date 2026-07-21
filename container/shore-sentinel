@@ -1,0 +1,13 @@
+#!/bin/sh
+set -eu
+
+case "${1:-}" in
+  migrate)
+    shift
+    exec node /opt/shore-sentinel/api/dist/migration-runner.js migrate "$@"
+    ;;
+  *)
+    echo "usage: shore-sentinel migrate" >&2
+    exit 64
+    ;;
+esac
