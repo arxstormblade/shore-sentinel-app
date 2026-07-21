@@ -52,6 +52,10 @@ class SingleContainerRuntimeContractTests(unittest.TestCase):
 
     def test_image_and_supervisor_define_seven_distinct_processes(self):
         self.assertRegex(self.dockerfile, r"(?m)^FROM [^\s]+@sha256:[0-9a-f]{64} AS runtime$")
+        self.assertRegex(self.dockerfile, r"(?m)^FROM --platform=\$BUILDPLATFORM [^\s]+@sha256:[0-9a-f]{64} AS dependencies$")
+        self.assertRegex(self.dockerfile, r"(?m)^FROM --platform=\$BUILDPLATFORM dependencies AS build$")
+        self.assertRegex(self.dockerfile, r"(?m)^FROM [^\s]+@sha256:[0-9a-f]{64} AS runtime-dependencies$")
+        self.assertIn("npm ci --omit=dev --ignore-scripts", self.dockerfile)
         for user in ("shore-web", "shore-api", "shore-worker", "shore-parser", "shore-postgres", "shore-redis", "shore-minio"):
             self.assertRegex(self.dockerfile, rf"adduser[^\n]*{re.escape(user)}")
         for process in ("postgres", "redis", "minio", "api", "worker-node", "worker-python", "web"):

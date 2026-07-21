@@ -1,4 +1,4 @@
-FROM node:20.18.0-alpine3.20@sha256:b1e0880c3af955867bc2f1944b49d20187beb7afa3f30173e15a97149ab7f5f1 AS dependencies
+FROM --platform=$BUILDPLATFORM node:20.18.0-alpine3.20@sha256:b1e0880c3af955867bc2f1944b49d20187beb7afa3f30173e15a97149ab7f5f1 AS dependencies
 WORKDIR /src
 COPY package.json package-lock.json ./
 COPY api/package.json api/package.json
@@ -7,9 +7,18 @@ COPY workers/worker-node/package.json workers/worker-node/package.json
 COPY packages/shared packages/shared
 RUN npm ci
 
-FROM dependencies AS build
+FROM --platform=$BUILDPLATFORM dependencies AS build
 COPY . .
 RUN npm run api:build && npm run web:build
+
+FROM node:20.18.0-alpine3.20@sha256:b1e0880c3af955867bc2f1944b49d20187beb7afa3f30173e15a97149ab7f5f1 AS runtime-dependencies
+WORKDIR /src
+COPY package.json package-lock.json ./
+COPY api/package.json api/package.json
+COPY web/package.json web/package.json
+COPY workers/worker-node/package.json workers/worker-node/package.json
+COPY packages/shared packages/shared
+RUN npm ci --omit=dev --ignore-scripts
 
 FROM node:20.18.0-alpine3.20@sha256:b1e0880c3af955867bc2f1944b49d20187beb7afa3f30173e15a97149ab7f5f1 AS runtime
 ENV NODE_ENV=production \
@@ -49,7 +58,7 @@ RUN case "$TARGETARCH" in amd64) MINIO_ARCH=amd64; MINIO_PACKAGE_ARCH=x86_64; MI
   && echo "${MINIO_SHA256}  /tmp/minio.apk" | sha256sum -c - \
   && apk add --no-cache --allow-untrusted /tmp/minio.apk \
   && rm /tmp/minio.apk
-COPY --from=build /src/node_modules ./node_modules
+COPY --from=runtime-dependencies /src/node_modules ./node_modules
 COPY --from=build /src/api/dist ./api/dist
 COPY --from=build /src/api/package.json ./api/package.json
 COPY --from=build /src/api/migrations ./api/migrations
