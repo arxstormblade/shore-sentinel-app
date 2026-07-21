@@ -6,6 +6,14 @@
 
 Managed-machine security posture monitoring, inventory, remediation, and reporting — with a standalone one-time local audit option for machines that should not be enrolled.
 
+## Graphify navigation
+
+Use Graphify before broad code exploration or cross-cutting changes. Refresh the local,
+untracked graph with `npm run graphify:refresh`, then ask a focused question from the
+repository root, for example: `graphify query "How are API scan jobs processed?"`.
+Generated artifacts live in `graphify-out/` and are intentionally ignored; its
+`FRESHNESS.json` records the source HEAD, generation time, CLI version, and graph counts.
+
 Shore Sentinel has two supported usage paths:
 
 1. **One-Time Audit** — pull the scanner bundle from GitHub and run it locally on a client machine. Reports and artifacts stay on the client machine.

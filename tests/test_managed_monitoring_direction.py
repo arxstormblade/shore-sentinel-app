@@ -17,12 +17,10 @@ class ManagedMonitoringDirectionTests(unittest.TestCase):
         self.assertIn('docker compose up -d --build', readme)
         self.assertIn('Reports and artifacts stay on the client machine', readme)
 
-    def test_start_scan_page_is_managed_monitoring_only(self):
+    def test_start_scan_route_requires_machine_selection(self):
         page = read('web/app/scans/start/page.jsx')
-        self.assertIn('Managed machine monitoring', page)
-        self.assertIn('Add managed machine', page)
-        self.assertIn('GitHub README', page)
-        self.assertNotIn('One-time local audit', page)
+        self.assertIn("redirect(routePath('/inventory'))", page)
+        self.assertNotIn('Start managed monitoring', page)
         self.assertNotIn("routePath('/audits/new')", page)
 
     def test_one_time_audit_runner_route_is_removed_from_app(self):
@@ -35,8 +33,10 @@ class ManagedMonitoringDirectionTests(unittest.TestCase):
     def test_navigation_names_the_primary_feature(self):
         nav = read('web/lib/data.js')
         shell = read('web/components/ui.jsx')
-        self.assertIn("label: 'Managed Machines'", nav)
+        self.assertIn("label: 'AI Assets'", nav)
+        self.assertIn("label: 'Asset inventory'", nav)
         self.assertIn("href: '/inventory'", nav)
+        self.assertNotIn("label: 'Start scan'", nav)
         self.assertNotIn('icon:', nav)
         self.assertNotIn('item.icon', shell)
 

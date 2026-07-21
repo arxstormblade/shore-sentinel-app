@@ -1,0 +1,37 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e3]:
+    - link "Shore Sentinel dashboard" [ref=e4] [cursor=pointer]:
+      - /url: /shore-sentinel/dashboard
+      - generic "Shore Sentinel logo" [ref=e5]
+      - generic [ref=e7]: Shore Sentinel
+    - complementary [ref=e8]:
+      - link "Sign in" [ref=e9] [cursor=pointer]:
+        - /url: /shore-sentinel/auth/login
+  - main [ref=e10]:
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - generic "Shore Sentinel logo" [ref=e14]
+        - generic [ref=e16]: Shore Sentinel
+      - generic [ref=e17]:
+        - paragraph [ref=e18]: Sign in to continue
+        - heading "Sign in" [level=1] [ref=e19]
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - text: Email
+          - textbox "Email" [ref=e22]
+        - generic [ref=e23]:
+          - text: Password
+          - generic [ref=e24]:
+            - textbox "Password Show password" [ref=e25]
+            - button "Show password" [ref=e26] [cursor=pointer]
+        - generic [ref=e30] [cursor=pointer]:
+          - checkbox "Remember me for 30 days" [ref=e31]
+          - generic [ref=e32]: Remember me for 30 days
+        - button "Sign in" [ref=e33] [cursor=pointer]
+      - paragraph [ref=e34]:
+        - text: Need a local operator profile?
+        - link "Create local account" [ref=e35] [cursor=pointer]:
+          - /url: /shore-sentinel/auth/register
+  - alert [ref=e36]

@@ -64,20 +64,11 @@ class CompactCoreOperationsPageTests(unittest.TestCase):
         ]:
             self.assertIn(contract, form)
 
-    def test_scan_start_is_a_compact_managed_monitoring_command_center(self):
+    def test_scan_start_redirects_to_machine_selection(self):
         page = read("web/app/scans/start/page.jsx")
-        for contract in [
-            "CompactPageHeader",
-            "OperationsSummaryStrip",
-            "OperationalSection",
-            "OperationsLedger",
-            "OperationsLedgerRow",
-            'className="operations-page scan-start-page"',
-            "Add managed machine",
-            "View reports",
-        ]:
-            self.assertIn(contract, page)
-        self.assertNotIn('className="choice-panel"', page)
+        self.assertIn("redirect(routePath('/inventory'))", page)
+        self.assertNotIn("CompactPageHeader", page)
+        self.assertNotIn('className="operations-page scan-start-page"', page)
 
     def test_authenticated_root_continues_to_redirect_to_dashboard(self):
         landing = read("web/app/page.jsx")

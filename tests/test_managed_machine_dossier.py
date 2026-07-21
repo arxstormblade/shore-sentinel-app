@@ -45,6 +45,22 @@ class ManagedMachineDossierTests(unittest.TestCase):
         self.assertNotIn("report-cards", component)
         self.assertNotIn("report-card", component)
 
+    def test_high_impact_actions_require_accessible_confirmation_dialogs(self):
+        component = read("web/components/machine-detail-client.jsx")
+        css = read("web/app/globals.css")
+        self.assertIn("function ActionConfirmationDialog", component)
+        self.assertIn("showModal()", component)
+        self.assertIn("onCancel=", component)
+        self.assertIn("requestScanConfirmation", component)
+        self.assertIn("requestDeleteConfirmation", component)
+        self.assertIn('Approval context', component)
+        self.assertIn('Scan scope', component)
+        self.assertNotIn('window.confirm', component)
+        self.assertNotIn('errorPayload.message', component)
+        self.assertNotIn('response.status', component)
+        self.assertIn('Unable to delete the managed machine. Try again or contact an administrator.', component)
+        self.assertIn('.machine-action-dialog', css)
+
     def test_admin_sections_are_collapsed_disclosures(self):
         component = read("web/components/machine-detail-client.jsx")
         css = read("web/app/globals.css")

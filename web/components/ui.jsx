@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { useId } from 'react';
-import { navItems } from '@/lib/data';
+import { navGroups } from '@/lib/data';
 import { appPath, routePath } from '@/lib/paths';
+import { MobileNavigation } from '@/components/mobile-navigation';
 
 export function ShoreLogo({ size = 34 }) {
   return (
@@ -20,15 +21,41 @@ export function Brand() {
   );
 }
 
+function SystemStatus() {
+  return <span className="system-status"><i aria-hidden="true" />System status unavailable</span>;
+}
+
 function UserStrip({ initials, user }) {
   return (
     <aside className="user-strip">
-      <span className="system-ok"><i />All Systems Operational</span>
+      <SystemStatus />
       <Link className="avatar-link" href={routePath('/users')}>
         <span className="avatar">{initials}</span>
         <span>{user?.display_name || 'Admin User'}</span>
       </Link>
     </aside>
+  );
+}
+
+function NavigationGroups({ label = 'Primary navigation', idPrefix = 'nav-group' }) {
+  return (
+    <nav className="side-nav-links" aria-label={label}>
+      {navGroups.map((group) => {
+        const groupId = `${idPrefix}-${group.label.toLowerCase().replace(/\s+/g, '-')}`;
+        return (
+          <section className="side-nav-group" key={group.href} aria-labelledby={groupId}>
+            <Link className="side-nav-group-label" id={groupId} href={routePath(group.href)}>{group.label}</Link>
+            {group.items.length ? (
+              <div className="side-nav-group-items">
+                {group.items.map((item) => (
+                  <Link key={item.href} href={routePath(item.href)}>{item.label}</Link>
+                ))}
+              </div>
+            ) : null}
+          </section>
+        );
+      })}
+    </nav>
   );
 }
 
@@ -39,13 +66,9 @@ function SideNavigation({ initials, user }) {
         <Brand />
         <span className="side-nav-kicker">Security operations</span>
       </div>
-      <nav className="side-nav-links" aria-label="Primary navigation">
-        {navItems.map((item) => (
-          <Link key={item.href} href={routePath(item.href)}>{item.label}</Link>
-        ))}
-      </nav>
+      <NavigationGroups />
       <div className="side-nav-status">
-        <span className="system-ok"><i />All Systems Operational</span>
+        <SystemStatus />
         <Link className="avatar-link" href={routePath('/users')}>
           <span className="avatar">{initials}</span>
           <span>{user?.display_name || 'Admin User'}</span>
@@ -61,13 +84,15 @@ export function Shell({ children, authenticated = false, user = null }) {
   if (authenticated) {
     return (
       <div className="app-shell authenticated-shell">
+        <a className="skip-link" href="#main-content">Skip to main content</a>
         <SideNavigation initials={initials} user={user} />
         <div className="shell-main">
-          <header className="mobile-rail" aria-label="Mobile app status">
+          <header className="mobile-rail" aria-label="Mobile app navigation and status">
             <Brand />
+            <MobileNavigation status={<SystemStatus />} />
             <UserStrip initials={initials} user={user} />
           </header>
-          <main>{children}</main>
+          <main id="main-content" tabIndex="-1">{children}</main>
           <footer><b>Knowledgebase</b><Link href={routePath('/knowledgebase')}>Reference guide</Link><Link href={routePath('/audits')}>Audit History</Link><Link href={routePath('/system/update')}>System Update</Link><Link href={routePath('/dashboard')}>Dashboard</Link></footer>
         </div>
       </div>
@@ -76,13 +101,14 @@ export function Shell({ children, authenticated = false, user = null }) {
 
   return (
     <>
+      <a className="skip-link" href="#main-content">Skip to main content</a>
       <header className="top">
         <Brand />
         <aside className="user-strip">
           <Link className="btn alt" href={routePath('/auth/login')}>Sign in</Link>
         </aside>
       </header>
-      <main>{children}</main>
+      <main id="main-content" tabIndex="-1">{children}</main>
     </>
   );
 }

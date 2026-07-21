@@ -1,0 +1,81 @@
+- generic [ref=f2e1]:
+  - generic [ref=f2e2]:
+    - link "Skip to main content" [ref=f2e3] [cursor=pointer]:
+      - /url: "#main-content"
+    - generic [ref=f2e4]:
+      - banner "Mobile app navigation and status" [ref=f2e5]:
+        - link "Shore Sentinel dashboard" [ref=f2e6] [cursor=pointer]:
+          - /url: /shore-sentinel/dashboard
+          - generic "Shore Sentinel logo" [ref=f2e7]
+        - group [ref=f2e9]:
+          - generic "Application navigation" [active] [ref=f2e10] [cursor=pointer]: Navigation
+        - complementary [ref=f2e11]:
+          - link "QR" [ref=f2e12] [cursor=pointer]:
+            - /url: /shore-sentinel/users
+      - main [ref=f2e14]:
+        - generic [ref=f2e139]:
+          - generic [ref=f2e140]:
+            - generic [ref=f2e141]:
+              - paragraph [ref=f2e142]: Fleet registry
+              - heading "Managed machines" [level=1] [ref=f2e143]
+              - paragraph [ref=f2e144]: Filter the enrolled fleet by environment and current status, then open the machine dossier that needs attention.
+            - link "Add managed machine" [ref=f2e146] [cursor=pointer]:
+              - /url: /shore-sentinel/inventory/new
+          - generic "Managed machine registry summary" [ref=f2e147]:
+            - generic [ref=f2e148]:
+              - term [ref=f2e149]: Enrolled
+              - definition [ref=f2e150]: "1"
+            - generic [ref=f2e151]:
+              - term [ref=f2e152]: Visible
+              - definition [ref=f2e153]: "1"
+            - generic [ref=f2e154]:
+              - term [ref=f2e155]: Open remediation
+              - definition [ref=f2e156]: "0"
+            - generic [ref=f2e157]:
+              - term [ref=f2e158]: Environments
+              - definition [ref=f2e159]: "1"
+            - generic [ref=f2e160]:
+              - term [ref=f2e161]: SSH managed
+              - definition [ref=f2e162]: "1"
+            - generic [ref=f2e163]:
+              - term [ref=f2e164]: Pull check-in
+              - definition [ref=f2e165]: "0"
+          - region [ref=f2e166]:
+            - generic [ref=f2e167]:
+              - generic [ref=f2e168]:
+                - paragraph [ref=f2e169]: Machine registry
+                - heading "Enrolled fleet" [level=2] [ref=f2e170]
+              - generic [ref=f2e171]: 1 shown
+            - generic [ref=f2e173]:
+              - generic [ref=f2e174]:
+                - text: Environment
+                - combobox "Environment" [ref=f2e175]:
+                  - option "All environments" [selected]
+                  - option "Review"
+              - generic [ref=f2e176]:
+                - text: Status
+                - combobox "Status" [ref=f2e177]:
+                  - option "All statuses" [selected]
+                  - option "online"
+              - button "Clear filters" [disabled] [ref=f2e178] [cursor=pointer]
+            - list "Filtered managed machines" [ref=f2e179]:
+              - listitem [ref=f2e180]:
+                - generic [ref=f2e181]:
+                  - generic [ref=f2e182]: Review Machine
+                  - generic [ref=f2e183]: Unassigned owner · Review · Last scan Not scanned
+                - generic [ref=f2e184]:
+                  - generic [ref=f2e185]: 0 open remediation
+                  - generic [ref=f2e186]: online
+                  - link "Open Machine" [ref=f2e187] [cursor=pointer]:
+                    - /url: /shore-sentinel/inventory/machines/machine-1
+      - contentinfo [ref=f2e100]:
+        - generic [ref=f2e101]: Knowledgebase
+        - link "Reference guide" [ref=f2e102] [cursor=pointer]:
+          - /url: /shore-sentinel/knowledgebase
+        - link "Audit History" [ref=f2e103] [cursor=pointer]:
+          - /url: /shore-sentinel/audits
+        - link "System Update" [ref=f2e104] [cursor=pointer]:
+          - /url: /shore-sentinel/system/update
+        - link "Dashboard" [ref=f2e105] [cursor=pointer]:
+          - /url: /shore-sentinel/dashboard
+  - alert [ref=f2e106]

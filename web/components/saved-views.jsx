@@ -158,9 +158,9 @@ async function HighFindingsView() {
       {items.length === 0 ? (
         <div className="empty" data-testid="saved-view-empty">
           <h3>No critical or high findings</h3>
-          <p>Your fleet has no findings at critical or high severity. Run a scan to collect fresh evidence.</p>
+          <p>Your fleet has no findings at critical or high severity. Open a managed machine from AI Assets to run a scan and collect fresh evidence.</p>
           <div className="empty-actions">
-            <Link className="btn" href={routePath('/scans/start')}>Start scan</Link>
+            <Link className="btn" href={routePath('/inventory')}>Open AI assets</Link>
             <Link className="btn alt" href={routePath('/remediation')}>View all remediation</Link>
           </div>
         </div>
@@ -272,9 +272,9 @@ async function RecentlyCompletedView() {
       {items.length === 0 ? (
         <div className="empty" data-testid="saved-view-empty">
           <h3>No recently completed scans</h3>
-          <p>Complete a scan to see results here.</p>
+          <p>Complete a scan from a managed machine detail page to see results here.</p>
           <div className="empty-actions">
-            <Link className="btn" href={routePath('/scans/start')}>Start scan</Link>
+            <Link className="btn" href={routePath('/inventory')}>Open AI assets</Link>
           </div>
         </div>
       ) : <SavedViewRows items={items} statusClass="completed" renderAction={(run) => <><Link className="btn alt" href={routePath(`/scans-reports/reports/${run.id}`)}>Open report</Link><Link className="btn ghost" href={routePath('/remediation')}>Remediation</Link></>} />}

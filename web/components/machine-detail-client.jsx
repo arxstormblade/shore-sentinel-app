@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { appPath, routePath } from '@/lib/paths';
 import { isSuccessfulRun, isTerminalRun, progressForRun, toneForRun } from '@/lib/machine-run-status';
@@ -73,6 +73,54 @@ function remediationGuidance(item) {
     || 'Detailed guidance is unavailable in this summary. Open the full record to review the finding and recommended action.';
 }
 
+function ActionConfirmationDialog({ id, open, title, description, confirmLabel, confirmTone = 'btn', busy = false, onConfirm, onClose, children }) {
+  const dialogRef = useRef(null);
+  const previousFocusRef = useRef(null);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (open && !dialog.open) {
+      previousFocusRef.current = document.activeElement;
+      dialog.showModal();
+      return;
+    }
+    if (!open && dialog.open) {
+      dialog.close();
+      previousFocusRef.current?.focus?.();
+    }
+  }, [open]);
+
+  useEffect(() => () => {
+    if (dialogRef.current?.open) dialogRef.current.close();
+  }, []);
+
+  return (
+    <dialog
+      ref={dialogRef}
+      className="machine-action-dialog"
+      aria-labelledby={`${id}-title`}
+      aria-describedby={`${id}-description`}
+      onCancel={(event) => {
+        event.preventDefault();
+        onClose();
+      }}
+    >
+      <div className="machine-action-dialog-body">
+        <p className="section-kicker">Approval context</p>
+        <h2 id={`${id}-title`}>{title}</h2>
+        <p id={`${id}-description`}>{description}</p>
+        {children}
+        <p className="machine-action-dialog-policy">Your signed-in role permits this request. Server-side scope and policy checks still apply before execution.</p>
+        <div className="machine-action-dialog-actions">
+          <button className="btn alt" type="button" onClick={onClose} disabled={busy}>Cancel</button>
+          <button className={confirmTone} type="button" onClick={onConfirm} disabled={busy}>{busy ? 'Working…' : confirmLabel}</button>
+        </div>
+      </div>
+    </dialog>
+  );
+}
+
 export function MachineDetailClient({ machine, initialRuns = [], canScan = false, canEdit = false, canDelete = false, runHistoryUnavailable = false }) {
   const router = useRouter();
   const [runs, setRuns] = useState(() => ensureArray(initialRuns));
@@ -85,6 +133,8 @@ export function MachineDetailClient({ machine, initialRuns = [], canScan = false
   const [saveBusy, setSaveBusy] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [deleteStatus, setDeleteStatus] = useState('');
+  const [scanConfirmOpen, setScanConfirmOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [permissions, setPermissions] = useState({ scan: Boolean(canScan), edit: Boolean(canEdit), delete: Boolean(canDelete) });
   const [permissionStatus, setPermissionStatus] = useState(canDelete ? 'Admin permissions confirmed.' : 'Checking permissions…');
   const [draft, setDraft] = useState(() => ({
@@ -216,6 +266,25 @@ export function MachineDetailClient({ machine, initialRuns = [], canScan = false
     if (!elapsed || elapsed <= 0) return null;
     return Math.ceil((elapsed * (100 - currentProgress)) / currentProgress);
   })();
+
+  function requestScanConfirmation() {
+    if (!permissions.scan) {
+      setNotice('Your role does not permit launching managed-machine scans.');
+      return;
+    }
+    if (runHistoryUnavailable) {
+      setNotice('Live scan history is unavailable. Scan launch remains disabled to prevent duplicate jobs.');
+      return;
+    }
+    const targetError = validateScanTarget(scanTarget);
+    if (targetError) {
+      setScanTargetError(targetError);
+      setNotice('Correct the directory before launching a scan.');
+      return;
+    }
+    setScanTargetError('');
+    setScanConfirmOpen(true);
+  }
 
   async function runScan() {
     if (!permissions.scan) {
@@ -354,13 +423,17 @@ export function MachineDetailClient({ machine, initialRuns = [], canScan = false
     }
   }
 
-  async function deleteMachine() {
+  function requestDeleteConfirmation() {
     if (!permissions.delete) {
       setDeleteStatus('Deletion is disabled because admin permissions are not confirmed. Sign out and sign back in with an admin account.');
       return;
     }
-    if (!window.confirm(`Delete ${machine.name}? This removes the machine and related scan history.`)) {
-      setDeleteStatus('Delete cancelled.');
+    setDeleteConfirmOpen(true);
+  }
+
+  async function deleteMachine() {
+    if (!permissions.delete) {
+      setDeleteStatus('Deletion is disabled because admin permissions are not confirmed. Sign out and sign back in with an admin account.');
       return;
     }
     setDeleteBusy(true);
@@ -368,15 +441,12 @@ export function MachineDetailClient({ machine, initialRuns = [], canScan = false
     setDeleteStatus('Deleting managed machine…');
     try {
       const response = await fetch(appPath(`/api/targets/${machine.id}`), { method: 'DELETE', credentials: 'same-origin' });
-      if (!response.ok) {
-        const errorPayload = await response.json().catch(() => ({}));
-        throw new Error(errorPayload.message || `Delete failed with HTTP ${response.status}`);
-      }
+      if (!response.ok) throw new Error('delete-failed');
       setDeleteStatus('Managed machine deleted. Returning to inventory…');
       router.replace(routePath('/inventory'));
       router.refresh();
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unable to delete machine.';
+    } catch {
+      const message = 'Unable to delete the managed machine. Try again or contact an administrator.';
       setNotice(message);
       setDeleteStatus(message);
       setDeleteBusy(false);
@@ -455,7 +525,7 @@ export function MachineDetailClient({ machine, initialRuns = [], canScan = false
                 aria-invalid={Boolean(scanTargetError)}
                 aria-describedby={scanTargetError ? 'machine-scan-target-error' : 'machine-scan-target-help'}
               />
-              <button className="btn machine-scan-action" type="button" onClick={runScan} disabled={scanBusy || scanBlocked}>
+              <button className="btn machine-scan-action" type="button" onClick={requestScanConfirmation} disabled={scanBusy || scanBlocked}>
                 {scanButtonLabel}
               </button>
               {hasActiveRun && permissions.edit ? (
@@ -549,7 +619,7 @@ export function MachineDetailClient({ machine, initialRuns = [], canScan = false
             ))}
           </div>
         ) : (
-          <div className="machine-compact-empty"><p>No reports have been generated for this machine yet.</p><button className="btn alt" type="button" onClick={runScan} disabled={scanBusy || scanBlocked}>Run first scan</button></div>
+          <div className="machine-compact-empty"><p>No reports have been generated for this machine yet.</p><button className="btn alt" type="button" onClick={requestScanConfirmation} disabled={scanBusy || scanBlocked}>Run first scan</button></div>
         )}
       </section>
 
@@ -577,9 +647,52 @@ export function MachineDetailClient({ machine, initialRuns = [], canScan = false
           <p>Delete this managed machine and its related scan history. This cannot be undone.</p>
           <p className="note">{permissionStatus}</p>
           {deleteStatus ? <p className="note">{deleteStatus}</p> : null}
-          <button className="btn danger" type="button" onClick={deleteMachine} disabled={!permissions.delete || deleteBusy}>{deleteBusy ? 'Deleting managed machine…' : 'Delete managed machine'}</button>
+          <button className="btn danger" type="button" onClick={requestDeleteConfirmation} disabled={!permissions.delete || deleteBusy}>{deleteBusy ? 'Deleting managed machine…' : 'Delete managed machine'}</button>
         </div>
       </details>
+
+      <ActionConfirmationDialog
+        id="machine-scan-confirmation"
+        open={scanConfirmOpen}
+        title={`Launch a scan on ${machine.name}?`}
+        description="Confirm the selected managed machine and directory before placing this bounded scan request in the execution queue."
+        confirmLabel="Launch scan"
+        busy={scanBusy}
+        onClose={() => setScanConfirmOpen(false)}
+        onConfirm={() => {
+          setScanConfirmOpen(false);
+          runScan();
+        }}
+      >
+        <dl className="machine-action-dialog-details">
+          <div><dt>Managed machine</dt><dd>{machine.name}</dd></div>
+          <div><dt>Scan scope</dt><dd><code>{scanTarget.trim()}</code></dd></div>
+          <div><dt>Connection</dt><dd>{humanize(machine.connection_mode)}</dd></div>
+        </dl>
+      </ActionConfirmationDialog>
+
+      <ActionConfirmationDialog
+        id="machine-delete-confirmation"
+        open={deleteConfirmOpen}
+        title={`Delete ${machine.name}?`}
+        description="This permanently removes the managed-machine record and its related scan history. This action cannot be undone."
+        confirmLabel="Delete managed machine"
+        confirmTone="btn danger"
+        busy={deleteBusy}
+        onClose={() => {
+          setDeleteConfirmOpen(false);
+          setDeleteStatus('Delete cancelled.');
+        }}
+        onConfirm={() => {
+          setDeleteConfirmOpen(false);
+          deleteMachine();
+        }}
+      >
+        <dl className="machine-action-dialog-details">
+          <div><dt>Managed machine</dt><dd>{machine.name}</dd></div>
+          <div><dt>Consequence</dt><dd>Machine inventory and related scan history are removed.</dd></div>
+        </dl>
+      </ActionConfirmationDialog>
     </div>
   );
 }

@@ -1,0 +1,133 @@
+- generic [ref=f3e1]:
+  - generic [ref=f3e2]:
+    - link "Skip to main content" [ref=f3e3] [cursor=pointer]:
+      - /url: "#main-content"
+    - generic [ref=f3e4]:
+      - banner "Mobile app navigation and status" [ref=f3e5]:
+        - link "Shore Sentinel dashboard" [ref=f3e6] [cursor=pointer]:
+          - /url: /shore-sentinel/dashboard
+          - generic "Shore Sentinel logo" [ref=f3e7]
+        - group [ref=f3e9]:
+          - generic "Application navigation" [ref=f3e10] [cursor=pointer]: Navigation
+        - complementary [ref=f3e11]:
+          - link "QR" [ref=f3e12] [cursor=pointer]:
+            - /url: /shore-sentinel/users
+      - main [ref=f3e14]:
+        - generic [ref=f3e15]:
+          - generic [ref=f3e16]:
+            - generic [ref=f3e17]:
+              - paragraph [ref=f3e18]: Managed machine
+              - heading "Review Machine" [level=1] [ref=f3e19]
+              - region "Hardware summary" [ref=f3e20]:
+                - heading "Hardware summary" [level=2] [ref=f3e22]
+                - generic [ref=f3e23]:
+                  - generic [ref=f3e24]:
+                    - term [ref=f3e25]: Status
+                    - definition [ref=f3e26]: online
+                  - generic [ref=f3e27]:
+                    - term [ref=f3e28]: Platform
+                    - definition [ref=f3e29]: linux
+                  - generic [ref=f3e30]:
+                    - term [ref=f3e31]: Agent version
+                    - definition [ref=f3e32]: review
+                  - generic [ref=f3e33]:
+                    - term [ref=f3e34]: Scanner version
+                    - definition [ref=f3e35]: review
+                  - generic [ref=f3e36]:
+                    - term [ref=f3e37]: Last contact
+                    - definition [ref=f3e38]: Not available
+                  - generic [ref=f3e39]:
+                    - term [ref=f3e40]: SSH port
+                    - definition [ref=f3e41]: "22"
+                  - generic [ref=f3e42]:
+                    - term [ref=f3e43]: Authentication
+                    - definition [ref=f3e44]: Ssh Key
+              - paragraph [ref=f3e45]: review-machine.local · linux
+            - generic [ref=f3e46]:
+              - generic [ref=f3e47]: Online
+              - generic [ref=f3e48]:
+                - generic [ref=f3e49]: Directory to scan
+                - generic [ref=f3e50]:
+                  - textbox "Directory to scan" [ref=f3e51]: .
+                  - button "Scan machine" [ref=f3e52] [cursor=pointer]
+                - paragraph [ref=f3e53]: Choose the directory this scan should review.
+          - generic "Machine operational summary" [ref=f3e55]:
+            - generic [ref=f3e56]:
+              - term [ref=f3e57]: Environment
+              - definition [ref=f3e58]: Review
+            - generic [ref=f3e59]:
+              - term [ref=f3e60]: Owner
+              - definition [ref=f3e61]: QA
+            - generic [ref=f3e62]:
+              - term [ref=f3e63]: Connection
+              - definition [ref=f3e64]: Ssh Push
+            - generic [ref=f3e65]:
+              - term [ref=f3e66]: Findings
+              - definition [ref=f3e67]: "0"
+            - generic [ref=f3e68]:
+              - term [ref=f3e69]: Open remediation
+              - definition [ref=f3e70]: "0"
+            - generic [ref=f3e71]:
+              - term [ref=f3e72]: Last scan
+              - definition [ref=f3e73]: Not available
+          - region [ref=f3e74]:
+            - generic [ref=f3e76]:
+              - paragraph [ref=f3e77]: Current activity
+              - heading "Scan readiness" [level=2] [ref=f3e78]
+            - generic [ref=f3e79]:
+              - progressbar "Scan progress"
+              - strong [ref=f3e80]: 0%
+            - generic [ref=f3e81]:
+              - generic [ref=f3e82]: Ready for a new scan
+              - generic [ref=f3e83]: Started Not available
+          - region [ref=f3e84]:
+            - generic [ref=f3e85]:
+              - generic [ref=f3e86]:
+                - paragraph [ref=f3e87]: Prioritized work
+                - heading "Remediation" [level=2] [ref=f3e88]
+              - generic [ref=f3e89]: 0 open
+            - generic [ref=f3e90]:
+              - paragraph [ref=f3e91]: No remediation is currently open for this machine.
+              - generic [ref=f3e92]: Run a new scan to refresh its security posture.
+          - region [ref=f3e93]:
+            - generic [ref=f3e94]:
+              - generic [ref=f3e95]:
+                - paragraph [ref=f3e96]: Evidence history
+                - heading "Recent reports" [level=2] [ref=f3e97]
+              - generic [ref=f3e98]: "0"
+            - generic [ref=f3e99]:
+              - paragraph [ref=f3e100]: No reports have been generated for this machine yet.
+              - button "Run first scan" [ref=f3e101] [cursor=pointer]
+          - group [ref=f3e102]:
+            - generic "Machine settings Edit identity, ownership, connection, and monitoring. Expand settings" [ref=f3e103] [cursor=pointer]:
+              - generic [ref=f3e104]:
+                - generic [ref=f3e105]: Machine settings
+                - generic [ref=f3e106]: Edit identity, ownership, connection, and monitoring.
+              - generic [ref=f3e107]: Expand settings
+            - option "Windows"
+            - option "Linux" [selected]
+            - option "macOS"
+            - option "SSH push" [selected]
+            - option "Pull check-in"
+            - option "Both"
+          - group [ref=f3e108]:
+            - generic "Danger zone Permanent machine removal and scan-history deletion. Hide controls" [active] [ref=f3e141] [cursor=pointer]:
+              - generic [ref=f3e110]:
+                - generic [ref=f3e111]: Danger zone
+                - generic [ref=f3e112]: Permanent machine removal and scan-history deletion.
+              - generic [ref=f3e113]: Hide controls
+            - generic [ref=f3e142]:
+              - paragraph [ref=f3e143]: Delete this managed machine and its related scan history. This cannot be undone.
+              - paragraph [ref=f3e144]: Admin permissions confirmed.
+              - button "Delete managed machine" [ref=f3e145] [cursor=pointer]
+      - contentinfo [ref=f3e114]:
+        - generic [ref=f3e115]: Knowledgebase
+        - link "Reference guide" [ref=f3e116] [cursor=pointer]:
+          - /url: /shore-sentinel/knowledgebase
+        - link "Audit History" [ref=f3e117] [cursor=pointer]:
+          - /url: /shore-sentinel/audits
+        - link "System Update" [ref=f3e118] [cursor=pointer]:
+          - /url: /shore-sentinel/system/update
+        - link "Dashboard" [ref=f3e119] [cursor=pointer]:
+          - /url: /shore-sentinel/dashboard
+  - alert [ref=f3e120]
