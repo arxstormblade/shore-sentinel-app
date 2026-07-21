@@ -26,6 +26,7 @@
     "test": "npm run worker:test && npm run api:test && npm run web:test",
     "check": "python3 scripts/validate_phase0.py && npm run scanner:validate && npm run compose:smoke && npm run worker:test && npm --workspace @shore-sentinel/api run check && npm run web:test",
     "compose:smoke": "python3 scripts/compose_smoke.py",
+    "compose:runtime-smoke": "tests/single_container_runtime_smoke.sh",
     "token:efficiency": "python3 scripts/token_efficiency.py",
     "graphify:refresh": "bash scripts/refresh_graphify.sh"
   },
