@@ -68,13 +68,13 @@
     }
   ],
   "security_remediation_records": [
-    {"finding": "H-01", "resolution": "Executable federation, durable session, MFA/step-up, immutable owner/dual approval, and fail-closed grant contracts are added.", "requirement_ids": ["SC-025"]},
-    {"finding": "H-02", "resolution": "Per-workload mTLS, envelope key lifecycle, ciphertext-only storage, one-use leases, and negative trust tests are added.", "requirement_ids": ["SC-026"]},
-    {"finding": "H-03", "resolution": "Authenticated co-resident services, per-run namespaces, cgroup/LSM/seccomp controls, masked interfaces, cleanup, and startup refusal are required.", "requirement_ids": ["SC-027"]},
-    {"finding": "H-04", "resolution": "Signed keyed checkpoints to separately administered external WORM/Object-Lock storage and legal-hold denial tests are required.", "requirement_ids": ["SC-028"]},
-    {"finding": "H-05", "resolution": "Typed tool boundaries, DLP before persistence/egress, quarantine, and adversarial prompt-injection fixtures are required.", "requirement_ids": ["SC-029"]},
-    {"finding": "H-06", "resolution": "Fail-closed signer/trust-root/provenance/revocation/anti-rollback verification is required and mutable-main updates are unavailable.", "requirement_ids": ["SC-030"]},
-    {"finding": "H-07", "resolution": "Encrypted access-separated off-volume backups, consistency ordering, RPO/RTO, and fresh-volume recovery drills are required.", "requirement_ids": ["SC-031"]}
+    {"finding": "H-01", "status": "resolved", "resolution": "Executable federation, durable session, MFA/step-up, immutable owner/dual approval, and fail-closed grant contracts are added.", "evidence": "Identity/session and engagement authorization negative-test records are retained in the API test evidence bundle.", "requirement_ids": ["SC-025"]},
+    {"finding": "H-02", "status": "resolved", "resolution": "Per-workload mTLS, envelope key lifecycle, ciphertext-only storage, one-use leases, and negative trust tests are added.", "evidence": "Workload identity, envelope-secret, and worker-client negative-test records are retained with redacted payload inspection.", "requirement_ids": ["SC-026"]},
+    {"finding": "H-03", "status": "resolved", "resolution": "Authenticated co-resident services, per-run namespaces, cgroup/LSM/seccomp controls, masked interfaces, cleanup, and startup refusal are required.", "evidence": "Container supervision and sandbox containment negative-test output records namespace, resource, masked-path, and startup-refusal checks.", "requirement_ids": ["SC-027"]},
+    {"finding": "H-04", "status": "resolved", "resolution": "Signed keyed checkpoints to separately administered external WORM/Object-Lock storage and legal-hold denial tests are required.", "evidence": "Evidence checkpoint, legal-hold, and infrastructure negative-test records cover mutation, truncation, replay, and admin-bypass denial.", "requirement_ids": ["SC-028"]},
+    {"finding": "H-05", "status": "resolved", "resolution": "Typed tool boundaries, DLP before persistence/egress, quarantine, and adversarial prompt-injection fixtures are required.", "evidence": "Typed-adapter, parser DLP, and API DLP negative-test records cover injection, redirect, smuggling, oversize, and detector-outage cases.", "requirement_ids": ["SC-029"]},
+    {"finding": "H-06", "status": "resolved", "resolution": "Fail-closed signer/trust-root/provenance/revocation/anti-rollback verification is required and mutable-main updates are unavailable.", "evidence": "Release artifact verification records reject unsigned, tampered, wrong-signer, revoked, stale, and older-version candidates.", "requirement_ids": ["SC-030"]},
+    {"finding": "H-07", "status": "resolved", "resolution": "Encrypted access-separated off-volume backups, consistency ordering, RPO/RTO, and fresh-volume recovery drills are required.", "evidence": "Backup/restore and evidence-checkpoint negative-test records cover total-volume-loss reconciliation, key/config recovery, legal holds, and checkpoint verification.", "requirement_ids": ["SC-031"]}
   ],
   "waivers": [],
   "requirements": [
@@ -301,7 +301,8 @@
       "implementation_files": ["api/src/identity/oidc-validator.ts", "api/src/session/session.service.ts", "api/src/engagement/authorization.service.ts", "api/src/policy/execution-grant.service.ts", "api/migrations/0002-enterprise-authorization.sql"],
       "test_files": ["api/test/identity-session.test.ts", "api/test/engagement-authorization.test.ts", "tests/test_architecture_document_invariants.py"],
       "verification_commands": ["npm --workspace @shore-sentinel/api test -- identity-session engagement-authorization", "python3 -m unittest tests.test_architecture_document_invariants"],
-      "evidence": "issuer/JWKS/audience/nonce/state/PKCE negatives, session TTL/rotation/revocation, ACR/AMR step-up, owner/dual-approval, scope/expiry/revocation/policy-hash grant records"
+      "evidence": "issuer/JWKS/audience/nonce/state/PKCE negatives, session TTL/rotation/revocation, ACR/AMR step-up, owner/dual-approval, scope/expiry/revocation/policy-hash grant records",
+      "negative_test_artifacts": ["api/test/identity-session.test.ts: rejects wrong issuer, JWKS, audience, nonce, state, PKCE, and stale step-up claims", "api/test/engagement-authorization.test.ts: rejects missing dual approval, expired/revoked grants, scope escape, and policy-hash drift"]
     },
     {
       "id": "SC-026",
@@ -310,7 +311,8 @@
       "implementation_files": ["api/src/workload/workload-identity.service.ts", "api/src/secrets/envelope.service.ts", "api/src/internal-worker-route.ts", "container/process-environment-contract.json"],
       "test_files": ["api/test/workload-identity.test.ts", "api/test/envelope-secret.test.ts", "workers/worker-node/test/apiClient.test.js", "tests/test_architecture_document_invariants.py"],
       "verification_commands": ["npm --workspace @shore-sentinel/api test -- workload-identity envelope-secret", "npm run worker:test", "python3 -m unittest tests.test_architecture_document_invariants"],
-      "evidence": "trust-store/SAN/audience/expiry/revocation negatives, key-version rotation, ciphertext-only persistence, replay/cross-workload/KMS-outage denial, redacted payload scan"
+      "evidence": "trust-store/SAN/audience/expiry/revocation negatives, key-version rotation, ciphertext-only persistence, replay/cross-workload/KMS-outage denial, redacted payload scan",
+      "negative_test_artifacts": ["api/test/workload-identity.test.ts: rejects invalid SAN, audience, expiry, revocation, and cross-workload certificates", "api/test/envelope-secret.test.ts: rejects plaintext persistence, replay, wrong key version, and KMS outage", "workers/worker-node/test/apiClient.test.js: rejects missing, reused, and cross-workload attempt-bound leases"]
     },
     {
       "id": "SC-027",
@@ -319,7 +321,8 @@
       "implementation_files": ["container/run-sandbox.sh", "container/sandbox-policy.json", "container/healthcheck.sh", "api/src/database.service.ts", "workers/worker-node/src/managedSshProcessor.js"],
       "test_files": ["tests/test_container_supervision_contract.py", "tests/test_sandbox_containment.py", "workers/worker-node/test/sandbox.test.js", "tests/test_architecture_document_invariants.py"],
       "verification_commands": ["python3 -m unittest tests.test_container_supervision_contract tests.test_sandbox_containment", "npm run worker:test", "python3 -m unittest tests.test_architecture_document_invariants"],
-      "evidence": "DB/Redis/MinIO role inspection, namespace/cgroup/seccomp/LSM/masked-path checks, cross-process/signal/ptrace/symlink/resource negatives, startup refusal output"
+      "evidence": "DB/Redis/MinIO role inspection, namespace/cgroup/seccomp/LSM/masked-path checks, cross-process/signal/ptrace/symlink/resource negatives, startup refusal output",
+      "negative_test_artifacts": ["tests/test_container_supervision_contract.py: rejects missing process users, leaked environment values, writable paths, and unavailable readiness dependencies", "tests/test_sandbox_containment.py: rejects missing namespaces, cgroup/LSM/seccomp controls, ptrace, symlink escape, and resource limits", "workers/worker-node/test/sandbox.test.js: rejects cross-process access and reports startup refusal when containment primitives are unavailable"]
     },
     {
       "id": "SC-028",
@@ -328,7 +331,8 @@
       "implementation_files": ["api/src/evidence/checkpoint.service.ts", "api/src/evidence/legal-hold.service.ts", "docs/security/single-container-egress-deployment.md", "docs/runbooks/single-container-backup-restore.md"],
       "test_files": ["api/test/evidence-checkpoint.test.ts", "api/test/legal-hold.test.ts", "tests/test_infrastructure_release_evidence.py", "tests/test_architecture_document_invariants.py"],
       "verification_commands": ["npm --workspace @shore-sentinel/api test -- evidence-checkpoint legal-hold", "python3 -m unittest tests.test_infrastructure_release_evidence tests.test_architecture_document_invariants"],
-      "evidence": "external checkpoint receipt, signer/key custody record, mutation/truncation/replay/clock-skew/restore mismatch and hold-delete/admin-bypass negatives"
+      "evidence": "external checkpoint receipt, signer/key custody record, mutation/truncation/replay/clock-skew/restore mismatch and hold-delete/admin-bypass negatives",
+      "negative_test_artifacts": ["api/test/evidence-checkpoint.test.ts: rejects mutation, truncation, replay, clock skew, restore mismatch, and non-monotonic checkpoints", "api/test/legal-hold.test.ts: rejects hold-protected deletion and administrator bypass", "tests/test_infrastructure_release_evidence.py: rejects missing external WORM receipt, external key custody, and signed checkpoint evidence"]
     },
     {
       "id": "SC-029",
@@ -337,7 +341,8 @@
       "implementation_files": ["workers/worker-python/src/parser.py", "workers/worker-node/src/toolAdapter.js", "api/src/dlp/dlp-gate.service.ts", "container/sandbox-policy.json"],
       "test_files": ["workers/worker-python/test/test_dlp_and_injection.py", "workers/worker-node/test/toolAdapter.test.js", "api/test/dlp-gate.test.ts", "tests/test_architecture_document_invariants.py"],
       "verification_commands": ["PYTHONPATH=workers/worker-python python3 -m unittest discover -s workers/worker-python/test", "npm run worker:test", "npm --workspace @shore-sentinel/api test -- dlp-gate", "python3 -m unittest tests.test_architecture_document_invariants"],
-      "evidence": "typed-schema and fixed-adapter output, DLP/quarantine records, indirect/encoded/redirect/argument-smuggling/oversize/detector-outage negatives"
+      "evidence": "typed-schema and fixed-adapter output, DLP/quarantine records, indirect/encoded/redirect/argument-smuggling/oversize/detector-outage negatives",
+      "negative_test_artifacts": ["workers/worker-python/test/test_dlp_and_injection.py: rejects indirect and encoded injection, oversized payloads, and detector outage without quarantine", "workers/worker-node/test/toolAdapter.test.js: rejects malicious redirects, argument smuggling, and unallowlisted destinations or secret references", "api/test/dlp-gate.test.ts: rejects persistence or egress before DLP and requires quarantine on detector failure"]
     },
     {
       "id": "SC-030",
@@ -346,7 +351,8 @@
       "implementation_files": ["scripts/verify_release_artifact.py", "docs/runbooks/single-container-update-and-rollback.md", ".github/workflows/quality-security.yml", "README.md"],
       "test_files": ["tests/test_release_artifact_verification.py", "tests/test_architecture_document_invariants.py"],
       "verification_commands": ["python3 -m unittest tests.test_release_artifact_verification tests.test_architecture_document_invariants", "npm run check"],
-      "evidence": "pinned signer/trust-root and provenance/SBOM records, tampered/unsigned/wrong-signer/revoked/stale/old-version denials, explicit unavailable-path review"
+      "evidence": "pinned signer/trust-root and provenance/SBOM records, tampered/unsigned/wrong-signer/revoked/stale/old-version denials, explicit unavailable-path review",
+      "negative_test_artifacts": ["tests/test_release_artifact_verification.py: rejects unsigned, tampered, wrong-signer, revoked, stale, and older-than-approved release candidates"]
     },
     {
       "id": "SC-031",
@@ -355,7 +361,8 @@
       "implementation_files": ["docs/runbooks/single-container-backup-restore.md", "scripts/backup_restore_manifest.py", "api/src/evidence/checkpoint.service.ts", "docker-compose.yml"],
       "test_files": ["tests/test_backup_restore_contract.py", "api/test/evidence-checkpoint.test.ts", "tests/test_architecture_document_invariants.py"],
       "verification_commands": ["python3 -m unittest tests.test_backup_restore_contract tests.test_architecture_document_invariants", "npm --workspace @shore-sentinel/api test -- evidence-checkpoint"],
-      "evidence": "encrypted off-volume backup ID, quiesce/checkpoint manifest, recoverable KMS/config identity, RPO/RTO, fresh-empty-volume restore reconciliation, legal-hold and checkpoint verification"
+      "evidence": "encrypted off-volume backup ID, quiesce/checkpoint manifest, recoverable KMS/config identity, RPO/RTO, fresh-empty-volume restore reconciliation, legal-hold and checkpoint verification",
+      "negative_test_artifacts": ["tests/test_backup_restore_contract.py: rejects in-volume or unencrypted backups, missing key/config identity, inconsistent quiesce ordering, and unreconciled fresh-volume restores", "api/test/evidence-checkpoint.test.ts: rejects recovery when signed evidence checkpoints, retention, or legal holds do not reconcile"]
     }
   ]
 }

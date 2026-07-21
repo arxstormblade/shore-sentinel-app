@@ -263,8 +263,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_package_dependencies_bcryptjs",
-      "community": 40,
-      "community_name": "dependencies",
+      "community": 178,
+      "community_name": "bcryptjs",
       "norm_label": "bcryptjs"
     },
     {
@@ -274,8 +274,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "bcryptjs",
-      "community": 40,
-      "community_name": "dependencies",
+      "community": 178,
+      "community_name": "bcryptjs",
       "norm_label": "bcryptjs"
     },
     {
@@ -285,8 +285,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_package_dependencies_bullmq",
-      "community": 149,
-      "community_name": "bullmq",
+      "community": 40,
+      "community_name": "dependencies",
       "norm_label": "bullmq"
     },
     {
@@ -296,8 +296,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_package_json_bullmq",
-      "community": 149,
-      "community_name": "bullmq",
+      "community": 40,
+      "community_name": "dependencies",
       "norm_label": "bullmq"
     },
     {
@@ -747,8 +747,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "body",
-      "community": 8,
-      "community_name": "app.controller.ts",
+      "community": 174,
+      "community_name": "Body",
       "norm_label": "body"
     },
     {
@@ -758,8 +758,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "res",
-      "community": 15,
-      "community_name": "AppController",
+      "community": 174,
+      "community_name": "Body",
       "norm_label": "res"
     },
     {
@@ -802,8 +802,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "delete",
-      "community": 10,
-      "community_name": ".query",
+      "community": 29,
+      "community_name": "Post",
       "norm_label": "delete"
     },
     {
@@ -846,8 +846,8 @@
       "source_location": "L151",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_register",
-      "community": 15,
-      "community_name": "AppController",
+      "community": 174,
+      "community_name": "Body",
       "norm_label": ".register()"
     },
     {
@@ -857,8 +857,8 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_login",
-      "community": 15,
-      "community_name": "AppController",
+      "community": 174,
+      "community_name": "Body",
       "norm_label": ".login()"
     },
     {
@@ -1077,8 +1077,8 @@
       "source_location": "L507",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_deletetarget",
-      "community": 10,
-      "community_name": ".query",
+      "community": 29,
+      "community_name": "Post",
       "norm_label": ".deletetarget()"
     },
     {
@@ -1242,8 +1242,8 @@
       "source_location": "L921",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_stream",
-      "community": 15,
-      "community_name": "AppController",
+      "community": 174,
+      "community_name": "Body",
       "norm_label": ".stream()"
     },
     {
@@ -1253,8 +1253,8 @@
       "source_location": "L923",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_rememberme",
-      "community": 15,
-      "community_name": "AppController",
+      "community": 174,
+      "community_name": "Body",
       "norm_label": ".rememberme()"
     },
     {
@@ -1275,8 +1275,8 @@
       "source_location": "L986",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_scanneroutput",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": ".scanneroutput()"
     },
     {
@@ -1297,8 +1297,8 @@
       "source_location": "L1007",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_setsessioncookie",
-      "community": 15,
-      "community_name": "AppController",
+      "community": 174,
+      "community_name": "Body",
       "norm_label": ".setsessioncookie()"
     },
     {
@@ -1473,8 +1473,8 @@
       "source_location": "L1202",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_createuser",
-      "community": 8,
-      "community_name": "app.controller.ts",
+      "community": 174,
+      "community_name": "Body",
       "norm_label": ".createuser()"
     },
     {
@@ -1506,8 +1506,8 @@
       "source_location": "L1297",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_deleteuser",
-      "community": 10,
-      "community_name": ".query",
+      "community": 29,
+      "community_name": "Post",
       "norm_label": ".deleteuser()"
     },
     {
@@ -1814,8 +1814,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "api_src_auth_service_authservice_constructor",
-      "community": 56,
-      "community_name": "AuthService",
+      "community": 84,
+      "community_name": "DatabaseService",
       "norm_label": ".constructor()"
     },
     {
@@ -2914,8 +2914,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 81,
+      "community_name": "enum",
       "norm_label": "controller-shapes.test.ts"
     },
     {
@@ -2925,8 +2925,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_workercapability",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 81,
+      "community_name": "enum",
       "norm_label": "workercapability()"
     },
     {
@@ -2936,8 +2936,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_workerrequest",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 81,
+      "community_name": "enum",
       "norm_label": "workerrequest()"
     },
     {
@@ -2947,8 +2947,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_operatorrequest",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 81,
+      "community_name": "enum",
       "norm_label": "operatorrequest"
     },
     {
@@ -2958,8 +2958,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_adminrequest",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 81,
+      "community_name": "enum",
       "norm_label": "adminrequest"
     },
     {
@@ -2969,8 +2969,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_analystrequest",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 81,
+      "community_name": "enum",
       "norm_label": "analystrequest"
     },
     {
@@ -2980,8 +2980,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_viewerrequest",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 81,
+      "community_name": "enum",
       "norm_label": "viewerrequest"
     },
     {
@@ -2991,8 +2991,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_controller",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 81,
+      "community_name": "enum",
       "norm_label": "controller()"
     },
     {
@@ -5101,8 +5101,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "packages_shared_src_index",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 81,
+      "community_name": "enum",
       "norm_label": "index.js"
     },
     {
@@ -5112,8 +5112,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "packages_shared_src_index_queues",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 81,
+      "community_name": "enum",
       "norm_label": "queues"
     },
     {
@@ -5123,8 +5123,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "packages_shared_src_index_job_status",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 81,
+      "community_name": "enum",
       "norm_label": "job_status"
     },
     {
@@ -5134,8 +5134,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "packages_shared_src_index_run_event_type",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 81,
+      "community_name": "enum",
       "norm_label": "run_event_type"
     },
     {
@@ -5145,8 +5145,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "packages_shared_src_index_artifact_kind",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 81,
+      "community_name": "enum",
       "norm_label": "artifact_kind"
     },
     {
@@ -5156,8 +5156,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "packages_shared_src_index_buildrunevent",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 81,
+      "community_name": "enum",
       "norm_label": "buildrunevent()"
     },
     {
@@ -5167,8 +5167,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "packages_shared_src_index_validateartifactupload",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 81,
+      "community_name": "enum",
       "norm_label": "validateartifactupload()"
     },
     {
@@ -5178,8 +5178,8 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "packages_shared_src_index_scannerbundlecontractversion",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "scannerbundlecontractversion()"
     },
     {
@@ -6597,7 +6597,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema",
-      "community": 57,
+      "community": 175,
       "community_name": "scanner-output.schema.json",
       "norm_label": "scanner-output.schema.json"
     },
@@ -6608,7 +6608,7 @@
       "source_location": "L2",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_schema",
-      "community": 57,
+      "community": 175,
       "community_name": "scanner-output.schema.json",
       "norm_label": "$schema"
     },
@@ -6619,7 +6619,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_id",
-      "community": 57,
+      "community": 175,
       "community_name": "scanner-output.schema.json",
       "norm_label": "$id"
     },
@@ -6630,7 +6630,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_title",
-      "community": 57,
+      "community": 175,
       "community_name": "scanner-output.schema.json",
       "norm_label": "title"
     },
@@ -6641,7 +6641,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_type",
-      "community": 57,
+      "community": 175,
       "community_name": "scanner-output.schema.json",
       "norm_label": "type"
     },
@@ -6751,7 +6751,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_properties_scanner",
-      "community": 53,
+      "community": 176,
       "community_name": "scanner",
       "norm_label": "scanner"
     },
@@ -6762,7 +6762,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_scanner_type",
-      "community": 53,
+      "community": 176,
       "community_name": "scanner",
       "norm_label": "type"
     },
@@ -6773,7 +6773,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_scanner_required",
-      "community": 53,
+      "community": 176,
       "community_name": "scanner",
       "norm_label": "required"
     },
@@ -6784,7 +6784,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_json_ref_name",
-      "community": 53,
+      "community": 176,
       "community_name": "scanner",
       "norm_label": "name"
     },
@@ -6795,7 +6795,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_json_ref_version",
-      "community": 53,
+      "community": 176,
       "community_name": "scanner",
       "norm_label": "version"
     },
@@ -6883,7 +6883,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_scanner_additionalproperties",
-      "community": 53,
+      "community": 176,
       "community_name": "scanner",
       "norm_label": "additionalproperties"
     },
@@ -6894,8 +6894,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_properties_target",
-      "community": 68,
-      "community_name": "properties",
+      "community": 177,
+      "community_name": "target",
       "norm_label": "target"
     },
     {
@@ -6905,8 +6905,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_target_type",
-      "community": 68,
-      "community_name": "properties",
+      "community": 177,
+      "community_name": "target",
       "norm_label": "type"
     },
     {
@@ -6916,8 +6916,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_target_required",
-      "community": 68,
-      "community_name": "properties",
+      "community": 177,
+      "community_name": "target",
       "norm_label": "required"
     },
     {
@@ -6927,8 +6927,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "ref_assetid",
-      "community": 68,
-      "community_name": "properties",
+      "community": 177,
+      "community_name": "target",
       "norm_label": "assetid"
     },
     {
@@ -7026,8 +7026,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_target_additionalproperties",
-      "community": 68,
-      "community_name": "properties",
+      "community": 177,
+      "community_name": "target",
       "norm_label": "additionalproperties"
     },
     {
@@ -7180,8 +7180,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_severity_enum",
-      "community": 81,
-      "community_name": "enum",
+      "community": 39,
+      "community_name": "properties",
       "norm_label": "enum"
     },
     {
@@ -7191,8 +7191,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ref_informational",
-      "community": 81,
-      "community_name": "enum",
+      "community": 39,
+      "community_name": "properties",
       "norm_label": "informational"
     },
     {
@@ -7202,8 +7202,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ref_low",
-      "community": 81,
-      "community_name": "enum",
+      "community": 39,
+      "community_name": "properties",
       "norm_label": "low"
     },
     {
@@ -7213,8 +7213,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ref_moderate",
-      "community": 81,
-      "community_name": "enum",
+      "community": 39,
+      "community_name": "properties",
       "norm_label": "moderate"
     },
     {
@@ -7224,8 +7224,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ref_medium",
-      "community": 81,
-      "community_name": "enum",
+      "community": 39,
+      "community_name": "properties",
       "norm_label": "medium"
     },
     {
@@ -7235,8 +7235,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ref_high",
-      "community": 81,
-      "community_name": "enum",
+      "community": 39,
+      "community_name": "properties",
       "norm_label": "high"
     },
     {
@@ -7246,8 +7246,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ref_critical",
-      "community": 81,
-      "community_name": "enum",
+      "community": 39,
+      "community_name": "properties",
       "norm_label": "critical"
     },
     {
@@ -7257,8 +7257,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ref_info",
-      "community": 81,
-      "community_name": "enum",
+      "community": 39,
+      "community_name": "properties",
       "norm_label": "info"
     },
     {
@@ -7268,8 +7268,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ref_crit",
-      "community": 81,
-      "community_name": "enum",
+      "community": 39,
+      "community_name": "properties",
       "norm_label": "crit"
     },
     {
@@ -7345,8 +7345,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_properties_remediation",
-      "community": 91,
-      "community_name": "null",
+      "community": 39,
+      "community_name": "properties",
       "norm_label": "remediation"
     },
     {
@@ -7356,8 +7356,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_remediation_type",
-      "community": 91,
-      "community_name": "null",
+      "community": 39,
+      "community_name": "properties",
       "norm_label": "type"
     },
     {
@@ -7367,8 +7367,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "ref_string",
-      "community": 91,
-      "community_name": "null",
+      "community": 39,
+      "community_name": "properties",
       "norm_label": "string"
     },
     {
@@ -7378,8 +7378,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "ref_null",
-      "community": 91,
-      "community_name": "null",
+      "community": 39,
+      "community_name": "properties",
       "norm_label": "null"
     },
     {
@@ -7411,8 +7411,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_properties_cve",
-      "community": 91,
-      "community_name": "null",
+      "community": 39,
+      "community_name": "properties",
       "norm_label": "cve"
     },
     {
@@ -7422,8 +7422,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_cve_type",
-      "community": 91,
-      "community_name": "null",
+      "community": 39,
+      "community_name": "properties",
       "norm_label": "type"
     },
     {
@@ -7433,8 +7433,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_properties_cveurl",
-      "community": 91,
-      "community_name": "null",
+      "community": 39,
+      "community_name": "properties",
       "norm_label": "cveurl"
     },
     {
@@ -7444,8 +7444,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_cveurl_type",
-      "community": 91,
-      "community_name": "null",
+      "community": 39,
+      "community_name": "properties",
       "norm_label": "type"
     },
     {
@@ -7521,7 +7521,7 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_additionalproperties",
-      "community": 57,
+      "community": 175,
       "community_name": "scanner-output.schema.json",
       "norm_label": "additionalproperties"
     },
@@ -8610,21 +8610,32 @@
       "norm_label": ".test_accepted_deviations_are_explicit_and_not_waivers()"
     },
     {
-      "label": ".test_each_security_review_blocker_has_architecture_plan_and_rtm_contract()",
+      "label": ".test_readme_options_preserve_explicit_installation_contracts()",
       "file_type": "code",
       "source_file": "tests/test_architecture_document_invariants.py",
       "source_location": "L65",
       "_origin": "ast",
-      "id": "tests_test_architecture_document_invariants_architecturedocumentinvarianttests_test_each_security_review_blocker_has_architecture_plan_and_rtm_contract",
+      "id": "tests_test_architecture_document_invariants_architecturedocumentinvarianttests_test_readme_options_preserve_explicit_installation_contracts",
       "community": 70,
       "community_name": "ArchitectureDocumentInvariantTests",
-      "norm_label": ".test_each_security_review_blocker_has_architecture_plan_and_rtm_contract()"
+      "norm_label": ".test_readme_options_preserve_explicit_installation_contracts()"
+    },
+    {
+      "label": ".test_security_remediations_map_one_to_one_to_dedicated_requirements()",
+      "file_type": "code",
+      "source_file": "tests/test_architecture_document_invariants.py",
+      "source_location": "L87",
+      "_origin": "ast",
+      "id": "tests_test_architecture_document_invariants_architecturedocumentinvarianttests_test_security_remediations_map_one_to_one_to_dedicated_requirements",
+      "community": 70,
+      "community_name": "ArchitectureDocumentInvariantTests",
+      "norm_label": ".test_security_remediations_map_one_to_one_to_dedicated_requirements()"
     },
     {
       "label": ".test_single_container_and_volume_contract_is_consistent()",
       "file_type": "code",
       "source_file": "tests/test_architecture_document_invariants.py",
-      "source_location": "L84",
+      "source_location": "L153",
       "_origin": "ast",
       "id": "tests_test_architecture_document_invariants_architecturedocumentinvarianttests_test_single_container_and_volume_contract_is_consistent",
       "community": 70,
@@ -8635,7 +8646,7 @@
       "label": ".test_readme_update_instructions_fail_closed()",
       "file_type": "code",
       "source_file": "tests/test_architecture_document_invariants.py",
-      "source_location": "L96",
+      "source_location": "L165",
       "_origin": "ast",
       "id": "tests_test_architecture_document_invariants_architecturedocumentinvarianttests_test_readme_update_instructions_fail_closed",
       "community": 70,
@@ -8646,7 +8657,7 @@
       "label": ".test_architecture_has_no_untracked_high_finding_language()",
       "file_type": "code",
       "source_file": "tests/test_architecture_document_invariants.py",
-      "source_location": "L106",
+      "source_location": "L175",
       "_origin": "ast",
       "id": "tests_test_architecture_document_invariants_architecturedocumentinvarianttests_test_architecture_has_no_untracked_high_finding_language",
       "community": 70,
@@ -11696,8 +11707,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_app_knowledgebase_page",
-      "community": 19,
-      "community_name": "routePath",
+      "community": 36,
+      "community_name": "saved-views.jsx",
       "norm_label": "page.jsx"
     },
     {
@@ -11707,8 +11718,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "web_app_knowledgebase_page_kb",
-      "community": 19,
-      "community_name": "routePath",
+      "community": 36,
+      "community_name": "saved-views.jsx",
       "norm_label": "kb()"
     },
     {
@@ -11916,8 +11927,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "web_app_saved_views_slug_page_savedviewslugpage",
-      "community": 122,
-      "community_name": "page.jsx",
+      "community": 36,
+      "community_name": "saved-views.jsx",
       "norm_label": "savedviewslugpage()"
     },
     {
@@ -11927,8 +11938,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_app_saved_views_page",
-      "community": 19,
-      "community_name": "routePath",
+      "community": 36,
+      "community_name": "saved-views.jsx",
       "norm_label": "page.jsx"
     },
     {
@@ -11938,8 +11949,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "web_app_saved_views_page_savedviewspage",
-      "community": 19,
-      "community_name": "routePath",
+      "community": 36,
+      "community_name": "saved-views.jsx",
       "norm_label": "savedviewspage()"
     },
     {
@@ -12818,8 +12829,8 @@
       "source_location": "L285",
       "_origin": "ast",
       "id": "web_components_saved_views_savedviewcontent",
-      "community": 19,
-      "community_name": "routePath",
+      "community": 36,
+      "community_name": "saved-views.jsx",
       "norm_label": "savedviewcontent()"
     },
     {
@@ -12873,8 +12884,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_components_ui_shorelogo",
-      "community": 19,
-      "community_name": "routePath",
+      "community": 2,
+      "community_name": "appPath",
       "norm_label": "shorelogo()"
     },
     {
@@ -13060,8 +13071,8 @@
       "source_location": "L201",
       "_origin": "ast",
       "id": "web_components_ui_empty",
-      "community": 19,
-      "community_name": "routePath",
+      "community": 36,
+      "community_name": "saved-views.jsx",
       "norm_label": "empty()"
     },
     {
@@ -13709,8 +13720,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_lib_paths_routepath",
-      "community": 19,
-      "community_name": "routePath",
+      "community": 36,
+      "community_name": "saved-views.jsx",
       "norm_label": "routepath()"
     },
     {
@@ -15095,8 +15106,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_failurehandling",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 91,
+      "community_name": "null",
       "norm_label": "failurehandling.js"
     },
     {
@@ -15106,8 +15117,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "workers_worker_node_src_failurehandling_delay",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 91,
+      "community_name": "null",
       "norm_label": "delay()"
     },
     {
@@ -15117,8 +15128,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "workers_worker_node_src_failurehandling_handlemanagedsshfailure",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 91,
+      "community_name": "null",
       "norm_label": "handlemanagedsshfailure()"
     },
     {
@@ -15249,8 +15260,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_lifecycle",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 81,
+      "community_name": "enum",
       "norm_label": "lifecycle.js"
     },
     {
@@ -15260,8 +15271,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "workers_worker_node_src_lifecycle_retrydecision",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 91,
+      "community_name": "null",
       "norm_label": "retrydecision()"
     },
     {
@@ -15271,8 +15282,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "workers_worker_node_src_lifecycle_lifecycleevent",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 81,
+      "community_name": "enum",
       "norm_label": "lifecycleevent()"
     },
     {
@@ -15282,8 +15293,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "workers_worker_node_src_lifecycle_artifactuploadpayload",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 81,
+      "community_name": "enum",
       "norm_label": "artifactuploadpayload()"
     },
     {
@@ -15293,8 +15304,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_managedsshprocessor",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 91,
+      "community_name": "null",
       "norm_label": "managedsshprocessor.js"
     },
     {
@@ -15304,8 +15315,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "workers_worker_node_src_managedsshprocessor_withtimeout",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 91,
+      "community_name": "null",
       "norm_label": "withtimeout()"
     },
     {
@@ -15315,8 +15326,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "workers_worker_node_src_managedsshprocessor_assertactive",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 91,
+      "community_name": "null",
       "norm_label": "assertactive()"
     },
     {
@@ -15326,8 +15337,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "workers_worker_node_src_managedsshprocessor_emit",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 91,
+      "community_name": "null",
       "norm_label": "emit()"
     },
     {
@@ -15337,8 +15348,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "workers_worker_node_src_managedsshprocessor_emitmanagedsshfailure",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 91,
+      "community_name": "null",
       "norm_label": "emitmanagedsshfailure()"
     },
     {
@@ -15348,8 +15359,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "workers_worker_node_src_managedsshprocessor_monitorcancellation",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 91,
+      "community_name": "null",
       "norm_label": "monitorcancellation()"
     },
     {
@@ -15359,8 +15370,8 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "workers_worker_node_src_managedsshprocessor_scanneroutputfromssh",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 91,
+      "community_name": "null",
       "norm_label": "scanneroutputfromssh()"
     },
     {
@@ -15370,8 +15381,8 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "workers_worker_node_src_managedsshprocessor_processmanagedsshjob",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 91,
+      "community_name": "null",
       "norm_label": "processmanagedsshjob()"
     },
     {
@@ -15381,8 +15392,8 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "workers_worker_node_src_managedsshprocessor_processmanagedsshjobsteps",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 91,
+      "community_name": "null",
       "norm_label": "processmanagedsshjobsteps()"
     },
     {
@@ -15392,8 +15403,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_parserclient",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 173,
+      "community_name": "payloadContract.test.js",
       "norm_label": "parserclient.js"
     },
     {
@@ -15403,8 +15414,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "workers_worker_node_src_parserclient_createparserclient",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 173,
+      "community_name": "payloadContract.test.js",
       "norm_label": "createparserclient()"
     },
     {
@@ -15414,8 +15425,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_payload",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "payload.js"
     },
     {
@@ -15425,8 +15436,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "workers_worker_node_src_payload_normalizejobdata",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "normalizejobdata()"
     },
     {
@@ -15436,8 +15447,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_payloadlimits",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 173,
+      "community_name": "payloadContract.test.js",
       "norm_label": "payloadlimits.js"
     },
     {
@@ -15447,8 +15458,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "workers_worker_node_src_payloadlimits_assertscanneroutputbytes",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 91,
+      "community_name": "null",
       "norm_label": "assertscanneroutputbytes()"
     },
     {
@@ -15458,8 +15469,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "workers_worker_node_src_payloadlimits_serializeparserrequest",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 173,
+      "community_name": "payloadContract.test.js",
       "norm_label": "serializeparserrequest()"
     },
     {
@@ -15469,8 +15480,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "scannerrunner.js"
     },
     {
@@ -15480,8 +15491,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_execfileasync",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "execfileasync"
     },
     {
@@ -15491,8 +15502,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_severityfromrisk",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "severityfromrisk()"
     },
     {
@@ -15502,8 +15513,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_tocontract",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "tocontract()"
     },
     {
@@ -15513,8 +15524,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_artifacttypefor",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "artifacttypefor()"
     },
     {
@@ -15524,8 +15535,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_contenttypefor",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "contenttypefor()"
     },
     {
@@ -15535,8 +15546,8 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_runbundledscanner",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "runbundledscanner()"
     },
     {
@@ -15689,8 +15700,8 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "workers_worker_node_src_sshexecutor_normalizesshjob",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 91,
+      "community_name": "null",
       "norm_label": "normalizesshjob()"
     },
     {
@@ -15832,8 +15843,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_test_lifecycle_test",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 81,
+      "community_name": "enum",
       "norm_label": "lifecycle.test.js"
     },
     {
@@ -15843,8 +15854,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_test_managedsshprocessor_test",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 91,
+      "community_name": "null",
       "norm_label": "managedsshprocessor.test.js"
     },
     {
@@ -15854,8 +15865,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "workers_worker_node_test_managedsshprocessor_test_job",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 91,
+      "community_name": "null",
       "norm_label": "job"
     },
     {
@@ -15865,8 +15876,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "workers_worker_node_test_managedsshprocessor_test_grant",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 91,
+      "community_name": "null",
       "norm_label": "grant"
     },
     {
@@ -15876,8 +15887,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_test_payload_test",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "payload.test.js"
     },
     {
@@ -15887,8 +15898,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_test_payloadcontract_test",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 173,
+      "community_name": "payloadContract.test.js",
       "norm_label": "payloadcontract.test.js"
     },
     {
@@ -15898,8 +15909,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "workers_worker_node_test_payloadcontract_test_job",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 173,
+      "community_name": "payloadContract.test.js",
       "norm_label": "job"
     },
     {
@@ -15909,8 +15920,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "workers_worker_node_test_payloadcontract_test_grant",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 173,
+      "community_name": "payloadContract.test.js",
       "norm_label": "grant"
     },
     {
@@ -15920,8 +15931,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "workers_worker_node_test_payloadcontract_test_scannerjsonwithexactbytes",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 173,
+      "community_name": "payloadContract.test.js",
       "norm_label": "scannerjsonwithexactbytes()"
     },
     {
@@ -15931,8 +15942,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "workers_worker_node_test_payloadcontract_test_apirecorder",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 173,
+      "community_name": "payloadContract.test.js",
       "norm_label": "apirecorder()"
     },
     {
@@ -15942,8 +15953,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test",
-      "community": 7,
-      "community_name": "sshExecutor.js",
+      "community": 149,
+      "community_name": "bullmq",
       "norm_label": "sshexecutor.test.js"
     },
     {
@@ -15953,8 +15964,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_readyclient",
-      "community": 7,
-      "community_name": "sshExecutor.js",
+      "community": 149,
+      "community_name": "bullmq",
       "norm_label": "readyclient"
     },
     {
@@ -15964,8 +15975,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_readyclient_constructor",
-      "community": 7,
-      "community_name": "sshExecutor.js",
+      "community": 149,
+      "community_name": "bullmq",
       "norm_label": ".constructor()"
     },
     {
@@ -15975,8 +15986,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_readyclient_connect",
-      "community": 7,
-      "community_name": "sshExecutor.js",
+      "community": 149,
+      "community_name": "bullmq",
       "norm_label": ".connect()"
     },
     {
@@ -15986,8 +15997,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_readyclient_end",
-      "community": 7,
-      "community_name": "sshExecutor.js",
+      "community": 149,
+      "community_name": "bullmq",
       "norm_label": ".end()"
     },
     {
@@ -15997,8 +16008,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_sshcontext",
-      "community": 7,
-      "community_name": "sshExecutor.js",
+      "community": 149,
+      "community_name": "bullmq",
       "norm_label": "sshcontext()"
     },
     {
@@ -16008,8 +16019,8 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_commandclient",
-      "community": 7,
-      "community_name": "sshExecutor.js",
+      "community": 149,
+      "community_name": "bullmq",
       "norm_label": "commandclient"
     },
     {
@@ -16019,8 +16030,8 @@
       "source_location": "L156",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_commandclient_constructor",
-      "community": 7,
-      "community_name": "sshExecutor.js",
+      "community": 149,
+      "community_name": "bullmq",
       "norm_label": ".constructor()"
     },
     {
@@ -16030,8 +16041,8 @@
       "source_location": "L162",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_commandclient_connect",
-      "community": 7,
-      "community_name": "sshExecutor.js",
+      "community": 149,
+      "community_name": "bullmq",
       "norm_label": ".connect()"
     },
     {
@@ -16041,8 +16052,8 @@
       "source_location": "L163",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_commandclient_end",
-      "community": 7,
-      "community_name": "sshExecutor.js",
+      "community": 149,
+      "community_name": "bullmq",
       "norm_label": ".end()"
     },
     {
@@ -16052,8 +16063,8 @@
       "source_location": "L164",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_commandclient_exec",
-      "community": 7,
-      "community_name": "sshExecutor.js",
+      "community": 149,
+      "community_name": "bullmq",
       "norm_label": ".exec()"
     },
     {
@@ -16063,8 +16074,8 @@
       "source_location": "L171",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_stageclient",
-      "community": 7,
-      "community_name": "sshExecutor.js",
+      "community": 149,
+      "community_name": "bullmq",
       "norm_label": "stageclient"
     },
     {
@@ -16074,8 +16085,8 @@
       "source_location": "L174",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_stageclient_constructor",
-      "community": 7,
-      "community_name": "sshExecutor.js",
+      "community": 149,
+      "community_name": "bullmq",
       "norm_label": ".constructor()"
     },
     {
@@ -16085,8 +16096,8 @@
       "source_location": "L182",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_stageclient_connect",
-      "community": 7,
-      "community_name": "sshExecutor.js",
+      "community": 149,
+      "community_name": "bullmq",
       "norm_label": ".connect()"
     },
     {
@@ -16096,8 +16107,8 @@
       "source_location": "L183",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_stageclient_end",
-      "community": 7,
-      "community_name": "sshExecutor.js",
+      "community": 149,
+      "community_name": "bullmq",
       "norm_label": ".end()"
     },
     {
@@ -16107,8 +16118,8 @@
       "source_location": "L184",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_stageclient_sftp",
-      "community": 7,
-      "community_name": "sshExecutor.js",
+      "community": 149,
+      "community_name": "bullmq",
       "norm_label": ".sftp()"
     },
     {
@@ -16118,8 +16129,8 @@
       "source_location": "L185",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_stageclient_exec",
-      "community": 7,
-      "community_name": "sshExecutor.js",
+      "community": 149,
+      "community_name": "bullmq",
       "norm_label": ".exec()"
     },
     {
@@ -16129,8 +16140,8 @@
       "source_location": "L232",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_scannerjsonwithexactbytes",
-      "community": 7,
-      "community_name": "sshExecutor.js",
+      "community": 149,
+      "community_name": "bullmq",
       "norm_label": "scannerjsonwithexactbytes()"
     },
     {
@@ -22993,8 +23004,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "workers_worker_node_src_payloadlimits_raw_scanner_artifact_max_bytes",
-      "community": 0,
-      "community_name": "index.js",
+      "community": 91,
+      "community_name": "null",
       "norm_label": "raw_scanner_artifact_max_bytes"
     },
     {
@@ -26661,7 +26672,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "api/src/app.controller.ts",
-      "source_location": "L472",
+      "source_location": "L473",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -30317,7 +30328,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "api/src/queue.service.ts",
-      "source_location": "L12",
+      "source_location": "L53",
       "weight": 1.0,
       "_origin": "ast",
       "source": "api_src_queue_service",
@@ -31235,7 +31246,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "api/src/validation.ts",
-      "source_location": "L8",
+      "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
       "source": "api_src_validation",
@@ -31633,7 +31644,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "api/test/scan-dispatch-outbox.test.ts",
-      "source_location": "L87",
+      "source_location": "L271",
       "weight": 1.0,
       "_origin": "ast",
       "source": "api_test_scan_dispatch_outbox_test",
@@ -31655,7 +31666,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "api/test/scan-dispatch-outbox.test.ts",
-      "source_location": "L211",
+      "source_location": "L225",
       "weight": 1.0,
       "_origin": "ast",
       "source": "api_test_scan_dispatch_outbox_test",
@@ -34658,7 +34669,7 @@
     },
     {
       "relation": "references",
-      "context": "parameter_type",
+      "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py",
       "source_location": "L328",
@@ -34718,7 +34729,7 @@
     },
     {
       "relation": "references",
-      "context": "generic_arg",
+      "context": "return_type",
       "confidence": "EXTRACTED",
       "source_file": "scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py",
       "source_location": "L318",
@@ -35161,7 +35172,7 @@
     },
     {
       "relation": "references",
-      "context": "parameter_type",
+      "context": "return_type",
       "confidence": "EXTRACTED",
       "source_file": "scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py",
       "source_location": "L397",
@@ -35185,7 +35196,7 @@
     },
     {
       "relation": "references",
-      "context": "parameter_type",
+      "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py",
       "source_location": "L405",
@@ -35233,7 +35244,7 @@
     },
     {
       "relation": "references",
-      "context": "generic_arg",
+      "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py",
       "source_location": "L343",
@@ -38867,7 +38878,7 @@
     },
     {
       "relation": "references",
-      "context": "generic_arg",
+      "context": "return_type",
       "confidence": "EXTRACTED",
       "source_file": "scanner-bundle/tools/ARX_Agent_Security_Remediation.py",
       "source_location": "L115",
@@ -38891,7 +38902,7 @@
     },
     {
       "relation": "references",
-      "context": "generic_arg",
+      "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "scanner-bundle/tools/ARX_Agent_Security_Remediation.py",
       "source_location": "L123",
@@ -39101,7 +39112,7 @@
     },
     {
       "relation": "references",
-      "context": "parameter_type",
+      "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "scripts/check_disposable_ssh_fixture.py",
       "source_location": "L78",
@@ -39368,7 +39379,7 @@
     },
     {
       "relation": "references",
-      "context": "parameter_type",
+      "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "scripts/check_worker_node_egress_policy.py",
       "source_location": "L34",
@@ -39452,7 +39463,7 @@
     },
     {
       "relation": "references",
-      "context": "parameter_type",
+      "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "scripts/check_worker_node_egress_policy.py",
       "source_location": "L96",
@@ -39464,7 +39475,7 @@
     },
     {
       "relation": "references",
-      "context": "parameter_type",
+      "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "scripts/check_worker_node_egress_policy.py",
       "source_location": "L76",
@@ -39687,7 +39698,7 @@
     },
     {
       "relation": "references",
-      "context": "return_type",
+      "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "scripts/compose_smoke.py",
       "source_location": "L33",
@@ -39711,7 +39722,7 @@
     },
     {
       "relation": "references",
-      "context": "return_type",
+      "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "scripts/compose_smoke.py",
       "source_location": "L37",
@@ -40707,7 +40718,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_architecture_document_invariants.py",
-      "source_location": "L106",
+      "source_location": "L175",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_architecture_document_invariants_architecturedocumentinvarianttests",
@@ -40722,14 +40733,14 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_architecture_document_invariants_architecturedocumentinvarianttests",
-      "target": "tests_test_architecture_document_invariants_architecturedocumentinvarianttests_test_each_security_review_blocker_has_architecture_plan_and_rtm_contract",
+      "target": "tests_test_architecture_document_invariants_architecturedocumentinvarianttests_test_readme_options_preserve_explicit_installation_contracts",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_architecture_document_invariants.py",
-      "source_location": "L96",
+      "source_location": "L165",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_architecture_document_invariants_architecturedocumentinvarianttests",
@@ -40740,7 +40751,18 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_architecture_document_invariants.py",
-      "source_location": "L84",
+      "source_location": "L87",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_architecture_document_invariants_architecturedocumentinvarianttests",
+      "target": "tests_test_architecture_document_invariants_architecturedocumentinvarianttests_test_security_remediations_map_one_to_one_to_dedicated_requirements",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_architecture_document_invariants.py",
+      "source_location": "L153",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_architecture_document_invariants_architecturedocumentinvarianttests",
@@ -58762,5 +58784,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "167678a3939d02bb8a702a839e153f357fc8a79e"
+  "built_at_commit": "ed38bab2ddfa4da9850f97b521c3e394a0d9de96"
 }

@@ -62,24 +62,93 @@ class ArchitectureDocumentInvariantTests(unittest.TestCase):
         self.assertIn("not a security or authorization waiver", self.architecture)
         self.assertIn("not waivers", self.plan)
 
-    def test_each_security_review_blocker_has_architecture_plan_and_rtm_contract(self):
-        controls = {
-            "H-01": ("SC-025", ("JWKS", "PKCE", "durable", "ACR/AMR", "dual")),
-            "H-02": ("SC-026", ("mTLS", "OpenBao", "envelope", "rotation", "attempt-bound")),
-            "H-03": ("SC-027", ("cgroup v2", "seccomp", "AppArmor", "ptrace", "startup refusal")),
-            "H-04": ("SC-028", ("WORM", "keyed", "monotonic", "legal hold", "truncation")),
-            "H-05": ("SC-029", ("DLP", "prompt-injection", "typed", "quarantine", "detector outage")),
-            "H-06": ("SC-030", ("signature", "trust roots", "anti-rollback", "provenance", "unavailable")),
-            "H-07": ("SC-031", ("off-volume", "encrypted", "quiesce", "RPO/RTO", "fresh empty")),
+    def test_readme_options_preserve_explicit_installation_contracts(self):
+        option_one_heading = "## Option 1 — One-Time Audit (pull the scanner script)"
+        option_two_heading = "## Option 2 — App Deployment (install Shore Sentinel into Docker)"
+        self.assertEqual(self.readme.count(option_one_heading), 1)
+        self.assertEqual(self.readme.count(option_two_heading), 1)
+
+        option_one = self.readme.split(option_one_heading, 1)[1].split("\n---", 1)[0]
+        option_two = self.readme.split(option_two_heading, 1)[1].split("\n---", 1)[0]
+        self.assertIn("scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py", option_one)
+        self.assertIn("Reports and artifacts stay on the client machine", option_one)
+        for phrase in (
+            "exactly one `shore-sentinel` application container",
+            "One named `shore-sentinel-data` volume",
+            "`/var/lib/shore-sentinel`",
+            "docker compose up -d --build",
+            "docker compose ps",
+            "curl -fsS http://localhost:4000/health",
+            "curl -fsS http://localhost:3010/shore-sentinel",
+        ):
+            with self.subTest(option_two_contract=phrase):
+                self.assertIn(phrase, option_two)
+
+    def test_security_remediations_map_one_to_one_to_dedicated_requirements(self):
+        finding_to_requirement = {
+            "H-01": "SC-025",
+            "H-02": "SC-026",
+            "H-03": "SC-027",
+            "H-04": "SC-028",
+            "H-05": "SC-029",
+            "H-06": "SC-030",
+            "H-07": "SC-031",
         }
+        records = self.rtm["security_remediation_records"]
         requirements = {item["id"]: item for item in self.rtm["requirements"]}
-        records = {item["finding"]: item for item in self.rtm["security_remediation_records"]}
-        for finding, (requirement_id, keywords) in controls.items():
+        dedicated_ids = list(finding_to_requirement.values())
+
+        self.assertEqual(len(records), len(finding_to_requirement))
+        self.assertEqual(
+            [record["finding"] for record in records],
+            list(finding_to_requirement),
+        )
+        self.assertEqual(
+            len({record["finding"] for record in records}),
+            len(records),
+        )
+
+        required_fields = (
+            "statement",
+            "source",
+            "implementation_files",
+            "test_files",
+            "verification_commands",
+            "evidence",
+            "negative_test_artifacts",
+        )
+
+        def assert_meaningful(value, label):
+            if isinstance(value, str):
+                self.assertGreater(len(value.strip()), 8, label)
+                self.assertNotRegex(value, r"(?i)\b(?:todo|tbd|placeholder|fill[ -]?me)\b", label)
+            else:
+                self.assertIsInstance(value, list, label)
+                self.assertTrue(value, label)
+                self.assertTrue(all(isinstance(item, str) and len(item.strip()) > 8 for item in value), label)
+
+        for record in records:
+            finding = record["finding"]
+            requirement_id = finding_to_requirement[finding]
+            requirement = requirements[requirement_id]
             with self.subTest(finding=finding):
-                self.assertIn(requirement_id, records[finding]["requirement_ids"])
-                self.assertIn(requirement_id, requirements)
-                self.assertTrue(all(keyword.lower() in self.documents.lower() for keyword in keywords))
-                self.assertIn("tests/test_architecture_document_invariants.py", requirements[requirement_id]["test_files"])
+                self.assertEqual(record["requirement_ids"], [requirement_id])
+                self.assertIn(record["status"], {"resolved", "closed"})
+                assert_meaningful(record["resolution"], f"{finding} resolution")
+                assert_meaningful(record["evidence"], f"{finding} evidence")
+                for field in required_fields:
+                    assert_meaningful(requirement[field], f"{requirement_id} {field}")
+
+                artifacts = requirement["negative_test_artifacts"]
+                test_files = set(requirement["test_files"])
+                artifact_files = {artifact.split(":", 1)[0] for artifact in artifacts}
+                self.assertTrue(artifact_files <= test_files)
+                self.assertNotIn("tests/test_architecture_document_invariants.py", artifact_files)
+
+        self.assertEqual(
+            {requirement_id for requirement_id in dedicated_ids},
+            set(requirements) & set(dedicated_ids),
+        )
 
     def test_single_container_and_volume_contract_is_consistent(self):
         self.assertIn("exactly one deployable Shore Sentinel container", self.architecture)
