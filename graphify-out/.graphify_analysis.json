@@ -501,6 +501,41 @@
       "web_lib_machine_run_status_toneforrun"
     ],
     "10": [
+      "api_src_app_controller_appcontroller_deletetarget",
+      "api_src_app_controller_appcontroller_deleteuser",
+      "api_src_app_controller_appcontroller_downloadartifact",
+      "api_src_app_controller_appcontroller_events",
+      "api_src_app_controller_appcontroller_getremediation",
+      "api_src_app_controller_appcontroller_getreport",
+      "api_src_app_controller_appcontroller_gettarget",
+      "api_src_app_controller_appcontroller_job",
+      "api_src_app_controller_appcontroller_listaudits",
+      "api_src_app_controller_appcontroller_listremediation",
+      "api_src_app_controller_appcontroller_listreports",
+      "api_src_app_controller_appcontroller_listroles",
+      "api_src_app_controller_appcontroller_listtargets",
+      "api_src_app_controller_appcontroller_listusers",
+      "api_src_app_controller_appcontroller_onetimeaudit",
+      "api_src_app_controller_appcontroller_publicartifact",
+      "api_src_app_controller_appcontroller_ready",
+      "api_src_app_controller_appcontroller_remediationactivity",
+      "api_src_app_controller_appcontroller_run",
+      "api_src_app_controller_appcontroller_runartifacts",
+      "api_src_app_controller_appcontroller_settings",
+      "api_src_app_controller_appcontroller_targetscanruns",
+      "api_src_app_controller_appcontroller_tenantid",
+      "api_src_app_controller_appcontroller_updateremediationstatus",
+      "api_src_app_controller_appcontroller_updatetarget",
+      "api_src_app_controller_appcontroller_updateuser",
+      "api_src_app_controller_appcontroller_workerruncontrol",
+      "api_src_database_service_databaseservice_query",
+      "delete",
+      "get",
+      "param",
+      "patch",
+      "req"
+    ],
+    "11": [
       "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design",
       "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_accessibility_and_responsive_requirements",
       "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_audits_and_audits_id",
@@ -535,7 +570,7 @@
       "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_system_update",
       "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_users"
     ],
-    "11": [
+    "12": [
       "ref_bundle",
       "ref_entrypoint",
       "ref_outputschema",
@@ -569,40 +604,6 @@
       "scanner_bundle_schemas_scanner_manifest_schema_title",
       "scanner_bundle_schemas_scanner_manifest_schema_type",
       "scanner_bundle_schemas_scanner_manifest_schema_version_type"
-    ],
-    "12": [
-      "api_src_app_controller_appcontroller_downloadartifact",
-      "api_src_app_controller_appcontroller_events",
-      "api_src_app_controller_appcontroller_getremediation",
-      "api_src_app_controller_appcontroller_getreport",
-      "api_src_app_controller_appcontroller_gettarget",
-      "api_src_app_controller_appcontroller_job",
-      "api_src_app_controller_appcontroller_listaudits",
-      "api_src_app_controller_appcontroller_listremediation",
-      "api_src_app_controller_appcontroller_listreports",
-      "api_src_app_controller_appcontroller_listroles",
-      "api_src_app_controller_appcontroller_listtargets",
-      "api_src_app_controller_appcontroller_listusers",
-      "api_src_app_controller_appcontroller_me",
-      "api_src_app_controller_appcontroller_onetimeaudit",
-      "api_src_app_controller_appcontroller_publicartifact",
-      "api_src_app_controller_appcontroller_ready",
-      "api_src_app_controller_appcontroller_remediationactivity",
-      "api_src_app_controller_appcontroller_run",
-      "api_src_app_controller_appcontroller_runartifacts",
-      "api_src_app_controller_appcontroller_settings",
-      "api_src_app_controller_appcontroller_targetscanruns",
-      "api_src_app_controller_appcontroller_tenantid",
-      "api_src_app_controller_appcontroller_updateremediationstatus",
-      "api_src_app_controller_appcontroller_updatetarget",
-      "api_src_app_controller_appcontroller_updateuser",
-      "api_src_app_controller_appcontroller_workerruncontrol",
-      "api_src_auth_service_authservice_me",
-      "api_src_database_service_databaseservice_query",
-      "get",
-      "param",
-      "patch",
-      "req"
     ],
     "13": [
       "api_src_queue_service",
@@ -671,6 +672,38 @@
       "ref_workers_worker_node"
     ],
     "15": [
+      "api_src_app_controller_appcontroller",
+      "api_src_app_controller_appcontroller_cancelrun",
+      "api_src_app_controller_appcontroller_createjob",
+      "api_src_app_controller_appcontroller_discardreservedartifact",
+      "api_src_app_controller_appcontroller_enqueueartifactcleanup",
+      "api_src_app_controller_appcontroller_health",
+      "api_src_app_controller_appcontroller_login",
+      "api_src_app_controller_appcontroller_logout",
+      "api_src_app_controller_appcontroller_machinehardwaresummary",
+      "api_src_app_controller_appcontroller_me",
+      "api_src_app_controller_appcontroller_principal",
+      "api_src_app_controller_appcontroller_publicrun",
+      "api_src_app_controller_appcontroller_publicrunevent",
+      "api_src_app_controller_appcontroller_register",
+      "api_src_app_controller_appcontroller_rememberme",
+      "api_src_app_controller_appcontroller_requirepermission",
+      "api_src_app_controller_appcontroller_runtarget",
+      "api_src_app_controller_appcontroller_setsessioncookie",
+      "api_src_app_controller_appcontroller_stream",
+      "api_src_app_controller_appcontroller_token",
+      "api_src_auth_service_authservice_me",
+      "api_src_validation_validatescantarget",
+      "api_test_artifact_cleanup_route_test",
+      "api_test_artifact_cleanup_route_test_cleanuprouteharness",
+      "api_test_machine_hardware_summary_test",
+      "api_test_machine_hardware_summary_test_viewerrequest",
+      "api_test_managed_scan_validation_test",
+      "api_test_managed_scan_validation_test_viewerrequest",
+      "controller",
+      "res"
+    ],
+    "16": [
       "hermes_skills_graphify_skill",
       "hermes_skills_graphify_skill_for_cluster_only",
       "hermes_skills_graphify_skill_for_git_commit_hook",
@@ -701,36 +734,6 @@
       "hermes_skills_graphify_skill_usage",
       "hermes_skills_graphify_skill_what_graphify_is_for",
       "hermes_skills_graphify_skill_what_you_must_do_when_invoked"
-    ],
-    "16": [
-      "api_src_app_controller_appcontroller",
-      "api_src_app_controller_appcontroller_cancelrun",
-      "api_src_app_controller_appcontroller_createjob",
-      "api_src_app_controller_appcontroller_discardreservedartifact",
-      "api_src_app_controller_appcontroller_enqueueartifactcleanup",
-      "api_src_app_controller_appcontroller_health",
-      "api_src_app_controller_appcontroller_login",
-      "api_src_app_controller_appcontroller_logout",
-      "api_src_app_controller_appcontroller_machinehardwaresummary",
-      "api_src_app_controller_appcontroller_principal",
-      "api_src_app_controller_appcontroller_publicrun",
-      "api_src_app_controller_appcontroller_publicrunevent",
-      "api_src_app_controller_appcontroller_register",
-      "api_src_app_controller_appcontroller_rememberme",
-      "api_src_app_controller_appcontroller_requirepermission",
-      "api_src_app_controller_appcontroller_runtarget",
-      "api_src_app_controller_appcontroller_setsessioncookie",
-      "api_src_app_controller_appcontroller_stream",
-      "api_src_app_controller_appcontroller_token",
-      "api_src_validation_validatescantarget",
-      "api_test_artifact_cleanup_route_test",
-      "api_test_artifact_cleanup_route_test_cleanuprouteharness",
-      "api_test_machine_hardware_summary_test",
-      "api_test_machine_hardware_summary_test_viewerrequest",
-      "api_test_managed_scan_validation_test",
-      "api_test_managed_scan_validation_test_viewerrequest",
-      "controller",
-      "res"
     ],
     "17": [
       "tests_test_deployment_hardening",
@@ -894,29 +897,6 @@
       "web_package_version"
     ],
     "23": [
-      "api_src_app_controller_appcontroller_applyupdate",
-      "api_src_app_controller_appcontroller_checkupdate",
-      "api_src_app_controller_appcontroller_constructor",
-      "api_src_app_controller_appcontroller_deletetarget",
-      "api_src_app_controller_appcontroller_deleteuser",
-      "api_src_app_controller_appcontroller_disableuser",
-      "api_src_app_controller_appcontroller_enableuser",
-      "api_src_app_controller_appcontroller_requireadmin",
-      "api_src_app_controller_appcontroller_requiretenantuser",
-      "api_src_app_controller_appcontroller_resetpassword",
-      "api_src_app_controller_appcontroller_updatestatus",
-      "api_src_update_service",
-      "api_src_update_service_ts_injectable",
-      "api_src_update_service_updatemode",
-      "api_src_update_service_updateresult",
-      "api_src_update_service_updateservice",
-      "api_src_update_service_updateservice_isenabled",
-      "api_src_update_service_updateservice_run",
-      "api_src_update_service_updateservice_scriptpath",
-      "delete",
-      "post"
-    ],
-    "24": [
       "scanner_bundle_bin_envdetect",
       "scanner_bundle_bin_envdetect_cgroup_indicates_container",
       "scanner_bundle_bin_envdetect_cpuinfo_hypervisor_flag",
@@ -939,7 +919,7 @@
       "scanner_bundle_bin_envdetect_rationale_99",
       "scanner_bundle_bin_envdetect_systemd_detect_virt"
     ],
-    "25": [
+    "24": [
       "docs_plans_2026_07_22_enterprise_single_container_completion",
       "docs_plans_2026_07_22_enterprise_single_container_completion_95_evidence_matrix",
       "docs_plans_2026_07_22_enterprise_single_container_completion_accepted_deviation_records",
@@ -961,7 +941,7 @@
       "docs_plans_2026_07_22_enterprise_single_container_completion_test_command_catalog",
       "docs_plans_2026_07_22_enterprise_single_container_completion_threat_control_matrix"
     ],
-    "26": [
+    "25": [
       "docs_security_2026_07_17_v1_1_ssh_push_security_decision",
       "docs_security_2026_07_17_v1_1_ssh_push_security_decision_allowed_data_flow",
       "docs_security_2026_07_17_v1_1_ssh_push_security_decision_bundle_and_command_integrity",
@@ -982,7 +962,7 @@
       "docs_security_remote_runner_install_rollout_verification_not_performed_locally",
       "docs_security_remote_runner_install_runtime_cancellation_and_deadline_behavior"
     ],
-    "27": [
+    "26": [
       "infra_remote_runner_run_scan",
       "infra_remote_runner_run_scan__entry",
       "infra_remote_runner_run_scan_cancel_request",
@@ -1003,7 +983,7 @@
       "infra_remote_runner_run_scan_terminate_process_group",
       "infra_remote_runner_run_scan_validated_request_path_for"
     ],
-    "28": [
+    "27": [
       "tests_test_ssh_remote_runner_contract",
       "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests",
       "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_cancel_does_not_signal_mismatched_lifetime_identity_or_expired_state",
@@ -1024,7 +1004,7 @@
       "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_supervisor_requires_runner_startup_release_before_invoking_fixed_implementation",
       "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_write_sandboxed_runner"
     ],
-    "29": [
+    "28": [
       "web_changelog",
       "web_changelog_added",
       "web_changelog_changed",
@@ -1044,6 +1024,26 @@
       "web_changelog_verification_34",
       "web_changelog_verification_44",
       "web_changelog_verification_64"
+    ],
+    "29": [
+      "api_src_app_controller_appcontroller_applyupdate",
+      "api_src_app_controller_appcontroller_checkupdate",
+      "api_src_app_controller_appcontroller_constructor",
+      "api_src_app_controller_appcontroller_disableuser",
+      "api_src_app_controller_appcontroller_enableuser",
+      "api_src_app_controller_appcontroller_requireadmin",
+      "api_src_app_controller_appcontroller_requiretenantuser",
+      "api_src_app_controller_appcontroller_resetpassword",
+      "api_src_app_controller_appcontroller_updatestatus",
+      "api_src_update_service",
+      "api_src_update_service_ts_injectable",
+      "api_src_update_service_updatemode",
+      "api_src_update_service_updateresult",
+      "api_src_update_service_updateservice",
+      "api_src_update_service_updateservice_isenabled",
+      "api_src_update_service_updateservice_run",
+      "api_src_update_service_updateservice_scriptpath",
+      "post"
     ],
     "30": [
       "tests_test_compact_operations_system",
@@ -1236,15 +1236,15 @@
     ],
     "40": [
       "api_package_dependencies",
-      "api_package_dependencies_bullmq",
+      "api_package_dependencies_bcryptjs",
       "api_package_dependencies_nestjs_common",
       "api_package_dependencies_nestjs_core",
       "api_package_dependencies_nestjs_platform_express",
       "api_package_dependencies_pg",
       "api_package_dependencies_rxjs",
       "api_package_dependencies_shore_sentinel_shared",
-      "api_package_json_bullmq",
       "api_package_json_shore_sentinel_shared",
+      "bcryptjs",
       "nestjs_common",
       "nestjs_core",
       "nestjs_platform_express",
@@ -1493,6 +1493,20 @@
       "web_app_api_users_route_serverapibase"
     ],
     "56": [
+      "api_src_auth_service",
+      "api_src_auth_service_authservice",
+      "api_src_auth_service_authservice_audit",
+      "api_src_auth_service_authservice_constructor",
+      "api_src_auth_service_authservice_createsession",
+      "api_src_auth_service_authservice_login",
+      "api_src_auth_service_authservice_logout",
+      "api_src_auth_service_authservice_register",
+      "api_src_auth_service_session",
+      "api_src_auth_service_ts_injectable",
+      "api_src_database_service_databaseservice_tenantid",
+      "api_test_tenant_isolation_test"
+    ],
+    "57": [
       "ref_collectedat",
       "ref_findings",
       "ref_scanner",
@@ -1506,7 +1520,7 @@
       "scanner_bundle_schemas_scanner_output_schema_title",
       "scanner_bundle_schemas_scanner_output_schema_type"
     ],
-    "57": [
+    "58": [
       "scripts_check_worker_node_egress_policy",
       "scripts_check_worker_node_egress_policy_load_and_validate",
       "scripts_check_worker_node_egress_policy_main",
@@ -1520,7 +1534,7 @@
       "scripts_check_worker_node_egress_policy_validate_optional_hosts",
       "scripts_check_worker_node_egress_policy_validate_targets"
     ],
-    "58": [
+    "59": [
       "scripts_tailnet_path_proxy",
       "scripts_tailnet_path_proxy_proxyhandler",
       "scripts_tailnet_path_proxy_proxyhandler_do_delete",
@@ -1534,7 +1548,7 @@
       "scripts_tailnet_path_proxy_py_basehttprequesthandler",
       "scripts_tailnet_path_proxy_upstream_path"
     ],
-    "59": [
+    "60": [
       "tests_test_side_navigation_shell",
       "tests_test_side_navigation_shell_read",
       "tests_test_side_navigation_shell_sidenavigationshelltests",
@@ -1548,7 +1562,7 @@
       "tests_test_side_navigation_shell_sidenavigationshelltests_test_side_navigation_uses_required_order_and_grouped_subpages",
       "tests_test_side_navigation_shell_sidenavigationshelltests_test_start_scan_is_a_machine_detail_action_not_primary_navigation"
     ],
-    "60": [
+    "61": [
       "web_components_display_preferences",
       "web_components_display_preferences_applypreferences",
       "web_components_display_preferences_displaypreferencespanel",
@@ -1562,7 +1576,7 @@
       "web_lib_display_preferences_normalizechoice",
       "web_lib_display_preferences_normalizedisplaypreferences"
     ],
-    "61": [
+    "62": [
       "web_scripts_verify_mvp",
       "web_scripts_verify_mvp_failures",
       "web_scripts_verify_mvp_landing",
@@ -1575,19 +1589,6 @@
       "web_scripts_verify_mvp_routes",
       "web_scripts_verify_mvp_source",
       "web_scripts_verify_mvp_walk"
-    ],
-    "62": [
-      "api_src_auth_service",
-      "api_src_auth_service_authservice",
-      "api_src_auth_service_authservice_audit",
-      "api_src_auth_service_authservice_createsession",
-      "api_src_auth_service_authservice_login",
-      "api_src_auth_service_authservice_logout",
-      "api_src_auth_service_authservice_register",
-      "api_src_auth_service_session",
-      "api_src_auth_service_ts_injectable",
-      "api_src_database_service_databaseservice_tenantid",
-      "api_test_tenant_isolation_test"
     ],
     "63": [
       "docs_qa_2026_07_20_v1_1_0_release_scorecard",
@@ -1792,17 +1793,6 @@
       "tests_test_v1_1_release_gates_v110releasegatetests_test_v11_scorecard_template_captures_required_release_evidence"
     ],
     "79": [
-      "api_src_artifact_service_artifactservice_constructor",
-      "api_src_auth_service_authservice_constructor",
-      "api_src_database_service_databaseservice",
-      "api_src_database_service_databaseservice_isready",
-      "api_src_database_service_databaseservice_migrate",
-      "api_src_database_service_databaseservice_onmoduledestroy",
-      "api_src_database_service_databaseservice_onmoduleinit",
-      "api_src_database_service_databaseservice_seed",
-      "api_src_database_service_ts_injectable"
-    ],
-    "80": [
       "api_src_database_service",
       "api_src_database_service_databaseservice_constructor",
       "api_src_database_service_isweaksecret",
@@ -1813,7 +1803,7 @@
       "api_test_migration_and_production_secrets_test_fixturesecret",
       "api_test_migration_and_production_secrets_test_productionsecrets"
     ],
-    "81": [
+    "80": [
       "docs_qa_2026_07_16_managed_machine_compact_dossier_scorecard",
       "docs_qa_2026_07_16_managed_machine_compact_dossier_scorecard_baseline_note",
       "docs_qa_2026_07_16_managed_machine_compact_dossier_scorecard_breakpoint_evidence",
@@ -1824,7 +1814,7 @@
       "docs_qa_2026_07_16_managed_machine_compact_dossier_scorecard_technical_gates",
       "docs_qa_2026_07_16_managed_machine_compact_dossier_scorecard_verified_outcomes"
     ],
-    "82": [
+    "81": [
       "ref_crit",
       "ref_critical",
       "ref_high",
@@ -1835,7 +1825,7 @@
       "ref_moderate",
       "scanner_bundle_schemas_scanner_output_schema_severity_enum"
     ],
-    "83": [
+    "82": [
       "scripts_check_disposable_ssh_fixture",
       "scripts_check_disposable_ssh_fixture_load_and_validate",
       "scripts_check_disposable_ssh_fixture_main",
@@ -1846,7 +1836,7 @@
       "scripts_check_disposable_ssh_fixture_require_string_list",
       "scripts_check_disposable_ssh_fixture_validate_force_command_assets"
     ],
-    "84": [
+    "83": [
       "web_middleware",
       "web_middleware_authpagetoapi",
       "web_middleware_basepath",
@@ -1856,6 +1846,16 @@
       "web_middleware_middleware",
       "web_middleware_public_path_prefixes",
       "web_middleware_withoutbasepath"
+    ],
+    "84": [
+      "api_src_artifact_service_artifactservice_constructor",
+      "api_src_database_service_databaseservice",
+      "api_src_database_service_databaseservice_isready",
+      "api_src_database_service_databaseservice_migrate",
+      "api_src_database_service_databaseservice_onmoduledestroy",
+      "api_src_database_service_databaseservice_onmoduleinit",
+      "api_src_database_service_databaseservice_seed",
+      "api_src_database_service_ts_injectable"
     ],
     "85": [
       "api_src_request_principal",
@@ -2335,8 +2335,8 @@
       "aws_sdk_s3_request_presigner"
     ],
     "149": [
-      "api_package_dependencies_bcryptjs",
-      "bcryptjs"
+      "api_package_dependencies_bullmq",
+      "api_package_json_bullmq"
     ],
     "150": [
       "api_package_dependencies_cookie_parser",
@@ -2432,26 +2432,26 @@
     "7": 0.0782051282051282,
     "8": 0.10526315789473684,
     "9": 0.11596638655462185,
-    "10": 0.06060606060606061,
+    "10": 0.2196969696969697,
     "11": 0.06060606060606061,
-    "12": 0.2217741935483871,
+    "12": 0.06060606060606061,
     "13": 0.0967741935483871,
     "14": 0.06451612903225806,
-    "15": 0.06666666666666667,
-    "16": 0.11904761904761904,
+    "15": 0.1103448275862069,
+    "16": 0.06666666666666667,
     "17": 0.09788359788359788,
     "18": 0.11076923076923077,
     "19": 0.09333333333333334,
     "20": 0.08333333333333333,
     "21": 0.18181818181818182,
     "22": 0.08695652173913043,
-    "23": 0.1523809523809524,
-    "24": 0.15714285714285714,
-    "25": 0.1,
-    "26": 0.10526315789473684,
-    "27": 0.25146198830409355,
-    "28": 0.1286549707602339,
-    "29": 0.10526315789473684,
+    "23": 0.15714285714285714,
+    "24": 0.1,
+    "25": 0.10526315789473684,
+    "26": 0.25146198830409355,
+    "27": 0.1286549707602339,
+    "28": 0.10526315789473684,
+    "29": 0.17647058823529413,
     "30": 0.11764705882352941,
     "31": 0.23529411764705882,
     "32": 0.11764705882352941,
@@ -2478,13 +2478,13 @@
     "53": 0.15384615384615385,
     "54": 0.28205128205128205,
     "55": 0.32051282051282054,
-    "56": 0.16666666666666666,
-    "57": 0.5454545454545454,
-    "58": 0.2727272727272727,
-    "59": 0.30303030303030304,
-    "60": 0.24242424242424243,
-    "61": 0.16666666666666666,
-    "62": 0.2909090909090909,
+    "56": 0.25757575757575757,
+    "57": 0.16666666666666666,
+    "58": 0.5454545454545454,
+    "59": 0.2727272727272727,
+    "60": 0.30303030303030304,
+    "61": 0.24242424242424243,
+    "62": 0.16666666666666666,
     "63": 0.18181818181818182,
     "64": 0.18181818181818182,
     "65": 0.18181818181818182,
@@ -2501,12 +2501,12 @@
     "76": 0.2,
     "77": 0.2,
     "78": 0.24444444444444444,
-    "79": 0.2777777777777778,
-    "80": 0.3055555555555556,
+    "79": 0.3055555555555556,
+    "80": 0.2222222222222222,
     "81": 0.2222222222222222,
-    "82": 0.2222222222222222,
-    "83": 0.4722222222222222,
-    "84": 0.3611111111111111,
+    "82": 0.4722222222222222,
+    "83": 0.3611111111111111,
+    "84": 0.32142857142857145,
     "85": 0.39285714285714285,
     "86": 0.25,
     "87": 0.25,
@@ -2707,7 +2707,7 @@
   "questions": [
     {
       "type": "bridge_node",
-      "question": "Why does `AppController` connect `AppController` to `index.js`, `app.controller.ts`, `admin-tenant-mutations.test.ts`, `app.module.ts`, `scan-run-events.test.ts`, `.query`, `queue.service.ts`, `tenant-controller.test.ts`, `ArtifactService`, `worker-ssh-grant.test.ts`, `Post`?",
+      "question": "Why does `AppController` connect `AppController` to `index.js`, `app.controller.ts`, `admin-tenant-mutations.test.ts`, `.query`, `app.module.ts`, `scan-run-events.test.ts`, `queue.service.ts`, `tenant-controller.test.ts`, `ArtifactService`, `worker-ssh-grant.test.ts`, `Post`?",
       "why": "High betweenness centrality (0.045) - this node is a cross-community bridge."
     },
     {
@@ -2717,7 +2717,7 @@
     },
     {
       "type": "bridge_node",
-      "question": "Why does `routePath()` connect `routePath` to `appPath`, `InventoryRegistry`, `saved-views.jsx`, `MachineDetailClient`, `apiGet`, `getAuthenticatedUser`, `page.jsx`, `RemediationQueue`, `page.jsx`, `display-preferences.js`, `ReportsLedger`?",
+      "question": "Why does `routePath()` connect `routePath` to `appPath`, `InventoryRegistry`, `saved-views.jsx`, `MachineDetailClient`, `apiGet`, `getAuthenticatedUser`, `page.jsx`, `RemediationQueue`, `ReportsLedger`, `page.jsx`, `display-preferences.js`?",
       "why": "High betweenness centrality (0.027) - this node is a cross-community bridge."
     },
     {

@@ -263,8 +263,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_package_dependencies_bcryptjs",
-      "community": 149,
-      "community_name": "bcryptjs",
+      "community": 40,
+      "community_name": "dependencies",
       "norm_label": "bcryptjs"
     },
     {
@@ -274,8 +274,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "bcryptjs",
-      "community": 149,
-      "community_name": "bcryptjs",
+      "community": 40,
+      "community_name": "dependencies",
       "norm_label": "bcryptjs"
     },
     {
@@ -285,8 +285,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_package_dependencies_bullmq",
-      "community": 40,
-      "community_name": "dependencies",
+      "community": 149,
+      "community_name": "bullmq",
       "norm_label": "bullmq"
     },
     {
@@ -296,8 +296,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_package_json_bullmq",
-      "community": 40,
-      "community_name": "dependencies",
+      "community": 149,
+      "community_name": "bullmq",
       "norm_label": "bullmq"
     },
     {
@@ -703,7 +703,7 @@
       "source_location": "L140",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": "appcontroller"
     },
@@ -714,7 +714,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "controller",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": "controller"
     },
@@ -725,7 +725,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "get",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": "get"
     },
@@ -736,7 +736,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "post",
-      "community": 23,
+      "community": 29,
       "community_name": "Post",
       "norm_label": "post"
     },
@@ -758,7 +758,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "res",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": "res"
     },
@@ -769,7 +769,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "req",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": "req"
     },
@@ -780,7 +780,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "param",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": "param"
     },
@@ -791,7 +791,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "patch",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": "patch"
     },
@@ -802,8 +802,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "delete",
-      "community": 23,
-      "community_name": "Post",
+      "community": 10,
+      "community_name": ".query",
       "norm_label": "delete"
     },
     {
@@ -813,7 +813,7 @@
       "source_location": "L141",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_constructor",
-      "community": 23,
+      "community": 29,
       "community_name": "Post",
       "norm_label": ".constructor()"
     },
@@ -824,7 +824,7 @@
       "source_location": "L149",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_health",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": ".health()"
     },
@@ -835,7 +835,7 @@
       "source_location": "L150",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_ready",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".ready()"
     },
@@ -846,7 +846,7 @@
       "source_location": "L151",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_register",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": ".register()"
     },
@@ -857,7 +857,7 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_login",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": ".login()"
     },
@@ -868,7 +868,7 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_logout",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": ".logout()"
     },
@@ -879,8 +879,8 @@
       "source_location": "L154",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_me",
-      "community": 12,
-      "community_name": ".query",
+      "community": 15,
+      "community_name": "AppController",
       "norm_label": ".me()"
     },
     {
@@ -890,7 +890,7 @@
       "source_location": "L155",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_settings",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".settings()"
     },
@@ -901,7 +901,7 @@
       "source_location": "L158",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_updatestatus",
-      "community": 23,
+      "community": 29,
       "community_name": "Post",
       "norm_label": ".updatestatus()"
     },
@@ -912,7 +912,7 @@
       "source_location": "L164",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_checkupdate",
-      "community": 23,
+      "community": 29,
       "community_name": "Post",
       "norm_label": ".checkupdate()"
     },
@@ -923,7 +923,7 @@
       "source_location": "L170",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_applyupdate",
-      "community": 23,
+      "community": 29,
       "community_name": "Post",
       "norm_label": ".applyupdate()"
     },
@@ -934,7 +934,7 @@
       "source_location": "L176",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_listtargets",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".listtargets()"
     },
@@ -945,7 +945,7 @@
       "source_location": "L203",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_gettarget",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".gettarget()"
     },
@@ -956,7 +956,7 @@
       "source_location": "L249",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_listaudits",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".listaudits()"
     },
@@ -967,7 +967,7 @@
       "source_location": "L264",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_listreports",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".listreports()"
     },
@@ -978,7 +978,7 @@
       "source_location": "L291",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_getreport",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".getreport()"
     },
@@ -989,7 +989,7 @@
       "source_location": "L334",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_listremediation",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".listremediation()"
     },
@@ -1000,7 +1000,7 @@
       "source_location": "L362",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_getremediation",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".getremediation()"
     },
@@ -1022,7 +1022,7 @@
       "source_location": "L459",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_remediationactivity",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".remediationactivity()"
     },
@@ -1033,7 +1033,7 @@
       "source_location": "L474",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_updateremediationstatus",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".updateremediationstatus()"
     },
@@ -1044,7 +1044,7 @@
       "source_location": "L491",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_targetscanruns",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".targetscanruns()"
     },
@@ -1055,7 +1055,7 @@
       "source_location": "L505",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_runartifacts",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".runartifacts()"
     },
@@ -1066,7 +1066,7 @@
       "source_location": "L506",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_updatetarget",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".updatetarget()"
     },
@@ -1077,8 +1077,8 @@
       "source_location": "L507",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_deletetarget",
-      "community": 23,
-      "community_name": "Post",
+      "community": 10,
+      "community_name": ".query",
       "norm_label": ".deletetarget()"
     },
     {
@@ -1088,7 +1088,7 @@
       "source_location": "L536",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_onetimeaudit",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".onetimeaudit()"
     },
@@ -1099,7 +1099,7 @@
       "source_location": "L537",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_runtarget",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": ".runtarget()"
     },
@@ -1110,7 +1110,7 @@
       "source_location": "L538",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_job",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".job()"
     },
@@ -1121,7 +1121,7 @@
       "source_location": "L539",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_run",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".run()"
     },
@@ -1132,7 +1132,7 @@
       "source_location": "L541",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_cancelrun",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": ".cancelrun()"
     },
@@ -1176,7 +1176,7 @@
       "source_location": "L795",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_workerruncontrol",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".workerruncontrol()"
     },
@@ -1187,7 +1187,7 @@
       "source_location": "L804",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_events",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".events()"
     },
@@ -1198,7 +1198,7 @@
       "source_location": "L822",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_downloadartifact",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".downloadartifact()"
     },
@@ -1220,7 +1220,7 @@
       "source_location": "L904",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_enqueueartifactcleanup",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": ".enqueueartifactcleanup()"
     },
@@ -1231,7 +1231,7 @@
       "source_location": "L908",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_discardreservedartifact",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": ".discardreservedartifact()"
     },
@@ -1242,7 +1242,7 @@
       "source_location": "L921",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_stream",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": ".stream()"
     },
@@ -1253,7 +1253,7 @@
       "source_location": "L923",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_rememberme",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": ".rememberme()"
     },
@@ -1264,7 +1264,7 @@
       "source_location": "L928",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_createjob",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": ".createjob()"
     },
@@ -1297,7 +1297,7 @@
       "source_location": "L1007",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_setsessioncookie",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": ".setsessioncookie()"
     },
@@ -1341,7 +1341,7 @@
       "source_location": "L1064",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_principal",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": ".principal()"
     },
@@ -1352,7 +1352,7 @@
       "source_location": "L1072",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_tenantid",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".tenantid()"
     },
@@ -1363,7 +1363,7 @@
       "source_location": "L1076",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_requiretenantuser",
-      "community": 23,
+      "community": 29,
       "community_name": "Post",
       "norm_label": ".requiretenantuser()"
     },
@@ -1374,7 +1374,7 @@
       "source_location": "L1081",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_requireadmin",
-      "community": 23,
+      "community": 29,
       "community_name": "Post",
       "norm_label": ".requireadmin()"
     },
@@ -1385,7 +1385,7 @@
       "source_location": "L1087",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_requirepermission",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": ".requirepermission()"
     },
@@ -1396,7 +1396,7 @@
       "source_location": "L1095",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_machinehardwaresummary",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": ".machinehardwaresummary()"
     },
@@ -1407,7 +1407,7 @@
       "source_location": "L1118",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_publicrunevent",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": ".publicrunevent()"
     },
@@ -1418,7 +1418,7 @@
       "source_location": "L1137",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_publicrun",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": ".publicrun()"
     },
@@ -1429,7 +1429,7 @@
       "source_location": "L1159",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_publicartifact",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".publicartifact()"
     },
@@ -1440,7 +1440,7 @@
       "source_location": "L1172",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_token",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": ".token()"
     },
@@ -1451,7 +1451,7 @@
       "source_location": "L1177",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_listusers",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".listusers()"
     },
@@ -1462,7 +1462,7 @@
       "source_location": "L1195",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_listroles",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".listroles()"
     },
@@ -1484,7 +1484,7 @@
       "source_location": "L1236",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_updateuser",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".updateuser()"
     },
@@ -1495,7 +1495,7 @@
       "source_location": "L1282",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_resetpassword",
-      "community": 23,
+      "community": 29,
       "community_name": "Post",
       "norm_label": ".resetpassword()"
     },
@@ -1506,8 +1506,8 @@
       "source_location": "L1297",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_deleteuser",
-      "community": 23,
-      "community_name": "Post",
+      "community": 10,
+      "community_name": ".query",
       "norm_label": ".deleteuser()"
     },
     {
@@ -1517,7 +1517,7 @@
       "source_location": "L1312",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_disableuser",
-      "community": 23,
+      "community": 29,
       "community_name": "Post",
       "norm_label": ".disableuser()"
     },
@@ -1528,7 +1528,7 @@
       "source_location": "L1325",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_enableuser",
-      "community": 23,
+      "community": 29,
       "community_name": "Post",
       "norm_label": ".enableuser()"
     },
@@ -1627,7 +1627,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "api_src_artifact_service_artifactservice_constructor",
-      "community": 79,
+      "community": 84,
       "community_name": "DatabaseService",
       "norm_label": ".constructor()"
     },
@@ -1770,7 +1770,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_src_auth_service",
-      "community": 62,
+      "community": 56,
       "community_name": "AuthService",
       "norm_label": "auth.service.ts"
     },
@@ -1781,7 +1781,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "api_src_auth_service_session",
-      "community": 62,
+      "community": 56,
       "community_name": "AuthService",
       "norm_label": "session"
     },
@@ -1792,7 +1792,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "api_src_auth_service_authservice",
-      "community": 62,
+      "community": 56,
       "community_name": "AuthService",
       "norm_label": "authservice"
     },
@@ -1803,7 +1803,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "api_src_auth_service_ts_injectable",
-      "community": 62,
+      "community": 56,
       "community_name": "AuthService",
       "norm_label": "injectable"
     },
@@ -1814,8 +1814,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "api_src_auth_service_authservice_constructor",
-      "community": 79,
-      "community_name": "DatabaseService",
+      "community": 56,
+      "community_name": "AuthService",
       "norm_label": ".constructor()"
     },
     {
@@ -1825,7 +1825,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "api_src_auth_service_authservice_register",
-      "community": 62,
+      "community": 56,
       "community_name": "AuthService",
       "norm_label": ".register()"
     },
@@ -1836,7 +1836,7 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "api_src_auth_service_authservice_login",
-      "community": 62,
+      "community": 56,
       "community_name": "AuthService",
       "norm_label": ".login()"
     },
@@ -1847,7 +1847,7 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "api_src_auth_service_authservice_logout",
-      "community": 62,
+      "community": 56,
       "community_name": "AuthService",
       "norm_label": ".logout()"
     },
@@ -1858,8 +1858,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "api_src_auth_service_authservice_me",
-      "community": 12,
-      "community_name": ".query",
+      "community": 15,
+      "community_name": "AppController",
       "norm_label": ".me()"
     },
     {
@@ -1869,7 +1869,7 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "api_src_auth_service_authservice_createsession",
-      "community": 62,
+      "community": 56,
       "community_name": "AuthService",
       "norm_label": ".createsession()"
     },
@@ -1880,7 +1880,7 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "api_src_auth_service_authservice_audit",
-      "community": 62,
+      "community": 56,
       "community_name": "AuthService",
       "norm_label": ".audit()"
     },
@@ -1935,7 +1935,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_src_database_service",
-      "community": 80,
+      "community": 79,
       "community_name": "database.service.ts",
       "norm_label": "database.service.ts"
     },
@@ -1946,7 +1946,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "api_src_database_service_required_production_secrets",
-      "community": 80,
+      "community": 79,
       "community_name": "database.service.ts",
       "norm_label": "required_production_secrets"
     },
@@ -1957,7 +1957,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "api_src_database_service_isweaksecret",
-      "community": 80,
+      "community": 79,
       "community_name": "database.service.ts",
       "norm_label": "isweaksecret()"
     },
@@ -1968,7 +1968,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "api_src_database_service_validateproductionsecrets",
-      "community": 80,
+      "community": 79,
       "community_name": "database.service.ts",
       "norm_label": "validateproductionsecrets()"
     },
@@ -1979,7 +1979,7 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "api_src_database_service_databaseservice",
-      "community": 79,
+      "community": 84,
       "community_name": "DatabaseService",
       "norm_label": "databaseservice"
     },
@@ -1990,7 +1990,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "api_src_database_service_ts_injectable",
-      "community": 79,
+      "community": 84,
       "community_name": "DatabaseService",
       "norm_label": "injectable"
     },
@@ -2001,7 +2001,7 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "api_src_database_service_databaseservice_constructor",
-      "community": 80,
+      "community": 79,
       "community_name": "database.service.ts",
       "norm_label": ".constructor()"
     },
@@ -2012,7 +2012,7 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "api_src_database_service_databaseservice_onmoduleinit",
-      "community": 79,
+      "community": 84,
       "community_name": "DatabaseService",
       "norm_label": ".onmoduleinit()"
     },
@@ -2023,7 +2023,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "api_src_database_service_databaseservice_onmoduledestroy",
-      "community": 79,
+      "community": 84,
       "community_name": "DatabaseService",
       "norm_label": ".onmoduledestroy()"
     },
@@ -2034,7 +2034,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "api_src_database_service_databaseservice_isready",
-      "community": 79,
+      "community": 84,
       "community_name": "DatabaseService",
       "norm_label": ".isready()"
     },
@@ -2045,7 +2045,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "api_src_database_service_databaseservice_query",
-      "community": 12,
+      "community": 10,
       "community_name": ".query",
       "norm_label": ".query()"
     },
@@ -2056,7 +2056,7 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "api_src_database_service_databaseservice_tenantid",
-      "community": 62,
+      "community": 56,
       "community_name": "AuthService",
       "norm_label": ".tenantid()"
     },
@@ -2067,7 +2067,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "api_src_database_service_databaseservice_migrate",
-      "community": 79,
+      "community": 84,
       "community_name": "DatabaseService",
       "norm_label": ".migrate()"
     },
@@ -2078,7 +2078,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "api_src_database_service_databaseservice_seed",
-      "community": 79,
+      "community": 84,
       "community_name": "DatabaseService",
       "norm_label": ".seed()"
     },
@@ -2463,7 +2463,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_src_schema",
-      "community": 80,
+      "community": 79,
       "community_name": "database.service.ts",
       "norm_label": "schema.ts"
     },
@@ -2562,7 +2562,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_src_update_service",
-      "community": 23,
+      "community": 29,
       "community_name": "Post",
       "norm_label": "update.service.ts"
     },
@@ -2573,7 +2573,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "api_src_update_service_updatemode",
-      "community": 23,
+      "community": 29,
       "community_name": "Post",
       "norm_label": "updatemode"
     },
@@ -2584,7 +2584,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "api_src_update_service_updateresult",
-      "community": 23,
+      "community": 29,
       "community_name": "Post",
       "norm_label": "updateresult"
     },
@@ -2595,7 +2595,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "api_src_update_service_updateservice",
-      "community": 23,
+      "community": 29,
       "community_name": "Post",
       "norm_label": "updateservice"
     },
@@ -2606,7 +2606,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "api_src_update_service_ts_injectable",
-      "community": 23,
+      "community": 29,
       "community_name": "Post",
       "norm_label": "injectable"
     },
@@ -2617,7 +2617,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "api_src_update_service_updateservice_isenabled",
-      "community": 23,
+      "community": 29,
       "community_name": "Post",
       "norm_label": ".isenabled()"
     },
@@ -2628,7 +2628,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "api_src_update_service_updateservice_scriptpath",
-      "community": 23,
+      "community": 29,
       "community_name": "Post",
       "norm_label": ".scriptpath()"
     },
@@ -2639,7 +2639,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "api_src_update_service_updateservice_run",
-      "community": 23,
+      "community": 29,
       "community_name": "Post",
       "norm_label": ".run()"
     },
@@ -2694,7 +2694,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "api_src_validation_validatescantarget",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": "validatescantarget()"
     },
@@ -2848,7 +2848,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_test_artifact_cleanup_route_test",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": "artifact-cleanup-route.test.ts"
     },
@@ -2859,7 +2859,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "api_test_artifact_cleanup_route_test_cleanuprouteharness",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": "cleanuprouteharness()"
     },
@@ -3013,7 +3013,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_test_machine_hardware_summary_test",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": "machine-hardware-summary.test.ts"
     },
@@ -3024,7 +3024,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "api_test_machine_hardware_summary_test_viewerrequest",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": "viewerrequest"
     },
@@ -3035,7 +3035,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_test_managed_scan_validation_test",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": "managed-scan-validation.test.ts"
     },
@@ -3046,7 +3046,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "api_test_managed_scan_validation_test_viewerrequest",
-      "community": 16,
+      "community": 15,
       "community_name": "AppController",
       "norm_label": "viewerrequest"
     },
@@ -3057,7 +3057,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_test_migration_and_production_secrets_test",
-      "community": 80,
+      "community": 79,
       "community_name": "database.service.ts",
       "norm_label": "migration-and-production-secrets.test.ts"
     },
@@ -3068,7 +3068,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "api_test_migration_and_production_secrets_test_fixturesecret",
-      "community": 80,
+      "community": 79,
       "community_name": "database.service.ts",
       "norm_label": "fixturesecret()"
     },
@@ -3079,7 +3079,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "api_test_migration_and_production_secrets_test_productionsecrets",
-      "community": 80,
+      "community": 79,
       "community_name": "database.service.ts",
       "norm_label": "productionsecrets"
     },
@@ -3310,7 +3310,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_test_tenant_isolation_test",
-      "community": 62,
+      "community": 56,
       "community_name": "AuthService",
       "norm_label": "tenant-isolation.test.ts"
     },
@@ -4051,7 +4051,7 @@
       },
       "_origin": "ast",
       "id": "infra_remote_runner_run_scan",
-      "community": 27,
+      "community": 26,
       "community_name": "run-scan",
       "norm_label": "run-scan"
     },
@@ -4066,7 +4066,7 @@
       },
       "_origin": "ast",
       "id": "infra_remote_runner_run_scan__entry",
-      "community": 27,
+      "community": 26,
       "community_name": "run-scan",
       "norm_label": "run-scan script"
     },
@@ -4081,7 +4081,7 @@
       },
       "_origin": "ast",
       "id": "infra_remote_runner_run_scan_status",
-      "community": 27,
+      "community": 26,
       "community_name": "run-scan",
       "norm_label": "status()"
     },
@@ -4096,7 +4096,7 @@
       },
       "_origin": "ast",
       "id": "infra_remote_runner_run_scan_reject",
-      "community": 27,
+      "community": 26,
       "community_name": "run-scan",
       "norm_label": "reject()"
     },
@@ -4111,7 +4111,7 @@
       },
       "_origin": "ast",
       "id": "infra_remote_runner_run_scan_is_uuid",
-      "community": 27,
+      "community": 26,
       "community_name": "run-scan",
       "norm_label": "is_uuid()"
     },
@@ -4126,7 +4126,7 @@
       },
       "_origin": "ast",
       "id": "infra_remote_runner_run_scan_require_root",
-      "community": 27,
+      "community": 26,
       "community_name": "run-scan",
       "norm_label": "require_root()"
     },
@@ -4141,7 +4141,7 @@
       },
       "_origin": "ast",
       "id": "infra_remote_runner_run_scan_state_directory_for",
-      "community": 27,
+      "community": 26,
       "community_name": "run-scan",
       "norm_label": "state_directory_for()"
     },
@@ -4156,7 +4156,7 @@
       },
       "_origin": "ast",
       "id": "infra_remote_runner_run_scan_read_state",
-      "community": 27,
+      "community": 26,
       "community_name": "run-scan",
       "norm_label": "read_state()"
     },
@@ -4171,7 +4171,7 @@
       },
       "_origin": "ast",
       "id": "infra_remote_runner_run_scan_read_process_identity",
-      "community": 27,
+      "community": 26,
       "community_name": "run-scan",
       "norm_label": "read_process_identity()"
     },
@@ -4186,7 +4186,7 @@
       },
       "_origin": "ast",
       "id": "infra_remote_runner_run_scan_process_identity_matches",
-      "community": 27,
+      "community": 26,
       "community_name": "run-scan",
       "norm_label": "process_identity_matches()"
     },
@@ -4201,7 +4201,7 @@
       },
       "_origin": "ast",
       "id": "infra_remote_runner_run_scan_process_group_running",
-      "community": 27,
+      "community": 26,
       "community_name": "run-scan",
       "norm_label": "process_group_running()"
     },
@@ -4216,7 +4216,7 @@
       },
       "_origin": "ast",
       "id": "infra_remote_runner_run_scan_terminate_process_group",
-      "community": 27,
+      "community": 26,
       "community_name": "run-scan",
       "norm_label": "terminate_process_group()"
     },
@@ -4231,7 +4231,7 @@
       },
       "_origin": "ast",
       "id": "infra_remote_runner_run_scan_mark_state_status",
-      "community": 27,
+      "community": 26,
       "community_name": "run-scan",
       "norm_label": "mark_state_status()"
     },
@@ -4246,7 +4246,7 @@
       },
       "_origin": "ast",
       "id": "infra_remote_runner_run_scan_mark_cleanup_failed_state",
-      "community": 27,
+      "community": 26,
       "community_name": "run-scan",
       "norm_label": "mark_cleanup_failed_state()"
     },
@@ -4261,7 +4261,7 @@
       },
       "_origin": "ast",
       "id": "infra_remote_runner_run_scan_mark_stale_authority_state",
-      "community": 27,
+      "community": 26,
       "community_name": "run-scan",
       "norm_label": "mark_stale_authority_state()"
     },
@@ -4276,7 +4276,7 @@
       },
       "_origin": "ast",
       "id": "infra_remote_runner_run_scan_cancel_request",
-      "community": 27,
+      "community": 26,
       "community_name": "run-scan",
       "norm_label": "cancel_request()"
     },
@@ -4291,7 +4291,7 @@
       },
       "_origin": "ast",
       "id": "infra_remote_runner_run_scan_validated_request_path_for",
-      "community": 27,
+      "community": 26,
       "community_name": "run-scan",
       "norm_label": "validated_request_path_for()"
     },
@@ -4306,7 +4306,7 @@
       },
       "_origin": "ast",
       "id": "infra_remote_runner_run_scan_stage_request",
-      "community": 27,
+      "community": 26,
       "community_name": "run-scan",
       "norm_label": "stage_request()"
     },
@@ -4321,7 +4321,7 @@
       },
       "_origin": "ast",
       "id": "infra_remote_runner_run_scan_run_request",
-      "community": 27,
+      "community": 26,
       "community_name": "run-scan",
       "norm_label": "run_request()"
     },
@@ -5882,7 +5882,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "envdetect.py"
     },
@@ -5893,7 +5893,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect_detect_environment",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "detect_environment()"
     },
@@ -5904,7 +5904,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect_is_container",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "_is_container()"
     },
@@ -5915,7 +5915,7 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect_cgroup_indicates_container",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "_cgroup_indicates_container()"
     },
@@ -5926,7 +5926,7 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect_pid1_is_container_init",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "_pid1_is_container_init()"
     },
@@ -5937,7 +5937,7 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect_is_vm",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "_is_vm()"
     },
@@ -5948,7 +5948,7 @@
       "source_location": "L148",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect_systemd_detect_virt",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "_systemd_detect_virt()"
     },
@@ -5959,7 +5959,7 @@
       "source_location": "L162",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect_dmi_indicates_vm",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "_dmi_indicates_vm()"
     },
@@ -5970,7 +5970,7 @@
       "source_location": "L185",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect_cpuinfo_hypervisor_flag",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "_cpuinfo_hypervisor_flag()"
     },
@@ -5981,7 +5981,7 @@
       "source_location": "L196",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect_dmi_product_name_vm",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "_dmi_product_name_vm()"
     },
@@ -5992,7 +5992,7 @@
       "source_location": "L221",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect_detect_environment_detail",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "detect_environment_detail()"
     },
@@ -6003,7 +6003,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect_rationale_31",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "return a string label describing the execution environment.      returns:"
     },
@@ -6014,7 +6014,7 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect_rationale_55",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "check common container indicators."
     },
@@ -6025,7 +6025,7 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect_rationale_85",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "inspect /proc/1/cgroup for container-related entries."
     },
@@ -6036,7 +6036,7 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect_rationale_99",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "heuristic: pid 1 cmdline suggests a container init, not systemd/init."
     },
@@ -6047,7 +6047,7 @@
       "source_location": "L127",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect_rationale_127",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "check common vm/hypervisor indicators."
     },
@@ -6058,7 +6058,7 @@
       "source_location": "L149",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect_rationale_149",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "run systemd-detect-virt and return the detected virt type, or none on failure."
     },
@@ -6069,7 +6069,7 @@
       "source_location": "L163",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect_rationale_163",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "check dmi sys_vendor for vm indicators."
     },
@@ -6080,7 +6080,7 @@
       "source_location": "L186",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect_rationale_186",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "check /proc/cpuinfo for the hypervisor cpuid flag."
     },
@@ -6091,7 +6091,7 @@
       "source_location": "L197",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect_rationale_197",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "check dmi product name for vm indicators."
     },
@@ -6102,7 +6102,7 @@
       "source_location": "L222",
       "_origin": "ast",
       "id": "scanner_bundle_bin_envdetect_rationale_222",
-      "community": 24,
+      "community": 23,
       "community_name": "envdetect.py",
       "norm_label": "return detailed environment information.      returns a dict with:         - lab"
     },
@@ -6234,7 +6234,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "scanner-manifest.schema.json"
     },
@@ -6245,7 +6245,7 @@
       "source_location": "L2",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_schema",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "$schema"
     },
@@ -6256,7 +6256,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_id",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "$id"
     },
@@ -6267,7 +6267,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_title",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "title"
     },
@@ -6278,7 +6278,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_type",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "type"
     },
@@ -6289,7 +6289,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_required",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "required"
     },
@@ -6300,7 +6300,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_json_ref_contractversion",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "contractversion"
     },
@@ -6311,7 +6311,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "ref_bundle",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "bundle"
     },
@@ -6322,7 +6322,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "ref_entrypoint",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "entrypoint"
     },
@@ -6333,7 +6333,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "ref_outputschema",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "outputschema"
     },
@@ -6344,7 +6344,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_properties",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "properties"
     },
@@ -6355,7 +6355,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_properties_contractversion",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "contractversion"
     },
@@ -6366,7 +6366,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_contractversion_const",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "const"
     },
@@ -6377,7 +6377,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_properties_bundle",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "bundle"
     },
@@ -6388,7 +6388,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_bundle_type",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "type"
     },
@@ -6399,7 +6399,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_bundle_required",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "required"
     },
@@ -6410,7 +6410,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_json_ref_name",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "name"
     },
@@ -6421,7 +6421,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_json_ref_version",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "version"
     },
@@ -6432,7 +6432,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_bundle_properties",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "properties"
     },
@@ -6443,7 +6443,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_properties_name",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "name"
     },
@@ -6454,7 +6454,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_name_type",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "type"
     },
@@ -6465,7 +6465,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_properties_version",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "version"
     },
@@ -6476,7 +6476,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_version_type",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "type"
     },
@@ -6487,7 +6487,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_properties_entrypoint",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "entrypoint"
     },
@@ -6498,7 +6498,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_entrypoint_type",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "type"
     },
@@ -6509,7 +6509,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_entrypoint_description",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "description"
     },
@@ -6520,7 +6520,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_properties_outputschema",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "outputschema"
     },
@@ -6531,7 +6531,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_outputschema_const",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "const"
     },
@@ -6542,7 +6542,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_properties_requiredenv",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "requiredenv"
     },
@@ -6553,7 +6553,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_requiredenv_type",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "type"
     },
@@ -6564,7 +6564,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_requiredenv_items",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "items"
     },
@@ -6575,7 +6575,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_items_type",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "type"
     },
@@ -6586,7 +6586,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_manifest_schema_additionalproperties",
-      "community": 11,
+      "community": 12,
       "community_name": "scanner-manifest.schema.json",
       "norm_label": "additionalproperties"
     },
@@ -6597,7 +6597,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema",
-      "community": 56,
+      "community": 57,
       "community_name": "scanner-output.schema.json",
       "norm_label": "scanner-output.schema.json"
     },
@@ -6608,7 +6608,7 @@
       "source_location": "L2",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_schema",
-      "community": 56,
+      "community": 57,
       "community_name": "scanner-output.schema.json",
       "norm_label": "$schema"
     },
@@ -6619,7 +6619,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_id",
-      "community": 56,
+      "community": 57,
       "community_name": "scanner-output.schema.json",
       "norm_label": "$id"
     },
@@ -6630,7 +6630,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_title",
-      "community": 56,
+      "community": 57,
       "community_name": "scanner-output.schema.json",
       "norm_label": "title"
     },
@@ -6641,7 +6641,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_type",
-      "community": 56,
+      "community": 57,
       "community_name": "scanner-output.schema.json",
       "norm_label": "type"
     },
@@ -6652,7 +6652,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_required",
-      "community": 56,
+      "community": 57,
       "community_name": "scanner-output.schema.json",
       "norm_label": "required"
     },
@@ -6663,7 +6663,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_json_ref_contractversion",
-      "community": 56,
+      "community": 57,
       "community_name": "scanner-output.schema.json",
       "norm_label": "contractversion"
     },
@@ -6674,7 +6674,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "ref_scanner",
-      "community": 56,
+      "community": 57,
       "community_name": "scanner-output.schema.json",
       "norm_label": "scanner"
     },
@@ -6685,7 +6685,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "ref_target",
-      "community": 56,
+      "community": 57,
       "community_name": "scanner-output.schema.json",
       "norm_label": "target"
     },
@@ -6696,7 +6696,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "ref_findings",
-      "community": 56,
+      "community": 57,
       "community_name": "scanner-output.schema.json",
       "norm_label": "findings"
     },
@@ -6707,7 +6707,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "ref_collectedat",
-      "community": 56,
+      "community": 57,
       "community_name": "scanner-output.schema.json",
       "norm_label": "collectedat"
     },
@@ -7180,7 +7180,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_severity_enum",
-      "community": 82,
+      "community": 81,
       "community_name": "enum",
       "norm_label": "enum"
     },
@@ -7191,7 +7191,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ref_informational",
-      "community": 82,
+      "community": 81,
       "community_name": "enum",
       "norm_label": "informational"
     },
@@ -7202,7 +7202,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ref_low",
-      "community": 82,
+      "community": 81,
       "community_name": "enum",
       "norm_label": "low"
     },
@@ -7213,7 +7213,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ref_moderate",
-      "community": 82,
+      "community": 81,
       "community_name": "enum",
       "norm_label": "moderate"
     },
@@ -7224,7 +7224,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ref_medium",
-      "community": 82,
+      "community": 81,
       "community_name": "enum",
       "norm_label": "medium"
     },
@@ -7235,7 +7235,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ref_high",
-      "community": 82,
+      "community": 81,
       "community_name": "enum",
       "norm_label": "high"
     },
@@ -7246,7 +7246,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ref_critical",
-      "community": 82,
+      "community": 81,
       "community_name": "enum",
       "norm_label": "critical"
     },
@@ -7257,7 +7257,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ref_info",
-      "community": 82,
+      "community": 81,
       "community_name": "enum",
       "norm_label": "info"
     },
@@ -7268,7 +7268,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ref_crit",
-      "community": 82,
+      "community": 81,
       "community_name": "enum",
       "norm_label": "crit"
     },
@@ -7521,7 +7521,7 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "scanner_bundle_schemas_scanner_output_schema_additionalproperties",
-      "community": 56,
+      "community": 57,
       "community_name": "scanner-output.schema.json",
       "norm_label": "additionalproperties"
     },
@@ -7697,7 +7697,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "scripts_check_disposable_ssh_fixture",
-      "community": 83,
+      "community": 82,
       "community_name": "load_and_validate",
       "norm_label": "check_disposable_ssh_fixture.py"
     },
@@ -7708,7 +7708,7 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "scripts_check_disposable_ssh_fixture_reject",
-      "community": 83,
+      "community": 82,
       "community_name": "load_and_validate",
       "norm_label": "reject()"
     },
@@ -7719,7 +7719,7 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "scripts_check_disposable_ssh_fixture_require_object",
-      "community": 83,
+      "community": 82,
       "community_name": "load_and_validate",
       "norm_label": "require_object()"
     },
@@ -7730,7 +7730,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "scripts_check_disposable_ssh_fixture_py_any",
-      "community": 83,
+      "community": 82,
       "community_name": "load_and_validate",
       "norm_label": "any"
     },
@@ -7741,7 +7741,7 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "scripts_check_disposable_ssh_fixture_require_string_list",
-      "community": 83,
+      "community": 82,
       "community_name": "load_and_validate",
       "norm_label": "require_string_list()"
     },
@@ -7752,7 +7752,7 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "scripts_check_disposable_ssh_fixture_validate_force_command_assets",
-      "community": 83,
+      "community": 82,
       "community_name": "load_and_validate",
       "norm_label": "validate_force_command_assets()"
     },
@@ -7763,7 +7763,7 @@
       "source_location": "L142",
       "_origin": "ast",
       "id": "scripts_check_disposable_ssh_fixture_load_and_validate",
-      "community": 83,
+      "community": 82,
       "community_name": "load_and_validate",
       "norm_label": "load_and_validate()"
     },
@@ -7774,7 +7774,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "scripts_check_disposable_ssh_fixture_py_path",
-      "community": 83,
+      "community": 82,
       "community_name": "load_and_validate",
       "norm_label": "path"
     },
@@ -7785,7 +7785,7 @@
       "source_location": "L222",
       "_origin": "ast",
       "id": "scripts_check_disposable_ssh_fixture_main",
-      "community": 83,
+      "community": 82,
       "community_name": "load_and_validate",
       "norm_label": "main()"
     },
@@ -7796,7 +7796,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "scripts_check_worker_node_egress_policy",
-      "community": 57,
+      "community": 58,
       "community_name": "check_worker_node_egress_policy.py",
       "norm_label": "check_worker_node_egress_policy.py"
     },
@@ -7807,7 +7807,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "scripts_check_worker_node_egress_policy_reject",
-      "community": 57,
+      "community": 58,
       "community_name": "check_worker_node_egress_policy.py",
       "norm_label": "reject()"
     },
@@ -7818,7 +7818,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "scripts_check_worker_node_egress_policy_require_exact_keys",
-      "community": 57,
+      "community": 58,
       "community_name": "check_worker_node_egress_policy.py",
       "norm_label": "require_exact_keys()"
     },
@@ -7829,7 +7829,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "scripts_check_worker_node_egress_policy_py_any",
-      "community": 57,
+      "community": 58,
       "community_name": "check_worker_node_egress_policy.py",
       "norm_label": "any"
     },
@@ -7840,7 +7840,7 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "scripts_check_worker_node_egress_policy_require_uuid",
-      "community": 57,
+      "community": 58,
       "community_name": "check_worker_node_egress_policy.py",
       "norm_label": "require_uuid()"
     },
@@ -7851,7 +7851,7 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "scripts_check_worker_node_egress_policy_require_network",
-      "community": 57,
+      "community": 58,
       "community_name": "check_worker_node_egress_policy.py",
       "norm_label": "require_network()"
     },
@@ -7862,7 +7862,7 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "scripts_check_worker_node_egress_policy_require_port",
-      "community": 57,
+      "community": 58,
       "community_name": "check_worker_node_egress_policy.py",
       "norm_label": "require_port()"
     },
@@ -7873,7 +7873,7 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "scripts_check_worker_node_egress_policy_validate_targets",
-      "community": 57,
+      "community": 58,
       "community_name": "check_worker_node_egress_policy.py",
       "norm_label": "validate_targets()"
     },
@@ -7884,7 +7884,7 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "scripts_check_worker_node_egress_policy_validate_optional_hosts",
-      "community": 57,
+      "community": 58,
       "community_name": "check_worker_node_egress_policy.py",
       "norm_label": "validate_optional_hosts()"
     },
@@ -7895,7 +7895,7 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "scripts_check_worker_node_egress_policy_load_and_validate",
-      "community": 57,
+      "community": 58,
       "community_name": "check_worker_node_egress_policy.py",
       "norm_label": "load_and_validate()"
     },
@@ -7906,7 +7906,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "scripts_check_worker_node_egress_policy_py_path",
-      "community": 57,
+      "community": 58,
       "community_name": "check_worker_node_egress_policy.py",
       "norm_label": "path"
     },
@@ -7917,7 +7917,7 @@
       "source_location": "L155",
       "_origin": "ast",
       "id": "scripts_check_worker_node_egress_policy_main",
-      "community": 57,
+      "community": 58,
       "community_name": "check_worker_node_egress_policy.py",
       "norm_label": "main()"
     },
@@ -8110,7 +8110,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy",
-      "community": 58,
+      "community": 59,
       "community_name": "ProxyHandler",
       "norm_label": "tailnet_path_proxy.py"
     },
@@ -8121,7 +8121,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_upstream_path",
-      "community": 58,
+      "community": 59,
       "community_name": "ProxyHandler",
       "norm_label": "upstream_path()"
     },
@@ -8132,7 +8132,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_proxyhandler",
-      "community": 58,
+      "community": 59,
       "community_name": "ProxyHandler",
       "norm_label": "proxyhandler"
     },
@@ -8143,7 +8143,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_py_basehttprequesthandler",
-      "community": 58,
+      "community": 59,
       "community_name": "ProxyHandler",
       "norm_label": "basehttprequesthandler"
     },
@@ -8154,7 +8154,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_proxyhandler_proxy",
-      "community": 58,
+      "community": 59,
       "community_name": "ProxyHandler",
       "norm_label": "._proxy()"
     },
@@ -8165,7 +8165,7 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_proxyhandler_do_get",
-      "community": 58,
+      "community": 59,
       "community_name": "ProxyHandler",
       "norm_label": ".do_get()"
     },
@@ -8176,7 +8176,7 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_proxyhandler_do_head",
-      "community": 58,
+      "community": 59,
       "community_name": "ProxyHandler",
       "norm_label": ".do_head()"
     },
@@ -8187,7 +8187,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_proxyhandler_do_post",
-      "community": 58,
+      "community": 59,
       "community_name": "ProxyHandler",
       "norm_label": ".do_post()"
     },
@@ -8198,7 +8198,7 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_proxyhandler_do_put",
-      "community": 58,
+      "community": 59,
       "community_name": "ProxyHandler",
       "norm_label": ".do_put()"
     },
@@ -8209,7 +8209,7 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_proxyhandler_do_patch",
-      "community": 58,
+      "community": 59,
       "community_name": "ProxyHandler",
       "norm_label": ".do_patch()"
     },
@@ -8220,7 +8220,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_proxyhandler_do_delete",
-      "community": 58,
+      "community": 59,
       "community_name": "ProxyHandler",
       "norm_label": ".do_delete()"
     },
@@ -8231,7 +8231,7 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_proxyhandler_log_message",
-      "community": 58,
+      "community": 59,
       "community_name": "ProxyHandler",
       "norm_label": ".log_message()"
     },
@@ -10112,7 +10112,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_side_navigation_shell",
-      "community": 59,
+      "community": 60,
       "community_name": "read",
       "norm_label": "test_side_navigation_shell.py"
     },
@@ -10123,7 +10123,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "tests_test_side_navigation_shell_read",
-      "community": 59,
+      "community": 60,
       "community_name": "read",
       "norm_label": "read()"
     },
@@ -10134,7 +10134,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "tests_test_side_navigation_shell_sidenavigationshelltests",
-      "community": 59,
+      "community": 60,
       "community_name": "read",
       "norm_label": "sidenavigationshelltests"
     },
@@ -10145,7 +10145,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "tests_test_side_navigation_shell_sidenavigationshelltests_test_authenticated_shell_uses_side_navigation_not_top_nav",
-      "community": 59,
+      "community": 60,
       "community_name": "read",
       "norm_label": ".test_authenticated_shell_uses_side_navigation_not_top_nav()"
     },
@@ -10156,7 +10156,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_test_side_navigation_shell_sidenavigationshelltests_test_side_navigation_uses_required_order_and_grouped_subpages",
-      "community": 59,
+      "community": 60,
       "community_name": "read",
       "norm_label": ".test_side_navigation_uses_required_order_and_grouped_subpages()"
     },
@@ -10167,7 +10167,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "tests_test_side_navigation_shell_sidenavigationshelltests_test_legacy_start_scan_route_redirects_to_machine_selection",
-      "community": 59,
+      "community": 60,
       "community_name": "read",
       "norm_label": ".test_legacy_start_scan_route_redirects_to_machine_selection()"
     },
@@ -10178,7 +10178,7 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "tests_test_side_navigation_shell_sidenavigationshelltests_test_start_scan_is_a_machine_detail_action_not_primary_navigation",
-      "community": 59,
+      "community": 60,
       "community_name": "read",
       "norm_label": ".test_start_scan_is_a_machine_detail_action_not_primary_navigation()"
     },
@@ -10189,7 +10189,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "tests_test_side_navigation_shell_sidenavigationshelltests_test_side_navigation_renders_group_labels_and_subpage_links",
-      "community": 59,
+      "community": 60,
       "community_name": "read",
       "norm_label": ".test_side_navigation_renders_group_labels_and_subpage_links()"
     },
@@ -10200,7 +10200,7 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "tests_test_side_navigation_shell_sidenavigationshelltests_test_mobile_navigation_uses_a_drawer_while_desktop_keeps_the_side_rail",
-      "community": 59,
+      "community": 60,
       "community_name": "read",
       "norm_label": ".test_mobile_navigation_uses_a_drawer_while_desktop_keeps_the_side_rail()"
     },
@@ -10211,7 +10211,7 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "tests_test_side_navigation_shell_sidenavigationshelltests_test_shell_uses_neutral_system_truth_and_skip_navigation",
-      "community": 59,
+      "community": 60,
       "community_name": "read",
       "norm_label": ".test_shell_uses_neutral_system_truth_and_skip_navigation()"
     },
@@ -10222,7 +10222,7 @@
       "source_location": "L86",
       "_origin": "ast",
       "id": "tests_test_side_navigation_shell_sidenavigationshelltests_test_empty_navigation_groups_do_not_render_empty_subpage_containers",
-      "community": 59,
+      "community": 60,
       "community_name": "read",
       "norm_label": ".test_empty_navigation_groups_do_not_render_empty_subpage_containers()"
     },
@@ -10233,7 +10233,7 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "tests_test_side_navigation_shell_sidenavigationshelltests_test_css_defines_responsive_side_navigation",
-      "community": 59,
+      "community": 60,
       "community_name": "read",
       "norm_label": ".test_css_defines_responsive_side_navigation()"
     },
@@ -10244,7 +10244,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_ssh_remote_runner_contract",
-      "community": 28,
+      "community": 27,
       "community_name": "RemoteRunnerProtocolTests",
       "norm_label": "test_ssh_remote_runner_contract.py"
     },
@@ -10255,7 +10255,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests",
-      "community": 28,
+      "community": 27,
       "community_name": "RemoteRunnerProtocolTests",
       "norm_label": "remoterunnerprotocoltests"
     },
@@ -10266,7 +10266,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_write_sandboxed_runner",
-      "community": 28,
+      "community": 27,
       "community_name": "RemoteRunnerProtocolTests",
       "norm_label": ".write_sandboxed_runner()"
     },
@@ -10277,7 +10277,7 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_runner_bounded_cleanup_reports_fixed_failure_when_kill_does_not_clear_group",
-      "community": 28,
+      "community": 27,
       "community_name": "RemoteRunnerProtocolTests",
       "norm_label": ".test_runner_bounded_cleanup_reports_fixed_failure_when_kill_does_not_clear_group()"
     },
@@ -10288,7 +10288,7 @@
       "source_location": "L109",
       "_origin": "ast",
       "id": "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_retained_stale_uuid_state_never_signals_a_recycled_process_group",
-      "community": 28,
+      "community": 27,
       "community_name": "RemoteRunnerProtocolTests",
       "norm_label": ".test_retained_stale_uuid_state_never_signals_a_recycled_process_group()"
     },
@@ -10299,7 +10299,7 @@
       "source_location": "L149",
       "_origin": "ast",
       "id": "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_deadline_cleanup_failure_keeps_state_after_leader_exits_with_persistent_group",
-      "community": 28,
+      "community": 27,
       "community_name": "RemoteRunnerProtocolTests",
       "norm_label": ".test_deadline_cleanup_failure_keeps_state_after_leader_exits_with_persistent_group()"
     },
@@ -10310,7 +10310,7 @@
       "source_location": "L226",
       "_origin": "ast",
       "id": "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_runner_rejects_symlinked_uuid_request_directory_before_fixed_implementation",
-      "community": 28,
+      "community": 27,
       "community_name": "RemoteRunnerProtocolTests",
       "norm_label": ".test_runner_rejects_symlinked_uuid_request_directory_before_fixed_implementation()"
     },
@@ -10321,7 +10321,7 @@
       "source_location": "L250",
       "_origin": "ast",
       "id": "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_stage_request_creates_a_root_owned_atomic_uuid_request_without_symlink_escape",
-      "community": 28,
+      "community": 27,
       "community_name": "RemoteRunnerProtocolTests",
       "norm_label": ".test_stage_request_creates_a_root_owned_atomic_uuid_request_without_symlink_escape()"
     },
@@ -10332,7 +10332,7 @@
       "source_location": "L293",
       "_origin": "ast",
       "id": "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_stage_request_rejects_oversized_stdin_without_creating_a_request_file",
-      "community": 28,
+      "community": 27,
       "community_name": "RemoteRunnerProtocolTests",
       "norm_label": ".test_stage_request_rejects_oversized_stdin_without_creating_a_request_file()"
     },
@@ -10343,7 +10343,7 @@
       "source_location": "L311",
       "_origin": "ast",
       "id": "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_stage_request_has_fixed_timeout_and_rejects_timed_out_stdin_without_request_state",
-      "community": 28,
+      "community": 27,
       "community_name": "RemoteRunnerProtocolTests",
       "norm_label": ".test_stage_request_has_fixed_timeout_and_rejects_timed_out_stdin_without_request_state()"
     },
@@ -10354,7 +10354,7 @@
       "source_location": "L350",
       "_origin": "ast",
       "id": "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_runner_launches_fixed_implementation_for_regular_uuid_request_directory",
-      "community": 28,
+      "community": 27,
       "community_name": "RemoteRunnerProtocolTests",
       "norm_label": ".test_runner_launches_fixed_implementation_for_regular_uuid_request_directory()"
     },
@@ -10365,7 +10365,7 @@
       "source_location": "L376",
       "_origin": "ast",
       "id": "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_supervisor_requires_runner_startup_release_before_invoking_fixed_implementation",
-      "community": 28,
+      "community": 27,
       "community_name": "RemoteRunnerProtocolTests",
       "norm_label": ".test_supervisor_requires_runner_startup_release_before_invoking_fixed_implementation()"
     },
@@ -10376,7 +10376,7 @@
       "source_location": "L423",
       "_origin": "ast",
       "id": "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_supervisor_rejects_expired_matching_startup_state_before_fixed_implementation",
-      "community": 28,
+      "community": 27,
       "community_name": "RemoteRunnerProtocolTests",
       "norm_label": ".test_supervisor_rejects_expired_matching_startup_state_before_fixed_implementation()"
     },
@@ -10387,7 +10387,7 @@
       "source_location": "L486",
       "_origin": "ast",
       "id": "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_runner_startup_identity_failure_reaps_unreleased_supervisor_without_scanning",
-      "community": 28,
+      "community": 27,
       "community_name": "RemoteRunnerProtocolTests",
       "norm_label": ".test_runner_startup_identity_failure_reaps_unreleased_supervisor_without_scanning()"
     },
@@ -10398,7 +10398,7 @@
       "source_location": "L558",
       "_origin": "ast",
       "id": "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_duplicate_and_unknown_cancellation_remain_idempotent",
-      "community": 28,
+      "community": 27,
       "community_name": "RemoteRunnerProtocolTests",
       "norm_label": ".test_duplicate_and_unknown_cancellation_remain_idempotent()"
     },
@@ -10409,7 +10409,7 @@
       "source_location": "L596",
       "_origin": "ast",
       "id": "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_cancel_does_not_signal_mismatched_lifetime_identity_or_expired_state",
-      "community": 28,
+      "community": 27,
       "community_name": "RemoteRunnerProtocolTests",
       "norm_label": ".test_cancel_does_not_signal_mismatched_lifetime_identity_or_expired_state()"
     },
@@ -10420,7 +10420,7 @@
       "source_location": "L644",
       "_origin": "ast",
       "id": "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_runner_rejects_non_uuid_arguments_with_only_a_fixed_status",
-      "community": 28,
+      "community": 27,
       "community_name": "RemoteRunnerProtocolTests",
       "norm_label": ".test_runner_rejects_non_uuid_arguments_with_only_a_fixed_status()"
     },
@@ -10431,7 +10431,7 @@
       "source_location": "L667",
       "_origin": "ast",
       "id": "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_runner_owns_only_uuid_scoped_supervisor_lifetime_state_and_hard_deadline_cleanup",
-      "community": 28,
+      "community": 27,
       "community_name": "RemoteRunnerProtocolTests",
       "norm_label": ".test_runner_owns_only_uuid_scoped_supervisor_lifetime_state_and_hard_deadline_cleanup()"
     },
@@ -10442,7 +10442,7 @@
       "source_location": "L694",
       "_origin": "ast",
       "id": "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_install_contract_requires_root_owned_non_writable_runner_supervisor_and_fixed_scanner_implementation",
-      "community": 28,
+      "community": 27,
       "community_name": "RemoteRunnerProtocolTests",
       "norm_label": ".test_install_contract_requires_root_owned_non_writable_runner_supervisor_and_fixed_scanner_implementation()"
     },
@@ -12180,7 +12180,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_components_display_preferences",
-      "community": 60,
+      "community": 61,
       "community_name": "display-preferences.js",
       "norm_label": "display-preferences.jsx"
     },
@@ -12191,7 +12191,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "web_components_display_preferences_readstoredpreferences",
-      "community": 60,
+      "community": 61,
       "community_name": "display-preferences.js",
       "norm_label": "readstoredpreferences()"
     },
@@ -12202,7 +12202,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "web_components_display_preferences_applypreferences",
-      "community": 60,
+      "community": 61,
       "community_name": "display-preferences.js",
       "norm_label": "applypreferences()"
     },
@@ -12213,7 +12213,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "web_components_display_preferences_preferencegroup",
-      "community": 60,
+      "community": 61,
       "community_name": "display-preferences.js",
       "norm_label": "preferencegroup()"
     },
@@ -12224,7 +12224,7 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "web_components_display_preferences_displaypreferencespanel",
-      "community": 60,
+      "community": 61,
       "community_name": "display-preferences.js",
       "norm_label": "displaypreferencespanel()"
     },
@@ -13247,7 +13247,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_lib_display_preferences",
-      "community": 60,
+      "community": 61,
       "community_name": "display-preferences.js",
       "norm_label": "display-preferences.js"
     },
@@ -13258,7 +13258,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "web_lib_display_preferences_display_preference_defaults",
-      "community": 60,
+      "community": 61,
       "community_name": "display-preferences.js",
       "norm_label": "display_preference_defaults"
     },
@@ -13269,7 +13269,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "web_lib_display_preferences_display_preference_options",
-      "community": 60,
+      "community": 61,
       "community_name": "display-preferences.js",
       "norm_label": "display_preference_options"
     },
@@ -13280,7 +13280,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "web_lib_display_preferences_normalizechoice",
-      "community": 60,
+      "community": 61,
       "community_name": "display-preferences.js",
       "norm_label": "normalizechoice()"
     },
@@ -13291,7 +13291,7 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "web_lib_display_preferences_normalizedisplaypreferences",
-      "community": 60,
+      "community": 61,
       "community_name": "display-preferences.js",
       "norm_label": "normalizedisplaypreferences()"
     },
@@ -13302,7 +13302,7 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "web_lib_display_preferences_describedisplaypreferences",
-      "community": 60,
+      "community": 61,
       "community_name": "display-preferences.js",
       "norm_label": "describedisplaypreferences()"
     },
@@ -13313,7 +13313,7 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "web_lib_display_preferences_displaypreferencesbootstrapscript",
-      "community": 60,
+      "community": 61,
       "community_name": "display-preferences.js",
       "norm_label": "displaypreferencesbootstrapscript()"
     },
@@ -13940,7 +13940,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_middleware",
-      "community": 84,
+      "community": 83,
       "community_name": "middleware.js",
       "norm_label": "middleware.js"
     },
@@ -13951,7 +13951,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "web_middleware_authpagetoapi",
-      "community": 84,
+      "community": 83,
       "community_name": "middleware.js",
       "norm_label": "authpagetoapi"
     },
@@ -13962,7 +13962,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "web_middleware_public_path_prefixes",
-      "community": 84,
+      "community": 83,
       "community_name": "middleware.js",
       "norm_label": "public_path_prefixes"
     },
@@ -13973,7 +13973,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "web_middleware_basepath",
-      "community": 84,
+      "community": 83,
       "community_name": "middleware.js",
       "norm_label": "basepath()"
     },
@@ -13984,7 +13984,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "web_middleware_withoutbasepath",
-      "community": 84,
+      "community": 83,
       "community_name": "middleware.js",
       "norm_label": "withoutbasepath()"
     },
@@ -13995,7 +13995,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "web_middleware_ispublicpath",
-      "community": 84,
+      "community": 83,
       "community_name": "middleware.js",
       "norm_label": "ispublicpath()"
     },
@@ -14006,7 +14006,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "web_middleware_homeurl",
-      "community": 84,
+      "community": 83,
       "community_name": "middleware.js",
       "norm_label": "homeurl()"
     },
@@ -14017,7 +14017,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "web_middleware_middleware",
-      "community": 84,
+      "community": 83,
       "community_name": "middleware.js",
       "norm_label": "middleware()"
     },
@@ -14028,7 +14028,7 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "web_middleware_config",
-      "community": 84,
+      "community": 83,
       "community_name": "middleware.js",
       "norm_label": "config"
     },
@@ -14424,7 +14424,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_scripts_verify_mvp",
-      "community": 61,
+      "community": 62,
       "community_name": "verify-mvp.mjs",
       "norm_label": "verify-mvp.mjs"
     },
@@ -14435,7 +14435,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "web_scripts_verify_mvp_root",
-      "community": 61,
+      "community": 62,
       "community_name": "verify-mvp.mjs",
       "norm_label": "root"
     },
@@ -14446,7 +14446,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "web_scripts_verify_mvp_routes",
-      "community": 61,
+      "community": 62,
       "community_name": "verify-mvp.mjs",
       "norm_label": "routes"
     },
@@ -14457,7 +14457,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "web_scripts_verify_mvp_failures",
-      "community": 61,
+      "community": 62,
       "community_name": "verify-mvp.mjs",
       "norm_label": "failures"
     },
@@ -14468,7 +14468,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "web_scripts_verify_mvp_walk",
-      "community": 61,
+      "community": 62,
       "community_name": "verify-mvp.mjs",
       "norm_label": "walk()"
     },
@@ -14479,7 +14479,7 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "web_scripts_verify_mvp_source",
-      "community": 61,
+      "community": 62,
       "community_name": "verify-mvp.mjs",
       "norm_label": "source"
     },
@@ -14490,7 +14490,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "web_scripts_verify_mvp_landing",
-      "community": 61,
+      "community": 62,
       "community_name": "verify-mvp.mjs",
       "norm_label": "landing"
     },
@@ -14501,7 +14501,7 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "web_scripts_verify_mvp_loginpage",
-      "community": 61,
+      "community": 62,
       "community_name": "verify-mvp.mjs",
       "norm_label": "loginpage"
     },
@@ -14512,7 +14512,7 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "web_scripts_verify_mvp_nextconfig",
-      "community": 61,
+      "community": 62,
       "community_name": "verify-mvp.mjs",
       "norm_label": "nextconfig"
     },
@@ -14523,7 +14523,7 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "web_scripts_verify_mvp_navigationdata",
-      "community": 61,
+      "community": 62,
       "community_name": "verify-mvp.mjs",
       "norm_label": "navigationdata"
     },
@@ -14534,7 +14534,7 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "web_scripts_verify_mvp_navigationgroups",
-      "community": 61,
+      "community": 62,
       "community_name": "verify-mvp.mjs",
       "norm_label": "navigationgroups"
     },
@@ -14545,7 +14545,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "web_scripts_verify_mvp_navigationpositions",
-      "community": 61,
+      "community": 62,
       "community_name": "verify-mvp.mjs",
       "norm_label": "navigationpositions"
     },
@@ -16591,7 +16591,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "skill.md"
     },
@@ -16602,7 +16602,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_graphify",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "/graphify"
     },
@@ -16613,7 +16613,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_usage",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "usage"
     },
@@ -16624,7 +16624,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_what_graphify_is_for",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "what graphify is for"
     },
@@ -16635,7 +16635,7 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_what_you_must_do_when_invoked",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "what you must do when invoked"
     },
@@ -16646,7 +16646,7 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_step_1_ensure_graphify_is_installed",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "step 1 - ensure graphify is installed"
     },
@@ -16657,7 +16657,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_step_2_detect_files",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "step 2 - detect files"
     },
@@ -16668,7 +16668,7 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_step_3_extract_entities_and_relationships",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "step 3 - extract entities and relationships"
     },
@@ -16679,7 +16679,7 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_part_a_structural_extraction_for_code_files",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "part a - structural extraction for code files"
     },
@@ -16690,7 +16690,7 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_part_b_semantic_extraction_parallel_subagents",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "part b - semantic extraction (parallel subagents)"
     },
@@ -16701,7 +16701,7 @@
       "source_location": "L287",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_part_c_merge_ast_semantic_into_final_extraction",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "part c - merge ast + semantic into final extraction"
     },
@@ -16712,7 +16712,7 @@
       "source_location": "L319",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_step_4_build_graph_cluster_analyze_generate_outputs",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "step 4 - build graph, cluster, analyze, generate outputs"
     },
@@ -16723,7 +16723,7 @@
       "source_location": "L369",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_step_5_label_communities",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "step 5 - label communities"
     },
@@ -16734,7 +16734,7 @@
       "source_location": "L409",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_step_6_generate_obsidian_vault_default_optional_html",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "step 6 - generate obsidian vault (default) + optional html"
     },
@@ -16745,7 +16745,7 @@
       "source_location": "L467",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_step_7_neo4j_export_only_if_neo4j_or_neo4j_push_flag",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "step 7 - neo4j export (only if --neo4j or --neo4j-push flag)"
     },
@@ -16756,7 +16756,7 @@
       "source_location": "L506",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_step_7b_svg_export_only_if_svg_flag",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "step 7b - svg export (only if --svg flag)"
     },
@@ -16767,7 +16767,7 @@
       "source_location": "L528",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_step_7c_graphml_export_only_if_graphml_flag",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "step 7c - graphml export (only if --graphml flag)"
     },
@@ -16778,7 +16778,7 @@
       "source_location": "L548",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_step_7d_mcp_server_only_if_mcp_flag",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "step 7d - mcp server (only if --mcp flag)"
     },
@@ -16789,7 +16789,7 @@
       "source_location": "L568",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_step_8_token_reduction_benchmark_only_if_total_words_5000",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "step 8 - token reduction benchmark (only if total_words > 5000)"
     },
@@ -16800,7 +16800,7 @@
       "source_location": "L588",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_step_9_save_manifest_update_cost_tracker_clean_up_and_report",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "step 9 - save manifest, update cost tracker, clean up, and report"
     },
@@ -16811,7 +16811,7 @@
       "source_location": "L666",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_for_update_incremental_re_extraction",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "for --update (incremental re-extraction)"
     },
@@ -16822,7 +16822,7 @@
       "source_location": "L766",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_for_cluster_only",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "for --cluster-only"
     },
@@ -16833,7 +16833,7 @@
       "source_location": "L813",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_for_graphify_query",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "for /graphify query"
     },
@@ -16844,7 +16844,7 @@
       "source_location": "L951",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_for_graphify_path",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "for /graphify path"
     },
@@ -16855,7 +16855,7 @@
       "source_location": "L1035",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_for_graphify_explain",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "for /graphify explain"
     },
@@ -16866,7 +16866,7 @@
       "source_location": "L1112",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_for_graphify_add",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "for /graphify add"
     },
@@ -16877,7 +16877,7 @@
       "source_location": "L1145",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_for_watch",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "for --watch"
     },
@@ -16888,7 +16888,7 @@
       "source_location": "L1166",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_for_git_commit_hook",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "for git commit hook"
     },
@@ -16899,7 +16899,7 @@
       "source_location": "L1182",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_for_native_claude_md_integration",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "for native claude.md integration"
     },
@@ -16910,7 +16910,7 @@
       "source_location": "L1198",
       "_origin": "ast",
       "id": "hermes_skills_graphify_skill_honesty_rules",
-      "community": 15,
+      "community": 16,
       "community_name": "/graphify",
       "norm_label": "honesty rules"
     },
@@ -17779,7 +17779,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_plans_2026_07_22_enterprise_single_container_completion",
-      "community": 25,
+      "community": 24,
       "community_name": "Shore Sentinel Enterprise Single-Container Completion Plan",
       "norm_label": "2026-07-22-enterprise-single-container-completion.md"
     },
@@ -17790,7 +17790,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_plans_2026_07_22_enterprise_single_container_completion_shore_sentinel_enterprise_single_container_completion_plan",
-      "community": 25,
+      "community": 24,
       "community_name": "Shore Sentinel Enterprise Single-Container Completion Plan",
       "norm_label": "shore sentinel enterprise single-container completion plan"
     },
@@ -17801,7 +17801,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "docs_plans_2026_07_22_enterprise_single_container_completion_locked_decisions_and_constraints",
-      "community": 25,
+      "community": 24,
       "community_name": "Shore Sentinel Enterprise Single-Container Completion Plan",
       "norm_label": "locked decisions and constraints"
     },
@@ -17812,7 +17812,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "docs_plans_2026_07_22_enterprise_single_container_completion_accepted_deviation_records",
-      "community": 25,
+      "community": 24,
       "community_name": "Shore Sentinel Enterprise Single-Container Completion Plan",
       "norm_label": "accepted deviation records"
     },
@@ -17823,7 +17823,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "docs_plans_2026_07_22_enterprise_single_container_completion_current_baseline_used_by_this_plan",
-      "community": 25,
+      "community": 24,
       "community_name": "Shore Sentinel Enterprise Single-Container Completion Plan",
       "norm_label": "current baseline used by this plan"
     },
@@ -17834,7 +17834,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "docs_plans_2026_07_22_enterprise_single_container_completion_requirement_register",
-      "community": 25,
+      "community": 24,
       "community_name": "Shore Sentinel Enterprise Single-Container Completion Plan",
       "norm_label": "requirement register"
     },
@@ -17845,7 +17845,7 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "docs_plans_2026_07_22_enterprise_single_container_completion_dependency_order_and_implementation_tasks",
-      "community": 25,
+      "community": 24,
       "community_name": "Shore Sentinel Enterprise Single-Container Completion Plan",
       "norm_label": "dependency order and implementation tasks"
     },
@@ -17856,7 +17856,7 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "docs_plans_2026_07_22_enterprise_single_container_completion_task_1_freeze_contracts_and_write_failing_release_guards",
-      "community": 25,
+      "community": 24,
       "community_name": "Shore Sentinel Enterprise Single-Container Completion Plan",
       "norm_label": "task 1: freeze contracts and write failing release guards"
     },
@@ -17867,7 +17867,7 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "docs_plans_2026_07_22_enterprise_single_container_completion_task_2_build_the_single_container_image_and_supervisor_process_graph",
-      "community": 25,
+      "community": 24,
       "community_name": "Shore Sentinel Enterprise Single-Container Completion Plan",
       "norm_label": "task 2: build the single-container image and supervisor process graph"
     },
@@ -17878,7 +17878,7 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "docs_plans_2026_07_22_enterprise_single_container_completion_task_3_replace_production_compose_delivery_with_one_application_service",
-      "community": 25,
+      "community": 24,
       "community_name": "Shore Sentinel Enterprise Single-Container Completion Plan",
       "norm_label": "task 3: replace production compose delivery with one application service"
     },
@@ -17889,7 +17889,7 @@
       "source_location": "L150",
       "_origin": "ast",
       "id": "docs_plans_2026_07_22_enterprise_single_container_completion_task_4_introduce_ordered_one_shot_sql_migrations",
-      "community": 25,
+      "community": 24,
       "community_name": "Shore Sentinel Enterprise Single-Container Completion Plan",
       "norm_label": "task 4: introduce ordered, one-shot sql migrations"
     },
@@ -17900,7 +17900,7 @@
       "source_location": "L185",
       "_origin": "ast",
       "id": "docs_plans_2026_07_22_enterprise_single_container_completion_task_5_preserve_logical_least_privilege_and_worker_data_boundaries",
-      "community": 25,
+      "community": 24,
       "community_name": "Shore Sentinel Enterprise Single-Container Completion Plan",
       "norm_label": "task 5: preserve logical least privilege and worker/data boundaries"
     },
@@ -17911,7 +17911,7 @@
       "source_location": "L224",
       "_origin": "ast",
       "id": "docs_plans_2026_07_22_enterprise_single_container_completion_task_6_enforce_host_network_egress_and_in_container_sandbox_policy",
-      "community": 25,
+      "community": 24,
       "community_name": "Shore Sentinel Enterprise Single-Container Completion Plan",
       "norm_label": "task 6: enforce host/network egress and in-container sandbox policy"
     },
@@ -17922,7 +17922,7 @@
       "source_location": "L248",
       "_origin": "ast",
       "id": "docs_plans_2026_07_22_enterprise_single_container_completion_task_7_complete_navigation_documentation_and_update_rollback_runbooks",
-      "community": 25,
+      "community": 24,
       "community_name": "Shore Sentinel Enterprise Single-Container Completion Plan",
       "norm_label": "task 7: complete navigation, documentation, and update/rollback runbooks"
     },
@@ -17933,7 +17933,7 @@
       "source_location": "L273",
       "_origin": "ast",
       "id": "docs_plans_2026_07_22_enterprise_single_container_completion_task_8_staged_integration_review_and_release_proof",
-      "community": 25,
+      "community": 24,
       "community_name": "Shore Sentinel Enterprise Single-Container Completion Plan",
       "norm_label": "task 8: staged integration, review, and release proof"
     },
@@ -17944,7 +17944,7 @@
       "source_location": "L298",
       "_origin": "ast",
       "id": "docs_plans_2026_07_22_enterprise_single_container_completion_migration_and_data_safety_contract",
-      "community": 25,
+      "community": 24,
       "community_name": "Shore Sentinel Enterprise Single-Container Completion Plan",
       "norm_label": "migration and data-safety contract"
     },
@@ -17955,7 +17955,7 @@
       "source_location": "L308",
       "_origin": "ast",
       "id": "docs_plans_2026_07_22_enterprise_single_container_completion_threat_control_matrix",
-      "community": 25,
+      "community": 24,
       "community_name": "Shore Sentinel Enterprise Single-Container Completion Plan",
       "norm_label": "threat-control matrix"
     },
@@ -17966,7 +17966,7 @@
       "source_location": "L327",
       "_origin": "ast",
       "id": "docs_plans_2026_07_22_enterprise_single_container_completion_test_command_catalog",
-      "community": 25,
+      "community": 24,
       "community_name": "Shore Sentinel Enterprise Single-Container Completion Plan",
       "norm_label": "test command catalog"
     },
@@ -17977,7 +17977,7 @@
       "source_location": "L341",
       "_origin": "ast",
       "id": "docs_plans_2026_07_22_enterprise_single_container_completion_95_evidence_matrix",
-      "community": 25,
+      "community": 24,
       "community_name": "Shore Sentinel Enterprise Single-Container Completion Plan",
       "norm_label": "95+ evidence matrix"
     },
@@ -17988,7 +17988,7 @@
       "source_location": "L357",
       "_origin": "ast",
       "id": "docs_plans_2026_07_22_enterprise_single_container_completion_rollback_and_review_boundary",
-      "community": 25,
+      "community": 24,
       "community_name": "Shore Sentinel Enterprise Single-Container Completion Plan",
       "norm_label": "rollback and review boundary"
     },
@@ -17999,7 +17999,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_qa_2026_07_16_managed_machine_compact_dossier_scorecard",
-      "community": 81,
+      "community": 80,
       "community_name": "Managed Machine Compact Dossier \u2014 UI/UX Quality Gate",
       "norm_label": "2026-07-16-managed-machine-compact-dossier-scorecard.md"
     },
@@ -18010,7 +18010,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_qa_2026_07_16_managed_machine_compact_dossier_scorecard_managed_machine_compact_dossier_ui_ux_quality_gate",
-      "community": 81,
+      "community": 80,
       "community_name": "Managed Machine Compact Dossier \u2014 UI/UX Quality Gate",
       "norm_label": "managed machine compact dossier \u2014 ui/ux quality gate"
     },
@@ -18021,7 +18021,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "docs_qa_2026_07_16_managed_machine_compact_dossier_scorecard_independent_qa_blockers_and_resolution",
-      "community": 81,
+      "community": 80,
       "community_name": "Managed Machine Compact Dossier \u2014 UI/UX Quality Gate",
       "norm_label": "independent qa blockers and resolution"
     },
@@ -18032,7 +18032,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "docs_qa_2026_07_16_managed_machine_compact_dossier_scorecard_soft_refinements",
-      "community": 81,
+      "community": 80,
       "community_name": "Managed Machine Compact Dossier \u2014 UI/UX Quality Gate",
       "norm_label": "soft refinements"
     },
@@ -18043,7 +18043,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "docs_qa_2026_07_16_managed_machine_compact_dossier_scorecard_score",
-      "community": 81,
+      "community": 80,
       "community_name": "Managed Machine Compact Dossier \u2014 UI/UX Quality Gate",
       "norm_label": "score"
     },
@@ -18054,7 +18054,7 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "docs_qa_2026_07_16_managed_machine_compact_dossier_scorecard_verified_outcomes",
-      "community": 81,
+      "community": 80,
       "community_name": "Managed Machine Compact Dossier \u2014 UI/UX Quality Gate",
       "norm_label": "verified outcomes"
     },
@@ -18065,7 +18065,7 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "docs_qa_2026_07_16_managed_machine_compact_dossier_scorecard_breakpoint_evidence",
-      "community": 81,
+      "community": 80,
       "community_name": "Managed Machine Compact Dossier \u2014 UI/UX Quality Gate",
       "norm_label": "breakpoint evidence"
     },
@@ -18076,7 +18076,7 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "docs_qa_2026_07_16_managed_machine_compact_dossier_scorecard_technical_gates",
-      "community": 81,
+      "community": 80,
       "community_name": "Managed Machine Compact Dossier \u2014 UI/UX Quality Gate",
       "norm_label": "technical gates"
     },
@@ -18087,7 +18087,7 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "docs_qa_2026_07_16_managed_machine_compact_dossier_scorecard_baseline_note",
-      "community": 81,
+      "community": 80,
       "community_name": "Managed Machine Compact Dossier \u2014 UI/UX Quality Gate",
       "norm_label": "baseline note"
     },
@@ -18285,7 +18285,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_security_2026_07_17_v1_1_ssh_push_security_decision",
-      "community": 26,
+      "community": 25,
       "community_name": "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)",
       "norm_label": "2026-07-17-v1.1-ssh-push-security-decision.md"
     },
@@ -18296,7 +18296,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_security_2026_07_17_v1_1_ssh_push_security_decision_shore_sentinel_v1_1_ssh_push_security_decision_historical",
-      "community": 26,
+      "community": 25,
       "community_name": "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)",
       "norm_label": "shore sentinel v1.1 ssh-push security decision (historical)"
     },
@@ -18307,7 +18307,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "docs_security_2026_07_17_v1_1_ssh_push_security_decision_decision",
-      "community": 26,
+      "community": 25,
       "community_name": "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)",
       "norm_label": "decision"
     },
@@ -18318,7 +18318,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "docs_security_2026_07_17_v1_1_ssh_push_security_decision_allowed_data_flow",
-      "community": 26,
+      "community": 25,
       "community_name": "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)",
       "norm_label": "allowed data flow"
     },
@@ -18329,7 +18329,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "docs_security_2026_07_17_v1_1_ssh_push_security_decision_non_negotiable_controls",
-      "community": 26,
+      "community": 25,
       "community_name": "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)",
       "norm_label": "non-negotiable controls"
     },
@@ -18340,7 +18340,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "docs_security_2026_07_17_v1_1_ssh_push_security_decision_target_and_network_policy",
-      "community": 26,
+      "community": 25,
       "community_name": "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)",
       "norm_label": "target and network policy"
     },
@@ -18351,7 +18351,7 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "docs_security_2026_07_17_v1_1_ssh_push_security_decision_ssh_identity_and_credentials",
-      "community": 26,
+      "community": 25,
       "community_name": "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)",
       "norm_label": "ssh identity and credentials"
     },
@@ -18362,7 +18362,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "docs_security_2026_07_17_v1_1_ssh_push_security_decision_bundle_and_command_integrity",
-      "community": 26,
+      "community": 25,
       "community_name": "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)",
       "norm_label": "bundle and command integrity"
     },
@@ -18373,7 +18373,7 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "docs_security_2026_07_17_v1_1_ssh_push_security_decision_limits_and_cancellation",
-      "community": 26,
+      "community": 25,
       "community_name": "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)",
       "norm_label": "limits and cancellation"
     },
@@ -18384,7 +18384,7 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "docs_security_2026_07_17_v1_1_ssh_push_security_decision_evidence_attribution",
-      "community": 26,
+      "community": 25,
       "community_name": "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)",
       "norm_label": "evidence attribution"
     },
@@ -18395,7 +18395,7 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "docs_security_2026_07_17_v1_1_ssh_push_security_decision_required_implementation_work",
-      "community": 26,
+      "community": 25,
       "community_name": "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)",
       "norm_label": "required implementation work"
     },
@@ -18406,7 +18406,7 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "docs_security_2026_07_17_v1_1_ssh_push_security_decision_release_acceptance_gates",
-      "community": 26,
+      "community": 25,
       "community_name": "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)",
       "norm_label": "release acceptance gates"
     },
@@ -18417,7 +18417,7 @@
       "source_location": "L109",
       "_origin": "ast",
       "id": "docs_security_2026_07_17_v1_1_ssh_push_security_decision_control_mapping",
-      "community": 26,
+      "community": 25,
       "community_name": "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)",
       "norm_label": "control mapping"
     },
@@ -18516,7 +18516,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_security_remote_runner_install",
-      "community": 26,
+      "community": 25,
       "community_name": "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)",
       "norm_label": "remote-runner-install.md"
     },
@@ -18527,7 +18527,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_security_remote_runner_install_managed_ssh_remote_runner_installation_contract",
-      "community": 26,
+      "community": 25,
       "community_name": "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)",
       "norm_label": "managed ssh remote-runner installation contract"
     },
@@ -18538,7 +18538,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "docs_security_remote_runner_install_fixed_protocol",
-      "community": 26,
+      "community": 25,
       "community_name": "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)",
       "norm_label": "fixed protocol"
     },
@@ -18549,7 +18549,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "docs_security_remote_runner_install_required_target_layout_and_ownership",
-      "community": 26,
+      "community": 25,
       "community_name": "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)",
       "norm_label": "required target layout and ownership"
     },
@@ -18560,7 +18560,7 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "docs_security_remote_runner_install_runtime_cancellation_and_deadline_behavior",
-      "community": 26,
+      "community": 25,
       "community_name": "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)",
       "norm_label": "runtime cancellation and deadline behavior"
     },
@@ -18571,7 +18571,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "docs_security_remote_runner_install_rollout_verification_not_performed_locally",
-      "community": 26,
+      "community": 25,
       "community_name": "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)",
       "norm_label": "rollout verification (not performed locally)"
     },
@@ -18670,7 +18670,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "2026-07-16-app-wide-compact-operations-design.md"
     },
@@ -18681,7 +18681,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_shore_sentinel_app_wide_compact_operations_design",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "shore sentinel app-wide compact operations design"
     },
@@ -18692,7 +18692,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_status",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "status"
     },
@@ -18703,7 +18703,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_goal",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "goal"
     },
@@ -18714,7 +18714,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_product_direction",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "product direction"
     },
@@ -18725,7 +18725,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_design_principles",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "design principles"
     },
@@ -18736,7 +18736,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_shared_compact_operations_system",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "shared compact operations system"
     },
@@ -18747,7 +18747,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_page_header",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "page header"
     },
@@ -18758,7 +18758,7 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_summary_strip",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "summary strip"
     },
@@ -18769,7 +18769,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_operational_section",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "operational section"
     },
@@ -18780,7 +18780,7 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_data_rows",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "data rows"
     },
@@ -18791,7 +18791,7 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_settings_and_destructive_actions",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "settings and destructive actions"
     },
@@ -18802,7 +18802,7 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_filters",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "filters"
     },
@@ -18813,7 +18813,7 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_route_treatment",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "route treatment"
     },
@@ -18824,7 +18824,7 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_dashboard",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "`/dashboard`"
     },
@@ -18835,7 +18835,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_inventory",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "`/inventory`"
     },
@@ -18846,7 +18846,7 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_inventory_new",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "`/inventory/new`"
     },
@@ -18857,7 +18857,7 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_scans_start",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "`/scans/start`"
     },
@@ -18868,7 +18868,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_scans_reports",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "`/scans-reports`"
     },
@@ -18879,7 +18879,7 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_scans_reports_reports_id",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "`/scans-reports/reports/[id]`"
     },
@@ -18890,7 +18890,7 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_remediation",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "`/remediation`"
     },
@@ -18901,7 +18901,7 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_remediation_id",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "`/remediation/[id]`"
     },
@@ -18912,7 +18912,7 @@
       "source_location": "L109",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_users",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "`/users`"
     },
@@ -18923,7 +18923,7 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_system_update",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "`/system/update`"
     },
@@ -18934,7 +18934,7 @@
       "source_location": "L117",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_preferences",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "`/preferences`"
     },
@@ -18945,7 +18945,7 @@
       "source_location": "L121",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_saved_views_and_saved_views_slug",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "`/saved-views` and `/saved-views/[slug]`"
     },
@@ -18956,7 +18956,7 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_knowledgebase",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "`/knowledgebase`"
     },
@@ -18967,7 +18967,7 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_audits_and_audits_id",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "`/audits` and `/audits/[id]`"
     },
@@ -18978,7 +18978,7 @@
       "source_location": "L133",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_auth_login_and_auth_register",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "`/auth/login` and `/auth/register`"
     },
@@ -18989,7 +18989,7 @@
       "source_location": "L137",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_repository_integrity_and_api_contracts",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "repository integrity and api contracts"
     },
@@ -19000,7 +19000,7 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_accessibility_and_responsive_requirements",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "accessibility and responsive requirements"
     },
@@ -19011,7 +19011,7 @@
       "source_location": "L156",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_quality_gate",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "quality gate"
     },
@@ -19022,7 +19022,7 @@
       "source_location": "L170",
       "_origin": "ast",
       "id": "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_non_goals",
-      "community": 10,
+      "community": 11,
       "community_name": "Route treatment",
       "norm_label": "non-goals"
     },
@@ -22707,7 +22707,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_changelog",
-      "community": 29,
+      "community": 28,
       "community_name": "Changelog",
       "norm_label": "changelog.md"
     },
@@ -22718,7 +22718,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_changelog_changelog",
-      "community": 29,
+      "community": 28,
       "community_name": "Changelog",
       "norm_label": "changelog"
     },
@@ -22729,7 +22729,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "web_changelog_v1_1_0_release_candidate_unreleased",
-      "community": 29,
+      "community": 28,
       "community_name": "Changelog",
       "norm_label": "v1.1.0 - release candidate (unreleased)"
     },
@@ -22740,7 +22740,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "web_changelog_verification",
-      "community": 29,
+      "community": 28,
       "community_name": "Changelog",
       "norm_label": "verification"
     },
@@ -22751,7 +22751,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "web_changelog_v1_0_0_2026_07_16",
-      "community": 29,
+      "community": 28,
       "community_name": "Changelog",
       "norm_label": "v1.0.0 - 2026-07-16"
     },
@@ -22762,7 +22762,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "web_changelog_changed",
-      "community": 29,
+      "community": 28,
       "community_name": "Changelog",
       "norm_label": "changed"
     },
@@ -22773,7 +22773,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "web_changelog_security",
-      "community": 29,
+      "community": 28,
       "community_name": "Changelog",
       "norm_label": "security"
     },
@@ -22784,7 +22784,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "web_changelog_verification_19",
-      "community": 29,
+      "community": 28,
       "community_name": "Changelog",
       "norm_label": "verification"
     },
@@ -22795,7 +22795,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "web_changelog_v0_3_2_2026_06_26",
-      "community": 29,
+      "community": 28,
       "community_name": "Changelog",
       "norm_label": "v0.3.2 - 2026-06-26"
     },
@@ -22806,7 +22806,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "web_changelog_security_24",
-      "community": 29,
+      "community": 28,
       "community_name": "Changelog",
       "norm_label": "security"
     },
@@ -22817,7 +22817,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "web_changelog_fixed",
-      "community": 29,
+      "community": 28,
       "community_name": "Changelog",
       "norm_label": "fixed"
     },
@@ -22828,7 +22828,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "web_changelog_verification_34",
-      "community": 29,
+      "community": 28,
       "community_name": "Changelog",
       "norm_label": "verification"
     },
@@ -22839,7 +22839,7 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "web_changelog_v0_3_1_2026_06_26",
-      "community": 29,
+      "community": 28,
       "community_name": "Changelog",
       "norm_label": "v0.3.1 - 2026-06-26"
     },
@@ -22850,7 +22850,7 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "web_changelog_fixed_40",
-      "community": 29,
+      "community": 28,
       "community_name": "Changelog",
       "norm_label": "fixed"
     },
@@ -22861,7 +22861,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "web_changelog_verification_44",
-      "community": 29,
+      "community": 28,
       "community_name": "Changelog",
       "norm_label": "verification"
     },
@@ -22872,7 +22872,7 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "web_changelog_v0_3_0_2026_06_25",
-      "community": 29,
+      "community": 28,
       "community_name": "Changelog",
       "norm_label": "v0.3.0 - 2026-06-25"
     },
@@ -22883,7 +22883,7 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "web_changelog_added",
-      "community": 29,
+      "community": 28,
       "community_name": "Changelog",
       "norm_label": "added"
     },
@@ -22894,7 +22894,7 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "web_changelog_changed_59",
-      "community": 29,
+      "community": 28,
       "community_name": "Changelog",
       "norm_label": "changed"
     },
@@ -22905,7 +22905,7 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "web_changelog_verification_64",
-      "community": 29,
+      "community": 28,
       "community_name": "Changelog",
       "norm_label": "verification"
     },
@@ -58762,5 +58762,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "66f312686773bccaa376478e6ee06a16951e294b"
+  "built_at_commit": "167678a3939d02bb8a702a839e153f357fc8a79e"
 }

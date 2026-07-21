@@ -9,7 +9,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `66f31268`
+- Built from commit: `167678a3`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -24,26 +24,26 @@
 - sshExecutor.js
 - app.controller.ts
 - MachineDetailClient
+- .query
 - Route treatment
 - scanner-manifest.schema.json
-- .query
 - queue.service.ts
 - scripts
-- /graphify
 - AppController
+- /graphify
 - service_block
 - ArtifactService
 - routePath
 - Option 2 — App Deployment (install Shore Sentinel into Docker)
 - token_efficiency.py
 - package.json
-- Post
 - envdetect.py
 - Shore Sentinel Enterprise Single-Container Completion Plan
 - Shore Sentinel v1.1 SSH-Push Security Decision (Historical)
 - run-scan
 - RemoteRunnerProtocolTests
 - Changelog
+- Post
 - CompactOperationsComponentTests
 - users-api.js
 - App-Wide Compact Operations Test Guide
@@ -70,13 +70,13 @@
 - scanner
 - ManagedMachineDossierTests
 - proxyUsers
+- AuthService
 - scanner-output.schema.json
 - check_worker_node_egress_policy.py
 - ProxyHandler
 - read
 - display-preferences.js
 - verify-mvp.mjs
-- AuthService
 - Shore Sentinel v1.1.0 Release QA Scorecard — Template
 - UI/UX Review and Simplification Plan
 - API Surface Overview
@@ -93,12 +93,12 @@
 - Shore Sentinel App-Wide Compact Operations Rollout Plan
 - SSH Managed-Machine Scan Controls Implementation Plan
 - V110ReleaseGateTests
-- DatabaseService
 - database.service.ts
 - Managed Machine Compact Dossier — UI/UX Quality Gate
 - enum
 - load_and_validate
 - middleware.js
+- DatabaseService
 - request-principal.ts
 - Managed Machine Compact Dossier Implementation Plan
 - Disposable SSH fixture contract and evidence harness
@@ -163,7 +163,7 @@
 - machine-hardware-summary.test.mjs
 - @aws-sdk/client-s3
 - @aws-sdk/s3-request-presigner
-- bcryptjs
+- bullmq
 - cookie-parser
 - ioredis
 - reflect-metadata
@@ -248,17 +248,17 @@ Nodes (24): ARTIFACT_CONTENT_TYPES, assertSshEnrollment(), assertSshGrantControl
 Cohesion: 0.12
 Nodes (29): enrichRemediations(), Machine(), deriveProgressMessage(), ensureArray(), formatDuration(), hardwareSummaryIsStale(), hardwareSummaryState(), hardwareValue() (+21 more)
 
-### Community 10 - "Route treatment"
+### Community 10 - ".query"
+Cohesion: 0.22
+Nodes (5): Delete, Get, Param, Patch, Req
+
+### Community 11 - "Route treatment"
 Cohesion: 0.06
 Nodes (32): Accessibility and responsive requirements, `/audits` and `/audits/[id]`, `/auth/login` and `/auth/register`, `/dashboard`, Data rows, Design principles, Filters, Goal (+24 more)
 
-### Community 11 - "scanner-manifest.schema.json"
+### Community 12 - "scanner-manifest.schema.json"
 Cohesion: 0.06
 Nodes (32): bundle, entrypoint, outputSchema, additionalProperties, properties, required, type, const (+24 more)
-
-### Community 12 - ".query"
-Cohesion: 0.22
-Nodes (4): Get, Param, Patch, Req
 
 ### Community 13 - "queue.service.ts"
 Cohesion: 0.10
@@ -268,13 +268,13 @@ Nodes (14): positiveInteger(), QUEUE_NAMES, QueueName, QueueService, ScanDispatc
 Cohesion: 0.06
 Nodes (30): api, web, name, overrides, postcss, private, scripts, api:build (+22 more)
 
-### Community 15 - "/graphify"
+### Community 15 - "AppController"
+Cohesion: 0.11
+Nodes (6): AppController, validateScanTarget(), viewerRequest, viewerRequest, Controller, Res
+
+### Community 16 - "/graphify"
 Cohesion: 0.07
 Nodes (29): For --cluster-only, For git commit hook, For /graphify add, For /graphify explain, For /graphify path, For /graphify query, For native CLAUDE.md integration, For --update (incremental re-extraction) (+21 more)
-
-### Community 16 - "AppController"
-Cohesion: 0.12
-Nodes (6): AppController, validateScanTarget(), viewerRequest, viewerRequest, Controller, Res
 
 ### Community 17 - "service_block"
 Cohesion: 0.10
@@ -300,29 +300,29 @@ Nodes (18): ArgumentParser, Namespace, add_common_data_arg(), append_record(), b
 Cohesion: 0.09
 Nodes (22): eslint, eslint-config-next, next, react, react-dom, dependencies, next, react (+14 more)
 
-### Community 23 - "Post"
-Cohesion: 0.15
-Nodes (6): Injectable, UpdateMode, UpdateResult, UpdateService, Delete, Post
-
-### Community 24 - "envdetect.py"
+### Community 23 - "envdetect.py"
 Cohesion: 0.16
 Nodes (20): _cgroup_indicates_container(), _cpuinfo_hypervisor_flag(), detect_environment(), detect_environment_detail(), _dmi_indicates_vm(), _dmi_product_name_vm(), _is_container(), _is_vm() (+12 more)
 
-### Community 25 - "Shore Sentinel Enterprise Single-Container Completion Plan"
+### Community 24 - "Shore Sentinel Enterprise Single-Container Completion Plan"
 Cohesion: 0.10
 Nodes (19): 95+ evidence matrix, Accepted deviation records, Current baseline used by this plan, Dependency order and implementation tasks, Locked decisions and constraints, Migration and data-safety contract, Requirement register, Rollback and review boundary (+11 more)
 
-### Community 26 - "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)"
+### Community 25 - "Shore Sentinel v1.1 SSH-Push Security Decision (Historical)"
 Cohesion: 0.11
 Nodes (17): Allowed data flow, Bundle and command integrity, Control mapping, Decision, Evidence attribution, Limits and cancellation, Non-negotiable controls, Release acceptance gates (+9 more)
 
-### Community 27 - "run-scan"
+### Community 26 - "run-scan"
 Cohesion: 0.25
 Nodes (14): run-scan script, cancel_request(), is_uuid(), mark_cleanup_failed_state(), mark_stale_authority_state(), mark_state_status(), process_group_running(), process_identity_matches() (+6 more)
 
-### Community 29 - "Changelog"
+### Community 28 - "Changelog"
 Cohesion: 0.11
 Nodes (18): Added, Changed, Changed, Changelog, Fixed, Fixed, Security, Security (+10 more)
+
+### Community 29 - "Post"
+Cohesion: 0.18
+Nodes (5): Injectable, UpdateMode, UpdateResult, UpdateService, Post
 
 ### Community 30 - "CompactOperationsComponentTests"
 Cohesion: 0.12
@@ -366,7 +366,7 @@ Nodes (16): type, type, type, type, type, properties, category, cves (+8 more)
 
 ### Community 40 - "dependencies"
 Cohesion: 0.13
-Nodes (15): dependencies, bullmq, @nestjs/common, @nestjs/core, @nestjs/platform-express, pg, rxjs, @shore-sentinel/shared (+7 more)
+Nodes (15): dependencies, bcryptjs, @nestjs/common, @nestjs/core, @nestjs/platform-express, pg, rxjs, @shore-sentinel/shared (+7 more)
 
 ### Community 41 - "devDependencies"
 Cohesion: 0.13
@@ -424,29 +424,29 @@ Nodes (13): name, version, minLength, type, name, scanner, version, additionalPr
 Cohesion: 0.32
 Nodes (11): DELETE(), GET(), PATCH(), POST(), segmentsFromContext(), GET(), hopByHopHeaders, POST() (+3 more)
 
-### Community 56 - "scanner-output.schema.json"
+### Community 56 - "AuthService"
+Cohesion: 0.26
+Nodes (3): AuthService, Session, Injectable
+
+### Community 57 - "scanner-output.schema.json"
 Cohesion: 0.17
 Nodes (11): collectedAt, findings, scanner, target, additionalProperties, $id, contractVersion, required (+3 more)
 
-### Community 57 - "check_worker_node_egress_policy.py"
+### Community 58 - "check_worker_node_egress_policy.py"
 Cohesion: 0.55
 Nodes (11): load_and_validate(), main(), Any, Path, reject(), require_exact_keys(), require_network(), require_port() (+3 more)
 
-### Community 58 - "ProxyHandler"
+### Community 59 - "ProxyHandler"
 Cohesion: 0.27
 Nodes (3): ProxyHandler, BaseHTTPRequestHandler, upstream_path()
 
-### Community 60 - "display-preferences.js"
+### Community 61 - "display-preferences.js"
 Cohesion: 0.24
 Nodes (8): applyPreferences(), DisplayPreferencesPanel(), readStoredPreferences(), describeDisplayPreferences(), DISPLAY_PREFERENCE_DEFAULTS, DISPLAY_PREFERENCE_OPTIONS, normalizeChoice(), normalizeDisplayPreferences()
 
-### Community 61 - "verify-mvp.mjs"
+### Community 62 - "verify-mvp.mjs"
 Cohesion: 0.17
 Nodes (10): failures, landing, loginPage, navigationData, navigationGroups, navigationPositions, nextConfig, root (+2 more)
-
-### Community 62 - "AuthService"
-Cohesion: 0.29
-Nodes (3): AuthService, Session, Injectable
 
 ### Community 63 - "Shore Sentinel v1.1.0 Release QA Scorecard — Template"
 Cohesion: 0.18
@@ -508,23 +508,23 @@ Nodes (9): Rollback, Shore Sentinel App-Wide Compact Operations Rollout Plan, Ta
 Cohesion: 0.20
 Nodes (9): SSH Managed-Machine Scan Controls Implementation Plan, Task 1: Lock the version and release contract, Task 2: Add safe managed-scan request validation and public context projection, Task 3: Add host-key pinning and internal worker authentication, Task 4: Make queue cancellation reliable and terminal, Task 5: Implement secure SSH-push scanner execution, Task 6: Add browser-safe hardware summary projection, Task 7: Complete scan controls, copy, and typography (+1 more)
 
-### Community 80 - "database.service.ts"
+### Community 79 - "database.service.ts"
 Cohesion: 0.31
 Nodes (4): isWeakSecret(), REQUIRED_PRODUCTION_SECRETS, validateProductionSecrets(), productionSecrets
 
-### Community 81 - "Managed Machine Compact Dossier — UI/UX Quality Gate"
+### Community 80 - "Managed Machine Compact Dossier — UI/UX Quality Gate"
 Cohesion: 0.22
 Nodes (8): Baseline note, Breakpoint evidence, Independent QA blockers and resolution, Managed Machine Compact Dossier — UI/UX Quality Gate, Score, Soft refinements, Technical gates, Verified outcomes
 
-### Community 82 - "enum"
+### Community 81 - "enum"
 Cohesion: 0.22
 Nodes (9): crit, critical, high, info, informational, low, medium, moderate (+1 more)
 
-### Community 83 - "load_and_validate"
+### Community 82 - "load_and_validate"
 Cohesion: 0.47
 Nodes (8): load_and_validate(), main(), Any, Path, reject(), require_object(), require_string_list(), validate_force_command_assets()
 
-### Community 84 - "middleware.js"
+### Community 83 - "middleware.js"
 Cohesion: 0.36
 Nodes (8): authPageToApi, basePath(), config, homeUrl(), isPublicPath(), middleware(), PUBLIC_PATH_PREFIXES, withoutBasePath()
 
@@ -696,11 +696,11 @@ Nodes (3): Flow, Intent, Pull-Agent / Check-in Flow
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `AppController` connect `AppController` to `index.js`, `app.controller.ts`, `admin-tenant-mutations.test.ts`, `app.module.ts`, `scan-run-events.test.ts`, `.query`, `queue.service.ts`, `tenant-controller.test.ts`, `ArtifactService`, `worker-ssh-grant.test.ts`, `Post`?**
+- **Why does `AppController` connect `AppController` to `index.js`, `app.controller.ts`, `admin-tenant-mutations.test.ts`, `.query`, `app.module.ts`, `scan-run-events.test.ts`, `queue.service.ts`, `tenant-controller.test.ts`, `ArtifactService`, `worker-ssh-grant.test.ts`, `Post`?**
   _High betweenness centrality (0.045) - this node is a cross-community bridge._
 - **Why does `Header()` connect `routePath` to `AppController`?**
   _High betweenness centrality (0.037) - this node is a cross-community bridge._
-- **Why does `routePath()` connect `routePath` to `appPath`, `InventoryRegistry`, `saved-views.jsx`, `MachineDetailClient`, `apiGet`, `getAuthenticatedUser`, `page.jsx`, `RemediationQueue`, `page.jsx`, `display-preferences.js`, `ReportsLedger`?**
+- **Why does `routePath()` connect `routePath` to `appPath`, `InventoryRegistry`, `saved-views.jsx`, `MachineDetailClient`, `apiGet`, `getAuthenticatedUser`, `page.jsx`, `RemediationQueue`, `ReportsLedger`, `page.jsx`, `display-preferences.js`?**
   _High betweenness centrality (0.027) - this node is a cross-community bridge._
 - **Are the 30 inferred relationships involving `routePath()` (e.g. with `Audit()` and `Audits()`) actually correct?**
   _`routePath()` has 30 INFERRED edges - model-reasoned connections that need verification._
