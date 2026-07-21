@@ -216,60 +216,21 @@ For an enrolled managed machine using the SSH-push connection mode, the machine 
 
 ## Updating Shore Sentinel
 
-Shore Sentinel supports two update paths.
+The update path is currently **unavailable in this planning baseline**. Do not run `git pull origin main`, update from a mutable branch, or rebuild an unverified checkout over persistent data. An update becomes available only when the signed update integration and the backup/restore runbook have passed review.
 
-### Option A: Manual command-line update, recommended default
+The approved release sequence must, in this order, verify a signed immutable commit/tag and image/test-bundle signatures against pinned signer identities and trust roots, verify revocation, anti-rollback policy, and provenance-to-SBOM linkage, quiesce the application, create an encrypted access-separated off-volume backup, apply compatible migrations under an advisory lock, record image/config/volume/checkpoint identity, and verify every process plus the critical flow. Unsigned, tampered, wrong-signer, revoked, stale, or older-than-approved candidates must be rejected.
 
-From the Git checkout:
-
-```bash
-cd shore-sentinel-app
-git fetch origin main
-git status --short
-git pull --ff-only origin main
-docker compose up -d --build
-```
-
-Verify after updating:
+Routine stop/rollback must not delete the one application-data volume:
 
 ```bash
-docker compose ps
-curl -fsS http://localhost:4000/health
-curl -fsS http://localhost:3010/shore-sentinel
+docker compose down
 ```
 
-If `git pull --ff-only` fails, the local checkout has diverged or contains local changes. Resolve that manually before updating.
+The historical `docker-compose.update.example.yml` override is not part of the single-container release baseline and must never be enabled: it grants Docker-socket and host-workspace access that the approved architecture forbids. The admin-only **System Update** page at `/shore-sentinel/system/update` remains a disabled placeholder until it provides the same signed-artifact, backup, authorization, and rollback guarantees; it must fail closed rather than offer a mutable-main update.
 
-### Option B: In-app System Update feature
+### Data protection before an approved update
 
-The app includes an admin-only **System Update** page:
-
-```text
-/shore-sentinel/system/update
-```
-
-By default, self-update is disabled because it mutates the reviewed source/image and persistent application data. The application container never receives the Docker socket; use the reviewed command-line update path unless a separately approved update integration provides equivalent backup, authorization, and rollback controls.
-
-The historical `docker-compose.update.example.yml` override is not part of the single-container release baseline and must not be enabled: it grants Docker-socket and host-workspace access that the approved architecture forbids. Updates are performed through the reviewed command-line path above until a replacement integration provides equivalent backup, authorization, and rollback controls.
-
-When an approved update integration is available, sign in as an admin and open:
-
-```text
-http://localhost:3010/shore-sentinel/system/update
-```
-
-Available actions:
-
-- **Check for updates** — fetches `origin/main`, reports pending commits, and does not restart services.
-- **Apply update** — creates a backup branch, fast-forwards to `origin/main`, rebuilds the one application image, and restarts the single application container.
-
-The updater refuses to run if the checkout has uncommitted changes unless this environment variable is explicitly set:
-
-```text
-SHORE_SENTINEL_UPDATE_ALLOW_DIRTY=true
-```
-
-Use that override only if you understand that local changes may be overwritten or conflict with upstream updates.
+Backups must be encrypted, access-separated, and stored outside `/var/lib/shore-sentinel`. The backup procedure quiesces new work, checkpoints the signed evidence ledger, flushes Redis/outbox state, captures PostgreSQL and object-storage state, preserves Object Lock/legal holds, records RPO/RTO, and proves restore into a fresh empty volume with database/object/evidence reconciliation. KMS/key and configuration recovery must be recorded without copying raw target secrets into the backup. See `docs/runbooks/single-container-backup-restore.md` once the implementation task creates and verifies it.
 
 ---
 

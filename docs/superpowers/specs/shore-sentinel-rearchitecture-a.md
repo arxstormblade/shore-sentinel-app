@@ -175,6 +175,8 @@ The application container must never mount `/var/run/docker.sock`, a broad host 
 - Supervisor starts each process with a fixed executable and environment allowlist, restarts only declared transient failures, and reports unhealthy dependencies instead of masking them with a hard-coded green state.
 - Resource limits, restart policies, health checks, log rotation, image-digest pinning, SBOMs, and signed-image admission checks are mandatory production controls.
 
+Because the release intentionally co-locates services in one container, loopback and a shared PID namespace are not authorization boundaries. The implementation must compensate with enforceable, testable controls: least-privilege PostgreSQL roles, Redis ACLs, MinIO service credentials, owner/mode-restricted Unix sockets where supported, and service-local authentication for every internal endpoint. Each disposable run must receive fresh user, mount, network, IPC, and UTS namespaces; cgroup v2 CPU/memory/PID/I/O limits; verified seccomp plus AppArmor or SELinux enforcement; masked `/proc`, `/sys`, and device paths; no setuid binaries or ptrace; only a fresh run directory; and deterministic PID-tree cleanup. Startup refuses to enter ready state when any mandatory primitive is unavailable, rather than silently degrading to shared namespaces or unrestricted access.
+
 ### 4.3 Independent egress enforcement
 
 Application CIDR validation remains useful but is not sufficient. Docker Compose alone does not prove that a compromised worker cannot bypass policy.
@@ -188,8 +190,8 @@ Application CIDR validation remains useful but is not sufficient. Docker Compose
 
 ### 5.1 Identity
 
-- Replace process-local sessions with OIDC/SAML federation, durable revocable session records, login throttling, device/session management, and MFA.
-- Require step-up authentication for engagement approval, target enrollment, credential access, high-impact test execution, evidence export, risk acceptance, and administrative policy changes.
+- Replace process-local sessions with OIDC/SAML federation and executable validation of issuer, JWKS signature, audience, nonce, state, and PKCE. Store only hashed durable session identifiers with idle and absolute TTLs, rotation, explicit revocation, device/session management, login throttling, Secure/HttpOnly/SameSite cookies, and CSRF protection.
+- Require MFA and step-up authentication for engagement approval, target enrollment, credential access, high-impact test execution, evidence export, risk acceptance, and administrative policy changes. Accept only an approved ACR/AMR combination with a bounded step-up recency window; missing, stale, or downgraded claims fail closed.
 - Add SCIM-ready lifecycle management and an emergency, audited break-glass process.
 
 ### 5.2 Engagement and approval object
@@ -205,20 +207,19 @@ Every test run requires an immutable engagement record containing:
 - approval chain, required dual control, revocation state, and justification;
 - policy bundle hash and signer identity.
 
-Execution grants fail closed when the engagement is expired, revoked, out of scope, missing required approvers, or inconsistent with the active policy bundle.
+Execution grants fail closed on every request when the engagement is expired, revoked, out of scope, missing the immutable owner authorization or required dual approvers, outside the permitted test class, or inconsistent with the active policy-bundle hash and signer. Approval records cannot be edited in place; corrections create a new version and preserve the prior audit trail.
 
 ### 5.3 Workload identity and secrets
 
-- Replace `INTERNAL_WORKER_TOKEN` with per-workload mTLS identity plus short-lived audience-scoped credentials.
-- Separate API, parser, broker, cleanup, and legacy SSH adapter identities.
-- Store long-lived target credentials with envelope encryption backed by OpenBao/Vault-compatible key management. Never expose them to browser clients or queue payloads.
-- Use one-time, attempt-bound secret delivery only when a policy-approved adapter actually requires it.
+- Replace `INTERNAL_WORKER_TOKEN` with per-workload mTLS identities and short-lived audience-scoped credentials. Validate the issuing CA/trust store, certificate expiry/revocation, SAN/workload identity, and audience on every internal request; certificate/key ownership is separate for API, parser, broker, cleanup, and legacy SSH adapter identities.
+- Store long-lived target credentials only as ciphertext envelopes containing a KMS/OpenBao/Vault key ID and version. Key rotation creates a new envelope version; stale keys, unavailable KMS, invalid wrapping, and cross-workload unwrap attempts fail closed without plaintext fallback.
+- Never expose target secrets to browser clients, queue payloads, logs, or evidence. Deliver a one-time, attempt-bound lease only after the approved adapter presents its mTLS identity and grant; replay, second use, expired lease, and wrong audience are denied and audited without logging secret material.
 
 ### 5.4 Tamper-evident evidence
 
 - Replace mutable audit-only records with an append-only event ledger.
-- Hash-chain events per engagement/run and periodically checkpoint to a separately retained evidence location.
-- Use deletion tombstones, legal holds, retention policy, and immutable evidence exports rather than destructive history erasure.
+- Hash-chain events per engagement/run and periodically emit signed, keyed sequence checkpoints to a separately administered external WORM/Object-Lock destination. Checkpoints include a monotonic sequence, previous checkpoint reference, candidate image/policy identity, and signer key version; verification rejects gaps, reordering, truncation, replay, clock-skew violations, and restore-time chain mismatches.
+- Keep checkpoint signing keys and WORM administration outside the application-data volume and co-resident MinIO administrator domain. Use compliance-mode retention where supported; deletion tombstones, legal holds, retention policy, and immutable evidence exports are never bypassed by an application or container administrator.
 - Every artifact package includes target snapshot, application image digest, sandbox/test bundle hash, policy decision, timestamps, artifact hashes, parser version, and findings provenance.
 
 ## 6. AI testing execution model
@@ -250,10 +251,12 @@ Map coverage to OWASP LLM Top 10, OWASP agentic security guidance, MITRE ATLAS, 
 
 ### 6.2 DLP and prompt-injection containment
 
-- Test inputs and model outputs are treated as untrusted data, never as sandbox instructions.
-- Apply data classification, redaction, token/credential detectors, size limits, and quarantine before evidence persistence.
+- Test inputs, retrieval results, model outputs, tool outputs, and external content are treated as untrusted data, never as supervisor, shell, policy, or tool instructions. Typed tool schemas and fixed adapters reject instruction smuggling and caller-supplied command fields.
+- Apply data classification, redaction, token/credential detectors, destination and secret-reference allowlists, output encoding, and size limits before evidence persistence or network egress. Detector failure, policy ambiguity, or parser uncertainty quarantines the result and fails closed.
 - In-container sandboxes have no implicit filesystem, host, shell, cloud metadata, or unrestricted tool access.
 - Tool calls require declared capability and explicit policy approval.
+
+The adversarial contract covers indirect prompt injection, encoded secrets, malicious URLs and redirects, tool-argument smuggling, oversized payloads, retrieval poisoning, and detector outage. A model or retrieved document can influence only typed data fields; it can never extend supervisor commands, policy bundles, capabilities, destinations, or secret references.
 
 ## 7. Data and workflow modernization
 
@@ -381,6 +384,10 @@ The enterprise design uses a deliberately small primary stack. Vendor-specific s
 - Treat identity, secrets, policy, egress, and observability as replaceable enterprise integration boundaries with stable internal contracts.
 - Add infrastructure only when a measured security, scale, recovery, or compliance requirement justifies it.
 
+### 9.1 Supply-chain and update trust contract
+
+Base images, release images, test bundles, migrations, and deployment configuration must be identified by immutable digests or signed commits/tags. Admission verifies the pinned signer identities and trust roots, signature validity, provenance-to-SBOM linkage, revocation status, and anti-rollback version policy; unsigned, tampered, wrong-signer, revoked, stale, or older-than-approved candidates are rejected. Until the signed update integration and backup/restore evidence exist, the operator update path is explicitly unavailable; a mutable `main` pull followed by `--build` is not a permitted update procedure.
+
 ## 10. Phased delivery plan
 
 ### Phase 0 — Baseline and safety truth
@@ -414,7 +421,7 @@ The enterprise design uses a deliberately small primary stack. Vendor-specific s
 ### Phase 5 — Scale, reliability, and release proof
 
 - Query shaping, indexes justified by `EXPLAIN (ANALYZE, BUFFERS)`, load tests, failure injection, backup/restore and rollback drills.
-- Exactly-one-container production image/profile, one-volume persistence, supervisor restart and dependency evidence, SLO dashboards, SIEM evidence, signed release process.
+- Exactly-one-container production image/profile, one-volume persistence, supervisor restart and dependency evidence, SLO dashboards, SIEM evidence, signed release process, external WORM checkpoint verification, and independent encrypted recovery drills.
 
 ## 11. 95+ quality gate
 
@@ -437,6 +444,15 @@ Mandatory release gates:
 - authenticated browser evidence and API/worker negative tests;
 - load/recovery evidence tied to the exact commit and image digest;
 - retained approval and release artifacts.
+
+### Accepted deviation records
+
+The following accepted deviations are explicit scope decisions with compensating controls; neither is a security or authorization waiver:
+
+- **DEV-001 — Navigation grouping:** Boss approved the ordered `Dashboard`, `AI Assets`, `Audit Reports`, `Knowledgebase`, `System`, `Users` grouping in §8.2 on 2026-07-22 PHT. Route authorization, approval gates, audit logging, evidence retention, and contextual links remain unchanged.
+- **DEV-002 — Single-container co-location:** Boss approved one application container and one application-data volume as the delivery boundary. Shared namespaces and loopback are not trusted boundaries; the mandatory process identities, service authentication, per-run namespaces, cgroup/seccomp/LSM enforcement, masked kernel interfaces, and startup refusal controls in §4.2 are required compensations.
+
+These records are tracked in the machine-readable RTM `accepted_deviations` array and must be re-evaluated if the topology or navigation contract changes.
 
 ## 12. Approval boundary
 

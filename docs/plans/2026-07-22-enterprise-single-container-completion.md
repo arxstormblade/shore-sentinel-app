@@ -20,9 +20,16 @@
 6. No application code, migration, image, container startup, external target test, deployment, or release promotion is part of this planning card.
 7. No Docker socket, host SSH keys, broad workspace bind mount, unbounded secret, or unverified egress policy may enter the application container.
 
+### Accepted deviation records
+
+- **DEV-001 — Navigation grouping:** the approved `Dashboard`, `AI Assets`, `Audit Reports`, `Knowledgebase`, `System`, `Users` grouping is a label/grouping deviation only. Route authorization, approval, audit, retention, and contextual-link controls remain mandatory.
+- **DEV-002 — Single-container co-location:** one application container and one application-data volume are the approved delivery boundary. Shared loopback/PID namespaces are not trusted boundaries; service-local authentication, per-run user/mount/network/IPC/UTS namespaces, cgroup v2, seccomp, AppArmor/SELinux, masked kernel interfaces, no-setuid/no-ptrace rules, fresh run directories, PID cleanup, and startup refusal are mandatory compensations.
+
+These are accepted architecture decisions, not waivers. They are mirrored in the RTM `accepted_deviations` array and the architecture specification.
+
 ## Current baseline used by this plan
 
-The live branch is `feat/enterprise-single-container` at the reviewed documentation commit `4dd47b9`. The completion verification refreshed Graphify with `graphify update .`; Graphify `0.9.16` reported 2,061 nodes, 3,115 edges, and 179 communities. The focused query `graphify query "How are the single-container process boundaries, persistent volumes, migrations, and release gates verified?"` returned 160 nodes, including this plan, the machine-readable requirements register, the single-container delivery contract, the required supervised process list, the persistence subdirectories, the deployment hardening tests, and the release scorecard.
+The live branch is `feat/enterprise-single-container` at the reviewed documentation commit `66f3126`; this is the source baseline for the security-remediated freeze. The completion verification refreshed Graphify with `graphify update .`; Graphify `0.9.16` reported 2,061 nodes, 3,115 edges, and 179 communities. The focused query `graphify query "How are the single-container process boundaries, persistent volumes, migrations, and release gates verified?"` returned 160 nodes, including this plan, the machine-readable requirements register, the single-container delivery contract, the required supervised process list, the persistence subdirectories, the deployment hardening tests, and the release scorecard.
 
 The current `docker-compose.yml` is a seven-service application topology with named `postgres-data`, `redis-data`, and `minio-data` volumes. `api/src/schema.ts` is an idempotent inline schema/migration sequence; `api/src/database.service.ts` currently owns schema startup. The current hardening tests prove pinned images, non-root application images, `no-new-privileges`, dropped capabilities, private parser networking, required production secrets, and explicit development override behavior. The current navigation contract is already encoded in `web/lib/data.js`, `web/components/ui.jsx`, `web/components/mobile-navigation.jsx`, and `tests/test_side_navigation_shell.py`.
 
@@ -54,6 +61,13 @@ The current `docker-compose.yml` is a seven-service application topology with na
 | SC-022 | No hidden waiver | Any unmet control is recorded with owner, scope, expiry, compensating control, and approver before a candidate can score. |
 | SC-023 | 95+ release gate | Candidate-specific evidence scores at least 95/100 and meets every category threshold and mandatory gate. |
 | SC-024 | Reversible change | The prior multi-service image/config and volume backups remain usable until the single-container candidate passes staged rollback. |
+| SC-025 | Human identity and engagement authorization | OIDC/SAML issuer/JWKS/audience/nonce/state/PKCE validation, hashed durable sessions with idle/absolute TTL and revocation, Secure/HttpOnly/SameSite cookies with CSRF, MFA/ACR/AMR step-up recency, immutable owner authorization, dual approval, and fail-closed scope/expiry/revocation/policy-hash grants are executable contracts. |
+| SC-026 | Workload trust and target-secret lifecycle | Per-workload mTLS trust-store/SAN/audience/expiry/revocation validation, OpenBao/Vault/KMS envelope key IDs and versions, rotation, ciphertext-only persistence, one-use attempt-bound leases, and fail-closed replay/cross-workload/KMS-outage behavior are required. |
+| SC-027 | Co-location containment | Internal services use authenticated least-privilege DB/Redis/MinIO roles or restricted Unix sockets; each run requires user/mount/network/IPC/UTS namespaces, cgroup v2 limits, seccomp plus AppArmor/SELinux verification, masked kernel interfaces, no setuid/ptrace, fresh run directories, cleanup, and startup refusal when primitives are unavailable. |
+| SC-028 | External evidence integrity and legal hold | Signed/keyed monotonic hash-chain checkpoints are written to separately administered external WORM/Object-Lock storage with keys outside the application volume; mutation, truncation, replay, clock skew, restore mismatch, hold-protected delete, and admin-bypass attempts fail closed. |
+| SC-029 | DLP and prompt-injection containment | Typed tool schemas, fixed adapters, output encoding, destination/secret-reference allowlists, DLP before persistence/egress, quarantine on detector failure, and adversarial coverage for indirect injection, encoded secrets, malicious redirects, argument smuggling, oversized payloads, and detector outage prevent untrusted content from becoming instructions. |
+| SC-030 | Fail-closed supply chain and updates | Pinned digests, signed image/bundle/commit verification, signer trust roots, provenance/SBOM linkage, revocation and anti-rollback checks, plus tampered/unsigned/wrong-signer/old-version negative tests protect the update path; mutable-main updates remain unavailable until the signed runbook exists. |
+| SC-031 | Independent encrypted recovery | Backups use an encrypted access-separated off-volume target with recoverable key/config identity, quiesce/checkpoint ordering across PostgreSQL/Redis/object/evidence/ledger, RPO/RTO, retention/legal-hold preservation, and a fresh-empty-volume restore drill with reconciliation and checkpoint verification. |
 
 ## Dependency order and implementation tasks
 
@@ -75,9 +89,10 @@ The current `docker-compose.yml` is a seven-service application topology with na
 1. Write failing structural tests that require exactly one production application service/container, the supervisor manifest, seven required process names, one named volume rooted at `/var/lib/shore-sentinel` with four required subdirectories, no Docker socket/host SSH bind, production secret requirements, and an explicit development override.
 2. Write failing migration tests for version order, advisory locking, no schema mutation in API startup, interruption recovery, and compatibility with the current `api/src/schema.ts` table/enum contracts.
 3. Write failing negative tests for process environment leakage, parser-to-egress reachability, missing host-key pin, traversal input, forged egress source, and unconditional health success.
-4. Write failing traceability validation that every `SC-*` requirement has source, implementation files, test files, command, and retained-evidence fields.
-5. Run `python3 -m unittest tests.test_single_container_release_gate tests.test_container_supervision_contract tests.test_single_container_persistence_contract`; expected result is failure because the target container and traceability files do not exist.
-6. Keep these tests check-only: they must inspect files/config and disposable test doubles; they must not call `docker compose up`, connect to a customer target, or change a firewall.
+4. Write failing traceability validation that every `SC-*` requirement has source, implementation files, test files, command, and retained-evidence fields; accepted deviation records `DEV-001` and `DEV-002` exist in the architecture, plan, and RTM without being waivers.
+5. Write failing document-invariant tests for H-01 through H-07: identity/session/grant checks, mTLS/envelope secret lifecycle, co-location sandbox primitives, external WORM evidence, DLP/prompt-injection adversarial fixtures, signed supply-chain/update refusal, and independent encrypted recovery.
+6. Run `python3 -m unittest tests.test_architecture_document_invariants tests.test_single_container_release_gate tests.test_container_supervision_contract tests.test_single_container_persistence_contract`; expected result is failure because the target container and traceability files do not exist.
+7. Keep these tests check-only: they must inspect files/config and disposable test doubles; they must not call `docker compose up`, connect to a customer target, or change a firewall.
 
 **Exit evidence:** Red tests identify every target contract before implementation starts; traceability JSON validates as JSON and has no unowned requirement.
 
@@ -198,9 +213,9 @@ The current `docker-compose.yml` is a seven-service application topology with na
 
 1. Add failing tests proving the browser cannot obtain worker credentials, SSH credentials, grant payloads, MinIO root credentials, or parser internals.
 2. Add failing tests proving every SSH execution requires tenant/run/grant/attempt/expiry/host-key/scope checks and that cancellation remains terminal under queue/worker races.
-3. Add failing tests proving parser input/output limits, redaction/quarantine, artifact hash verification, and no direct target egress from Python.
-4. Add failing sandbox tests proving every disposable per-run process uses a dedicated unprivileged user/namespace, a fixed allowlisted executable, a bounded temporary directory under `/var/lib/shore-sentinel`, `network: none` by default, resource limits, and a terminal timeout/cleanup path.
-5. Implement separate process environment contracts and authenticated internal API routes. Keep long-lived secrets in the secret boundary; deliver only one-time attempt-bound references to the approved adapter.
+3. Add failing tests proving parser input/output limits, redaction/quarantine, artifact hash verification, no direct target egress from Python, DLP-before-persistence/egress, typed tool schemas, and indirect/encoded/redirect/argument-smuggling/detector-outage fixtures.
+4. Add failing sandbox tests proving every disposable per-run process uses a dedicated unprivileged user/mount/network/IPC/UTS namespace, a fixed allowlisted executable, a bounded temporary directory under `/var/lib/shore-sentinel`, `network: none` by default, cgroup v2 limits, seccomp and AppArmor/SELinux verification, masked `/proc`/`/sys`/devices, no setuid/ptrace, and a terminal timeout/cleanup path. Startup must refuse readiness if a mandatory primitive is absent.
+5. Implement separate process environment contracts and authenticated internal API routes. Require least-privilege PostgreSQL roles, Redis ACLs, MinIO service credentials, and restricted Unix sockets where possible. Keep long-lived secrets in the external OpenBao/Vault/KMS boundary; deliver only one-time attempt-bound references to the approved mTLS-authenticated adapter.
 6. Implement `container/run-sandbox.sh` and `container/sandbox-policy.json` as a checkable local process boundary; they must not invoke Docker or accept caller-supplied commands outside the signed/allowlisted bundle contract.
 7. Run the focused Node, Python, API, and sandbox tests, then `npm run test`.
 
@@ -224,7 +239,7 @@ The current `docker-compose.yml` is a seven-service application topology with na
 
 1. Add failing check-only tests requiring default deny, authenticated proxy/TCP gateway, explicit destination/port/time-window authorization, no caller-supplied CIDR authority, and an explicit statement that JSON validation is not live firewall proof.
 2. Add failing tests proving the Python parser has no egress capability and that the Node worker is the only managed-SSH process path.
-3. Implement the host policy example and deployment guide as non-applying reference artifacts. Applying nftables/iptables or changing a live host remains an approved operations action outside this plan.
+3. Implement the host policy example and deployment guide as non-applying reference artifacts. Applying nftables/iptables or changing a live host remains an approved operations action outside this plan. The same guide must define separate WORM/Object-Lock checkpoint administration, external signer/key custody, and the evidence required to prove that a co-resident compromise cannot rewrite retained evidence.
 4. Cross-reference the in-container sandbox policy from Task 5 and define host-level default-deny/evidence requirements for the one application container. No runner broker, second container, or second Docker host is included in this release baseline.
 5. Run the check-only egress and infrastructure tests; do not run external SSH from the developer shell.
 
@@ -249,9 +264,9 @@ The current `docker-compose.yml` is a seven-service application topology with na
 
 1. Add failing tests for exact navigation group order, mobile drawer behavior, skip link/focus/reduced motion, and no orphaned route labels.
 2. Implement only the approved navigation grouping; preserve existing route authorization and contextual links for engagements, policy, evidence, search, and comparison.
-3. Add a runbook with preflight, backup, image/config identity, migration, health, log review, rollback trigger, prior-image restart, volume restore, and post-rollback verification commands. Use `docker compose down` without `-v` for routine rollback; never delete volumes as a rollback step.
-4. Add a backup/restore runbook covering `pg_dump`, Redis persistence, MinIO/object-storage versioning/Object Lock, evidence hash inventory, restore order, and owner/approval records.
-5. Run navigation tests and `python3 -m unittest discover -s tests`.
+3. Add a runbook with preflight, signed commit/tag and image/bundle verification (pinned signer/trust root, provenance/SBOM, revocation, anti-rollback), encrypted off-volume backup, image/config identity, migration, health, log review, rollback trigger, prior-image restart, volume restore, and post-rollback verification commands. Until this runbook is implemented and verified, the update path must say unavailable; never pull mutable `main` or rebuild it as an update. Use `docker compose down` without `-v` for routine rollback; never delete volumes as a rollback step.
+4. Add a backup/restore runbook covering `pg_dump`, Redis persistence, MinIO/object-storage versioning/Object Lock, signed ledger checkpoints, evidence hash inventory, quiesce/checkpoint ordering, encrypted access-separated off-volume storage, KMS/key recovery without raw secrets, RPO/RTO, retention/legal hold, restore into a fresh empty volume, and owner/approval records.
+5. Run navigation tests, document-invariant tests, and `python3 -m unittest discover -s tests`.
 
 **Exit evidence:** Authenticated browser evidence at 1440×1050, 900×1050, and 390×844; reviewed update/rollback and backup/restore runbooks; no unrecorded waiver.
 
@@ -283,23 +298,28 @@ The current `docker-compose.yml` is a seven-service application topology with na
 ## Migration and data-safety contract
 
 - The previous multi-service Compose release and `docker-compose.previous.yml` remain the rollback reference until the single-container release passes staging rollback.
-- Before an upgrade, capture the candidate commit, image digest, Compose revision, one-volume identity, `pg_dump --format=custom`, PostgreSQL schema version, Redis persistence state, object-storage version/object-lock state, and SHA-256 inventory of retained evidence.
+- Before an upgrade, capture the candidate signed commit/tag, verified image and bundle signatures, signer/trust-root identity, provenance/SBOM linkage, anti-rollback decision, Compose revision, one-volume identity, encrypted off-volume backup ID, `pg_dump --format=custom`, PostgreSQL schema version, Redis persistence state, object-storage version/object-lock state, signed ledger checkpoint, and SHA-256 inventory of retained evidence.
+- Quiesce new work, drain/cancel bounded workers, checkpoint the ledger, flush Redis/outbox state, take the PostgreSQL dump, snapshot/version object storage and evidence, and verify the cross-component consistency manifest before accepting the backup. Backup keys/config are recoverable through the approved KMS/identity path; raw target secrets never enter the backup.
 - Apply migrations before starting dependent processes, under a PostgreSQL advisory lock. A migration checksum mismatch is a hard stop.
 - Keep additive schema changes backward-compatible for the rollback window. If a later migration cannot be backward-compatible, require a complete database/object backup and restore to the prior image; never claim a binary rollback alone is safe.
-- Rollback trigger examples are failed readiness for any required process, data-integrity/hash mismatch, unauthorized egress, secret-boundary failure, failed critical flow, or unresolved Critical/High finding.
+- Rollback trigger examples are failed readiness for any required process or sandbox primitive, data-integrity/hash/checkpoint mismatch, unauthorized egress, secret-boundary or DLP failure, failed signature/provenance/revocation/anti-rollback check, failed critical flow, or unresolved Critical/High finding.
 - Rollback restores the prior image/config, restarts without deleting volumes, verifies prior health and critical flow, and restores the database/object data only when the recorded backup/restore test requires it.
 
 ## Threat-control matrix
 
 | Threat | Control in this plan | Negative proof |
 |---|---|---|
-| T-01 Process compromise reaches all services | Separate users, fixed supervisor commands, read-only paths, capability drop, no-new-privileges, resource limits | Attempted unauthorized executable/env/path in supervision contract fails |
-| T-02 Browser or queue leaks secrets | Per-process env allowlist, one-time adapter delivery, redacted logs, API-only credential references | Browser/queue payload tests assert no secret/token fields |
+| T-01 Process compromise reaches all services | Separate users, fixed supervisor commands, authenticated DB/Redis/MinIO roles, restricted Unix sockets, read-only paths, capability drop, no-new-privileges, resource limits, no Docker socket | Cross-process endpoint/filesystem/signal/ptrace/symlink and namespace-failure tests fail closed |
+| T-02 Browser or queue leaks secrets | OIDC/session/CSRF controls, per-process env allowlist, mTLS workload identity, envelope ciphertext, one-time adapter delivery, redacted logs, API-only credential references | Browser/queue/log/evidence and cross-workload/replay/KMS-outage tests assert no secret/token fields |
 | T-03 Parser reaches targets or worker egress | Parser loopback/internal path only; Node worker is sole managed-SSH process | Parser egress and network policy negative tests |
 | T-04 Application bypasses egress | Host default-deny plus authenticated proxy/TCP gateway; signed/server-authoritative policy | Unauthorized destination/port fixture fails; schema-only input is unverified |
 | T-05 SSH command injection or scope escape | Fixed ForceCommand, sudoers regex, host-key pin, root/path/CIDR validation, bounded cancellation | Existing SSH fixture tests plus invalid command/path/host-key/cancel cases |
 | T-06 Database corruption during startup | One-shot ordered migrations, advisory lock, checksums, transaction per migration | Concurrent, interrupted, checksum-drift, and restart tests |
-| T-07 Evidence tampering or loss | Hashes, provenance, append-only events, retention/legal hold, one application-data volume, backups | Hash mismatch, restore, and evidence-chain tests |
+| T-07 Evidence tampering or loss | Hashes, provenance, append-only events, signed keyed monotonic external WORM checkpoints, keys outside the volume, retention/legal hold, one application-data volume, encrypted off-volume backups | Mutation, truncation, replay, clock-skew, admin-bypass, hold-delete, fresh-volume restore, and evidence-chain tests |
+| T-11 Identity or engagement authorization bypass | OIDC/SAML validation, durable hashed sessions, MFA/ACR/AMR step-up recency, immutable owner/dual approval, policy-hash/scope/expiry/revocation checks on every grant | Wrong issuer/JWKS/audience/nonce/state/PKCE, stale step-up, missing approver, scope, expiry, revoke, and policy-drift tests |
+| T-12 DLP or prompt injection becomes authority | Typed tool schemas, fixed adapters, output encoding, allowlists, DLP before persistence/egress, quarantine on detector failure | Indirect/encoded injection, malicious URL/redirect, argument smuggling, oversized payload, retrieval poisoning, and detector outage fixtures |
+| T-13 Supply-chain or update substitution | Immutable digests, signed commit/image/bundle verification, pinned trust roots, provenance/SBOM linkage, revocation, anti-rollback, update-unavailable gate | Tampered, unsigned, wrong-signer, revoked, stale, and older-version candidates fail closed |
+| T-14 Inconsistent recovery or secret-bearing backup | Quiesce/checkpoint ordering, encrypted access-separated off-volume destination, recoverable KMS/config identity, RPO/RTO, legal-hold preservation, fresh-empty-volume drill | Total-volume-loss restore reconciles database/object/evidence/ledger without raw secrets |
 | T-08 False health/availability claim | Supervisor readiness and dependency health, degraded state, redacted structured events | Kill/restart/dependency-failure tests must report non-ready |
 | T-09 Unsafe update or rollback | Clean-source preflight, immutable image/config identity, backup, compatible migrations, prior image | Staged rollback rehearsal and post-rollback critical flow |
 | T-10 UI hides approval/security state | Approved label grouping without authorization changes; accessible error/degraded/denied states | Browser route matrix, keyboard/focus, console, overflow, and negative API tests |
