@@ -1245,13 +1245,13 @@
     "semantic_hash": ""
   },
   "docs/qa/2026-07-22-enterprise-single-container-requirements.json": {
-    "mtime": 1784652148.0546942,
-    "ast_hash": "ae9ca7e73c57b054d606da264baea8aa",
+    "mtime": 1784652403.1130872,
+    "ast_hash": "3de9f0ceee558b3e538bd50eb9d25cb0",
     "semantic_hash": ""
   },
   "docs/plans/2026-07-22-enterprise-single-container-completion.md": {
-    "mtime": 1784652058.0471146,
-    "ast_hash": "293afbc8bf63cce8f324534637c553fb",
+    "mtime": 1784652403.0618074,
+    "ast_hash": "f0e3877155eb19da7f3475b31854e61e",
     "semantic_hash": ""
   }
 }
