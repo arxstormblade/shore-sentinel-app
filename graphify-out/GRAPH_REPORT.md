@@ -1,7 +1,8 @@
-# Graph Report - .  (2026-07-21)
+# Graph Report - github-shore-sentinel-app  (2026-07-21)
 
 ## Corpus Check
-- cluster-only mode — file stats not available
+- 213 files · ~274,851 words
+- Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
 - 2061 nodes · 3115 edges · 179 communities (132 shown, 47 thin omitted)
@@ -9,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7e1f6086`
+- Built from commit: `4dd47b93`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

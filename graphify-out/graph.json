@@ -26496,7 +26496,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "api/src/app.controller.ts",
-      "source_location": "L472",
+      "source_location": "L473",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -30152,7 +30152,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "api/src/queue.service.ts",
-      "source_location": "L12",
+      "source_location": "L53",
       "weight": 1.0,
       "_origin": "ast",
       "source": "api_src_queue_service",
@@ -31070,7 +31070,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "api/src/validation.ts",
-      "source_location": "L8",
+      "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
       "source": "api_src_validation",
@@ -31468,7 +31468,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "api/test/scan-dispatch-outbox.test.ts",
-      "source_location": "L87",
+      "source_location": "L271",
       "weight": 1.0,
       "_origin": "ast",
       "source": "api_test_scan_dispatch_outbox_test",
@@ -31490,7 +31490,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "api/test/scan-dispatch-outbox.test.ts",
-      "source_location": "L211",
+      "source_location": "L225",
       "weight": 1.0,
       "_origin": "ast",
       "source": "api_test_scan_dispatch_outbox_test",
@@ -34471,7 +34471,7 @@
     },
     {
       "relation": "references",
-      "context": "parameter_type",
+      "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py",
       "source_location": "L328",
@@ -34531,7 +34531,7 @@
     },
     {
       "relation": "references",
-      "context": "generic_arg",
+      "context": "return_type",
       "confidence": "EXTRACTED",
       "source_file": "scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py",
       "source_location": "L318",
@@ -34974,7 +34974,7 @@
     },
     {
       "relation": "references",
-      "context": "parameter_type",
+      "context": "return_type",
       "confidence": "EXTRACTED",
       "source_file": "scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py",
       "source_location": "L397",
@@ -34998,7 +34998,7 @@
     },
     {
       "relation": "references",
-      "context": "parameter_type",
+      "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py",
       "source_location": "L405",
@@ -35046,7 +35046,7 @@
     },
     {
       "relation": "references",
-      "context": "generic_arg",
+      "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py",
       "source_location": "L343",
@@ -38680,7 +38680,7 @@
     },
     {
       "relation": "references",
-      "context": "generic_arg",
+      "context": "return_type",
       "confidence": "EXTRACTED",
       "source_file": "scanner-bundle/tools/ARX_Agent_Security_Remediation.py",
       "source_location": "L115",
@@ -38704,7 +38704,7 @@
     },
     {
       "relation": "references",
-      "context": "generic_arg",
+      "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "scanner-bundle/tools/ARX_Agent_Security_Remediation.py",
       "source_location": "L123",
@@ -38914,7 +38914,7 @@
     },
     {
       "relation": "references",
-      "context": "parameter_type",
+      "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "scripts/check_disposable_ssh_fixture.py",
       "source_location": "L78",
@@ -39181,7 +39181,7 @@
     },
     {
       "relation": "references",
-      "context": "parameter_type",
+      "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "scripts/check_worker_node_egress_policy.py",
       "source_location": "L34",
@@ -39265,7 +39265,7 @@
     },
     {
       "relation": "references",
-      "context": "parameter_type",
+      "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "scripts/check_worker_node_egress_policy.py",
       "source_location": "L96",
@@ -39277,7 +39277,7 @@
     },
     {
       "relation": "references",
-      "context": "parameter_type",
+      "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "scripts/check_worker_node_egress_policy.py",
       "source_location": "L76",
@@ -39500,7 +39500,7 @@
     },
     {
       "relation": "references",
-      "context": "return_type",
+      "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "scripts/compose_smoke.py",
       "source_location": "L33",
@@ -39524,7 +39524,7 @@
     },
     {
       "relation": "references",
-      "context": "return_type",
+      "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "scripts/compose_smoke.py",
       "source_location": "L37",
@@ -58430,5 +58430,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "7e1f60867af5f15a26aaadbdfc20ee284874cc45"
+  "built_at_commit": "4dd47b9396a408bcf3f4a46ee1ee38858c0245b8"
 }

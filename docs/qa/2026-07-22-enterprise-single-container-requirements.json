@@ -3,7 +3,7 @@
   "$id": "https://shore360.example/schemas/shore-sentinel/enterprise-single-container-requirements.json",
   "document": "2026-07-22-enterprise-single-container-requirements",
   "product": "shore-sentinel",
-  "baseline_commit": "7e1f60867af5f15a26aaadbdfc20ee284874cc45",
+  "baseline_commit": "4dd47b9",
   "approved_by": "Boss",
   "approved_on": "2026-07-22",
   "timezone": "Asia/Manila",
