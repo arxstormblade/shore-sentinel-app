@@ -186,5 +186,6 @@
   "184": "cookie-parser",
   "185": "ioredis",
   "186": "reflect-metadata",
-  "187": "shore-sentinel"
+  "187": "shore-sentinel",
+  "188": "@aws-sdk/s3-request-presigner"
 }

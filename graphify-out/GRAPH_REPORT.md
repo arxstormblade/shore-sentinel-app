@@ -1,16 +1,16 @@
 # Graph Report - github-shore-sentinel-app  (2026-07-22)
 
 ## Corpus Check
-- 232 files · ~285,258 words
+- 232 files · ~285,272 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2143 nodes · 3194 edges · 188 communities (139 shown, 49 thin omitted)
+- 2144 nodes · 3195 edges · 189 communities (139 shown, 50 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 95 edges (avg confidence: 0.77)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `115452e8`
+- Built from commit: `c511a423`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -197,6 +197,7 @@
 - ioredis
 - reflect-metadata
 - shore-sentinel
+- @aws-sdk/s3-request-presigner
 
 ## God Nodes (most connected - your core abstractions)
 1. `AppController` - 80 edges
@@ -207,25 +208,25 @@
 6. `MachineDetailClient()` - 20 edges
 7. `main()` - 19 edges
 8. `write_simple_pdf()` - 18 edges
-9. `RemoteRunnerProtocolTests` - 18 edges
-10. `AuthService` - 17 edges
+9. `SingleContainerRuntimeContractTests` - 18 edges
+10. `RemoteRunnerProtocolTests` - 18 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `SystemUpdatePage()` --calls--> `apiGet()`  [INFERRED]
   web/app/system/update/page.jsx → web/lib/api-data.js
-- `SavedViewContent()` --calls--> `routePath()`  [INFERRED]
-  web/components/saved-views.jsx → web/lib/paths.js
 - `bootstrap()` --indirect_call--> `AuthService`  [INFERRED]
   api/src/main.ts → api/src/auth.service.ts
 - `lifecycleEvent()` --calls--> `buildRunEvent()`  [EXTRACTED]
   workers/worker-node/src/lifecycle.js → packages/shared/src/index.js
 - `normalizeJobData()` --calls--> `scannerBundleContractVersion()`  [EXTRACTED]
   workers/worker-node/src/payload.js → packages/shared/src/index.js
+- `toContract()` --calls--> `scannerBundleContractVersion()`  [EXTRACTED]
+  workers/worker-node/src/scannerRunner.js → packages/shared/src/index.js
 
 ## Import Cycles
 - None detected.
 
-## Communities (188 total, 49 thin omitted)
+## Communities (189 total, 50 thin omitted)
 
 ### Community 0 - "AppController"
 Cohesion: 0.27
@@ -240,8 +241,8 @@ Cohesion: 0.11
 Nodes (52): add(), _add_pdf_section_inline(), as_list(), contains_secret_like_literal(), correlate(), count_known_config_dirs(), discover_context(), draw_hardware_summary() (+44 more)
 
 ### Community 3 - "appPath"
-Cohesion: 0.07
-Nodes (36): forwardAuth(), normalizeAuthCookie(), POST(), redirectTo(), serverApiBase(), forwardAuth(), normalizeAuthCookie(), POST() (+28 more)
+Cohesion: 0.09
+Nodes (33): forwardAuth(), normalizeAuthCookie(), POST(), redirectTo(), serverApiBase(), forwardAuth(), normalizeAuthCookie(), POST() (+25 more)
 
 ### Community 4 - "Shore Sentinel Enterprise AI Security Modernization — Design"
 Cohesion: 0.05
@@ -268,8 +269,8 @@ Cohesion: 0.20
 Nodes (9): name, private, scripts, build, check, start, test, type (+1 more)
 
 ### Community 10 - "MachineDetailClient"
-Cohesion: 0.13
-Nodes (27): deriveProgressMessage(), ensureArray(), formatDuration(), hardwareSummaryIsStale(), hardwareSummaryState(), hardwareValue(), humanize(), MachineDetailClient() (+19 more)
+Cohesion: 0.12
+Nodes (29): enrichRemediations(), Machine(), deriveProgressMessage(), ensureArray(), formatDuration(), hardwareSummaryIsStale(), hardwareSummaryState(), hardwareValue() (+21 more)
 
 ### Community 11 - "queue.service.ts"
 Cohesion: 0.12
@@ -292,8 +293,8 @@ Cohesion: 0.06
 Nodes (32): bundle, entrypoint, outputSchema, additionalProperties, properties, required, type, const (+24 more)
 
 ### Community 16 - "routePath"
-Cohesion: 0.09
-Nodes (12): KB(), SavedViewsPage(), StartScanRedirect(), MobileNavigation(), Brand(), Empty(), Header(), NavigationGroups() (+4 more)
+Cohesion: 0.07
+Nodes (15): Register(), KB(), SavedViewsPage(), StartScanRedirect(), MobileNavigation(), NewMachineForm(), SavedViewContent(), Brand() (+7 more)
 
 ### Community 17 - "ArtifactService"
 Cohesion: 0.11
@@ -336,16 +337,16 @@ Cohesion: 0.12
 Nodes (3): CompactOperationsComponentTests, CompactOperationsQualityArtifactTests, read()
 
 ### Community 28 - "apiGet"
-Cohesion: 0.14
-Nodes (11): Audit(), Audits(), enrichRemediations(), Machine(), Inventory(), Remediation(), Scans(), apiGet() (+3 more)
+Cohesion: 0.16
+Nodes (9): Audit(), Audits(), Inventory(), Remediation(), Scans(), apiGet(), publicApiBase(), serverApiBase() (+1 more)
 
 ### Community 29 - "users-api.js"
 Cohesion: 0.24
 Nodes (13): EMPTY_FORM, formatDate(), UsersPage(), apiBase(), createUser(), deleteUser(), disableUser(), enableUser() (+5 more)
 
 ### Community 30 - "saved-views.jsx"
-Cohesion: 0.18
-Nodes (17): ALL_VIEW_SLUGS, FailedScansView(), formatTime(), getJson(), HighFindingsView(), readableText(), RecentlyCompletedView(), remediationText() (+9 more)
+Cohesion: 0.19
+Nodes (16): ALL_VIEW_SLUGS, FailedScansView(), formatTime(), getJson(), HighFindingsView(), readableText(), RecentlyCompletedView(), remediationText() (+8 more)
 
 ### Community 31 - "package.json"
 Cohesion: 0.09
@@ -705,7 +706,7 @@ Nodes (12): createApiClient(), getJson(), postJson(), api, artifactCleanupWorker
 
 ### Community 165 - "dependencies"
 Cohesion: 0.13
-Nodes (15): dependencies, @aws-sdk/s3-request-presigner, @nestjs/common, @nestjs/core, @nestjs/platform-express, pg, rxjs, @shore-sentinel/shared (+7 more)
+Nodes (15): dependencies, @aws-sdk/client-s3, @nestjs/common, @nestjs/core, @nestjs/platform-express, pg, rxjs, @shore-sentinel/shared (+7 more)
 
 ### Community 166 - "devDependencies"
 Cohesion: 0.13
@@ -762,17 +763,17 @@ Nodes (3): positiveInteger(), readConfig(), sshWorkerConcurrency()
 ## Knowledge Gaps
 - **785 isolated node(s):** `name`, `version`, `private`, `type`, `build` (+780 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **49 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **50 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `AppController` connect `ParserServerTests` to `AppController`, `app.module.ts`, `QueueService`, `scannerBundleContractVersion`, `UpdateService`, `queue.service.ts`, `Body`, `app.controller.ts`, `controller-shapes.test.ts`, `.createJob`, `ArtifactService`, `worker-ssh-grant.test.ts`?**
-  _High betweenness centrality (0.043) - this node is a cross-community bridge._
-- **Why does `routePath()` connect `routePath` to `appPath`, `InventoryRegistry`, `getAuthenticatedUser`, `MachineDetailClient`, `page.jsx`, `RemediationQueue`, `page.jsx`, `display-preferences.js`, `ReportsLedger`, `apiGet`, `saved-views.jsx`?**
-  _High betweenness centrality (0.036) - this node is a cross-community bridge._
+  _High betweenness centrality (0.045) - this node is a cross-community bridge._
 - **Why does `Header()` connect `routePath` to `ParserServerTests`?**
-  _High betweenness centrality (0.035) - this node is a cross-community bridge._
+  _High betweenness centrality (0.036) - this node is a cross-community bridge._
+- **Why does `routePath()` connect `routePath` to `InventoryRegistry`, `appPath`, `getAuthenticatedUser`, `MachineDetailClient`, `page.jsx`, `RemediationQueue`, `@aws-sdk/client-s3`, `page.jsx`, `display-preferences.js`, `ReportsLedger`, `apiGet`, `saved-views.jsx`?**
+  _High betweenness centrality (0.034) - this node is a cross-community bridge._
 - **Are the 33 inferred relationships involving `routePath()` (e.g. with `Audit()` and `Audits()`) actually correct?**
   _`routePath()` has 33 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `name`, `version`, `private` to the rest of the system?**
@@ -780,4 +781,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `Agent_Security_Selfcheck_v3.4.0.py` be split into smaller, more focused modules?**
   _Cohesion score 0.10752688172043011 - nodes in this community are weakly interconnected._
 - **Should `appPath` be split into smaller, more focused modules?**
-  _Cohesion score 0.06857142857142857 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08527131782945736 - nodes in this community are weakly interconnected._
