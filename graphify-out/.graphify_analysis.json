@@ -2,9 +2,14 @@
   "communities": {
     "0": [
       "api_src_app_controller_appcontroller",
+      "api_src_app_controller_appcontroller_addidentitygroupmember",
       "api_src_app_controller_appcontroller_applyupdate",
+      "api_src_app_controller_appcontroller_approveengagement",
+      "api_src_app_controller_appcontroller_beginidentitybreakglass",
       "api_src_app_controller_appcontroller_cancelrun",
       "api_src_app_controller_appcontroller_checkupdate",
+      "api_src_app_controller_appcontroller_createengagement",
+      "api_src_app_controller_appcontroller_createidentitygroup",
       "api_src_app_controller_appcontroller_createjob",
       "api_src_app_controller_appcontroller_createtarget",
       "api_src_app_controller_appcontroller_createuser",
@@ -15,6 +20,7 @@
       "api_src_app_controller_appcontroller_downloadartifact",
       "api_src_app_controller_appcontroller_enableuser",
       "api_src_app_controller_appcontroller_enqueueartifactcleanup",
+      "api_src_app_controller_appcontroller_enrollmfa",
       "api_src_app_controller_appcontroller_events",
       "api_src_app_controller_appcontroller_getremediation",
       "api_src_app_controller_appcontroller_getreport",
@@ -22,6 +28,9 @@
       "api_src_app_controller_appcontroller_health",
       "api_src_app_controller_appcontroller_job",
       "api_src_app_controller_appcontroller_listaudits",
+      "api_src_app_controller_appcontroller_listengagements",
+      "api_src_app_controller_appcontroller_listidentitydevices",
+      "api_src_app_controller_appcontroller_listidentitygroups",
       "api_src_app_controller_appcontroller_listremediation",
       "api_src_app_controller_appcontroller_listreports",
       "api_src_app_controller_appcontroller_listroles",
@@ -42,16 +51,20 @@
       "api_src_app_controller_appcontroller_remediationactivity",
       "api_src_app_controller_appcontroller_rememberme",
       "api_src_app_controller_appcontroller_requireadmin",
+      "api_src_app_controller_appcontroller_requireexecutionauthorization",
       "api_src_app_controller_appcontroller_requireinternalworker",
       "api_src_app_controller_appcontroller_requirepermission",
       "api_src_app_controller_appcontroller_requiretenantuser",
       "api_src_app_controller_appcontroller_requireworkercapability",
       "api_src_app_controller_appcontroller_resetpassword",
+      "api_src_app_controller_appcontroller_revokeengagement",
+      "api_src_app_controller_appcontroller_revokeidentitydevice",
       "api_src_app_controller_appcontroller_run",
       "api_src_app_controller_appcontroller_runartifacts",
       "api_src_app_controller_appcontroller_runtarget",
       "api_src_app_controller_appcontroller_setsessioncookie",
       "api_src_app_controller_appcontroller_settings",
+      "api_src_app_controller_appcontroller_simulatepolicy",
       "api_src_app_controller_appcontroller_stream",
       "api_src_app_controller_appcontroller_targetscanruns",
       "api_src_app_controller_appcontroller_tenantid",
@@ -60,6 +73,7 @@
       "api_src_app_controller_appcontroller_updatestatus",
       "api_src_app_controller_appcontroller_updatetarget",
       "api_src_app_controller_appcontroller_updateuser",
+      "api_src_app_controller_appcontroller_verifymfa",
       "api_src_app_controller_appcontroller_workerartifact",
       "api_src_app_controller_appcontroller_workercapability",
       "api_src_app_controller_appcontroller_workerevent",
@@ -67,23 +81,27 @@
       "api_src_app_controller_appcontroller_workerruncontrol",
       "api_src_app_controller_appcontroller_workersshgrant",
       "api_src_app_controller_assertsshenrollment",
+      "api_src_app_controller_requireuuid",
       "api_src_auth_service_authservice_me",
-      "api_src_config_allowed_artifact_types",
-      "api_src_config_max_artifact_bytes",
       "api_src_database_service_databaseservice_query",
-      "api_src_validation",
-      "api_src_validation_assertexactlyonesubject",
-      "api_src_validation_positivetimebudget",
+      "api_src_identity_access_governance_service_accessgovernanceservice",
+      "api_src_identity_access_governance_service_accessgovernanceservice_addmember",
+      "api_src_identity_access_governance_service_accessgovernanceservice_audit",
+      "api_src_identity_access_governance_service_accessgovernanceservice_beginbreakglass",
+      "api_src_identity_access_governance_service_accessgovernanceservice_constructor",
+      "api_src_identity_access_governance_service_accessgovernanceservice_creategroup",
+      "api_src_identity_access_governance_service_accessgovernanceservice_listdevices",
+      "api_src_identity_access_governance_service_accessgovernanceservice_listgroups",
+      "api_src_identity_access_governance_service_accessgovernanceservice_listroles",
+      "api_src_identity_access_governance_service_accessgovernanceservice_revokedevice",
+      "api_src_identity_access_governance_service_ts_injectable",
       "api_src_validation_requirestring",
       "api_src_validation_requireworkerattempt",
-      "api_src_validation_validateartifactcomplete",
-      "api_src_validation_validateartifacttype",
-      "api_src_validation_validatecanonicalworkerartifactbase64",
       "api_src_validation_validatescantarget",
-      "api_src_validation_workerexecutiontimebudget",
       "api_test_managed_scan_validation_test",
       "api_test_managed_scan_validation_test_viewerrequest",
-      "api_test_validation_test",
+      "api_test_policy_simulation_test",
+      "api_test_policy_simulation_test_request",
       "body",
       "controller",
       "delete",
@@ -96,88 +114,6 @@
       "res"
     ],
     "1": [
-      "api_src_app_controller_appcontroller_scanneroutput",
-      "api_test_controller_shapes_test",
-      "api_test_controller_shapes_test_adminrequest",
-      "api_test_controller_shapes_test_analystrequest",
-      "api_test_controller_shapes_test_controller",
-      "api_test_controller_shapes_test_operatorrequest",
-      "api_test_controller_shapes_test_viewerrequest",
-      "api_test_controller_shapes_test_workercapability",
-      "api_test_controller_shapes_test_workerrequest",
-      "packages_shared_src_index",
-      "packages_shared_src_index_artifact_kind",
-      "packages_shared_src_index_buildrunevent",
-      "packages_shared_src_index_job_status",
-      "packages_shared_src_index_queues",
-      "packages_shared_src_index_run_event_type",
-      "packages_shared_src_index_scannerbundlecontractversion",
-      "packages_shared_src_index_validateartifactupload",
-      "workers_worker_node_src_apiclient",
-      "workers_worker_node_src_apiclient_createapiclient",
-      "workers_worker_node_src_apiclient_getjson",
-      "workers_worker_node_src_apiclient_postjson",
-      "workers_worker_node_src_config",
-      "workers_worker_node_src_config_positiveinteger",
-      "workers_worker_node_src_config_readconfig",
-      "workers_worker_node_src_config_sshworkerconcurrency",
-      "workers_worker_node_src_failurehandling",
-      "workers_worker_node_src_failurehandling_delay",
-      "workers_worker_node_src_failurehandling_handlemanagedsshfailure",
-      "workers_worker_node_src_index",
-      "workers_worker_node_src_index_api",
-      "workers_worker_node_src_index_artifactcleanupworker",
-      "workers_worker_node_src_index_config",
-      "workers_worker_node_src_index_connection",
-      "workers_worker_node_src_index_events",
-      "workers_worker_node_src_index_parsewithpython",
-      "workers_worker_node_src_index_processartifactcleanupjob",
-      "workers_worker_node_src_index_queue",
-      "workers_worker_node_src_index_shutdown",
-      "workers_worker_node_src_index_worker",
-      "workers_worker_node_src_lifecycle",
-      "workers_worker_node_src_lifecycle_artifactuploadpayload",
-      "workers_worker_node_src_lifecycle_lifecycleevent",
-      "workers_worker_node_src_lifecycle_retrydecision",
-      "workers_worker_node_src_managedsshprocessor",
-      "workers_worker_node_src_managedsshprocessor_assertactive",
-      "workers_worker_node_src_managedsshprocessor_emit",
-      "workers_worker_node_src_managedsshprocessor_emitmanagedsshfailure",
-      "workers_worker_node_src_managedsshprocessor_monitorcancellation",
-      "workers_worker_node_src_managedsshprocessor_processmanagedsshjob",
-      "workers_worker_node_src_managedsshprocessor_processmanagedsshjobsteps",
-      "workers_worker_node_src_managedsshprocessor_scanneroutputfromssh",
-      "workers_worker_node_src_managedsshprocessor_withtimeout",
-      "workers_worker_node_src_parserclient",
-      "workers_worker_node_src_parserclient_createparserclient",
-      "workers_worker_node_src_payload",
-      "workers_worker_node_src_payload_normalizejobdata",
-      "workers_worker_node_src_payloadlimits",
-      "workers_worker_node_src_payloadlimits_assertscanneroutputbytes",
-      "workers_worker_node_src_payloadlimits_raw_scanner_artifact_max_bytes",
-      "workers_worker_node_src_payloadlimits_serializeparserrequest",
-      "workers_worker_node_src_scannerrunner",
-      "workers_worker_node_src_scannerrunner_artifacttypefor",
-      "workers_worker_node_src_scannerrunner_contenttypefor",
-      "workers_worker_node_src_scannerrunner_execfileasync",
-      "workers_worker_node_src_scannerrunner_runbundledscanner",
-      "workers_worker_node_src_scannerrunner_severityfromrisk",
-      "workers_worker_node_src_scannerrunner_tocontract",
-      "workers_worker_node_src_sshexecutor_normalizesshjob",
-      "workers_worker_node_test_apiclient_test",
-      "workers_worker_node_test_config_test",
-      "workers_worker_node_test_lifecycle_test",
-      "workers_worker_node_test_managedsshprocessor_test",
-      "workers_worker_node_test_managedsshprocessor_test_grant",
-      "workers_worker_node_test_managedsshprocessor_test_job",
-      "workers_worker_node_test_payload_test",
-      "workers_worker_node_test_payloadcontract_test",
-      "workers_worker_node_test_payloadcontract_test_apirecorder",
-      "workers_worker_node_test_payloadcontract_test_grant",
-      "workers_worker_node_test_payloadcontract_test_job",
-      "workers_worker_node_test_payloadcontract_test_scannerjsonwithexactbytes"
-    ],
-    "2": [
       "scanner_bundle_bin_agent_security_selfcheck_v3_4_0",
       "scanner_bundle_bin_agent_security_selfcheck_v3_4_0_add",
       "scanner_bundle_bin_agent_security_selfcheck_v3_4_0_add_pdf_section_inline",
@@ -242,59 +178,61 @@
       "scanner_bundle_bin_agent_security_selfcheck_v3_4_0_write_reports",
       "scanner_bundle_bin_agent_security_selfcheck_v3_4_0_write_simple_pdf"
     ],
-    "3": [
-      "web_app_api_auth_login_route",
-      "web_app_api_auth_login_route_forwardauth",
-      "web_app_api_auth_login_route_normalizeauthcookie",
-      "web_app_api_auth_login_route_post",
-      "web_app_api_auth_login_route_redirectto",
-      "web_app_api_auth_login_route_serverapibase",
-      "web_app_api_auth_register_route",
-      "web_app_api_auth_register_route_forwardauth",
-      "web_app_api_auth_register_route_normalizeauthcookie",
-      "web_app_api_auth_register_route_post",
-      "web_app_api_auth_register_route_redirectto",
-      "web_app_api_auth_register_route_serverapibase",
-      "web_app_api_remediations_id_status_route",
-      "web_app_api_remediations_id_status_route_authorizestatusmutation",
-      "web_app_api_remediations_id_status_route_edit_roles",
-      "web_app_api_remediations_id_status_route_post",
-      "web_app_api_remediations_id_status_route_redirectto",
-      "web_app_api_remediations_id_status_route_serverapibase",
-      "web_app_api_targets_path_route",
-      "web_app_api_targets_path_route_allowedroles",
-      "web_app_api_targets_path_route_authenticated_roles",
-      "web_app_api_targets_path_route_authorize",
-      "web_app_api_targets_path_route_delete",
-      "web_app_api_targets_path_route_encodedpath",
-      "web_app_api_targets_path_route_get",
-      "web_app_api_targets_path_route_patch",
-      "web_app_api_targets_path_route_pathsegments",
-      "web_app_api_targets_path_route_post",
-      "web_app_api_targets_path_route_proxytargetrequest",
-      "web_app_api_targets_path_route_serverapibase",
-      "web_app_api_targets_route",
-      "web_app_api_targets_route_authorizeenrollment",
-      "web_app_api_targets_route_coercepayload",
-      "web_app_api_targets_route_create_roles",
-      "web_app_api_targets_route_post",
-      "web_app_api_targets_route_serverapibase",
-      "web_app_auth_register_page",
-      "web_app_auth_register_page_register",
-      "web_components_new_machine_form",
-      "web_components_new_machine_form_newmachineform",
-      "web_components_sign_in_form",
-      "web_components_sign_in_form_eyeicon",
-      "web_components_sign_in_form_signinform",
-      "web_components_ui_shorelogo",
-      "web_lib_paths",
-      "web_lib_paths_apppath",
-      "web_test_target_proxy_authorization_test",
-      "web_test_target_proxy_authorization_test_formrequest",
-      "web_test_target_proxy_authorization_test_header",
-      "web_test_target_proxy_authorization_test_requestfor"
+    "2": [
+      "basehttprequesthandler",
+      "scripts_tailnet_path_proxy",
+      "scripts_tailnet_path_proxy_proxyhandler",
+      "scripts_tailnet_path_proxy_proxyhandler_do_delete",
+      "scripts_tailnet_path_proxy_proxyhandler_do_get",
+      "scripts_tailnet_path_proxy_proxyhandler_do_head",
+      "scripts_tailnet_path_proxy_proxyhandler_do_patch",
+      "scripts_tailnet_path_proxy_proxyhandler_do_post",
+      "scripts_tailnet_path_proxy_proxyhandler_do_put",
+      "scripts_tailnet_path_proxy_proxyhandler_log_message",
+      "scripts_tailnet_path_proxy_proxyhandler_proxy",
+      "scripts_tailnet_path_proxy_upstream_path",
+      "workers_worker_python_src_parser",
+      "workers_worker_python_src_parser_extract_cve_info",
+      "workers_worker_python_src_parser_normalize_finding",
+      "workers_worker_python_src_parser_normalize_severity",
+      "workers_worker_python_src_parser_now",
+      "workers_worker_python_src_parser_parse_scanner_output",
+      "workers_worker_python_src_parser_parseresult",
+      "workers_worker_python_src_parser_parseresult_to_dict",
+      "workers_worker_python_src_parser_py_any",
+      "workers_worker_python_src_parser_reference_texts",
+      "workers_worker_python_src_server",
+      "workers_worker_python_src_server_handler",
+      "workers_worker_python_src_server_handler_do_get",
+      "workers_worker_python_src_server_handler_do_post",
+      "workers_worker_python_src_server_handler_is_authorized",
+      "workers_worker_python_src_server_handler_log_message",
+      "workers_worker_python_src_server_handler_send_json",
+      "workers_worker_python_src_server_main",
+      "workers_worker_python_test_test_parser",
+      "workers_worker_python_test_test_parser_parsertests",
+      "workers_worker_python_test_test_parser_parsertests_test_normalize_severity_aliases",
+      "workers_worker_python_test_test_parser_parsertests_test_parse_rejects_wrong_contract_version",
+      "workers_worker_python_test_test_parser_parsertests_test_parse_scanner_output_extracts_cve_reference",
+      "workers_worker_python_test_test_parser_parsertests_test_parse_scanner_output_normalizes_findings_and_summary",
+      "workers_worker_python_test_test_server",
+      "workers_worker_python_test_test_server_parserservertests",
+      "workers_worker_python_test_test_server_parserservertests_authorized_headers",
+      "workers_worker_python_test_test_server_parserservertests_post_parse",
+      "workers_worker_python_test_test_server_parserservertests_post_parse_raw",
+      "workers_worker_python_test_test_server_parserservertests_setupclass",
+      "workers_worker_python_test_test_server_parserservertests_teardownclass",
+      "workers_worker_python_test_test_server_parserservertests_test_parse_accepts_a_valid_body_at_exactly_documented_payload_ceiling",
+      "workers_worker_python_test_test_server_parserservertests_test_parse_does_not_leak_parser_exception_details",
+      "workers_worker_python_test_test_server_parserservertests_test_parse_payload_ceiling_matches_node_payload_contract",
+      "workers_worker_python_test_test_server_parserservertests_test_parse_rejects_absent_content_length_before_parsing",
+      "workers_worker_python_test_test_server_parserservertests_test_parse_rejects_content_length_one_byte_larger_than_documented_payload_ceiling_before_reading",
+      "workers_worker_python_test_test_server_parserservertests_test_parse_rejects_malformed_or_negative_content_length_before_parsing",
+      "workers_worker_python_test_test_server_parserservertests_test_parse_rejects_missing_worker_bearer_token",
+      "workers_worker_python_test_test_server_parserservertests_test_post_parse_raw_collects_early_rejection_response_after_write_close",
+      "workers_worker_python_test_test_server_parserservertests_test_post_parse_raw_reports_unavailable_response_after_early_write_close"
     ],
-    "4": [
+    "3": [
       "docs_superpowers_specs_shore_sentinel_rearchitecture_a",
       "docs_superpowers_specs_shore_sentinel_rearchitecture_a_10_phased_delivery_plan",
       "docs_superpowers_specs_shore_sentinel_rearchitecture_a_11_95_quality_gate",
@@ -340,7 +278,7 @@
       "docs_superpowers_specs_shore_sentinel_rearchitecture_a_shore_sentinel_enterprise_ai_security_modernization_design",
       "docs_superpowers_specs_shore_sentinel_rearchitecture_a_simplification_rules"
     ],
-    "5": [
+    "4": [
       "scanner_bundle_docs_agent_security_selfcheck_version_history",
       "scanner_bundle_docs_agent_security_selfcheck_version_history_agent_security_self_check_version_history",
       "scanner_bundle_docs_agent_security_selfcheck_version_history_current_status",
@@ -386,88 +324,172 @@
       "scanner_bundle_docs_agent_security_selfcheck_version_history_what_s_new_64",
       "scanner_bundle_docs_agent_security_selfcheck_version_history_what_s_new_84"
     ],
+    "5": [
+      "web_app_api_auth_login_route",
+      "web_app_api_auth_login_route_forwardauth",
+      "web_app_api_auth_login_route_normalizeauthcookie",
+      "web_app_api_auth_login_route_post",
+      "web_app_api_auth_login_route_redirectto",
+      "web_app_api_auth_login_route_serverapibase",
+      "web_app_api_auth_register_route",
+      "web_app_api_auth_register_route_forwardauth",
+      "web_app_api_auth_register_route_normalizeauthcookie",
+      "web_app_api_auth_register_route_post",
+      "web_app_api_auth_register_route_redirectto",
+      "web_app_api_auth_register_route_serverapibase",
+      "web_app_api_remediations_id_status_route",
+      "web_app_api_remediations_id_status_route_authorizestatusmutation",
+      "web_app_api_remediations_id_status_route_edit_roles",
+      "web_app_api_remediations_id_status_route_post",
+      "web_app_api_remediations_id_status_route_redirectto",
+      "web_app_api_remediations_id_status_route_serverapibase",
+      "web_app_api_targets_path_route",
+      "web_app_api_targets_path_route_allowedroles",
+      "web_app_api_targets_path_route_authenticated_roles",
+      "web_app_api_targets_path_route_authorize",
+      "web_app_api_targets_path_route_delete",
+      "web_app_api_targets_path_route_encodedpath",
+      "web_app_api_targets_path_route_get",
+      "web_app_api_targets_path_route_patch",
+      "web_app_api_targets_path_route_pathsegments",
+      "web_app_api_targets_path_route_post",
+      "web_app_api_targets_path_route_proxytargetrequest",
+      "web_app_api_targets_path_route_serverapibase",
+      "web_app_api_targets_route",
+      "web_app_api_targets_route_authorizeenrollment",
+      "web_app_api_targets_route_coercepayload",
+      "web_app_api_targets_route_create_roles",
+      "web_app_api_targets_route_post",
+      "web_app_api_targets_route_serverapibase",
+      "web_components_ui_shorelogo",
+      "web_lib_paths",
+      "web_lib_paths_apppath",
+      "web_test_target_proxy_authorization_test",
+      "web_test_target_proxy_authorization_test_formrequest",
+      "web_test_target_proxy_authorization_test_header",
+      "web_test_target_proxy_authorization_test_requestfor"
+    ],
     "6": [
-      "workers_worker_node_src_sshexecutor",
-      "workers_worker_node_src_sshexecutor_boundedremotecancellation",
-      "workers_worker_node_src_sshexecutor_createpinnedsshtransport",
-      "workers_worker_node_src_sshexecutor_executepinnedscan",
-      "workers_worker_node_src_sshexecutor_fixedremotecancellationcommand",
-      "workers_worker_node_src_sshexecutor_fixedremoterequestcommand",
-      "workers_worker_node_src_sshexecutor_fixedremotestagecommand",
-      "workers_worker_node_src_sshexecutor_forbidden_queue_fields",
-      "workers_worker_node_src_sshexecutor_ipv4touint32",
-      "workers_worker_node_src_sshexecutor_normalizescanscope",
-      "workers_worker_node_src_sshexecutor_parsepermittedcidr",
-      "workers_worker_node_src_sshexecutor_permittedipv4address",
-      "workers_worker_node_src_sshexecutor_pinnedhostverifier",
-      "workers_worker_node_src_sshexecutor_remote_cancellation_statuses",
-      "workers_worker_node_src_sshexecutor_requestidforfixedstagingpath",
-      "workers_worker_node_src_sshexecutor_requirecontext",
-      "workers_worker_node_src_sshexecutor_requirerequestid",
-      "workers_worker_node_src_sshexecutor_resolvepermittedipv4",
-      "workers_worker_node_src_sshexecutor_runfixedcancellationcommand",
-      "workers_worker_node_src_sshexecutor_sshcancellationerror",
-      "workers_worker_node_src_sshexecutor_sshcancellationerror_constructor",
-      "workers_worker_node_src_sshexecutor_stagefixedjson",
-      "workers_worker_node_test_sshexecutor_test",
-      "workers_worker_node_test_sshexecutor_test_commandclient",
-      "workers_worker_node_test_sshexecutor_test_commandclient_connect",
-      "workers_worker_node_test_sshexecutor_test_commandclient_constructor",
-      "workers_worker_node_test_sshexecutor_test_commandclient_end",
-      "workers_worker_node_test_sshexecutor_test_commandclient_exec",
-      "workers_worker_node_test_sshexecutor_test_readyclient",
-      "workers_worker_node_test_sshexecutor_test_readyclient_connect",
-      "workers_worker_node_test_sshexecutor_test_readyclient_constructor",
-      "workers_worker_node_test_sshexecutor_test_readyclient_end",
-      "workers_worker_node_test_sshexecutor_test_scannerjsonwithexactbytes",
-      "workers_worker_node_test_sshexecutor_test_sshcontext",
-      "workers_worker_node_test_sshexecutor_test_stageclient",
-      "workers_worker_node_test_sshexecutor_test_stageclient_connect",
-      "workers_worker_node_test_sshexecutor_test_stageclient_constructor",
-      "workers_worker_node_test_sshexecutor_test_stageclient_end",
-      "workers_worker_node_test_sshexecutor_test_stageclient_exec",
-      "workers_worker_node_test_sshexecutor_test_stageclient_sftp"
+      "api_src_queue_service",
+      "api_src_queue_service_positiveinteger",
+      "api_src_queue_service_queue_names",
+      "api_src_queue_service_queuename",
+      "api_src_queue_service_queueservice",
+      "api_src_queue_service_queueservice_constructor",
+      "api_src_queue_service_queueservice_deliverscandispatch",
+      "api_src_queue_service_queueservice_drainpendingscandispatches",
+      "api_src_queue_service_queueservice_enqueue",
+      "api_src_queue_service_queueservice_health",
+      "api_src_queue_service_queueservice_onmoduledestroy",
+      "api_src_queue_service_queueservice_onmoduleinit",
+      "api_src_queue_service_queueservice_queue",
+      "api_src_queue_service_scandispatchdeliveryfailure",
+      "api_src_queue_service_scandispatchdeliveryfailure_constructor",
+      "api_src_queue_service_scandispatchjoboptions",
+      "api_src_queue_service_scandispatchretrydelayms",
+      "api_src_queue_service_scanretrypolicy",
+      "api_src_queue_service_ts_injectable",
+      "api_src_queue_service_workerretryenvironment",
+      "api_src_queue_service_workerretrypolicyfromenv",
+      "api_src_schema",
+      "api_src_ssh_security",
+      "api_src_ssh_security_assertsshlaunchrequirements",
+      "api_src_ssh_security_canonicalhost",
+      "api_src_ssh_security_deny",
+      "api_src_ssh_security_launchinput",
+      "api_src_ssh_security_validcidr",
+      "api_src_ssh_security_validipv4",
+      "api_src_ssh_security_validroot",
+      "api_test_scan_dispatch_outbox_test",
+      "api_test_scan_dispatch_outbox_test_deliverscandispatch",
+      "api_test_scan_dispatch_outbox_test_dispatchcontroller",
+      "api_test_scan_dispatch_outbox_test_drainpendingscandispatches",
+      "api_test_scan_dispatch_outbox_test_duedrainqueue",
+      "api_test_scan_dispatch_outbox_test_opaquedispatch",
+      "api_test_scan_dispatch_outbox_test_operatorrequest",
+      "api_test_scan_dispatch_outbox_test_outboxqueue",
+      "api_test_scan_dispatch_outbox_test_overlappingdrainqueue",
+      "api_test_scan_dispatch_outbox_test_querycall",
+      "api_test_ssh_security_test",
+      "api_test_ssh_security_test_valid"
     ],
     "7": [
-      "basehttprequesthandler",
-      "scripts_tailnet_path_proxy",
-      "scripts_tailnet_path_proxy_proxyhandler",
-      "scripts_tailnet_path_proxy_proxyhandler_do_delete",
-      "scripts_tailnet_path_proxy_proxyhandler_do_get",
-      "scripts_tailnet_path_proxy_proxyhandler_do_head",
-      "scripts_tailnet_path_proxy_proxyhandler_do_patch",
-      "scripts_tailnet_path_proxy_proxyhandler_do_post",
-      "scripts_tailnet_path_proxy_proxyhandler_do_put",
-      "scripts_tailnet_path_proxy_proxyhandler_log_message",
-      "scripts_tailnet_path_proxy_proxyhandler_proxy",
-      "scripts_tailnet_path_proxy_upstream_path",
-      "workers_worker_python_src_parser",
-      "workers_worker_python_src_parser_extract_cve_info",
-      "workers_worker_python_src_parser_normalize_finding",
-      "workers_worker_python_src_parser_normalize_severity",
-      "workers_worker_python_src_parser_now",
-      "workers_worker_python_src_parser_parse_scanner_output",
-      "workers_worker_python_src_parser_parseresult",
-      "workers_worker_python_src_parser_parseresult_to_dict",
-      "workers_worker_python_src_parser_py_any",
-      "workers_worker_python_src_parser_reference_texts",
-      "workers_worker_python_src_server",
-      "workers_worker_python_src_server_handler",
-      "workers_worker_python_src_server_handler_do_get",
-      "workers_worker_python_src_server_handler_do_post",
-      "workers_worker_python_src_server_handler_is_authorized",
-      "workers_worker_python_src_server_handler_log_message",
-      "workers_worker_python_src_server_handler_send_json",
-      "workers_worker_python_src_server_main",
-      "workers_worker_python_test_test_parser",
-      "workers_worker_python_test_test_parser_parsertests",
-      "workers_worker_python_test_test_parser_parsertests_test_normalize_severity_aliases",
-      "workers_worker_python_test_test_parser_parsertests_test_parse_rejects_wrong_contract_version",
-      "workers_worker_python_test_test_parser_parsertests_test_parse_scanner_output_extracts_cve_reference",
-      "workers_worker_python_test_test_parser_parsertests_test_parse_scanner_output_normalizes_findings_and_summary",
-      "workers_worker_python_test_test_server"
+      "api_src_app_controller",
+      "api_src_app_controller_artifact_content_types",
+      "api_src_app_controller_assertsshgrantcontrols",
+      "api_src_app_controller_parsesshport",
+      "api_src_app_controller_public_scan_run_event",
+      "api_src_app_controller_sshenrollment",
+      "api_src_app_controller_sshfingerprint",
+      "api_src_app_controller_sshseal",
+      "api_src_app_controller_sshunseal",
+      "api_src_app_controller_trimtext",
+      "api_src_config",
+      "api_src_config_allowed_artifact_types",
+      "api_src_config_feature_areas",
+      "api_src_config_max_artifact_bytes",
+      "api_src_config_role_matrix",
+      "api_src_validation",
+      "api_src_validation_assertexactlyonesubject",
+      "api_src_validation_positivetimebudget",
+      "api_src_validation_validateartifactcomplete",
+      "api_src_validation_validateartifacttype",
+      "api_src_validation_validatecanonicalworkerartifactbase64",
+      "api_src_validation_workerexecutiontimebudget",
+      "api_test_admin_tenant_mutations_test",
+      "api_test_admin_tenant_mutations_test_appwithcrosstenanttarget",
+      "api_test_admin_tenant_mutations_test_crosstenantadmin",
+      "api_test_artifact_cleanup_route_test",
+      "api_test_artifact_cleanup_route_test_cleanuprouteharness",
+      "api_test_machine_hardware_summary_test",
+      "api_test_machine_hardware_summary_test_viewerrequest",
+      "api_test_requester_attribution_test",
+      "api_test_scan_run_events_test",
+      "api_test_scan_run_events_test_eventendpoint",
+      "api_test_scan_run_events_test_eventsendpoint",
+      "api_test_tenant_controller_test",
+      "api_test_tenant_controller_test_appwithrecordedqueries",
+      "api_test_tenant_controller_test_tenantrequest",
+      "api_test_validation_test"
     ],
     "8": [
+      "web_app_inventory_machines_id_page",
+      "web_app_inventory_machines_id_page_enrichremediations",
+      "web_app_inventory_machines_id_page_machine",
+      "web_components_machine_detail_client",
+      "web_components_machine_detail_client_actionconfirmationdialog",
+      "web_components_machine_detail_client_deriveprogressmessage",
+      "web_components_machine_detail_client_ensurearray",
+      "web_components_machine_detail_client_formatduration",
+      "web_components_machine_detail_client_hardwaresummaryisstale",
+      "web_components_machine_detail_client_hardwaresummarystate",
+      "web_components_machine_detail_client_hardwarevalue",
+      "web_components_machine_detail_client_humanize",
+      "web_components_machine_detail_client_machinedetailclient",
+      "web_components_machine_detail_client_remediationguidance",
+      "web_components_machine_detail_client_toelapsedseconds",
+      "web_components_machine_detail_client_toreadabletime",
+      "web_components_machine_detail_client_validatescantarget",
+      "web_lib_machine_detail_data",
+      "web_lib_machine_detail_data_array",
+      "web_lib_machine_detail_data_open_remediation_statuses",
+      "web_lib_machine_detail_data_openremediationcount",
+      "web_lib_machine_detail_data_openremediationitems",
+      "web_lib_machine_detail_data_scanlaunchblocked",
+      "web_lib_machine_detail_data_selectinitialruns",
+      "web_lib_machine_run_status",
+      "web_lib_machine_run_status_clampprogress",
+      "web_lib_machine_run_status_issuccessfulrun",
+      "web_lib_machine_run_status_isterminalrun",
+      "web_lib_machine_run_status_normalizedstatus",
+      "web_lib_machine_run_status_progressforrun",
+      "web_lib_machine_run_status_status_progress",
+      "web_lib_machine_run_status_success_statuses",
+      "web_lib_machine_run_status_terminal_events",
+      "web_lib_machine_run_status_terminal_statuses",
+      "web_lib_machine_run_status_toneforrun"
+    ],
+    "9": [
       "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design",
       "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_accessibility_and_responsive_requirements",
       "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_audits_and_audits_id",
@@ -502,7 +524,7 @@
       "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_system_update",
       "docs_superpowers_specs_2026_07_16_app_wide_compact_operations_design_users"
     ],
-    "9": [
+    "10": [
       "api_package",
       "api_package_dependencies",
       "api_package_dependencies_aws_sdk_client_s3",
@@ -536,74 +558,73 @@
       "api_package_type",
       "api_package_version"
     ],
-    "10": [
-      "web_components_machine_detail_client",
-      "web_components_machine_detail_client_actionconfirmationdialog",
-      "web_components_machine_detail_client_deriveprogressmessage",
-      "web_components_machine_detail_client_ensurearray",
-      "web_components_machine_detail_client_formatduration",
-      "web_components_machine_detail_client_hardwaresummaryisstale",
-      "web_components_machine_detail_client_hardwaresummarystate",
-      "web_components_machine_detail_client_hardwarevalue",
-      "web_components_machine_detail_client_humanize",
-      "web_components_machine_detail_client_machinedetailclient",
-      "web_components_machine_detail_client_remediationguidance",
-      "web_components_machine_detail_client_toelapsedseconds",
-      "web_components_machine_detail_client_toreadabletime",
-      "web_components_machine_detail_client_validatescantarget",
-      "web_lib_machine_detail_data",
-      "web_lib_machine_detail_data_array",
-      "web_lib_machine_detail_data_open_remediation_statuses",
-      "web_lib_machine_detail_data_openremediationcount",
-      "web_lib_machine_detail_data_openremediationitems",
-      "web_lib_machine_detail_data_scanlaunchblocked",
-      "web_lib_machine_detail_data_selectinitialruns",
-      "web_lib_machine_run_status",
-      "web_lib_machine_run_status_clampprogress",
-      "web_lib_machine_run_status_issuccessfulrun",
-      "web_lib_machine_run_status_isterminalrun",
-      "web_lib_machine_run_status_normalizedstatus",
-      "web_lib_machine_run_status_progressforrun",
-      "web_lib_machine_run_status_status_progress",
-      "web_lib_machine_run_status_success_statuses",
-      "web_lib_machine_run_status_terminal_events",
-      "web_lib_machine_run_status_terminal_statuses",
-      "web_lib_machine_run_status_toneforrun"
-    ],
     "11": [
-      "api_src_queue_service",
-      "api_src_queue_service_positiveinteger",
-      "api_src_queue_service_queue_names",
-      "api_src_queue_service_queuename",
-      "api_src_queue_service_queueservice",
-      "api_src_queue_service_queueservice_constructor",
-      "api_src_queue_service_queueservice_deliverscandispatch",
-      "api_src_queue_service_queueservice_drainpendingscandispatches",
-      "api_src_queue_service_queueservice_enqueue",
-      "api_src_queue_service_queueservice_health",
-      "api_src_queue_service_queueservice_onmoduledestroy",
-      "api_src_queue_service_queueservice_onmoduleinit",
-      "api_src_queue_service_queueservice_queue",
-      "api_src_queue_service_scandispatchdeliveryfailure",
-      "api_src_queue_service_scandispatchdeliveryfailure_constructor",
-      "api_src_queue_service_scandispatchjoboptions",
-      "api_src_queue_service_scandispatchretrydelayms",
-      "api_src_queue_service_scanretrypolicy",
-      "api_src_queue_service_ts_injectable",
-      "api_src_queue_service_workerretryenvironment",
-      "api_src_queue_service_workerretrypolicyfromenv",
-      "api_test_scan_dispatch_outbox_test",
-      "api_test_scan_dispatch_outbox_test_deliverscandispatch",
-      "api_test_scan_dispatch_outbox_test_dispatchcontroller",
-      "api_test_scan_dispatch_outbox_test_drainpendingscandispatches",
-      "api_test_scan_dispatch_outbox_test_duedrainqueue",
-      "api_test_scan_dispatch_outbox_test_opaquedispatch",
-      "api_test_scan_dispatch_outbox_test_operatorrequest",
-      "api_test_scan_dispatch_outbox_test_outboxqueue",
-      "api_test_scan_dispatch_outbox_test_overlappingdrainqueue",
-      "api_test_scan_dispatch_outbox_test_querycall"
+      "package",
+      "package_name",
+      "package_next_sharp",
+      "package_overrides",
+      "package_overrides_next",
+      "package_overrides_postcss",
+      "package_overrides_sharp",
+      "package_private",
+      "package_scripts",
+      "package_scripts_api_build",
+      "package_scripts_api_check",
+      "package_scripts_api_test",
+      "package_scripts_check",
+      "package_scripts_compose_config",
+      "package_scripts_compose_down",
+      "package_scripts_compose_logs",
+      "package_scripts_compose_ps",
+      "package_scripts_compose_runtime_smoke",
+      "package_scripts_compose_smoke",
+      "package_scripts_compose_up",
+      "package_scripts_graphify_refresh",
+      "package_scripts_scanner_run",
+      "package_scripts_scanner_validate",
+      "package_scripts_test",
+      "package_scripts_token_efficiency",
+      "package_scripts_web_build",
+      "package_scripts_web_test",
+      "package_scripts_worker_test",
+      "package_type",
+      "package_version",
+      "package_workspaces"
     ],
     "12": [
+      "web_app_auth_register_page",
+      "web_app_auth_register_page_register",
+      "web_app_knowledgebase_page",
+      "web_app_knowledgebase_page_kb",
+      "web_app_saved_views_page",
+      "web_app_saved_views_page_savedviewspage",
+      "web_app_scans_start_page",
+      "web_app_scans_start_page_startscanredirect",
+      "web_components_mobile_navigation",
+      "web_components_mobile_navigation_mobilenavigation",
+      "web_components_new_machine_form",
+      "web_components_new_machine_form_newmachineform",
+      "web_components_ui",
+      "web_components_ui_brand",
+      "web_components_ui_compactpageheader",
+      "web_components_ui_composedemptystate",
+      "web_components_ui_empty",
+      "web_components_ui_filters",
+      "web_components_ui_header",
+      "web_components_ui_navigationgroups",
+      "web_components_ui_operationalsection",
+      "web_components_ui_operationsdisclosure",
+      "web_components_ui_operationsledger",
+      "web_components_ui_operationsledgerrow",
+      "web_components_ui_operationssummarystrip",
+      "web_components_ui_pill",
+      "web_components_ui_shell",
+      "web_components_ui_sidenavigation",
+      "web_components_ui_systemstatus",
+      "web_components_ui_userstrip",
+      "web_lib_paths_routepath"
+    ],
+    "13": [
       "hermes_skills_graphify_skill",
       "hermes_skills_graphify_skill_for_cluster_only",
       "hermes_skills_graphify_skill_for_git_commit_hook",
@@ -635,66 +656,67 @@
       "hermes_skills_graphify_skill_what_graphify_is_for",
       "hermes_skills_graphify_skill_what_you_must_do_when_invoked"
     ],
-    "13": [
-      "package",
-      "package_name",
-      "package_overrides",
-      "package_overrides_postcss",
-      "package_private",
-      "package_scripts",
-      "package_scripts_api_build",
-      "package_scripts_api_check",
-      "package_scripts_api_test",
-      "package_scripts_check",
-      "package_scripts_compose_config",
-      "package_scripts_compose_down",
-      "package_scripts_compose_logs",
-      "package_scripts_compose_ps",
-      "package_scripts_compose_runtime_smoke",
-      "package_scripts_compose_smoke",
-      "package_scripts_compose_up",
-      "package_scripts_graphify_refresh",
-      "package_scripts_scanner_run",
-      "package_scripts_scanner_validate",
-      "package_scripts_test",
-      "package_scripts_token_efficiency",
-      "package_scripts_web_build",
-      "package_scripts_web_test",
-      "package_scripts_worker_test",
-      "package_type",
-      "package_version",
-      "package_workspaces"
-    ],
     "14": [
-      "api_src_app_controller",
-      "api_src_app_controller_artifact_content_types",
-      "api_src_app_controller_assertsshgrantcontrols",
-      "api_src_app_controller_parsesshport",
-      "api_src_app_controller_public_scan_run_event",
-      "api_src_app_controller_sshenrollment",
-      "api_src_app_controller_sshfingerprint",
-      "api_src_app_controller_sshseal",
-      "api_src_app_controller_sshunseal",
-      "api_src_app_controller_trimtext",
-      "api_src_config",
-      "api_src_config_feature_areas",
-      "api_src_config_role_matrix",
-      "api_test_admin_tenant_mutations_test",
-      "api_test_admin_tenant_mutations_test_appwithcrosstenanttarget",
-      "api_test_admin_tenant_mutations_test_crosstenantadmin",
-      "api_test_artifact_cleanup_route_test",
-      "api_test_artifact_cleanup_route_test_cleanuprouteharness",
-      "api_test_machine_hardware_summary_test",
-      "api_test_machine_hardware_summary_test_viewerrequest",
-      "api_test_requester_attribution_test",
-      "api_test_scan_run_events_test",
-      "api_test_scan_run_events_test_eventendpoint",
-      "api_test_scan_run_events_test_eventsendpoint",
-      "api_test_tenant_controller_test",
-      "api_test_tenant_controller_test_appwithrecordedqueries",
-      "api_test_tenant_controller_test_tenantrequest"
+      "api_src_auth_service",
+      "api_src_auth_service_authservice",
+      "api_src_auth_service_authservice_audit",
+      "api_src_auth_service_authservice_constructor",
+      "api_src_auth_service_authservice_login",
+      "api_src_auth_service_authservice_logout",
+      "api_src_auth_service_authservice_register",
+      "api_src_auth_service_authservice_stepup",
+      "api_src_auth_service_authservice_verifymfa",
+      "api_src_auth_service_ts_injectable",
+      "api_src_database_service_databaseservice_tenantid",
+      "api_src_session_session_service",
+      "api_src_session_session_service_asdate",
+      "api_src_session_session_service_clock",
+      "api_src_session_session_service_sessionoptions",
+      "api_src_session_session_service_sessionprincipal",
+      "api_src_session_session_service_sessionservice",
+      "api_src_session_session_service_sessionservice_assertloginallowed",
+      "api_src_session_session_service_sessionservice_create",
+      "api_src_session_session_service_sessionservice_markmfaverified",
+      "api_src_session_session_service_sessionservice_markstepup",
+      "api_src_session_session_service_sessionservice_recordloginfailure",
+      "api_src_session_session_service_sessionservice_recordloginsuccess",
+      "api_src_session_session_service_sessionservice_requirestepup",
+      "api_src_session_session_service_sessionservice_revoke",
+      "api_src_session_session_service_sessionservice_revokeusersessions",
+      "api_src_session_session_service_tokenhash",
+      "api_src_session_session_service_ts_injectable",
+      "api_test_tenant_isolation_test"
     ],
     "15": [
+      "packages_shared_src_index",
+      "packages_shared_src_index_artifact_kind",
+      "packages_shared_src_index_buildrunevent",
+      "packages_shared_src_index_job_status",
+      "packages_shared_src_index_run_event_type",
+      "packages_shared_src_index_validateartifactupload",
+      "workers_worker_node_src_failurehandling",
+      "workers_worker_node_src_failurehandling_handlemanagedsshfailure",
+      "workers_worker_node_src_lifecycle",
+      "workers_worker_node_src_lifecycle_artifactuploadpayload",
+      "workers_worker_node_src_lifecycle_lifecycleevent",
+      "workers_worker_node_src_lifecycle_retrydecision",
+      "workers_worker_node_src_managedsshprocessor",
+      "workers_worker_node_src_managedsshprocessor_assertactive",
+      "workers_worker_node_src_managedsshprocessor_emit",
+      "workers_worker_node_src_managedsshprocessor_emitmanagedsshfailure",
+      "workers_worker_node_src_managedsshprocessor_monitorcancellation",
+      "workers_worker_node_src_managedsshprocessor_processmanagedsshjob",
+      "workers_worker_node_src_managedsshprocessor_processmanagedsshjobsteps",
+      "workers_worker_node_src_managedsshprocessor_scanneroutputfromssh",
+      "workers_worker_node_src_managedsshprocessor_withtimeout",
+      "workers_worker_node_src_payloadlimits_assertscanneroutputbytes",
+      "workers_worker_node_src_payloadlimits_raw_scanner_artifact_max_bytes",
+      "workers_worker_node_test_lifecycle_test",
+      "workers_worker_node_test_managedsshprocessor_test",
+      "workers_worker_node_test_managedsshprocessor_test_grant",
+      "workers_worker_node_test_managedsshprocessor_test_job"
+    ],
+    "16": [
       "scanner_bundle_schemas_scanner_manifest_schema",
       "scanner_bundle_schemas_scanner_manifest_schema_additionalproperties",
       "scanner_bundle_schemas_scanner_manifest_schema_bundle_properties",
@@ -722,35 +744,6 @@
       "scanner_bundle_schemas_scanner_manifest_schema_title",
       "scanner_bundle_schemas_scanner_manifest_schema_type",
       "scanner_bundle_schemas_scanner_manifest_schema_version_type"
-    ],
-    "16": [
-      "web_app_knowledgebase_page",
-      "web_app_knowledgebase_page_kb",
-      "web_app_saved_views_page",
-      "web_app_saved_views_page_savedviewspage",
-      "web_app_scans_start_page",
-      "web_app_scans_start_page_startscanredirect",
-      "web_components_mobile_navigation",
-      "web_components_mobile_navigation_mobilenavigation",
-      "web_components_ui",
-      "web_components_ui_brand",
-      "web_components_ui_compactpageheader",
-      "web_components_ui_composedemptystate",
-      "web_components_ui_empty",
-      "web_components_ui_filters",
-      "web_components_ui_header",
-      "web_components_ui_navigationgroups",
-      "web_components_ui_operationalsection",
-      "web_components_ui_operationsdisclosure",
-      "web_components_ui_operationsledger",
-      "web_components_ui_operationsledgerrow",
-      "web_components_ui_operationssummarystrip",
-      "web_components_ui_pill",
-      "web_components_ui_shell",
-      "web_components_ui_sidenavigation",
-      "web_components_ui_systemstatus",
-      "web_components_ui_userstrip",
-      "web_lib_paths_routepath"
     ],
     "17": [
       "api_src_artifact_service",
@@ -809,6 +802,86 @@
       "docs_qa_2026_07_22_enterprise_single_container_requirements_waivers"
     ],
     "19": [
+      "api_src_app_module",
+      "api_src_artifact_service_artifactservice_constructor",
+      "api_src_database_service",
+      "api_src_database_service_databaseservice",
+      "api_src_database_service_databaseservice_constructor",
+      "api_src_database_service_databaseservice_isready",
+      "api_src_database_service_databaseservice_onmoduledestroy",
+      "api_src_database_service_databaseservice_onmoduleinit",
+      "api_src_database_service_isweaksecret",
+      "api_src_database_service_required_production_secrets",
+      "api_src_database_service_ts_injectable",
+      "api_src_database_service_validateproductionsecrets",
+      "api_src_identity_access_governance_service",
+      "api_src_identity_oidc_validator_validatesamlboundary",
+      "api_src_identity_provider_service",
+      "api_src_identity_provider_service_identityproviderboundary",
+      "api_src_identity_provider_service_identityproviderservice",
+      "api_src_identity_provider_service_identityproviderservice_constructor",
+      "api_src_identity_provider_service_identityproviderservice_save",
+      "api_src_identity_provider_service_identityproviderservice_validatesaml",
+      "api_src_identity_provider_service_ts_injectable",
+      "api_src_policy_execution_grant_service",
+      "api_src_policy_execution_grant_service_grantrequest",
+      "api_src_session_session_service_sessionservice_constructor",
+      "optional"
+    ],
+    "20": [
+      "api_src_engagement_authorization_service",
+      "api_src_engagement_authorization_service_active",
+      "api_src_engagement_authorization_service_approval",
+      "api_src_engagement_authorization_service_authorizationdecision",
+      "api_src_engagement_authorization_service_authorizationinput",
+      "api_src_engagement_authorization_service_authorizationservice",
+      "api_src_engagement_authorization_service_authorizationservice_approveengagement",
+      "api_src_engagement_authorization_service_authorizationservice_authorize",
+      "api_src_engagement_authorization_service_authorizationservice_constructor",
+      "api_src_engagement_authorization_service_authorizationservice_createengagement",
+      "api_src_engagement_authorization_service_authorizationservice_revokeengagement",
+      "api_src_engagement_authorization_service_authorizationservice_simulate",
+      "api_src_engagement_authorization_service_conflictapprovalerror",
+      "api_src_engagement_authorization_service_conflictapprovalerror_constructor",
+      "api_src_engagement_authorization_service_evaluateexecutionauthorization",
+      "api_src_engagement_authorization_service_scopeallows",
+      "api_src_engagement_authorization_service_ts_injectable",
+      "api_src_policy_execution_grant_service_executiongrantservice",
+      "api_src_policy_execution_grant_service_executiongrantservice_constructor",
+      "api_src_policy_execution_grant_service_executiongrantservice_consume",
+      "api_src_policy_execution_grant_service_executiongrantservice_issue",
+      "api_src_policy_execution_grant_service_executiongrantservice_revoke",
+      "api_src_policy_execution_grant_service_ts_injectable",
+      "api_test_engagement_authorization_test",
+      "api_test_engagement_authorization_test_base"
+    ],
+    "21": [
+      "api_src_session_session_service_sessionservice_resolve",
+      "workers_worker_node_src_failurehandling_delay",
+      "workers_worker_node_src_sshexecutor",
+      "workers_worker_node_src_sshexecutor_boundedremotecancellation",
+      "workers_worker_node_src_sshexecutor_createpinnedsshtransport",
+      "workers_worker_node_src_sshexecutor_executepinnedscan",
+      "workers_worker_node_src_sshexecutor_fixedremotecancellationcommand",
+      "workers_worker_node_src_sshexecutor_fixedremoterequestcommand",
+      "workers_worker_node_src_sshexecutor_fixedremotestagecommand",
+      "workers_worker_node_src_sshexecutor_forbidden_queue_fields",
+      "workers_worker_node_src_sshexecutor_ipv4touint32",
+      "workers_worker_node_src_sshexecutor_normalizescanscope",
+      "workers_worker_node_src_sshexecutor_parsepermittedcidr",
+      "workers_worker_node_src_sshexecutor_permittedipv4address",
+      "workers_worker_node_src_sshexecutor_pinnedhostverifier",
+      "workers_worker_node_src_sshexecutor_remote_cancellation_statuses",
+      "workers_worker_node_src_sshexecutor_requestidforfixedstagingpath",
+      "workers_worker_node_src_sshexecutor_requirecontext",
+      "workers_worker_node_src_sshexecutor_requirerequestid",
+      "workers_worker_node_src_sshexecutor_resolvepermittedipv4",
+      "workers_worker_node_src_sshexecutor_runfixedcancellationcommand",
+      "workers_worker_node_src_sshexecutor_sshcancellationerror",
+      "workers_worker_node_src_sshexecutor_sshcancellationerror_constructor",
+      "workers_worker_node_src_sshexecutor_stagefixedjson"
+    ],
+    "22": [
       "readme",
       "readme_1_clone_the_repository",
       "readme_2_configure_environment_values",
@@ -834,7 +907,7 @@
       "readme_what_this_does_100",
       "readme_when_to_use_this_option"
     ],
-    "20": [
+    "23": [
       "scanner_bundle_schemas_scanner_output_schema_category_type",
       "scanner_bundle_schemas_scanner_output_schema_cve_type",
       "scanner_bundle_schemas_scanner_output_schema_cves_type",
@@ -859,7 +932,7 @@
       "scanner_bundle_schemas_scanner_output_schema_severity_enum",
       "scanner_bundle_schemas_scanner_output_schema_title_type"
     ],
-    "21": [
+    "24": [
       "container_entrypoint",
       "container_entrypoint_api_url",
       "container_entrypoint_cleanup_bootstrap",
@@ -882,7 +955,7 @@
       "container_entrypoint_worker_concurrency",
       "container_entrypoint_worker_max_attempts"
     ],
-    "22": [
+    "25": [
       "scanner_bundle_bin_envdetect",
       "scanner_bundle_bin_envdetect_cgroup_indicates_container",
       "scanner_bundle_bin_envdetect_cpuinfo_hypervisor_flag",
@@ -905,7 +978,30 @@
       "scanner_bundle_bin_envdetect_rationale_99",
       "scanner_bundle_bin_envdetect_systemd_detect_virt"
     ],
-    "23": [
+    "26": [
+      "workers_worker_node_src_apiclient",
+      "workers_worker_node_src_apiclient_createapiclient",
+      "workers_worker_node_src_apiclient_getjson",
+      "workers_worker_node_src_apiclient_postjson",
+      "workers_worker_node_src_config",
+      "workers_worker_node_src_config_positiveinteger",
+      "workers_worker_node_src_config_readconfig",
+      "workers_worker_node_src_config_sshworkerconcurrency",
+      "workers_worker_node_src_index",
+      "workers_worker_node_src_index_api",
+      "workers_worker_node_src_index_artifactcleanupworker",
+      "workers_worker_node_src_index_config",
+      "workers_worker_node_src_index_connection",
+      "workers_worker_node_src_index_events",
+      "workers_worker_node_src_index_parsewithpython",
+      "workers_worker_node_src_index_processartifactcleanupjob",
+      "workers_worker_node_src_index_queue",
+      "workers_worker_node_src_index_shutdown",
+      "workers_worker_node_src_index_worker",
+      "workers_worker_node_test_apiclient_test",
+      "workers_worker_node_test_config_test"
+    ],
+    "27": [
       "docs_plans_2026_07_22_enterprise_single_container_completion",
       "docs_plans_2026_07_22_enterprise_single_container_completion_95_evidence_matrix",
       "docs_plans_2026_07_22_enterprise_single_container_completion_accepted_deviation_records",
@@ -927,7 +1023,7 @@
       "docs_plans_2026_07_22_enterprise_single_container_completion_test_command_catalog",
       "docs_plans_2026_07_22_enterprise_single_container_completion_threat_control_matrix"
     ],
-    "24": [
+    "28": [
       "docs_security_2026_07_17_v1_1_ssh_push_security_decision",
       "docs_security_2026_07_17_v1_1_ssh_push_security_decision_allowed_data_flow",
       "docs_security_2026_07_17_v1_1_ssh_push_security_decision_bundle_and_command_integrity",
@@ -948,7 +1044,28 @@
       "docs_security_remote_runner_install_rollout_verification_not_performed_locally",
       "docs_security_remote_runner_install_runtime_cancellation_and_deadline_behavior"
     ],
-    "25": [
+    "29": [
+      "tests_test_single_container_runtime_contract",
+      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests",
+      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_parsed_compose",
+      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_setup",
+      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_bootstrap_database_checks_use_password_authentication",
+      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_capability_check_decodes_cap_eff_and_rejects_extra_capabilities",
+      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_entrypoint_cleans_bootstrap_password_file_on_failure",
+      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_entrypoint_migrates_before_supervisor_and_health_is_fail_closed",
+      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_healthcheck_parses_supervisor_state_and_rejects_duplicate_services",
+      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_image_and_supervisor_define_seven_distinct_processes",
+      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_no_docker_socket_or_privileged_runtime",
+      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_object_storage_bootstrap_removes_anonymous_policy_idempotently",
+      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_postgres_bootstrap_is_scram_socket_explicit_and_recovers_partial_init",
+      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_process_environment_contract_is_allowlisted",
+      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_production_has_one_application_service_and_one_volume",
+      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_published_ports_are_loopback_only",
+      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_published_web_process_binds_all_container_interfaces",
+      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_runtime_smoke_covers_persistence_integrity_shutdown_and_backup_primitives",
+      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_supervised_dependents_wait_for_local_readiness"
+    ],
+    "30": [
       "tests_test_ssh_remote_runner_contract",
       "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests",
       "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_cancel_does_not_signal_mismatched_lifetime_identity_or_expired_state",
@@ -969,7 +1086,49 @@
       "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_test_supervisor_requires_runner_startup_release_before_invoking_fixed_implementation",
       "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests_write_sandboxed_runner"
     ],
-    "26": [
+    "31": [
+      "web_app_auth_login_page",
+      "web_app_auth_login_page_login",
+      "web_app_engagements_page",
+      "web_app_engagements_page_engagementspage",
+      "web_app_inventory_new_page",
+      "web_app_inventory_new_page_newmachine",
+      "web_app_layout",
+      "web_app_layout_metadata",
+      "web_app_layout_rootlayout",
+      "web_app_page",
+      "web_app_page_landing",
+      "web_app_policies_page",
+      "web_app_policies_page_policiespage",
+      "web_app_remediation_id_page",
+      "web_app_remediation_id_page_remediationdetail",
+      "web_lib_session",
+      "web_lib_session_getauthenticateduser",
+      "web_lib_session_remembermemaxageseconds",
+      "web_lib_session_serverapibase"
+    ],
+    "32": [
+      "web_app_saved_views_slug_page_savedviewslugpage",
+      "web_components_saved_views",
+      "web_components_saved_views_all_view_slugs",
+      "web_components_saved_views_failedscansview",
+      "web_components_saved_views_formattime",
+      "web_components_saved_views_getjson",
+      "web_components_saved_views_highfindingsview",
+      "web_components_saved_views_readabletext",
+      "web_components_saved_views_recentlycompletedview",
+      "web_components_saved_views_remediationtext",
+      "web_components_saved_views_savedviewcontent",
+      "web_components_saved_views_savedviewrows",
+      "web_components_saved_views_savedviewspanel",
+      "web_components_saved_views_serverapibase",
+      "web_components_saved_views_severitytone",
+      "web_components_saved_views_statuslabels",
+      "web_components_saved_views_statustones",
+      "web_components_saved_views_unreviewedremediationview",
+      "web_components_saved_views_view_meta"
+    ],
+    "33": [
       "web_changelog",
       "web_changelog_added",
       "web_changelog_changed",
@@ -990,7 +1149,69 @@
       "web_changelog_verification_44",
       "web_changelog_verification_64"
     ],
-    "27": [
+    "34": [
+      "web_package",
+      "web_package_dependencies",
+      "web_package_dependencies_next",
+      "web_package_dependencies_react",
+      "web_package_dependencies_react_dom",
+      "web_package_dependencies_sharp",
+      "web_package_devdependencies",
+      "web_package_devdependencies_eslint",
+      "web_package_devdependencies_eslint_config_next",
+      "web_package_name",
+      "web_package_private",
+      "web_package_scripts",
+      "web_package_scripts_build",
+      "web_package_scripts_check",
+      "web_package_scripts_dev",
+      "web_package_scripts_start",
+      "web_package_scripts_test",
+      "web_package_type",
+      "web_package_version"
+    ],
+    "35": [
+      "workers_worker_node_src_sshexecutor_normalizesshjob",
+      "workers_worker_node_test_sshexecutor_test",
+      "workers_worker_node_test_sshexecutor_test_commandclient",
+      "workers_worker_node_test_sshexecutor_test_commandclient_connect",
+      "workers_worker_node_test_sshexecutor_test_commandclient_constructor",
+      "workers_worker_node_test_sshexecutor_test_commandclient_end",
+      "workers_worker_node_test_sshexecutor_test_commandclient_exec",
+      "workers_worker_node_test_sshexecutor_test_readyclient",
+      "workers_worker_node_test_sshexecutor_test_readyclient_connect",
+      "workers_worker_node_test_sshexecutor_test_readyclient_constructor",
+      "workers_worker_node_test_sshexecutor_test_readyclient_end",
+      "workers_worker_node_test_sshexecutor_test_scannerjsonwithexactbytes",
+      "workers_worker_node_test_sshexecutor_test_sshcontext",
+      "workers_worker_node_test_sshexecutor_test_stageclient",
+      "workers_worker_node_test_sshexecutor_test_stageclient_connect",
+      "workers_worker_node_test_sshexecutor_test_stageclient_constructor",
+      "workers_worker_node_test_sshexecutor_test_stageclient_end",
+      "workers_worker_node_test_sshexecutor_test_stageclient_exec",
+      "workers_worker_node_test_sshexecutor_test_stageclient_sftp"
+    ],
+    "36": [
+      "api_src_app_controller_appcontroller_constructor",
+      "api_src_identity_mfa_service",
+      "api_src_identity_mfa_service_key",
+      "api_src_identity_mfa_service_mfaservice",
+      "api_src_identity_mfa_service_mfaservice_constructor",
+      "api_src_identity_mfa_service_mfaservice_enrolltotp",
+      "api_src_identity_mfa_service_mfaservice_verifytotp",
+      "api_src_identity_mfa_service_seal",
+      "api_src_identity_mfa_service_ts_injectable",
+      "api_src_identity_mfa_service_unseal",
+      "api_src_session_totp",
+      "api_src_session_totp_codefor",
+      "api_src_session_totp_decodebase32",
+      "api_src_session_totp_generatetotpsecret",
+      "api_src_session_totp_totpcodefortest",
+      "api_src_session_totp_verifytotp",
+      "api_test_identity_session_test",
+      "api_test_identity_session_test_now"
+    ],
+    "37": [
       "tests_test_compact_operations_system",
       "tests_test_compact_operations_system_compactoperationscomponenttests",
       "tests_test_compact_operations_system_compactoperationscomponenttests_setupclass",
@@ -1010,27 +1231,7 @@
       "tests_test_compact_operations_system_compactoperationsqualityartifacttests_test_scorecard_is_blocker_gated_and_totals_one_hundred_points",
       "tests_test_compact_operations_system_read"
     ],
-    "28": [
-      "web_app_audits_id_page",
-      "web_app_audits_id_page_audit",
-      "web_app_audits_page",
-      "web_app_audits_page_audits",
-      "web_app_inventory_machines_id_page",
-      "web_app_inventory_machines_id_page_enrichremediations",
-      "web_app_inventory_machines_id_page_machine",
-      "web_app_inventory_page",
-      "web_app_inventory_page_inventory",
-      "web_app_remediation_page",
-      "web_app_remediation_page_remediation",
-      "web_app_scans_reports_page",
-      "web_app_scans_reports_page_scans",
-      "web_lib_api_data",
-      "web_lib_api_data_apiget",
-      "web_lib_api_data_publicapibase",
-      "web_lib_api_data_serverapibase",
-      "web_lib_api_data_sessioncookieheader"
-    ],
-    "29": [
+    "38": [
       "web_app_users_page",
       "web_app_users_page_userspage",
       "web_app_users_users_client",
@@ -1050,47 +1251,26 @@
       "web_lib_users_api_resetpassword",
       "web_lib_users_api_updateuser"
     ],
-    "30": [
-      "web_components_saved_views",
-      "web_components_saved_views_all_view_slugs",
-      "web_components_saved_views_failedscansview",
-      "web_components_saved_views_formattime",
-      "web_components_saved_views_getjson",
-      "web_components_saved_views_highfindingsview",
-      "web_components_saved_views_readabletext",
-      "web_components_saved_views_recentlycompletedview",
-      "web_components_saved_views_remediationtext",
-      "web_components_saved_views_savedviewcontent",
-      "web_components_saved_views_savedviewrows",
-      "web_components_saved_views_savedviewspanel",
-      "web_components_saved_views_serverapibase",
-      "web_components_saved_views_severitytone",
-      "web_components_saved_views_statuslabels",
-      "web_components_saved_views_statustones",
-      "web_components_saved_views_unreviewedremediationview",
-      "web_components_saved_views_view_meta"
+    "39": [
+      "api_src_app_module_appmodule",
+      "api_src_internal_worker_route",
+      "api_src_internal_worker_route_isinternalworkerserviceroute",
+      "api_src_internal_worker_route_worker_service_routes",
+      "api_src_main",
+      "api_src_main_bootstrap",
+      "api_src_main_public_paths",
+      "api_src_request_principal",
+      "api_src_request_principal_attachsessionprincipal",
+      "api_src_request_principal_principalfrom",
+      "api_src_request_principal_requestprincipal",
+      "api_src_request_principal_sessionrequest",
+      "api_src_request_principal_sessionresponse",
+      "api_src_request_principal_tokenfrom",
+      "api_test_internal_worker_route_test",
+      "api_test_request_principal_test",
+      "module"
     ],
-    "31": [
-      "web_package",
-      "web_package_dependencies",
-      "web_package_dependencies_next",
-      "web_package_dependencies_react",
-      "web_package_dependencies_react_dom",
-      "web_package_devdependencies",
-      "web_package_devdependencies_eslint",
-      "web_package_devdependencies_eslint_config_next",
-      "web_package_name",
-      "web_package_private",
-      "web_package_scripts",
-      "web_package_scripts_build",
-      "web_package_scripts_check",
-      "web_package_scripts_dev",
-      "web_package_scripts_start",
-      "web_package_scripts_test",
-      "web_package_type",
-      "web_package_version"
-    ],
-    "32": [
+    "40": [
       "docs_qa_app_wide_compact_operations_test_guide",
       "docs_qa_app_wide_compact_operations_test_guide_app_wide_compact_operations_test_guide",
       "docs_qa_app_wide_compact_operations_test_guide_evidence_record",
@@ -1109,7 +1289,7 @@
       "policies_templates_qa_scorecard_template_hard_blocker_gate",
       "policies_templates_qa_scorecard_template_scoring_guidance"
     ],
-    "33": [
+    "41": [
       "documents_shore_sentinel_architecture_artifacts",
       "documents_shore_sentinel_architecture_core_tables",
       "documents_shore_sentinel_architecture_key_fields",
@@ -1128,7 +1308,7 @@
       "documents_shore_sentinel_architecture_target_identities",
       "documents_shore_sentinel_architecture_targets"
     ],
-    "34": [
+    "42": [
       "documents_shore_sentinel_uiux_qa_loop",
       "documents_shore_sentinel_uiux_qa_loop_1_copy_paste_hermes_prompt",
       "documents_shore_sentinel_uiux_qa_loop_2_qa_checklist",
@@ -1147,26 +1327,7 @@
       "documents_shore_sentinel_uiux_qa_loop_shore_sentinel_ui_ux_qa_loop",
       "documents_shore_sentinel_uiux_qa_loop_verify"
     ],
-    "35": [
-      "tests_test_single_container_runtime_contract",
-      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests",
-      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_parsed_compose",
-      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_setup",
-      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_bootstrap_database_checks_use_password_authentication",
-      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_capability_check_decodes_cap_eff_and_rejects_extra_capabilities",
-      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_entrypoint_cleans_bootstrap_password_file_on_failure",
-      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_entrypoint_migrates_before_supervisor_and_health_is_fail_closed",
-      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_healthcheck_parses_supervisor_state_and_rejects_duplicate_services",
-      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_image_and_supervisor_define_seven_distinct_processes",
-      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_no_docker_socket_or_privileged_runtime",
-      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_object_storage_bootstrap_removes_anonymous_policy_idempotently",
-      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_postgres_bootstrap_is_scram_socket_explicit_and_recovers_partial_init",
-      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_process_environment_contract_is_allowlisted",
-      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_production_has_one_application_service_and_one_volume",
-      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_runtime_smoke_covers_persistence_integrity_shutdown_and_backup_primitives",
-      "tests_test_single_container_runtime_contract_singlecontainerruntimecontracttests_test_supervised_dependents_wait_for_local_readiness"
-    ],
-    "36": [
+    "43": [
       "documents_shore_sentinel_architecture",
       "documents_shore_sentinel_architecture_1_web_ui_next_js",
       "documents_shore_sentinel_architecture_component_breakdown",
@@ -1184,7 +1345,7 @@
       "documents_shore_sentinel_architecture_ssh_push_behavior",
       "documents_shore_sentinel_architecture_workspace_location_and_app_folder"
     ],
-    "37": [
+    "44": [
       "documents_shore_sentinel_release_checklist",
       "documents_shore_sentinel_release_checklist_10_rollback_readiness",
       "documents_shore_sentinel_release_checklist_11_closeout",
@@ -1202,7 +1363,7 @@
       "documents_shore_sentinel_release_checklist_shore_sentinel_release_checklist",
       "documents_shore_sentinel_release_checklist_ssh_push_changes_required_when_ssh_execution_or_credentials_are_affected"
     ],
-    "38": [
+    "45": [
       "docs_superpowers_specs_2026_07_16_managed_machine_compact_dossier_design",
       "docs_superpowers_specs_2026_07_16_managed_machine_compact_dossier_design_acceptance_criteria",
       "docs_superpowers_specs_2026_07_16_managed_machine_compact_dossier_design_accessibility",
@@ -1219,7 +1380,7 @@
       "docs_superpowers_specs_2026_07_16_managed_machine_compact_dossier_design_responsive_behavior",
       "docs_superpowers_specs_2026_07_16_managed_machine_compact_dossier_design_scan_progress"
     ],
-    "39": [
+    "46": [
       "documents_shore_sentinel_architecture_archon_protocol_visibility_and_approval_layer",
       "documents_shore_sentinel_architecture_branch_and_release_model",
       "documents_shore_sentinel_architecture_ci_cd_target_state",
@@ -1236,7 +1397,7 @@
       "documents_shore_sentinel_architecture_trend_analysis_and_posture_benchmarking",
       "documents_shore_sentinel_architecture_update_flow"
     ],
-    "40": [
+    "47": [
       "scanner_bundle_tools_arx_agent_security_remediation",
       "scanner_bundle_tools_arx_agent_security_remediation_config_path",
       "scanner_bundle_tools_arx_agent_security_remediation_env_path",
@@ -1253,24 +1414,24 @@
       "scanner_bundle_tools_arx_agent_security_remediation_run",
       "scanner_bundle_tools_arx_agent_security_remediation_setv"
     ],
-    "41": [
-      "web_app_auth_login_page",
-      "web_app_auth_login_page_login",
-      "web_app_inventory_new_page",
-      "web_app_inventory_new_page_newmachine",
-      "web_app_layout",
-      "web_app_layout_metadata",
-      "web_app_layout_rootlayout",
-      "web_app_page",
-      "web_app_page_landing",
-      "web_app_remediation_id_page",
-      "web_app_remediation_id_page_remediationdetail",
-      "web_lib_session",
-      "web_lib_session_getauthenticateduser",
-      "web_lib_session_remembermemaxageseconds",
-      "web_lib_session_serverapibase"
+    "48": [
+      "web_app_audits_id_page",
+      "web_app_audits_id_page_audit",
+      "web_app_audits_page",
+      "web_app_audits_page_audits",
+      "web_app_inventory_page",
+      "web_app_inventory_page_inventory",
+      "web_app_remediation_page",
+      "web_app_remediation_page_remediation",
+      "web_app_scans_reports_page",
+      "web_app_scans_reports_page_scans",
+      "web_lib_api_data",
+      "web_lib_api_data_apiget",
+      "web_lib_api_data_publicapibase",
+      "web_lib_api_data_serverapibase",
+      "web_lib_api_data_sessioncookieheader"
     ],
-    "42": [
+    "49": [
       "web_lib_filters",
       "web_lib_filters_env_values",
       "web_lib_filters_filter_defaults",
@@ -1287,24 +1448,7 @@
       "web_lib_filters_status_values",
       "web_lib_filters_summarizeruns"
     ],
-    "43": [
-      "workers_worker_python_test_test_server_parserservertests",
-      "workers_worker_python_test_test_server_parserservertests_authorized_headers",
-      "workers_worker_python_test_test_server_parserservertests_post_parse",
-      "workers_worker_python_test_test_server_parserservertests_post_parse_raw",
-      "workers_worker_python_test_test_server_parserservertests_setupclass",
-      "workers_worker_python_test_test_server_parserservertests_teardownclass",
-      "workers_worker_python_test_test_server_parserservertests_test_parse_accepts_a_valid_body_at_exactly_documented_payload_ceiling",
-      "workers_worker_python_test_test_server_parserservertests_test_parse_does_not_leak_parser_exception_details",
-      "workers_worker_python_test_test_server_parserservertests_test_parse_payload_ceiling_matches_node_payload_contract",
-      "workers_worker_python_test_test_server_parserservertests_test_parse_rejects_absent_content_length_before_parsing",
-      "workers_worker_python_test_test_server_parserservertests_test_parse_rejects_content_length_one_byte_larger_than_documented_payload_ceiling_before_reading",
-      "workers_worker_python_test_test_server_parserservertests_test_parse_rejects_malformed_or_negative_content_length_before_parsing",
-      "workers_worker_python_test_test_server_parserservertests_test_parse_rejects_missing_worker_bearer_token",
-      "workers_worker_python_test_test_server_parserservertests_test_post_parse_raw_collects_early_rejection_response_after_write_close",
-      "workers_worker_python_test_test_server_parserservertests_test_post_parse_raw_reports_unavailable_response_after_early_write_close"
-    ],
-    "44": [
+    "50": [
       "policies_archon_protocol_telegram_policy",
       "policies_archon_protocol_telegram_policy_approval_request_format",
       "policies_archon_protocol_telegram_policy_archon_protocol_telegram_coordination_policy",
@@ -1320,7 +1464,7 @@
       "policies_archon_protocol_telegram_policy_step_4_human_approval_rule",
       "policies_archon_protocol_telegram_policy_success_criteria"
     ],
-    "45": [
+    "51": [
       "api_tsconfig",
       "api_tsconfig_compileroptions",
       "api_tsconfig_compileroptions_emitdecoratormetadata",
@@ -1335,7 +1479,7 @@
       "api_tsconfig_compileroptions_target",
       "api_tsconfig_include"
     ],
-    "46": [
+    "52": [
       "changelog",
       "changelog_changelog",
       "changelog_unreleased",
@@ -1350,7 +1494,7 @@
       "changelog_v1_0_0_2026_07_16",
       "changelog_v1_1_0_release_candidate_unreleased"
     ],
-    "47": [
+    "53": [
       "docs_superpowers_specs_2026_07_16_v1_1_0_managed_machine_scan_controls_design",
       "docs_superpowers_specs_2026_07_16_v1_1_0_managed_machine_scan_controls_design_authorization_and_api_contracts",
       "docs_superpowers_specs_2026_07_16_v1_1_0_managed_machine_scan_controls_design_clearer_navigation_and_language",
@@ -1365,7 +1509,7 @@
       "docs_superpowers_specs_2026_07_16_v1_1_0_managed_machine_scan_controls_design_testing_and_verification",
       "docs_superpowers_specs_2026_07_16_v1_1_0_managed_machine_scan_controls_design_ui_behavior"
     ],
-    "48": [
+    "54": [
       "scanner_bundle_docs_agent_security_selfcheck",
       "scanner_bundle_docs_agent_security_selfcheck_1_run_the_self_check",
       "scanner_bundle_docs_agent_security_selfcheck_2_review_the_outputs",
@@ -1380,7 +1524,7 @@
       "scanner_bundle_docs_agent_security_selfcheck_shore_sentinel_integration",
       "scanner_bundle_docs_agent_security_selfcheck_what_this_script_does"
     ],
-    "49": [
+    "55": [
       "tests_test_managed_machine_dossier",
       "tests_test_managed_machine_dossier_managedmachinedossiertests",
       "tests_test_managed_machine_dossier_managedmachinedossiertests_test_admin_sections_are_collapsed_disclosures",
@@ -1395,7 +1539,7 @@
       "tests_test_managed_machine_dossier_managedmachinedossiertests_test_server_page_fails_closed_and_hydrates_remediation_details",
       "tests_test_managed_machine_dossier_read"
     ],
-    "50": [
+    "56": [
       "web_app_api_users_path_route",
       "web_app_api_users_path_route_delete",
       "web_app_api_users_path_route_get",
@@ -1410,7 +1554,22 @@
       "web_app_api_users_route_responseheaders",
       "web_app_api_users_route_serverapibase"
     ],
-    "51": [
+    "57": [
+      "web_scripts_verify_mvp",
+      "web_scripts_verify_mvp_failures",
+      "web_scripts_verify_mvp_invalidmountedlinks",
+      "web_scripts_verify_mvp_landing",
+      "web_scripts_verify_mvp_loginpage",
+      "web_scripts_verify_mvp_navigationdata",
+      "web_scripts_verify_mvp_navigationgroups",
+      "web_scripts_verify_mvp_navigationpositions",
+      "web_scripts_verify_mvp_nextconfig",
+      "web_scripts_verify_mvp_root",
+      "web_scripts_verify_mvp_routes",
+      "web_scripts_verify_mvp_source",
+      "web_scripts_verify_mvp_walk"
+    ],
+    "58": [
       "workers_worker_node_package",
       "workers_worker_node_package_dependencies",
       "workers_worker_node_package_dependencies_bullmq",
@@ -1425,21 +1584,21 @@
       "workers_worker_node_package_type",
       "workers_worker_node_package_version"
     ],
-    "52": [
-      "api_src_artifact_service_artifactservice_constructor",
-      "api_src_auth_service_authservice_constructor",
-      "api_src_database_service",
-      "api_src_database_service_databaseservice",
-      "api_src_database_service_databaseservice_constructor",
-      "api_src_database_service_databaseservice_isready",
-      "api_src_database_service_databaseservice_onmoduledestroy",
-      "api_src_database_service_databaseservice_onmoduleinit",
-      "api_src_database_service_isweaksecret",
-      "api_src_database_service_required_production_secrets",
-      "api_src_database_service_ts_injectable",
-      "api_src_database_service_validateproductionsecrets"
+    "59": [
+      "api_src_identity_oidc_validator",
+      "api_src_identity_oidc_validator_buildpkcechallenge",
+      "api_src_identity_oidc_validator_decodetoken",
+      "api_src_identity_oidc_validator_oidcconfiguration",
+      "api_src_identity_oidc_validator_oidcvalidationerror",
+      "api_src_identity_oidc_validator_oidcvalidationerror_constructor",
+      "api_src_identity_oidc_validator_oidcvalidationinput",
+      "api_src_identity_oidc_validator_oidcvalidator",
+      "api_src_identity_oidc_validator_oidcvalidator_assertstepup",
+      "api_src_identity_oidc_validator_oidcvalidator_constructor",
+      "api_src_identity_oidc_validator_oidcvalidator_validate",
+      "api_src_identity_oidc_validator_samlboundaryconfiguration"
     ],
-    "53": [
+    "60": [
       "scripts_check_worker_node_egress_policy",
       "scripts_check_worker_node_egress_policy_load_and_validate",
       "scripts_check_worker_node_egress_policy_main",
@@ -1453,7 +1612,7 @@
       "scripts_check_worker_node_egress_policy_validate_optional_hosts",
       "scripts_check_worker_node_egress_policy_validate_targets"
     ],
-    "54": [
+    "61": [
       "tests_test_architecture_document_invariants",
       "tests_test_architecture_document_invariants_architecturedocumentinvarianttests",
       "tests_test_architecture_document_invariants_architecturedocumentinvarianttests_setupclass",
@@ -1467,7 +1626,7 @@
       "tests_test_architecture_document_invariants_py_path",
       "tests_test_architecture_document_invariants_read"
     ],
-    "55": [
+    "62": [
       "tests_test_side_navigation_shell",
       "tests_test_side_navigation_shell_read",
       "tests_test_side_navigation_shell_sidenavigationshelltests",
@@ -1481,7 +1640,7 @@
       "tests_test_side_navigation_shell_sidenavigationshelltests_test_side_navigation_uses_required_order_and_grouped_subpages",
       "tests_test_side_navigation_shell_sidenavigationshelltests_test_start_scan_is_a_machine_detail_action_not_primary_navigation"
     ],
-    "56": [
+    "63": [
       "web_components_display_preferences",
       "web_components_display_preferences_applypreferences",
       "web_components_display_preferences_displaypreferencespanel",
@@ -1495,34 +1654,7 @@
       "web_lib_display_preferences_normalizechoice",
       "web_lib_display_preferences_normalizedisplaypreferences"
     ],
-    "57": [
-      "web_scripts_verify_mvp",
-      "web_scripts_verify_mvp_failures",
-      "web_scripts_verify_mvp_landing",
-      "web_scripts_verify_mvp_loginpage",
-      "web_scripts_verify_mvp_navigationdata",
-      "web_scripts_verify_mvp_navigationgroups",
-      "web_scripts_verify_mvp_navigationpositions",
-      "web_scripts_verify_mvp_nextconfig",
-      "web_scripts_verify_mvp_root",
-      "web_scripts_verify_mvp_routes",
-      "web_scripts_verify_mvp_source",
-      "web_scripts_verify_mvp_walk"
-    ],
-    "58": [
-      "api_src_auth_service",
-      "api_src_auth_service_authservice",
-      "api_src_auth_service_authservice_audit",
-      "api_src_auth_service_authservice_createsession",
-      "api_src_auth_service_authservice_login",
-      "api_src_auth_service_authservice_logout",
-      "api_src_auth_service_authservice_register",
-      "api_src_auth_service_session",
-      "api_src_auth_service_ts_injectable",
-      "api_src_database_service_databaseservice_tenantid",
-      "api_test_tenant_isolation_test"
-    ],
-    "59": [
+    "64": [
       "api_src_migration_runner",
       "api_src_migration_runner_discovermigrations",
       "api_src_migration_runner_main",
@@ -1535,20 +1667,7 @@
       "api_src_migration_runner_runmigrations",
       "api_test_migration_runner_test"
     ],
-    "60": [
-      "api_src_schema",
-      "api_src_ssh_security",
-      "api_src_ssh_security_assertsshlaunchrequirements",
-      "api_src_ssh_security_canonicalhost",
-      "api_src_ssh_security_deny",
-      "api_src_ssh_security_launchinput",
-      "api_src_ssh_security_validcidr",
-      "api_src_ssh_security_validipv4",
-      "api_src_ssh_security_validroot",
-      "api_test_ssh_security_test",
-      "api_test_ssh_security_test_valid"
-    ],
-    "61": [
+    "65": [
       "docs_qa_2026_07_20_v1_1_0_release_scorecard",
       "docs_qa_2026_07_20_v1_1_0_release_scorecard_deployment_evidence",
       "docs_qa_2026_07_20_v1_1_0_release_scorecard_final_decision",
@@ -1561,7 +1680,7 @@
       "docs_qa_2026_07_20_v1_1_0_release_scorecard_temporary_v1_1_0_risk_acceptance",
       "docs_qa_2026_07_20_v1_1_0_release_scorecard_viewport_browser_evidence"
     ],
-    "62": [
+    "66": [
       "documents_shore_sentinel_architecture_2_backend_api_node_js",
       "documents_shore_sentinel_architecture_3_node_orchestrator_worker",
       "documents_shore_sentinel_architecture_4_python_data_ai_worker",
@@ -1574,7 +1693,7 @@
       "documents_shore_sentinel_architecture_what_holds_up_as_written",
       "documents_shore_sentinel_architecture_where_the_original_requirements_conflict_with_their_own_guardrails"
     ],
-    "63": [
+    "67": [
       "documents_shore_sentinel_architecture_analytics_and_notifications",
       "documents_shore_sentinel_architecture_api_surface_overview",
       "documents_shore_sentinel_architecture_artifacts_and_reports",
@@ -1587,7 +1706,7 @@
       "documents_shore_sentinel_architecture_pull_agent_check_in",
       "documents_shore_sentinel_architecture_ssh_push_execution"
     ],
-    "64": [
+    "68": [
       "documents_shore_sentinel_change_request_form",
       "documents_shore_sentinel_change_request_form_bug_report_section",
       "documents_shore_sentinel_change_request_form_current_behavior",
@@ -1600,7 +1719,20 @@
       "documents_shore_sentinel_change_request_form_summary",
       "documents_shore_sentinel_change_request_form_ui_ux_section"
     ],
-    "65": [
+    "69": [
+      "packages_shared_src_index_scannerbundlecontractversion",
+      "workers_worker_node_src_payload",
+      "workers_worker_node_src_payload_normalizejobdata",
+      "workers_worker_node_src_scannerrunner",
+      "workers_worker_node_src_scannerrunner_artifacttypefor",
+      "workers_worker_node_src_scannerrunner_contenttypefor",
+      "workers_worker_node_src_scannerrunner_execfileasync",
+      "workers_worker_node_src_scannerrunner_runbundledscanner",
+      "workers_worker_node_src_scannerrunner_severityfromrisk",
+      "workers_worker_node_src_scannerrunner_tocontract",
+      "workers_worker_node_test_payload_test"
+    ],
+    "70": [
       "scanner_bundle_bin_hardware_collection",
       "scanner_bundle_bin_hardware_collection_collect_hardware_info",
       "scanner_bundle_bin_hardware_collection_fallback_memory_info",
@@ -1613,7 +1745,7 @@
       "scanner_bundle_bin_hardware_collection_rationale_68",
       "scanner_bundle_bin_hardware_collection_rationale_80"
     ],
-    "66": [
+    "71": [
       "scanner_bundle_schemas_scanner_output_schema_name_minlength",
       "scanner_bundle_schemas_scanner_output_schema_name_type",
       "scanner_bundle_schemas_scanner_output_schema_properties_name",
@@ -1626,7 +1758,20 @@
       "scanner_bundle_schemas_scanner_output_schema_version_minlength",
       "scanner_bundle_schemas_scanner_output_schema_version_type"
     ],
-    "67": [
+    "72": [
+      "tests_test_compact_core_operations_pages",
+      "tests_test_compact_core_operations_pages_compactcoreoperationspagetests",
+      "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_authenticated_root_continues_to_redirect_to_dashboard",
+      "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_dashboard_is_a_live_compact_operator_briefing",
+      "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_enrollment_groups_fields_and_keeps_connection_details_progressive",
+      "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_inventory_uses_a_compact_registry_with_real_filter_controls",
+      "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_production_dependencies_pin_non_vulnerable_sharp",
+      "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_public_shell_sign_in_uses_the_mounted_application_path",
+      "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_scan_start_redirects_to_machine_selection",
+      "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_web_production_build_uses_architecture_independent_webpack",
+      "tests_test_compact_core_operations_pages_read"
+    ],
+    "73": [
       "tests_test_infrastructure_release_evidence",
       "tests_test_infrastructure_release_evidence_disposablesshfixtureevidencetests",
       "tests_test_infrastructure_release_evidence_disposablesshfixtureevidencetests_test_fixture_checker_rejects_tofu_and_executable_or_writable_runner_layouts",
@@ -1639,7 +1784,7 @@
       "tests_test_infrastructure_release_evidence_workernodeegressevidencetests_test_checker_is_check_only_and_rejects_non_schema_or_broad_policy_data",
       "tests_test_infrastructure_release_evidence_workernodeegressevidencetests_test_contract_records_a_fail_closed_worker_only_acl_without_claiming_live_enforcement"
     ],
-    "68": [
+    "74": [
       "tests_test_production_compose_release_gate",
       "tests_test_production_compose_release_gate_continuousintegrationreleasegatetests",
       "tests_test_production_compose_release_gate_continuousintegrationreleasegatetests_test_ci_builds_and_loads_the_single_application_image_without_starting_services",
@@ -1652,19 +1797,19 @@
       "tests_test_production_compose_release_gate_productionsecurityposturetests_test_production_secret_validation_rejects_placeholders_and_session_cookies_are_secure",
       "tests_test_production_compose_release_gate_service_block"
     ],
-    "69": [
-      "api_src_app_module",
-      "api_src_app_module_appmodule",
-      "api_src_internal_worker_route",
-      "api_src_internal_worker_route_isinternalworkerserviceroute",
-      "api_src_internal_worker_route_worker_service_routes",
-      "api_src_main",
-      "api_src_main_bootstrap",
-      "api_src_main_public_paths",
-      "api_test_internal_worker_route_test",
-      "module"
+    "75": [
+      "api_src_app_controller_appcontroller_scanneroutput",
+      "workers_worker_node_src_parserclient",
+      "workers_worker_node_src_parserclient_createparserclient",
+      "workers_worker_node_src_payloadlimits",
+      "workers_worker_node_src_payloadlimits_serializeparserrequest",
+      "workers_worker_node_test_payloadcontract_test",
+      "workers_worker_node_test_payloadcontract_test_apirecorder",
+      "workers_worker_node_test_payloadcontract_test_grant",
+      "workers_worker_node_test_payloadcontract_test_job",
+      "workers_worker_node_test_payloadcontract_test_scannerjsonwithexactbytes"
     ],
-    "70": [
+    "76": [
       "docs_plans_2026_07_16_app_wide_compact_operations_rollout",
       "docs_plans_2026_07_16_app_wide_compact_operations_rollout_rollback",
       "docs_plans_2026_07_16_app_wide_compact_operations_rollout_shore_sentinel_app_wide_compact_operations_rollout_plan",
@@ -1676,7 +1821,7 @@
       "docs_plans_2026_07_16_app_wide_compact_operations_rollout_task_6_add_canonical_qa_gate_artifacts",
       "docs_plans_2026_07_16_app_wide_compact_operations_rollout_task_7_integration_security_and_browser_quality_loop"
     ],
-    "71": [
+    "77": [
       "docs_plans_2026_07_16_v1_1_0_ssh_managed_machine_scan_controls",
       "docs_plans_2026_07_16_v1_1_0_ssh_managed_machine_scan_controls_ssh_managed_machine_scan_controls_implementation_plan",
       "docs_plans_2026_07_16_v1_1_0_ssh_managed_machine_scan_controls_task_1_lock_the_version_and_release_contract",
@@ -1688,7 +1833,7 @@
       "docs_plans_2026_07_16_v1_1_0_ssh_managed_machine_scan_controls_task_7_complete_scan_controls_copy_and_typography",
       "docs_plans_2026_07_16_v1_1_0_ssh_managed_machine_scan_controls_task_8_end_to_end_verification_release_and_deployment"
     ],
-    "72": [
+    "78": [
       "scanner_bundle_schemas_scanner_output_schema_collectedat_format",
       "scanner_bundle_schemas_scanner_output_schema_collectedat_type",
       "scanner_bundle_schemas_scanner_output_schema_contractversion_const",
@@ -1700,7 +1845,7 @@
       "scanner_bundle_schemas_scanner_output_schema_target_required",
       "scanner_bundle_schemas_scanner_output_schema_target_type"
     ],
-    "73": [
+    "79": [
       "tests_test_v1_1_release_gates",
       "tests_test_v1_1_release_gates_read",
       "tests_test_v1_1_release_gates_v110releasegatetests",
@@ -1712,18 +1857,18 @@
       "tests_test_v1_1_release_gates_v110releasegatetests_test_v110_changelog_is_unreleased_until_promotion",
       "tests_test_v1_1_release_gates_v110releasegatetests_test_v11_scorecard_template_captures_required_release_evidence"
     ],
-    "74": [
-      "api_src_app_controller_appcontroller_constructor",
-      "api_src_update_service",
-      "api_src_update_service_ts_injectable",
-      "api_src_update_service_updatemode",
-      "api_src_update_service_updateresult",
-      "api_src_update_service_updateservice",
-      "api_src_update_service_updateservice_isenabled",
-      "api_src_update_service_updateservice_run",
-      "api_src_update_service_updateservice_scriptpath"
+    "80": [
+      "api_test_controller_shapes_test",
+      "api_test_controller_shapes_test_adminrequest",
+      "api_test_controller_shapes_test_analystrequest",
+      "api_test_controller_shapes_test_controller",
+      "api_test_controller_shapes_test_operatorrequest",
+      "api_test_controller_shapes_test_viewerrequest",
+      "api_test_controller_shapes_test_workercapability",
+      "api_test_controller_shapes_test_workerrequest",
+      "packages_shared_src_index_queues"
     ],
-    "75": [
+    "81": [
       "docs_qa_2026_07_16_managed_machine_compact_dossier_scorecard",
       "docs_qa_2026_07_16_managed_machine_compact_dossier_scorecard_baseline_note",
       "docs_qa_2026_07_16_managed_machine_compact_dossier_scorecard_breakpoint_evidence",
@@ -1734,7 +1879,7 @@
       "docs_qa_2026_07_16_managed_machine_compact_dossier_scorecard_technical_gates",
       "docs_qa_2026_07_16_managed_machine_compact_dossier_scorecard_verified_outcomes"
     ],
-    "76": [
+    "82": [
       "scripts_check_disposable_ssh_fixture",
       "scripts_check_disposable_ssh_fixture_load_and_validate",
       "scripts_check_disposable_ssh_fixture_main",
@@ -1745,7 +1890,7 @@
       "scripts_check_disposable_ssh_fixture_require_string_list",
       "scripts_check_disposable_ssh_fixture_validate_force_command_assets"
     ],
-    "77": [
+    "83": [
       "tests_test_deployment_hardening",
       "tests_test_deployment_hardening_migrationandrecoverytests",
       "tests_test_deployment_hardening_migrationandrecoverytests_test_backup_restore_has_hash_manifest_and_no_socket_or_plaintext_assignment",
@@ -1756,7 +1901,7 @@
       "tests_test_deployment_hardening_singlecontainercomposetests_test_only_one_service_and_one_persistent_volume_exist",
       "tests_test_deployment_hardening_singlecontainercomposetests_test_runtime_manifest_contains_distinct_users_and_process_allowlist"
     ],
-    "78": [
+    "84": [
       "tests_test_single_container_persistence_contract",
       "tests_test_single_container_persistence_contract_singlecontainerpersistencecontracttests",
       "tests_test_single_container_persistence_contract_singlecontainerpersistencecontracttests_test_database_module_does_not_mutate_schema_or_rehash_seed_on_startup",
@@ -1767,7 +1912,7 @@
       "tests_test_single_container_persistence_contract_singlecontainerpersistencecontracttests_test_runtime_smoke_uses_the_real_database_password",
       "tests_test_single_container_persistence_contract_singlecontainerpersistencecontracttests_test_traceability_registers_runtime_and_migration_controls"
     ],
-    "79": [
+    "85": [
       "web_middleware",
       "web_middleware_authpagetoapi",
       "web_middleware_basepath",
@@ -1778,17 +1923,17 @@
       "web_middleware_public_path_prefixes",
       "web_middleware_withoutbasepath"
     ],
-    "80": [
-      "api_src_request_principal",
-      "api_src_request_principal_attachsessionprincipal",
-      "api_src_request_principal_principalfrom",
-      "api_src_request_principal_requestprincipal",
-      "api_src_request_principal_sessionrequest",
-      "api_src_request_principal_sessionresponse",
-      "api_src_request_principal_tokenfrom",
-      "api_test_request_principal_test"
+    "86": [
+      "api_src_update_service",
+      "api_src_update_service_ts_injectable",
+      "api_src_update_service_updatemode",
+      "api_src_update_service_updateresult",
+      "api_src_update_service_updateservice",
+      "api_src_update_service_updateservice_isenabled",
+      "api_src_update_service_updateservice_run",
+      "api_src_update_service_updateservice_scriptpath"
     ],
-    "81": [
+    "87": [
       "docs_plans_2026_07_16_managed_machine_compact_dossier",
       "docs_plans_2026_07_16_managed_machine_compact_dossier_managed_machine_compact_dossier_implementation_plan",
       "docs_plans_2026_07_16_managed_machine_compact_dossier_task_1_restore_a_compilable_route_baseline",
@@ -1798,7 +1943,7 @@
       "docs_plans_2026_07_16_managed_machine_compact_dossier_task_5_browser_qa_loop",
       "docs_plans_2026_07_16_managed_machine_compact_dossier_task_6_publish_scoped_branch"
     ],
-    "82": [
+    "88": [
       "docs_security_disposable_ssh_fixture",
       "docs_security_disposable_ssh_fixture_check_only_local_command",
       "docs_security_disposable_ssh_fixture_disposable_ssh_fixture_contract_and_evidence_harness",
@@ -1808,7 +1953,7 @@
       "docs_security_disposable_ssh_fixture_required_immutable_fixture_layout",
       "docs_security_disposable_ssh_fixture_scope_and_fixed_trust_boundary"
     ],
-    "83": [
+    "89": [
       "docs_security_worker_node_egress_acl_contract",
       "docs_security_worker_node_egress_acl_contract_atomic_update_and_rollback_contract",
       "docs_security_worker_node_egress_acl_contract_dns_and_https",
@@ -1818,7 +1963,7 @@
       "docs_security_worker_node_egress_acl_contract_safe_local_checks_and_approved_external_evidence",
       "docs_security_worker_node_egress_acl_contract_worker_node_egress_acl_contract_operator_evidence"
     ],
-    "84": [
+    "90": [
       "documents_shore_sentinel_architecture_mvp_phases",
       "documents_shore_sentinel_architecture_phase_0_repository_and_docker_skeleton",
       "documents_shore_sentinel_architecture_phase_1_core_inventory_auth_app_entry_paths_and_knowledgebase_foundation",
@@ -1828,7 +1973,7 @@
       "documents_shore_sentinel_architecture_phase_5_pull_agent_check_in_support",
       "documents_shore_sentinel_architecture_phase_6_hardening_and_scale"
     ],
-    "85": [
+    "91": [
       "scanner_bundle_schemas_scanner_output_schema_assetid_minlength",
       "scanner_bundle_schemas_scanner_output_schema_assetid_type",
       "scanner_bundle_schemas_scanner_output_schema_hostname_type",
@@ -1838,17 +1983,7 @@
       "scanner_bundle_schemas_scanner_output_schema_properties_ip",
       "scanner_bundle_schemas_scanner_output_schema_target_properties"
     ],
-    "86": [
-      "tests_test_compact_core_operations_pages",
-      "tests_test_compact_core_operations_pages_compactcoreoperationspagetests",
-      "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_authenticated_root_continues_to_redirect_to_dashboard",
-      "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_dashboard_is_a_live_compact_operator_briefing",
-      "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_enrollment_groups_fields_and_keeps_connection_details_progressive",
-      "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_inventory_uses_a_compact_registry_with_real_filter_controls",
-      "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_scan_start_redirects_to_machine_selection",
-      "tests_test_compact_core_operations_pages_read"
-    ],
-    "87": [
+    "92": [
       "tests_test_compact_evidence_workflow_pages",
       "tests_test_compact_evidence_workflow_pages_compactevidenceworkflowpagetests",
       "tests_test_compact_evidence_workflow_pages_compactevidenceworkflowpagetests_test_remediation_dossier_preserves_status_mutation_and_activity",
@@ -1858,7 +1993,7 @@
       "tests_test_compact_evidence_workflow_pages_compactevidenceworkflowpagetests_test_saved_views_and_reference_use_compact_sections_and_responsive_rows",
       "tests_test_compact_evidence_workflow_pages_read"
     ],
-    "88": [
+    "93": [
       "tests_test_managed_machine_v1_1_copy_and_controls",
       "tests_test_managed_machine_v1_1_copy_and_controls_managedmachinev11copyandcontrolstests",
       "tests_test_managed_machine_v1_1_copy_and_controls_managedmachinev11copyandcontrolstests_test_active_scan_displays_its_immutable_directory_scope_without_raw_data_copy",
@@ -1868,7 +2003,7 @@
       "tests_test_managed_machine_v1_1_copy_and_controls_managedmachinev11copyandcontrolstests_test_scan_directory_rejects_unsafe_values_before_launch_and_includes_safe_scope",
       "tests_test_managed_machine_v1_1_copy_and_controls_read"
     ],
-    "89": [
+    "94": [
       "tests_test_managed_monitoring_direction",
       "tests_test_managed_monitoring_direction_managedmonitoringdirectiontests",
       "tests_test_managed_monitoring_direction_managedmonitoringdirectiontests_test_navigation_names_the_primary_feature",
@@ -1878,7 +2013,7 @@
       "tests_test_managed_monitoring_direction_managedmonitoringdirectiontests_test_start_scan_route_requires_machine_selection",
       "tests_test_managed_monitoring_direction_read"
     ],
-    "90": [
+    "95": [
       "docs_token_efficiency_tracking",
       "docs_token_efficiency_tracking_check_current_graphify_metadata",
       "docs_token_efficiency_tracking_interpretation_rules",
@@ -1887,7 +2022,7 @@
       "docs_token_efficiency_tracking_summarize_the_data",
       "docs_token_efficiency_tracking_what_it_tracks"
     ],
-    "91": [
+    "96": [
       "documents_shore_sentinel_architecture_authentication_roles_and_permissions",
       "documents_shore_sentinel_architecture_baseline_role_permission_matrix",
       "documents_shore_sentinel_architecture_control_plane",
@@ -1896,7 +2031,7 @@
       "documents_shore_sentinel_architecture_recommended_architecture",
       "documents_shore_sentinel_architecture_scanner_bundle_contract"
     ],
-    "92": [
+    "97": [
       "documents_shore_sentinel_architecture_core_controls",
       "documents_shore_sentinel_architecture_mvp_local_authentication_requirements",
       "documents_shore_sentinel_architecture_mvp_sealed_secret_requirements",
@@ -1905,7 +2040,7 @@
       "documents_shore_sentinel_architecture_security_model_and_threat_boundaries",
       "documents_shore_sentinel_architecture_trust_boundaries"
     ],
-    "93": [
+    "98": [
       "scanner_bundle_readme",
       "scanner_bundle_readme_bundle_manifest",
       "scanner_bundle_readme_canonical_managed_machine_artifact_flow",
@@ -1914,7 +2049,7 @@
       "scanner_bundle_readme_runtime_interface_for_managed_machine_scans",
       "scanner_bundle_readme_shore_sentinel_scanner_bundle_contract"
     ],
-    "94": [
+    "99": [
       "scanner_bundle_schemas_scanner_output_schema",
       "scanner_bundle_schemas_scanner_output_schema_additionalproperties",
       "scanner_bundle_schemas_scanner_output_schema_id",
@@ -1923,7 +2058,7 @@
       "scanner_bundle_schemas_scanner_output_schema_title",
       "scanner_bundle_schemas_scanner_output_schema_type"
     ],
-    "95": [
+    "100": [
       "scripts_compose_smoke",
       "scripts_compose_smoke_has_socket_access",
       "scripts_compose_smoke_main",
@@ -1932,7 +2067,7 @@
       "scripts_compose_smoke_run_compose_via_sg",
       "scripts_compose_smoke_user_in_group"
     ],
-    "96": [
+    "101": [
       "tests_test_app_rollout_foundation",
       "tests_test_app_rollout_foundation_approlloutfoundationtests",
       "tests_test_app_rollout_foundation_approlloutfoundationtests_test_controller_sources_have_no_merge_markers_or_duplicate_routes",
@@ -1941,7 +2076,7 @@
       "tests_test_app_rollout_foundation_py_path",
       "tests_test_app_rollout_foundation_read"
     ],
-    "97": [
+    "102": [
       "tests_test_compact_admin_archive_pages",
       "tests_test_compact_admin_archive_pages_compactadminandarchivepagetests",
       "tests_test_compact_admin_archive_pages_compactadminandarchivepagetests_test_audit_archive_is_compact_read_only_and_keeps_report_and_promotion_handoffs",
@@ -1950,7 +2085,7 @@
       "tests_test_compact_admin_archive_pages_compactadminandarchivepagetests_test_users_directory_uses_compact_primitives_without_losing_account_controls",
       "tests_test_compact_admin_archive_pages_read"
     ],
-    "98": [
+    "103": [
       "tests_test_remove_inapp_one_time_audit",
       "tests_test_remove_inapp_one_time_audit_read",
       "tests_test_remove_inapp_one_time_audit_removeinapponetimeaudittests",
@@ -1959,7 +2094,7 @@
       "tests_test_remove_inapp_one_time_audit_removeinapponetimeaudittests_test_github_readme_remains_the_one_time_audit_channel",
       "tests_test_remove_inapp_one_time_audit_removeinapponetimeaudittests_test_no_web_route_exists_for_creating_one_time_audits"
     ],
-    "99": [
+    "104": [
       "web_lib_data",
       "web_lib_data_audits",
       "web_lib_data_byid",
@@ -1968,7 +2103,7 @@
       "web_lib_data_remediations",
       "web_lib_data_reports"
     ],
-    "100": [
+    "105": [
       "docs_readme",
       "docs_readme_bootstrap_behavior",
       "docs_readme_health_expectations",
@@ -1976,7 +2111,7 @@
       "docs_readme_shore_sentinel_docs",
       "docs_readme_validation_commands"
     ],
-    "101": [
+    "106": [
       "packages_shared_package",
       "packages_shared_package_exports",
       "packages_shared_package_name",
@@ -1984,7 +2119,7 @@
       "packages_shared_package_type",
       "packages_shared_package_version"
     ],
-    "102": [
+    "107": [
       "packages_shared_schema_placeholder",
       "packages_shared_schema_placeholder_description",
       "packages_shared_schema_placeholder_id",
@@ -1992,7 +2127,7 @@
       "packages_shared_schema_placeholder_title",
       "packages_shared_schema_placeholder_type"
     ],
-    "103": [
+    "108": [
       "scanner_bundle_schemas_scanner_output_schema_findings_items",
       "scanner_bundle_schemas_scanner_output_schema_findings_type",
       "scanner_bundle_schemas_scanner_output_schema_items_additionalproperties",
@@ -2000,7 +2135,7 @@
       "scanner_bundle_schemas_scanner_output_schema_items_type",
       "scanner_bundle_schemas_scanner_output_schema_properties_findings"
     ],
-    "104": [
+    "109": [
       "tests_test_users_page_api_proxy",
       "tests_test_users_page_api_proxy_read",
       "tests_test_users_page_api_proxy_userspageapiproxytests",
@@ -2008,7 +2143,7 @@
       "tests_test_users_page_api_proxy_userspageapiproxytests_test_users_proxy_forwards_auth_cookie_and_methods",
       "tests_test_users_page_api_proxy_userspageapiproxytests_test_users_proxy_routes_exist"
     ],
-    "105": [
+    "110": [
       "web_app_api_scan_runs_id_cancel_route",
       "web_app_api_scan_runs_id_cancel_route_authorizecancellation",
       "web_app_api_scan_runs_id_cancel_route_edit_roles",
@@ -2016,7 +2151,7 @@
       "web_app_api_scan_runs_id_cancel_route_post",
       "web_app_api_scan_runs_id_cancel_route_serverapibase"
     ],
-    "106": [
+    "111": [
       "web_app_api_scan_runs_path_route",
       "web_app_api_scan_runs_path_route_allowedpath",
       "web_app_api_scan_runs_path_route_get",
@@ -2024,7 +2159,7 @@
       "web_app_api_scan_runs_path_route_read_subresources",
       "web_app_api_scan_runs_path_route_serverapibase"
     ],
-    "107": [
+    "112": [
       "web_app_dashboard_page",
       "web_app_dashboard_page_dashboard",
       "web_app_dashboard_page_formatdate",
@@ -2032,7 +2167,7 @@
       "web_app_dashboard_page_severityorder",
       "web_app_dashboard_page_statuslabel"
     ],
-    "108": [
+    "113": [
       "web_components_remediation_queue_client",
       "web_components_remediation_queue_client_groupbymachine",
       "web_components_remediation_queue_client_normalized",
@@ -2040,446 +2175,454 @@
       "web_components_remediation_queue_client_titlecase",
       "web_components_remediation_queue_client_valuesfor"
     ],
-    "109": [
+    "114": [
       "api_test_worker_ssh_grant_test",
       "api_test_worker_ssh_grant_test_appwithgrant",
       "api_test_worker_ssh_grant_test_request",
       "api_test_worker_ssh_grant_test_seal",
       "api_test_worker_ssh_grant_test_validgrant"
     ],
-    "110": [
+    "115": [
       "container_run_process",
       "container_run_process_sh__entry",
       "container_run_process_wait_for_postgres",
       "container_run_process_wait_for_redis",
       "container_run_process_wait_for_url"
     ],
-    "111": [
+    "116": [
       "docs_changelog",
       "docs_changelog_shore_sentinel_product_roadmap_release_notes",
       "docs_changelog_user_facing_changes",
       "docs_changelog_v0_3_0_product_roadmap_epic_release",
       "docs_changelog_validation_expectations"
     ],
-    "112": [
+    "117": [
       "docs_runbooks_single_container_backup_restore",
       "docs_runbooks_single_container_backup_restore_backup",
       "docs_runbooks_single_container_backup_restore_restore_drill",
       "docs_runbooks_single_container_backup_restore_rollback_primitive",
       "docs_runbooks_single_container_backup_restore_single_container_backup_restore_and_rollback"
     ],
-    "113": [
+    "118": [
       "documents_shore_sentinel_architecture_core_product_capabilities",
       "documents_shore_sentinel_architecture_mode_1_github_scanner_option",
       "documents_shore_sentinel_architecture_mode_2_add_managed_machine",
       "documents_shore_sentinel_architecture_product_logic_and_operating_modes",
       "documents_shore_sentinel_architecture_promotion_path"
     ],
-    "114": [
+    "119": [
       "documents_shore_sentinel_architecture_docker_compose_services_for_mvp",
       "documents_shore_sentinel_architecture_docker_deployment_topology",
       "documents_shore_sentinel_architecture_mvp_runtime_requirements",
       "documents_shore_sentinel_architecture_production_evolution",
       "documents_shore_sentinel_architecture_runtime_characteristics"
     ],
-    "115": [
+    "120": [
       "scripts_shore_sentinel_update",
       "scripts_shore_sentinel_update_err",
       "scripts_shore_sentinel_update_log",
       "scripts_shore_sentinel_update_need",
       "scripts_shore_sentinel_update_sh__entry"
     ],
-    "116": [
+    "121": [
       "tests_test_rearchitecture_navigation_compliance",
       "tests_test_rearchitecture_navigation_compliance_read",
       "tests_test_rearchitecture_navigation_compliance_rearchitecturenavigationcompliancetests",
       "tests_test_rearchitecture_navigation_compliance_rearchitecturenavigationcompliancetests_test_app_exposes_loading_and_actionable_error_states",
       "tests_test_rearchitecture_navigation_compliance_rearchitecturenavigationcompliancetests_test_page_state_styles_are_static_and_reduced_motion_safe"
     ],
-    "117": [
+    "122": [
       "tests_test_token_efficiency",
       "tests_test_token_efficiency_tokenefficiencytests",
       "tests_test_token_efficiency_tokenefficiencytests_test_graph_metadata_reads_networkx_links_shape",
       "tests_test_token_efficiency_tokenefficiencytests_test_log_entry_computes_saved_tokens_and_percent",
       "tests_test_token_efficiency_tokenefficiencytests_test_summary_reports_totals_and_top_savings"
     ],
-    "118": [
+    "123": [
       "tests_test_v1_1_managed_machine_release",
       "tests_test_v1_1_managed_machine_release_package",
       "tests_test_v1_1_managed_machine_release_v11managedmachinereleasetests",
       "tests_test_v1_1_managed_machine_release_v11managedmachinereleasetests_test_readme_documents_directory_scope_for_managed_ssh_scans",
       "tests_test_v1_1_managed_machine_release_v11managedmachinereleasetests_test_release_packages_are_versioned_1_1_0"
     ],
-    "119": [
-      "web_app_saved_views_slug_page",
-      "web_app_saved_views_slug_page_generatestaticparams",
-      "web_app_saved_views_slug_page_savedviewslugpage",
-      "web_app_saved_views_slug_page_static_slugs",
-      "web_app_saved_views_slug_page_view_titles"
-    ],
-    "120": [
+    "124": [
       "web_app_scans_reports_reports_id_page",
       "web_app_scans_reports_reports_id_page_artifactdescription",
       "web_app_scans_reports_reports_id_page_artifactlabel",
       "web_app_scans_reports_reports_id_page_renderfinding",
       "web_app_scans_reports_reports_id_page_report"
     ],
-    "121": [
+    "125": [
       "web_app_system_update_page",
       "web_app_system_update_page_systemupdatepage",
       "web_app_system_update_update_client",
       "web_app_system_update_update_client_outputblock",
       "web_app_system_update_update_client_updateclient"
     ],
-    "122": [
+    "126": [
       "web_components_reports_ledger_client",
       "web_components_reports_ledger_client_normalized",
       "web_components_reports_ledger_client_optionsfor",
       "web_components_reports_ledger_client_reportsledger",
       "web_components_reports_ledger_client_titlecase"
     ],
-    "123": [
+    "127": [
       "web_jsconfig",
       "web_jsconfig_compileroptions",
       "web_jsconfig_compileroptions_baseurl",
       "web_jsconfig_compileroptions_paths",
       "web_jsconfig_paths"
     ],
-    "124": [
+    "128": [
       "web_lib_update_api",
       "web_lib_update_api_applyupdate",
       "web_lib_update_api_checkupdate",
       "web_lib_update_api_parseresponse",
       "web_lib_update_api_publicapibase"
     ],
-    "125": [
+    "129": [
       "web_test_scan_run_cancel_proxy_test",
       "web_test_scan_run_cancel_proxy_test_cancelrequest",
       "web_test_scan_run_cancel_proxy_test_cancelrouteurl",
       "web_test_scan_run_cancel_proxy_test_header",
       "web_test_scan_run_cancel_proxy_test_withfetch"
     ],
-    "126": [
+    "130": [
       "container_backup_restore",
       "container_backup_restore_set_redis_appendonly",
       "container_backup_restore_sh__entry",
       "container_backup_restore_usage"
     ],
-    "127": [
+    "131": [
       "documents_shore_sentinel_architecture_core_metrics",
       "documents_shore_sentinel_architecture_dashboard_analytics_model",
       "documents_shore_sentinel_architecture_mvp_analytics_decision",
       "documents_shore_sentinel_architecture_recommended_charts"
     ],
-    "128": [
+    "132": [
       "documents_shore_sentinel_architecture_error_handling",
       "documents_shore_sentinel_architecture_flow_730",
       "documents_shore_sentinel_architecture_report_ingestion_and_artifact_flow",
       "documents_shore_sentinel_architecture_supported_artifacts"
     ],
-    "129": [
+    "133": [
       "documents_shore_sentinel_architecture_flow",
       "documents_shore_sentinel_architecture_intent",
       "documents_shore_sentinel_architecture_notes",
       "documents_shore_sentinel_architecture_ssh_push_flow"
     ],
-    "130": [
+    "134": [
       "tests_single_container_runtime_smoke",
       "tests_single_container_runtime_smoke_cleanup",
       "tests_single_container_runtime_smoke_run_args",
       "tests_single_container_runtime_smoke_sh__entry"
     ],
-    "131": [
+    "135": [
+      "web_app_saved_views_slug_page",
+      "web_app_saved_views_slug_page_generatestaticparams",
+      "web_app_saved_views_slug_page_static_slugs",
+      "web_app_saved_views_slug_page_view_titles"
+    ],
+    "136": [
       "web_components_inventory_registry_client",
       "web_components_inventory_registry_client_formatdate",
       "web_components_inventory_registry_client_inventoryregistry",
       "web_components_inventory_registry_client_readablestatus"
     ],
-    "132": [
+    "137": [
       "web_scripts_verify_machine_data",
       "web_scripts_verify_machine_data_fallbackreports",
       "web_scripts_verify_machine_data_remediations",
       "web_scripts_verify_machine_data_root"
     ],
-    "133": [
+    "138": [
       "web_scripts_verify_machine_dossier",
       "web_scripts_verify_machine_dossier_exercisescanrunread",
       "web_scripts_verify_machine_dossier_exercisetargetmutation",
       "web_scripts_verify_machine_dossier_root"
     ],
-    "134": [
+    "139": [
       "web_test_machine_stop_scan_test",
       "web_test_machine_stop_scan_test_cancelscan",
       "web_test_machine_stop_scan_test_component",
       "web_test_machine_stop_scan_test_runstatus"
     ],
-    "135": [
+    "140": [
       "container_healthcheck",
       "container_healthcheck_check_single_process",
       "container_healthcheck_sh__entry"
     ],
-    "136": [
+    "141": [
       "documents_shore_sentinel_architecture_canonical_job_run_and_artifact_path",
       "documents_shore_sentinel_architecture_chosen_technology_stack",
       "documents_shore_sentinel_architecture_important_stack_decision"
     ],
-    "137": [
+    "142": [
       "documents_shore_sentinel_architecture_flow_671",
       "documents_shore_sentinel_architecture_intent_667",
       "documents_shore_sentinel_architecture_pull_agent_check_in_flow"
     ],
-    "138": [
+    "143": [
       "web_app_api_auth_me_route",
       "web_app_api_auth_me_route_get",
       "web_app_api_auth_me_route_serverapibase"
     ],
-    "139": [
+    "144": [
       "web_app_preferences_page",
       "web_app_preferences_page_metadata",
       "web_app_preferences_page_preferencespage"
     ],
-    "140": [
+    "145": [
       "web_components_filters",
       "web_components_filters_filteroptions",
       "web_components_filters_filters"
     ],
-    "141": [
+    "146": [
+      "web_components_sign_in_form",
+      "web_components_sign_in_form_eyeicon",
+      "web_components_sign_in_form_signinform"
+    ],
+    "147": [
       "web_test_async_cookie_server_helpers_test",
       "web_test_async_cookie_server_helpers_test_source",
       "web_test_async_cookie_server_helpers_test_webroot"
     ],
-    "142": [
+    "148": [
       "web_test_machine_directory_selection_test",
       "web_test_machine_directory_selection_test_read",
       "web_test_machine_directory_selection_test_webroot"
     ],
-    "143": [
+    "149": [
       "web_test_machine_hardware_summary_test",
       "web_test_machine_hardware_summary_test_read",
       "web_test_machine_hardware_summary_test_webroot"
     ],
-    "144": [
+    "150": [
       "api_readme",
       "api_readme_shore_sentinel_api"
     ],
-    "145": [
+    "151": [
+      "api_src_bootstrap_admin",
+      "api_src_bootstrap_admin_bootstrapadmin"
+    ],
+    "152": [
       "container_capability_check",
       "container_capability_check_sh__entry"
     ],
-    "146": [
+    "153": [
       "container_object_storage_bootstrap",
       "container_object_storage_bootstrap_client"
     ],
-    "147": [
+    "154": [
       "packages_shared_readme",
       "packages_shared_readme_shared_package_scaffold"
     ],
-    "148": [
+    "155": [
       "scripts_refresh_graphify",
       "scripts_refresh_graphify_sh__entry"
     ],
-    "149": [
+    "156": [
       "web_app_error",
       "web_app_error_errorstate"
     ],
-    "150": [
+    "157": [
       "web_app_loading",
       "web_app_loading_loading"
     ],
-    "151": [
+    "158": [
       "web_next_config",
       "web_next_config_nextconfig"
     ],
-    "152": [
+    "159": [
       "web_readme",
       "web_readme_web_ui_scaffold"
     ],
-    "153": [
+    "160": [
       "web_scripts_verify_machine_status",
       "web_scripts_verify_machine_status_root"
     ],
-    "154": [
+    "161": [
       "web_test_new_machine_enrollment_test",
       "web_test_new_machine_enrollment_test_form"
     ],
-    "155": [
+    "162": [
       "workers_worker_node_readme",
       "workers_worker_node_readme_worker_node"
     ],
-    "156": [
+    "163": [
       "workers_worker_python_readme",
       "workers_worker_python_readme_worker_python"
     ],
-    "157": [
+    "164": [
       "packages_shared_src_index_d"
     ],
-    "158": [
+    "165": [
       "scripts_validate_phase0"
     ],
-    "159": [
+    "166": [
       "scripts_validate_scanner_bundle"
     ],
-    "160": [
+    "167": [
       "workers_worker_node_src_sshexecutor_default_remote_output_max_bytes"
     ],
-    "161": [
+    "168": [
       "workers_worker_node_src_sshexecutor_default_remote_stderr_max_bytes"
     ],
-    "162": [
+    "169": [
       "workers_worker_node_test_artifact_cleanup_worker_test"
     ]
   },
   "cohesion": {
-    "0": 0.08368396446937822,
-    "1": 0.053164556962025315,
-    "2": 0.10752688172043011,
-    "3": 0.06857142857142857,
+    "0": 0.07207207207207207,
+    "1": 0.10752688172043011,
+    "2": 0.07013574660633484,
+    "3": 0.045454545454545456,
     "4": 0.045454545454545456,
-    "5": 0.045454545454545456,
-    "6": 0.0782051282051282,
-    "7": 0.0945945945945946,
-    "8": 0.06060606060606061,
-    "9": 0.0625,
-    "10": 0.12903225806451613,
-    "11": 0.0967741935483871,
-    "12": 0.06666666666666667,
-    "13": 0.07142857142857142,
-    "14": 0.07692307692307693,
-    "15": 0.07407407407407407,
-    "16": 0.08831908831908832,
+    "5": 0.08527131782945736,
+    "6": 0.0743321718931475,
+    "7": 0.07507507507507508,
+    "8": 0.11596638655462185,
+    "9": 0.06060606060606061,
+    "10": 0.0625,
+    "11": 0.06451612903225806,
+    "12": 0.07526881720430108,
+    "13": 0.06666666666666667,
+    "14": 0.1206896551724138,
+    "15": 0.19658119658119658,
+    "16": 0.07407407407407407,
     "17": 0.11076923076923077,
     "18": 0.07692307692307693,
-    "19": 0.08333333333333333,
-    "20": 0.08695652173913043,
-    "21": 0.11428571428571428,
-    "22": 0.15714285714285714,
-    "23": 0.1,
-    "24": 0.10526315789473684,
-    "25": 0.1286549707602339,
-    "26": 0.10526315789473684,
-    "27": 0.11764705882352941,
-    "28": 0.1437908496732026,
-    "29": 0.23529411764705882,
-    "30": 0.17647058823529413,
+    "19": 0.12,
+    "20": 0.10333333333333333,
+    "21": 0.16666666666666666,
+    "22": 0.08333333333333333,
+    "23": 0.08695652173913043,
+    "24": 0.11428571428571428,
+    "25": 0.15714285714285714,
+    "26": 0.14285714285714285,
+    "27": 0.1,
+    "28": 0.10526315789473684,
+    "29": 0.11695906432748537,
+    "30": 0.1286549707602339,
     "31": 0.1111111111111111,
-    "32": 0.11764705882352941,
-    "33": 0.11764705882352941,
-    "34": 0.11764705882352941,
-    "35": 0.1323529411764706,
-    "36": 0.125,
-    "37": 0.125,
-    "38": 0.13333333333333333,
-    "39": 0.13333333333333333,
-    "40": 0.3904761904761905,
-    "41": 0.14285714285714285,
-    "42": 0.21904761904761905,
-    "43": 0.2761904761904762,
-    "44": 0.14285714285714285,
-    "45": 0.15384615384615385,
-    "46": 0.15384615384615385,
-    "47": 0.15384615384615385,
-    "48": 0.15384615384615385,
-    "49": 0.28205128205128205,
-    "50": 0.32051282051282054,
+    "32": 0.16374269005847952,
+    "33": 0.10526315789473684,
+    "34": 0.10526315789473684,
+    "35": 0.10526315789473684,
+    "36": 0.19607843137254902,
+    "37": 0.11764705882352941,
+    "38": 0.23529411764705882,
+    "39": 0.20588235294117646,
+    "40": 0.11764705882352941,
+    "41": 0.11764705882352941,
+    "42": 0.11764705882352941,
+    "43": 0.125,
+    "44": 0.125,
+    "45": 0.13333333333333333,
+    "46": 0.13333333333333333,
+    "47": 0.3904761904761905,
+    "48": 0.1619047619047619,
+    "49": 0.21904761904761905,
+    "50": 0.14285714285714285,
     "51": 0.15384615384615385,
-    "52": 0.19696969696969696,
-    "53": 0.5454545454545454,
-    "54": 0.18181818181818182,
-    "55": 0.30303030303030304,
-    "56": 0.24242424242424243,
-    "57": 0.16666666666666666,
-    "58": 0.2909090909090909,
-    "59": 0.3090909090909091,
-    "60": 0.32727272727272727,
+    "52": 0.15384615384615385,
+    "53": 0.15384615384615385,
+    "54": 0.15384615384615385,
+    "55": 0.28205128205128205,
+    "56": 0.32051282051282054,
+    "57": 0.15384615384615385,
+    "58": 0.15384615384615385,
+    "59": 0.19696969696969696,
+    "60": 0.5454545454545454,
     "61": 0.18181818181818182,
-    "62": 0.18181818181818182,
-    "63": 0.18181818181818182,
-    "64": 0.18181818181818182,
-    "65": 0.2727272727272727,
+    "62": 0.30303030303030304,
+    "63": 0.24242424242424243,
+    "64": 0.3090909090909091,
+    "65": 0.18181818181818182,
     "66": 0.18181818181818182,
-    "67": 0.2,
-    "68": 0.2,
-    "69": 0.35555555555555557,
-    "70": 0.2,
-    "71": 0.2,
-    "72": 0.2,
-    "73": 0.24444444444444444,
-    "74": 0.2777777777777778,
-    "75": 0.2222222222222222,
-    "76": 0.4722222222222222,
-    "77": 0.25,
-    "78": 0.2222222222222222,
-    "79": 0.3611111111111111,
-    "80": 0.39285714285714285,
-    "81": 0.25,
-    "82": 0.25,
+    "67": 0.18181818181818182,
+    "68": 0.18181818181818182,
+    "69": 0.34545454545454546,
+    "70": 0.2727272727272727,
+    "71": 0.18181818181818182,
+    "72": 0.32727272727272727,
+    "73": 0.2,
+    "74": 0.2,
+    "75": 0.28888888888888886,
+    "76": 0.2,
+    "77": 0.2,
+    "78": 0.2,
+    "79": 0.24444444444444444,
+    "80": 0.2222222222222222,
+    "81": 0.2222222222222222,
+    "82": 0.4722222222222222,
     "83": 0.25,
-    "84": 0.25,
-    "85": 0.25,
-    "86": 0.42857142857142855,
-    "87": 0.42857142857142855,
-    "88": 0.42857142857142855,
-    "89": 0.42857142857142855,
-    "90": 0.2857142857142857,
-    "91": 0.2857142857142857,
-    "92": 0.2857142857142857,
-    "93": 0.2857142857142857,
-    "94": 0.2857142857142857,
-    "95": 0.5714285714285714,
-    "96": 0.42857142857142855,
-    "97": 0.47619047619047616,
-    "98": 0.42857142857142855,
+    "84": 0.2222222222222222,
+    "85": 0.3611111111111111,
+    "86": 0.32142857142857145,
+    "87": 0.25,
+    "88": 0.25,
+    "89": 0.25,
+    "90": 0.25,
+    "91": 0.25,
+    "92": 0.42857142857142855,
+    "93": 0.42857142857142855,
+    "94": 0.42857142857142855,
+    "95": 0.2857142857142857,
+    "96": 0.2857142857142857,
+    "97": 0.2857142857142857,
+    "98": 0.2857142857142857,
     "99": 0.2857142857142857,
-    "100": 0.3333333333333333,
-    "101": 0.3333333333333333,
-    "102": 0.3333333333333333,
-    "103": 0.3333333333333333,
-    "104": 0.4666666666666667,
-    "105": 0.6,
-    "106": 0.6,
-    "107": 0.4666666666666667,
-    "108": 0.6,
-    "109": 0.5,
-    "110": 0.7,
-    "111": 0.4,
-    "112": 0.4,
-    "113": 0.4,
-    "114": 0.4,
-    "115": 0.8,
-    "116": 0.6,
+    "100": 0.5714285714285714,
+    "101": 0.42857142857142855,
+    "102": 0.47619047619047616,
+    "103": 0.42857142857142855,
+    "104": 0.2857142857142857,
+    "105": 0.3333333333333333,
+    "106": 0.3333333333333333,
+    "107": 0.3333333333333333,
+    "108": 0.3333333333333333,
+    "109": 0.4666666666666667,
+    "110": 0.6,
+    "111": 0.6,
+    "112": 0.4666666666666667,
+    "113": 0.6,
+    "114": 0.5,
+    "115": 0.7,
+    "116": 0.4,
     "117": 0.4,
-    "118": 0.5,
+    "118": 0.4,
     "119": 0.4,
-    "120": 0.7,
-    "121": 0.5,
-    "122": 0.7,
-    "123": 0.4,
-    "124": 0.8,
-    "125": 0.4,
-    "126": 0.8333333333333334,
-    "127": 0.5,
-    "128": 0.5,
-    "129": 0.5,
-    "130": 0.6666666666666666,
-    "131": 0.8333333333333334,
+    "120": 0.8,
+    "121": 0.6,
+    "122": 0.4,
+    "123": 0.5,
+    "124": 0.7,
+    "125": 0.5,
+    "126": 0.7,
+    "127": 0.4,
+    "128": 0.8,
+    "129": 0.4,
+    "130": 0.8333333333333334,
+    "131": 0.5,
     "132": 0.5,
     "133": 0.5,
-    "134": 0.5,
-    "135": 1.0,
-    "136": 0.6666666666666666,
-    "137": 0.6666666666666666,
-    "138": 1.0,
-    "139": 0.6666666666666666,
-    "140": 0.6666666666666666,
+    "134": 0.6666666666666666,
+    "135": 0.5,
+    "136": 0.8333333333333334,
+    "137": 0.5,
+    "138": 0.5,
+    "139": 0.5,
+    "140": 1.0,
     "141": 0.6666666666666666,
     "142": 0.6666666666666666,
-    "143": 0.6666666666666666,
-    "144": 1.0,
-    "145": 1.0,
-    "146": 1.0,
-    "147": 1.0,
-    "148": 1.0,
-    "149": 1.0,
+    "143": 1.0,
+    "144": 0.6666666666666666,
+    "145": 0.6666666666666666,
+    "146": 0.6666666666666666,
+    "147": 0.6666666666666666,
+    "148": 0.6666666666666666,
+    "149": 0.6666666666666666,
     "150": 1.0,
     "151": 1.0,
     "152": 1.0,
@@ -2492,18 +2635,30 @@
     "159": 1.0,
     "160": 1.0,
     "161": 1.0,
-    "162": 1.0
+    "162": 1.0,
+    "163": 1.0,
+    "164": 1.0,
+    "165": 1.0,
+    "166": 1.0,
+    "167": 1.0,
+    "168": 1.0,
+    "169": 1.0
   },
   "gods": [
     {
       "id": "api_src_app_controller_appcontroller",
       "label": "AppController",
-      "degree": 80
+      "degree": 95
     },
     {
       "id": "web_lib_paths_routepath",
       "label": "routePath()",
       "degree": 34
+    },
+    {
+      "id": "api_src_database_service_databaseservice",
+      "label": "DatabaseService",
+      "degree": 29
     },
     {
       "id": "documents_shore_sentinel_architecture_shore_sentinel_control_plane_architecture_proposal",
@@ -2516,6 +2671,11 @@
       "degree": 21
     },
     {
+      "id": "api_src_validation_requirestring",
+      "label": "requireString()",
+      "degree": 20
+    },
+    {
       "id": "package_scripts",
       "label": "scripts",
       "degree": 20
@@ -2526,27 +2686,39 @@
       "degree": 20
     },
     {
-      "id": "scanner_bundle_bin_agent_security_selfcheck_v3_4_0_main",
-      "label": "main()",
+      "id": "api_src_auth_service_authservice",
+      "label": "AuthService",
       "degree": 19
     },
     {
-      "id": "scanner_bundle_bin_agent_security_selfcheck_v3_4_0_write_simple_pdf",
-      "label": "write_simple_pdf()",
-      "degree": 18
-    },
-    {
-      "id": "tests_test_ssh_remote_runner_contract_remoterunnerprotocoltests",
-      "label": "RemoteRunnerProtocolTests",
-      "degree": 18
-    },
-    {
-      "id": "api_src_auth_service_authservice",
-      "label": "AuthService",
-      "degree": 17
+      "id": "scanner_bundle_bin_agent_security_selfcheck_v3_4_0_main",
+      "label": "main()",
+      "degree": 19
     }
   ],
   "surprises": [
+    {
+      "source": "formRequest()",
+      "target": "key()",
+      "source_files": [
+        "web/test/target-proxy-authorization.test.mjs",
+        "api/src/identity/mfa.service.ts"
+      ],
+      "confidence": "INFERRED",
+      "relation": "indirect_call",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities; peripheral node `formRequest()` unexpectedly reaches hub `key()`"
+    },
+    {
+      "source": "coercePayload()",
+      "target": "key()",
+      "source_files": [
+        "web/app/api/targets/route.js",
+        "api/src/identity/mfa.service.ts"
+      ],
+      "confidence": "INFERRED",
+      "relation": "indirect_call",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
     {
       "source": "SystemUpdatePage()",
       "target": "apiGet()",
@@ -2579,45 +2751,23 @@
       "confidence": "INFERRED",
       "relation": "indirect_call",
       "why": "inferred connection - not explicitly stated in source; bridges separate communities"
-    },
-    {
-      "source": "lifecycleEvent()",
-      "target": "buildRunEvent()",
-      "source_files": [
-        "workers/worker-node/src/lifecycle.js",
-        "packages/shared/src/index.js"
-      ],
-      "confidence": "EXTRACTED",
-      "relation": "calls",
-      "why": "connects across different repos/directories"
-    },
-    {
-      "source": "normalizeJobData()",
-      "target": "scannerBundleContractVersion()",
-      "source_files": [
-        "workers/worker-node/src/payload.js",
-        "packages/shared/src/index.js"
-      ],
-      "confidence": "EXTRACTED",
-      "relation": "calls",
-      "why": "connects across different repos/directories"
     }
   ],
   "questions": [
     {
       "type": "bridge_node",
-      "question": "Why does `AppController` connect `AppController` to `index.js`, `app.module.ts`, `UpdateService`, `queue.service.ts`, `worker-ssh-grant.test.ts`, `app.controller.ts`, `ArtifactService`?",
-      "why": "High betweenness centrality (0.013) - this node is a cross-community bridge."
+      "question": "Why does `key()` connect `mfa.service.ts` to `appPath`?",
+      "why": "High betweenness centrality (0.053) - this node is a cross-community bridge."
     },
     {
       "type": "bridge_node",
-      "question": "Why does `DatabaseService` connect `DatabaseService` to `AppController`, `app.module.ts`, `UpdateService`, `queue.service.ts`, `app.controller.ts`, `ArtifactService`, `AuthService`?",
-      "why": "High betweenness centrality (0.005) - this node is a cross-community bridge."
+      "question": "Why does `coercePayload()` connect `appPath` to `mfa.service.ts`?",
+      "why": "High betweenness centrality (0.051) - this node is a cross-community bridge."
     },
     {
       "type": "bridge_node",
-      "question": "Why does `Shore Sentinel Control Plane Architecture Proposal` connect `Shore Sentinel Control Plane Architecture Proposal` to `Report Ingestion and Artifact Flow`, `SSH Push Flow`, `Key fields`, `Feature Update and DevOps Release Workflow`, `Chosen Technology Stack`, `Pull-Agent / Check-in Flow`, `Product Logic and Operating Modes`, `Docker Deployment Topology`, `MVP Phases`, `Recommended Architecture`, `Security Model and Threat Boundaries`, `API Surface Overview`, `UI/UX Review and Simplification Plan`, `Dashboard / Analytics Model`?",
-      "why": "High betweenness centrality (0.004) - this node is a cross-community bridge."
+      "question": "Why does `appPath()` connect `appPath` to `users-api.js`, `MachineDetailClient`, `routePath`, `SignInForm`, `getAuthenticatedUser`?",
+      "why": "High betweenness centrality (0.031) - this node is a cross-community bridge."
     },
     {
       "type": "verify_inferred",
@@ -2627,17 +2777,17 @@
     {
       "type": "isolated_nodes",
       "question": "What connects `name`, `version`, `private` to the rest of the system?",
-      "why": "772 weakly-connected nodes found - possible documentation gaps or missing edges."
+      "why": "788 weakly-connected nodes found - possible documentation gaps or missing edges."
     },
     {
       "type": "low_cohesion",
       "question": "Should `AppController` be split into smaller, more focused modules?",
-      "why": "Cohesion score 0.08368396446937822 - nodes in this community are weakly interconnected."
+      "why": "Cohesion score 0.07207207207207207 - nodes in this community are weakly interconnected."
     },
     {
       "type": "low_cohesion",
-      "question": "Should `index.js` be split into smaller, more focused modules?",
-      "why": "Cohesion score 0.053164556962025315 - nodes in this community are weakly interconnected."
+      "question": "Should `Agent_Security_Selfcheck_v3.4.0.py` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.10752688172043011 - nodes in this community are weakly interconnected."
     }
   ]
 }
