@@ -758,8 +758,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "res",
-      "community": 43,
-      "community_name": "ParserServerTests",
+      "community": 173,
+      "community_name": "Body",
       "norm_label": "res"
     },
     {
@@ -791,8 +791,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "patch",
-      "community": 173,
-      "community_name": "Body",
+      "community": 0,
+      "community_name": "AppController",
       "norm_label": "patch"
     },
     {
@@ -813,8 +813,8 @@
       "source_location": "L141",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_constructor",
-      "community": 167,
-      "community_name": "QueueService",
+      "community": 74,
+      "community_name": "UpdateService",
       "norm_label": ".constructor()"
     },
     {
@@ -846,8 +846,8 @@
       "source_location": "L151",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_register",
-      "community": 43,
-      "community_name": "ParserServerTests",
+      "community": 173,
+      "community_name": "Body",
       "norm_label": ".register()"
     },
     {
@@ -857,8 +857,8 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_login",
-      "community": 43,
-      "community_name": "ParserServerTests",
+      "community": 173,
+      "community_name": "Body",
       "norm_label": ".login()"
     },
     {
@@ -1033,8 +1033,8 @@
       "source_location": "L474",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_updateremediationstatus",
-      "community": 173,
-      "community_name": "Body",
+      "community": 0,
+      "community_name": "AppController",
       "norm_label": ".updateremediationstatus()"
     },
     {
@@ -1066,8 +1066,8 @@
       "source_location": "L506",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_updatetarget",
-      "community": 173,
-      "community_name": "Body",
+      "community": 0,
+      "community_name": "AppController",
       "norm_label": ".updatetarget()"
     },
     {
@@ -1077,8 +1077,8 @@
       "source_location": "L507",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_deletetarget",
-      "community": 0,
-      "community_name": "AppController",
+      "community": 74,
+      "community_name": "UpdateService",
       "norm_label": ".deletetarget()"
     },
     {
@@ -1099,8 +1099,8 @@
       "source_location": "L537",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_runtarget",
-      "community": 173,
-      "community_name": "Body",
+      "community": 43,
+      "community_name": "ParserServerTests",
       "norm_label": ".runtarget()"
     },
     {
@@ -1132,8 +1132,8 @@
       "source_location": "L541",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_cancelrun",
-      "community": 173,
-      "community_name": "Body",
+      "community": 43,
+      "community_name": "ParserServerTests",
       "norm_label": ".cancelrun()"
     },
     {
@@ -1242,8 +1242,8 @@
       "source_location": "L921",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_stream",
-      "community": 43,
-      "community_name": "ParserServerTests",
+      "community": 173,
+      "community_name": "Body",
       "norm_label": ".stream()"
     },
     {
@@ -1253,8 +1253,8 @@
       "source_location": "L923",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_rememberme",
-      "community": 43,
-      "community_name": "ParserServerTests",
+      "community": 173,
+      "community_name": "Body",
       "norm_label": ".rememberme()"
     },
     {
@@ -1264,8 +1264,8 @@
       "source_location": "L928",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_createjob",
-      "community": 176,
-      "community_name": ".createJob",
+      "community": 43,
+      "community_name": "ParserServerTests",
       "norm_label": ".createjob()"
     },
     {
@@ -1275,8 +1275,8 @@
       "source_location": "L986",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_scanneroutput",
-      "community": 168,
-      "community_name": "scannerBundleContractVersion",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": ".scanneroutput()"
     },
     {
@@ -1297,8 +1297,8 @@
       "source_location": "L1007",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_setsessioncookie",
-      "community": 43,
-      "community_name": "ParserServerTests",
+      "community": 173,
+      "community_name": "Body",
       "norm_label": ".setsessioncookie()"
     },
     {
@@ -1341,8 +1341,8 @@
       "source_location": "L1064",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_principal",
-      "community": 176,
-      "community_name": ".createJob",
+      "community": 43,
+      "community_name": "ParserServerTests",
       "norm_label": ".principal()"
     },
     {
@@ -1385,8 +1385,8 @@
       "source_location": "L1087",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_requirepermission",
-      "community": 173,
-      "community_name": "Body",
+      "community": 43,
+      "community_name": "ParserServerTests",
       "norm_label": ".requirepermission()"
     },
     {
@@ -1418,8 +1418,8 @@
       "source_location": "L1137",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_publicrun",
-      "community": 176,
-      "community_name": ".createJob",
+      "community": 43,
+      "community_name": "ParserServerTests",
       "norm_label": ".publicrun()"
     },
     {
@@ -1473,8 +1473,8 @@
       "source_location": "L1202",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_createuser",
-      "community": 74,
-      "community_name": "UpdateService",
+      "community": 173,
+      "community_name": "Body",
       "norm_label": ".createuser()"
     },
     {
@@ -1484,8 +1484,8 @@
       "source_location": "L1236",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_updateuser",
-      "community": 173,
-      "community_name": "Body",
+      "community": 0,
+      "community_name": "AppController",
       "norm_label": ".updateuser()"
     },
     {
@@ -1572,8 +1572,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_src_artifact_service",
-      "community": 17,
-      "community_name": "ArtifactService",
+      "community": 163,
+      "community_name": "sshExecutor.test.js",
       "norm_label": "artifact.service.ts"
     },
     {
@@ -1583,8 +1583,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "api_src_artifact_service_cleanupwork",
-      "community": 17,
-      "community_name": "ArtifactService",
+      "community": 163,
+      "community_name": "sshExecutor.test.js",
       "norm_label": "cleanupwork"
     },
     {
@@ -1594,8 +1594,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "api_src_artifact_service_cleanupsummary",
-      "community": 17,
-      "community_name": "ArtifactService",
+      "community": 163,
+      "community_name": "sshExecutor.test.js",
       "norm_label": "cleanupsummary"
     },
     {
@@ -1627,8 +1627,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "api_src_artifact_service_artifactservice_constructor",
-      "community": 58,
-      "community_name": "AuthService",
+      "community": 52,
+      "community_name": "DatabaseService",
       "norm_label": ".constructor()"
     },
     {
@@ -1814,8 +1814,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "api_src_auth_service_authservice_constructor",
-      "community": 58,
-      "community_name": "AuthService",
+      "community": 52,
+      "community_name": "DatabaseService",
       "norm_label": ".constructor()"
     },
     {
@@ -1979,8 +1979,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "api_src_database_service_databaseservice",
-      "community": 58,
-      "community_name": "AuthService",
+      "community": 52,
+      "community_name": "DatabaseService",
       "norm_label": "databaseservice"
     },
     {
@@ -1990,8 +1990,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "api_src_database_service_ts_injectable",
-      "community": 58,
-      "community_name": "AuthService",
+      "community": 52,
+      "community_name": "DatabaseService",
       "norm_label": "injectable"
     },
     {
@@ -2012,8 +2012,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "api_src_database_service_databaseservice_onmoduleinit",
-      "community": 58,
-      "community_name": "AuthService",
+      "community": 52,
+      "community_name": "DatabaseService",
       "norm_label": ".onmoduleinit()"
     },
     {
@@ -2023,8 +2023,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "api_src_database_service_databaseservice_onmoduledestroy",
-      "community": 58,
-      "community_name": "AuthService",
+      "community": 52,
+      "community_name": "DatabaseService",
       "norm_label": ".onmoduledestroy()"
     },
     {
@@ -2034,8 +2034,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "api_src_database_service_databaseservice_isready",
-      "community": 58,
-      "community_name": "AuthService",
+      "community": 52,
+      "community_name": "DatabaseService",
       "norm_label": ".isready()"
     },
     {
@@ -2551,8 +2551,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_src_schema",
-      "community": 52,
-      "community_name": "DatabaseService",
+      "community": 60,
+      "community_name": "ssh-security.ts",
       "norm_label": "schema.ts"
     },
     {
@@ -2782,8 +2782,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "api_src_validation_validatescantarget",
-      "community": 176,
-      "community_name": ".createJob",
+      "community": 43,
+      "community_name": "ParserServerTests",
       "norm_label": "validatescantarget()"
     },
     {
@@ -2859,8 +2859,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_test_admin_tenant_mutations_test",
-      "community": 43,
-      "community_name": "ParserServerTests",
+      "community": 164,
+      "community_name": "index.js",
       "norm_label": "admin-tenant-mutations.test.ts"
     },
     {
@@ -2870,8 +2870,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "api_test_admin_tenant_mutations_test_crosstenantadmin",
-      "community": 43,
-      "community_name": "ParserServerTests",
+      "community": 164,
+      "community_name": "index.js",
       "norm_label": "crosstenantadmin"
     },
     {
@@ -2881,8 +2881,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "api_test_admin_tenant_mutations_test_appwithcrosstenanttarget",
-      "community": 43,
-      "community_name": "ParserServerTests",
+      "community": 164,
+      "community_name": "index.js",
       "norm_label": "appwithcrosstenanttarget()"
     },
     {
@@ -2892,8 +2892,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_test_artifact_cleanup_recovery_test",
-      "community": 17,
-      "community_name": "ArtifactService",
+      "community": 163,
+      "community_name": "sshExecutor.test.js",
       "norm_label": "artifact-cleanup-recovery.test.ts"
     },
     {
@@ -2903,8 +2903,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "api_test_artifact_cleanup_recovery_test_cleanupsummary",
-      "community": 17,
-      "community_name": "ArtifactService",
+      "community": 163,
+      "community_name": "sshExecutor.test.js",
       "norm_label": "cleanupsummary"
     },
     {
@@ -2914,8 +2914,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "api_test_artifact_cleanup_recovery_test_recoverableartifactservice",
-      "community": 17,
-      "community_name": "ArtifactService",
+      "community": 163,
+      "community_name": "sshExecutor.test.js",
       "norm_label": "recoverableartifactservice"
     },
     {
@@ -2925,8 +2925,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "api_test_artifact_cleanup_recovery_test_recoveryharness",
-      "community": 17,
-      "community_name": "ArtifactService",
+      "community": 163,
+      "community_name": "sshExecutor.test.js",
       "norm_label": "recoveryharness()"
     },
     {
@@ -2958,8 +2958,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_test_artifact_cleanup_test",
-      "community": 17,
-      "community_name": "ArtifactService",
+      "community": 163,
+      "community_name": "sshExecutor.test.js",
       "norm_label": "artifact-cleanup.test.ts"
     },
     {
@@ -2969,8 +2969,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "api_test_artifact_cleanup_test_cleanupsummary",
-      "community": 17,
-      "community_name": "ArtifactService",
+      "community": 163,
+      "community_name": "sshExecutor.test.js",
       "norm_label": "cleanupsummary"
     },
     {
@@ -2980,8 +2980,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "api_test_artifact_cleanup_test_cleanupservice",
-      "community": 17,
-      "community_name": "ArtifactService",
+      "community": 163,
+      "community_name": "sshExecutor.test.js",
       "norm_label": "cleanupservice"
     },
     {
@@ -2991,8 +2991,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "api_test_artifact_cleanup_test_cleanupharness",
-      "community": 17,
-      "community_name": "ArtifactService",
+      "community": 163,
+      "community_name": "sshExecutor.test.js",
       "norm_label": "cleanupharness()"
     },
     {
@@ -3002,8 +3002,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test",
-      "community": 174,
-      "community_name": "controller-shapes.test.ts",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "controller-shapes.test.ts"
     },
     {
@@ -3013,8 +3013,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_workercapability",
-      "community": 174,
-      "community_name": "controller-shapes.test.ts",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "workercapability()"
     },
     {
@@ -3024,8 +3024,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_workerrequest",
-      "community": 174,
-      "community_name": "controller-shapes.test.ts",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "workerrequest()"
     },
     {
@@ -3035,8 +3035,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_operatorrequest",
-      "community": 174,
-      "community_name": "controller-shapes.test.ts",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "operatorrequest"
     },
     {
@@ -3046,8 +3046,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_adminrequest",
-      "community": 174,
-      "community_name": "controller-shapes.test.ts",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "adminrequest"
     },
     {
@@ -3057,8 +3057,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_analystrequest",
-      "community": 174,
-      "community_name": "controller-shapes.test.ts",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "analystrequest"
     },
     {
@@ -3068,8 +3068,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_viewerrequest",
-      "community": 174,
-      "community_name": "controller-shapes.test.ts",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "viewerrequest"
     },
     {
@@ -3079,8 +3079,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_controller",
-      "community": 174,
-      "community_name": "controller-shapes.test.ts",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "controller()"
     },
     {
@@ -3123,8 +3123,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_test_managed_scan_validation_test",
-      "community": 176,
-      "community_name": ".createJob",
+      "community": 43,
+      "community_name": "ParserServerTests",
       "norm_label": "managed-scan-validation.test.ts"
     },
     {
@@ -3134,8 +3134,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "api_test_managed_scan_validation_test_viewerrequest",
-      "community": 176,
-      "community_name": ".createJob",
+      "community": 43,
+      "community_name": "ParserServerTests",
       "norm_label": "viewerrequest"
     },
     {
@@ -3321,8 +3321,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_test_scan_run_events_test",
-      "community": 43,
-      "community_name": "ParserServerTests",
+      "community": 168,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "scan-run-events.test.ts"
     },
     {
@@ -3332,8 +3332,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "api_test_scan_run_events_test_eventendpoint",
-      "community": 43,
-      "community_name": "ParserServerTests",
+      "community": 168,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "eventendpoint"
     },
     {
@@ -3343,8 +3343,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "api_test_scan_run_events_test_eventsendpoint",
-      "community": 43,
-      "community_name": "ParserServerTests",
+      "community": 168,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "eventsendpoint()"
     },
     {
@@ -3376,8 +3376,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_test_tenant_controller_test",
-      "community": 43,
-      "community_name": "ParserServerTests",
+      "community": 171,
+      "community_name": "index.js",
       "norm_label": "tenant-controller.test.ts"
     },
     {
@@ -3387,8 +3387,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "api_test_tenant_controller_test_tenantrequest",
-      "community": 43,
-      "community_name": "ParserServerTests",
+      "community": 171,
+      "community_name": "index.js",
       "norm_label": "tenantrequest"
     },
     {
@@ -3398,8 +3398,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "api_test_tenant_controller_test_appwithrecordedqueries",
-      "community": 43,
-      "community_name": "ParserServerTests",
+      "community": 171,
+      "community_name": "index.js",
       "norm_label": "appwithrecordedqueries()"
     },
     {
@@ -3486,8 +3486,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_test_worker_tenant_scope_test",
-      "community": 17,
-      "community_name": "ArtifactService",
+      "community": 163,
+      "community_name": "sshExecutor.test.js",
       "norm_label": "worker-tenant-scope.test.ts"
     },
     {
@@ -5788,7 +5788,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "packages_shared_src_index",
-      "community": 171,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "index.js"
     },
@@ -5799,8 +5799,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "packages_shared_src_index_queues",
-      "community": 11,
-      "community_name": "queue.service.ts",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "queues"
     },
     {
@@ -5810,7 +5810,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "packages_shared_src_index_job_status",
-      "community": 171,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "job_status"
     },
@@ -5821,7 +5821,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "packages_shared_src_index_run_event_type",
-      "community": 171,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "run_event_type"
     },
@@ -5832,8 +5832,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "packages_shared_src_index_artifact_kind",
-      "community": 14,
-      "community_name": "app.controller.ts",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "artifact_kind"
     },
     {
@@ -5843,7 +5843,7 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "packages_shared_src_index_buildrunevent",
-      "community": 171,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "buildrunevent()"
     },
@@ -5854,7 +5854,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "packages_shared_src_index_validateartifactupload",
-      "community": 171,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "validateartifactupload()"
     },
@@ -5865,8 +5865,8 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "packages_shared_src_index_scannerbundlecontractversion",
-      "community": 168,
-      "community_name": "scannerBundleContractVersion",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "scannerbundlecontractversion()"
     },
     {
@@ -9566,10 +9566,21 @@
       "norm_label": ".test_scan_start_redirects_to_machine_selection()"
     },
     {
-      "label": ".test_authenticated_root_continues_to_redirect_to_dashboard()",
+      "label": ".test_public_shell_sign_in_uses_the_mounted_application_path()",
       "file_type": "code",
       "source_file": "tests/test_compact_core_operations_pages.py",
       "source_location": "L73",
+      "_origin": "ast",
+      "id": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_public_shell_sign_in_uses_the_mounted_application_path",
+      "community": 86,
+      "community_name": "CompactCoreOperationsPageTests",
+      "norm_label": ".test_public_shell_sign_in_uses_the_mounted_application_path()"
+    },
+    {
+      "label": ".test_authenticated_root_continues_to_redirect_to_dashboard()",
+      "file_type": "code",
+      "source_file": "tests/test_compact_core_operations_pages.py",
+      "source_location": "L78",
       "_origin": "ast",
       "id": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_authenticated_root_continues_to_redirect_to_dashboard",
       "community": 86,
@@ -12366,8 +12377,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_app_auth_register_page",
-      "community": 16,
-      "community_name": "routePath",
+      "community": 3,
+      "community_name": "appPath",
       "norm_label": "page.jsx"
     },
     {
@@ -12377,8 +12388,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "web_app_auth_register_page_register",
-      "community": 16,
-      "community_name": "routePath",
+      "community": 3,
+      "community_name": "appPath",
       "norm_label": "register()"
     },
     {
@@ -12773,8 +12784,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "web_app_saved_views_slug_page_savedviewslugpage",
-      "community": 119,
-      "community_name": "page.jsx",
+      "community": 30,
+      "community_name": "saved-views.jsx",
       "norm_label": "savedviewslugpage()"
     },
     {
@@ -13345,8 +13356,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_components_new_machine_form",
-      "community": 16,
-      "community_name": "routePath",
+      "community": 3,
+      "community_name": "appPath",
       "norm_label": "new-machine-form.jsx"
     },
     {
@@ -13356,8 +13367,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "web_components_new_machine_form_newmachineform",
-      "community": 16,
-      "community_name": "routePath",
+      "community": 3,
+      "community_name": "appPath",
       "norm_label": "newmachineform()"
     },
     {
@@ -13675,8 +13686,8 @@
       "source_location": "L285",
       "_origin": "ast",
       "id": "web_components_saved_views_savedviewcontent",
-      "community": 16,
-      "community_name": "routePath",
+      "community": 30,
+      "community_name": "saved-views.jsx",
       "norm_label": "savedviewcontent()"
     },
     {
@@ -13686,8 +13697,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_components_sign_in_form",
-      "community": 181,
-      "community_name": "@aws-sdk/client-s3",
+      "community": 3,
+      "community_name": "appPath",
       "norm_label": "sign-in-form.jsx"
     },
     {
@@ -13697,8 +13708,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "web_components_sign_in_form_eyeicon",
-      "community": 181,
-      "community_name": "@aws-sdk/client-s3",
+      "community": 3,
+      "community_name": "appPath",
       "norm_label": "eyeicon()"
     },
     {
@@ -13708,8 +13719,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "web_components_sign_in_form_signinform",
-      "community": 181,
-      "community_name": "@aws-sdk/client-s3",
+      "community": 3,
+      "community_name": "appPath",
       "norm_label": "signinform()"
     },
     {
@@ -15374,10 +15385,21 @@
       "norm_label": "nextconfig"
     },
     {
+      "label": "invalidMountedLinks",
+      "file_type": "code",
+      "source_file": "web/scripts/verify-mvp.mjs",
+      "source_location": "L61",
+      "_origin": "ast",
+      "id": "web_scripts_verify_mvp_invalidmountedlinks",
+      "community": 57,
+      "community_name": "verify-mvp.mjs",
+      "norm_label": "invalidmountedlinks"
+    },
+    {
       "label": "navigationData",
       "file_type": "code",
       "source_file": "web/scripts/verify-mvp.mjs",
-      "source_location": "L64",
+      "source_location": "L67",
       "_origin": "ast",
       "id": "web_scripts_verify_mvp_navigationdata",
       "community": 57,
@@ -15388,7 +15410,7 @@
       "label": "navigationGroups",
       "file_type": "code",
       "source_file": "web/scripts/verify-mvp.mjs",
-      "source_location": "L65",
+      "source_location": "L68",
       "_origin": "ast",
       "id": "web_scripts_verify_mvp_navigationgroups",
       "community": 57,
@@ -15399,7 +15421,7 @@
       "label": "navigationPositions",
       "file_type": "code",
       "source_file": "web/scripts/verify-mvp.mjs",
-      "source_location": "L66",
+      "source_location": "L69",
       "_origin": "ast",
       "id": "web_scripts_verify_mvp_navigationpositions",
       "community": 57,
@@ -15864,7 +15886,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_apiclient",
-      "community": 164,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "apiclient.js"
     },
@@ -15875,7 +15897,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_apiclient_postjson",
-      "community": 164,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "postjson()"
     },
@@ -15886,7 +15908,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "workers_worker_node_src_apiclient_getjson",
-      "community": 164,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "getjson()"
     },
@@ -15897,7 +15919,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "workers_worker_node_src_apiclient_createapiclient",
-      "community": 164,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "createapiclient()"
     },
@@ -15908,8 +15930,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_config",
-      "community": 180,
-      "community_name": "config.js",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "config.js"
     },
     {
@@ -15919,8 +15941,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_config_positiveinteger",
-      "community": 180,
-      "community_name": "config.js",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "positiveinteger()"
     },
     {
@@ -15930,8 +15952,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "workers_worker_node_src_config_sshworkerconcurrency",
-      "community": 180,
-      "community_name": "config.js",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "sshworkerconcurrency()"
     },
     {
@@ -15941,8 +15963,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "workers_worker_node_src_config_readconfig",
-      "community": 180,
-      "community_name": "config.js",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "readconfig()"
     },
     {
@@ -15985,7 +16007,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_index",
-      "community": 164,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "index.js"
     },
@@ -15996,7 +16018,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "workers_worker_node_src_index_config",
-      "community": 164,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "config"
     },
@@ -16007,7 +16029,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "workers_worker_node_src_index_connection",
-      "community": 164,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "connection"
     },
@@ -16018,7 +16040,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "workers_worker_node_src_index_queue",
-      "community": 164,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "queue"
     },
@@ -16029,7 +16051,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "workers_worker_node_src_index_events",
-      "community": 164,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "events"
     },
@@ -16040,7 +16062,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "workers_worker_node_src_index_api",
-      "community": 164,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "api"
     },
@@ -16051,7 +16073,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "workers_worker_node_src_index_parsewithpython",
-      "community": 164,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "parsewithpython"
     },
@@ -16062,7 +16084,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "workers_worker_node_src_index_worker",
-      "community": 164,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "worker"
     },
@@ -16073,7 +16095,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "workers_worker_node_src_index_processartifactcleanupjob",
-      "community": 164,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "processartifactcleanupjob()"
     },
@@ -16084,7 +16106,7 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "workers_worker_node_src_index_artifactcleanupworker",
-      "community": 164,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "artifactcleanupworker"
     },
@@ -16095,7 +16117,7 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "workers_worker_node_src_index_shutdown",
-      "community": 164,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "shutdown()"
     },
@@ -16106,7 +16128,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_lifecycle",
-      "community": 171,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "lifecycle.js"
     },
@@ -16128,7 +16150,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "workers_worker_node_src_lifecycle_lifecycleevent",
-      "community": 171,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "lifecycleevent()"
     },
@@ -16139,7 +16161,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "workers_worker_node_src_lifecycle_artifactuploadpayload",
-      "community": 171,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "artifactuploadpayload()"
     },
@@ -16249,8 +16271,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_parserclient",
-      "community": 172,
-      "community_name": "payloadContract.test.js",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "parserclient.js"
     },
     {
@@ -16260,8 +16282,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "workers_worker_node_src_parserclient_createparserclient",
-      "community": 172,
-      "community_name": "payloadContract.test.js",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "createparserclient()"
     },
     {
@@ -16271,8 +16293,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_payload",
-      "community": 168,
-      "community_name": "scannerBundleContractVersion",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "payload.js"
     },
     {
@@ -16282,8 +16304,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "workers_worker_node_src_payload_normalizejobdata",
-      "community": 168,
-      "community_name": "scannerBundleContractVersion",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "normalizejobdata()"
     },
     {
@@ -16293,8 +16315,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_payloadlimits",
-      "community": 172,
-      "community_name": "payloadContract.test.js",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "payloadlimits.js"
     },
     {
@@ -16315,8 +16337,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "workers_worker_node_src_payloadlimits_serializeparserrequest",
-      "community": 172,
-      "community_name": "payloadContract.test.js",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "serializeparserrequest()"
     },
     {
@@ -16326,8 +16348,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner",
-      "community": 168,
-      "community_name": "scannerBundleContractVersion",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "scannerrunner.js"
     },
     {
@@ -16337,8 +16359,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_execfileasync",
-      "community": 168,
-      "community_name": "scannerBundleContractVersion",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "execfileasync"
     },
     {
@@ -16348,8 +16370,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_severityfromrisk",
-      "community": 168,
-      "community_name": "scannerBundleContractVersion",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "severityfromrisk()"
     },
     {
@@ -16359,8 +16381,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_tocontract",
-      "community": 168,
-      "community_name": "scannerBundleContractVersion",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "tocontract()"
     },
     {
@@ -16370,8 +16392,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_artifacttypefor",
-      "community": 168,
-      "community_name": "scannerBundleContractVersion",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "artifacttypefor()"
     },
     {
@@ -16381,8 +16403,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_contenttypefor",
-      "community": 168,
-      "community_name": "scannerBundleContractVersion",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "contenttypefor()"
     },
     {
@@ -16392,8 +16414,8 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_runbundledscanner",
-      "community": 168,
-      "community_name": "scannerBundleContractVersion",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "runbundledscanner()"
     },
     {
@@ -16656,7 +16678,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_test_apiclient_test",
-      "community": 164,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "apiclient.test.js"
     },
@@ -16678,8 +16700,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_test_config_test",
-      "community": 180,
-      "community_name": "config.js",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "config.test.js"
     },
     {
@@ -16689,7 +16711,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_test_lifecycle_test",
-      "community": 171,
+      "community": 1,
       "community_name": "index.js",
       "norm_label": "lifecycle.test.js"
     },
@@ -16733,8 +16755,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_test_payload_test",
-      "community": 168,
-      "community_name": "scannerBundleContractVersion",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "payload.test.js"
     },
     {
@@ -16744,8 +16766,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_test_payloadcontract_test",
-      "community": 172,
-      "community_name": "payloadContract.test.js",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "payloadcontract.test.js"
     },
     {
@@ -16755,8 +16777,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "workers_worker_node_test_payloadcontract_test_job",
-      "community": 172,
-      "community_name": "payloadContract.test.js",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "job"
     },
     {
@@ -16766,8 +16788,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "workers_worker_node_test_payloadcontract_test_grant",
-      "community": 172,
-      "community_name": "payloadContract.test.js",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "grant"
     },
     {
@@ -16777,8 +16799,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "workers_worker_node_test_payloadcontract_test_scannerjsonwithexactbytes",
-      "community": 172,
-      "community_name": "payloadContract.test.js",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "scannerjsonwithexactbytes()"
     },
     {
@@ -16788,8 +16810,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "workers_worker_node_test_payloadcontract_test_apirecorder",
-      "community": 172,
-      "community_name": "payloadContract.test.js",
+      "community": 1,
+      "community_name": "index.js",
       "norm_label": "apirecorder()"
     },
     {
@@ -16799,8 +16821,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test",
-      "community": 163,
-      "community_name": "sshExecutor.test.js",
+      "community": 6,
+      "community_name": "sshExecutor.js",
       "norm_label": "sshexecutor.test.js"
     },
     {
@@ -16810,8 +16832,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_readyclient",
-      "community": 163,
-      "community_name": "sshExecutor.test.js",
+      "community": 6,
+      "community_name": "sshExecutor.js",
       "norm_label": "readyclient"
     },
     {
@@ -16821,8 +16843,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_readyclient_constructor",
-      "community": 163,
-      "community_name": "sshExecutor.test.js",
+      "community": 6,
+      "community_name": "sshExecutor.js",
       "norm_label": ".constructor()"
     },
     {
@@ -16832,8 +16854,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_readyclient_connect",
-      "community": 163,
-      "community_name": "sshExecutor.test.js",
+      "community": 6,
+      "community_name": "sshExecutor.js",
       "norm_label": ".connect()"
     },
     {
@@ -16843,8 +16865,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_readyclient_end",
-      "community": 163,
-      "community_name": "sshExecutor.test.js",
+      "community": 6,
+      "community_name": "sshExecutor.js",
       "norm_label": ".end()"
     },
     {
@@ -16854,8 +16876,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_sshcontext",
-      "community": 163,
-      "community_name": "sshExecutor.test.js",
+      "community": 6,
+      "community_name": "sshExecutor.js",
       "norm_label": "sshcontext()"
     },
     {
@@ -16865,8 +16887,8 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_commandclient",
-      "community": 163,
-      "community_name": "sshExecutor.test.js",
+      "community": 6,
+      "community_name": "sshExecutor.js",
       "norm_label": "commandclient"
     },
     {
@@ -16876,8 +16898,8 @@
       "source_location": "L156",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_commandclient_constructor",
-      "community": 163,
-      "community_name": "sshExecutor.test.js",
+      "community": 6,
+      "community_name": "sshExecutor.js",
       "norm_label": ".constructor()"
     },
     {
@@ -16887,8 +16909,8 @@
       "source_location": "L162",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_commandclient_connect",
-      "community": 163,
-      "community_name": "sshExecutor.test.js",
+      "community": 6,
+      "community_name": "sshExecutor.js",
       "norm_label": ".connect()"
     },
     {
@@ -16898,8 +16920,8 @@
       "source_location": "L163",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_commandclient_end",
-      "community": 163,
-      "community_name": "sshExecutor.test.js",
+      "community": 6,
+      "community_name": "sshExecutor.js",
       "norm_label": ".end()"
     },
     {
@@ -16909,8 +16931,8 @@
       "source_location": "L164",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_commandclient_exec",
-      "community": 163,
-      "community_name": "sshExecutor.test.js",
+      "community": 6,
+      "community_name": "sshExecutor.js",
       "norm_label": ".exec()"
     },
     {
@@ -16920,8 +16942,8 @@
       "source_location": "L171",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_stageclient",
-      "community": 163,
-      "community_name": "sshExecutor.test.js",
+      "community": 6,
+      "community_name": "sshExecutor.js",
       "norm_label": "stageclient"
     },
     {
@@ -16931,8 +16953,8 @@
       "source_location": "L174",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_stageclient_constructor",
-      "community": 163,
-      "community_name": "sshExecutor.test.js",
+      "community": 6,
+      "community_name": "sshExecutor.js",
       "norm_label": ".constructor()"
     },
     {
@@ -16942,8 +16964,8 @@
       "source_location": "L182",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_stageclient_connect",
-      "community": 163,
-      "community_name": "sshExecutor.test.js",
+      "community": 6,
+      "community_name": "sshExecutor.js",
       "norm_label": ".connect()"
     },
     {
@@ -16953,8 +16975,8 @@
       "source_location": "L183",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_stageclient_end",
-      "community": 163,
-      "community_name": "sshExecutor.test.js",
+      "community": 6,
+      "community_name": "sshExecutor.js",
       "norm_label": ".end()"
     },
     {
@@ -16964,8 +16986,8 @@
       "source_location": "L184",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_stageclient_sftp",
-      "community": 163,
-      "community_name": "sshExecutor.test.js",
+      "community": 6,
+      "community_name": "sshExecutor.js",
       "norm_label": ".sftp()"
     },
     {
@@ -16975,8 +16997,8 @@
       "source_location": "L185",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_stageclient_exec",
-      "community": 163,
-      "community_name": "sshExecutor.test.js",
+      "community": 6,
+      "community_name": "sshExecutor.js",
       "norm_label": ".exec()"
     },
     {
@@ -16986,8 +17008,8 @@
       "source_location": "L232",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_scannerjsonwithexactbytes",
-      "community": 163,
-      "community_name": "sshExecutor.test.js",
+      "community": 6,
+      "community_name": "sshExecutor.js",
       "norm_label": "scannerjsonwithexactbytes()"
     },
     {
@@ -42463,7 +42485,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_compact_core_operations_pages.py",
-      "source_location": "L74",
+      "source_location": "L79",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_authenticated_root_continues_to_redirect_to_dashboard",
@@ -42511,6 +42533,18 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_compact_core_operations_pages.py",
+      "source_location": "L74",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_public_shell_sign_in_uses_the_mounted_application_path",
+      "target": "tests_test_compact_core_operations_pages_read",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_compact_core_operations_pages.py",
       "source_location": "L68",
       "weight": 1.0,
       "_origin": "ast",
@@ -42522,7 +42556,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_compact_core_operations_pages.py",
-      "source_location": "L73",
+      "source_location": "L78",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests",
@@ -42560,6 +42594,17 @@
       "_origin": "ast",
       "source": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests",
       "target": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_inventory_uses_a_compact_registry_with_real_filter_controls",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_compact_core_operations_pages.py",
+      "source_location": "L73",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests",
+      "target": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_public_shell_sign_in_uses_the_mounted_application_path",
       "confidence_score": 1.0
     },
     {
@@ -50798,6 +50843,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "web/scripts/verify-mvp.mjs",
+      "source_location": "L61",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "web_scripts_verify_mvp",
+      "target": "web_scripts_verify_mvp_invalidmountedlinks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "web/scripts/verify-mvp.mjs",
       "source_location": "L48",
       "weight": 1.0,
       "_origin": "ast",
@@ -50820,7 +50876,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "web/scripts/verify-mvp.mjs",
-      "source_location": "L64",
+      "source_location": "L67",
       "weight": 1.0,
       "_origin": "ast",
       "source": "web_scripts_verify_mvp",
@@ -50831,7 +50887,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "web/scripts/verify-mvp.mjs",
-      "source_location": "L65",
+      "source_location": "L68",
       "weight": 1.0,
       "_origin": "ast",
       "source": "web_scripts_verify_mvp",
@@ -50842,7 +50898,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "web/scripts/verify-mvp.mjs",
-      "source_location": "L66",
+      "source_location": "L69",
       "weight": 1.0,
       "_origin": "ast",
       "source": "web_scripts_verify_mvp",
@@ -60396,5 +60452,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "c511a4230da0e009e22ef3af072ebb2062ab2143"
+  "built_at_commit": "d42ea46607178023e0ac1f35eddd967c8722e60d"
 }
