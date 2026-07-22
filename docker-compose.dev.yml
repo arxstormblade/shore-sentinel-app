@@ -1,13 +1,5 @@
-# Explicit local-development override. Production uses docker-compose.yml alone.
+# Explicit local-development override. It still launches one application container.
 services:
-  api:
-    environment:
-      NODE_ENV: development
-
-  web:
-    environment:
-      NODE_ENV: development
-
-  worker-node:
+  shore-sentinel:
     environment:
       NODE_ENV: development

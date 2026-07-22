@@ -22,8 +22,7 @@ export async function apiGet(path) {
   const url = `${serverApiBase()}${path.startsWith('/') ? path : `/${path}`}`;
   const res = await fetch(url, { cache: 'no-store', headers: await sessionCookieHeader() });
   if (!res.ok) {
-    const body = await res.text().catch(() => '');
-    throw new Error(`API ${path} failed with ${res.status}${body ? `: ${body.slice(0, 160)}` : ''}`);
+    throw new Error(`API request failed (${res.status})`);
   }
   return res.json();
 }

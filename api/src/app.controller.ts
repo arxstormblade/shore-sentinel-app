@@ -1,4 +1,4 @@
-import { BadRequestException, Body, ConflictException, Controller, Delete, ForbiddenException, Get, Header, NotFoundException, Param, Patch, Post, Req, Res } from '@nestjs/common';
+import { BadRequestException, Body, ConflictException, Controller, Delete, ForbiddenException, Get, Header, NotFoundException, Param, Patch, Post, Req, Res, UnauthorizedException } from '@nestjs/common';
 import bcrypt from 'bcryptjs';
 import { createCipheriv, createDecipheriv, createHash, createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { Readable } from 'node:stream';
@@ -13,6 +13,10 @@ import { assertExactlyOneSubject, requireString, requireWorkerAttempt, validateA
 import { ROLE_MATRIX } from './config.js';
 import { assertSshLaunchRequirements } from './ssh-security.js';
 import type { RequestPrincipal } from './request-principal.js';
+import { AuthorizationService } from './engagement/authorization.service.js';
+import { ExecutionGrantService } from './policy/execution-grant.service.js';
+import { AccessGovernanceService } from './identity/access-governance.service.js';
+import { MfaService } from './identity/mfa.service.js';
 
 const THIRTY_DAYS_SECONDS = 60 * 60 * 24 * 30;
 const ARTIFACT_CONTENT_TYPES: Record<string, string> = {
@@ -80,6 +84,14 @@ function trimText(value: unknown) {
   return typeof value === 'string' ? value.trim() : '';
 }
 
+function requireUuid(body: Record<string, unknown>, field: string) {
+  const value = requireString(body, field);
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)) {
+    throw new BadRequestException(`${field} must be a valid UUID`);
+  }
+  return value;
+}
+
 type SshEnrollment = {
   hostKeyAlgorithm: 'ssh-ed25519';
   hostKeyFingerprint: string;
@@ -144,6 +156,10 @@ export class AppController {
     private readonly queue: QueueService,
     private readonly artifacts: ArtifactService,
     private readonly updates: UpdateService,
+    private readonly authorization?: AuthorizationService,
+    private readonly executionGrants?: ExecutionGrantService,
+    private readonly accessGovernance?: AccessGovernanceService,
+    private readonly mfa?: MfaService,
   ) {}
 
   @Get('health') health() { return { ok: true, service: 'shore-sentinel-api' }; }
@@ -152,6 +168,9 @@ export class AppController {
   @Post('auth/login') async login(@Body() body: Record<string, unknown>, @Res({ passthrough: true }) res: Response) { const rememberMe = this.rememberMe(body); const result = await this.auth.login(requireString(body, 'email'), requireString(body, 'password'), rememberMe); this.setSessionCookie(res, result.token, rememberMe); return { user: result.user }; }
   @Post('auth/logout') logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) { this.auth.logout(this.token(req)); res.clearCookie('shore_session'); return { ok: true }; }
   @Get('auth/me') async me(@Req() req: Request) { return this.auth.me(this.token(req)); }
+  @Post('auth/mfa/enroll') async enrollMfa(@Req() req: Request) { const actor = this.principal(req); return (this.mfa ?? new MfaService(this.db)).enrollTotp(actor.tenantId, actor.userId); }
+  @Post('auth/mfa/verify') async verifyMfa(@Body() body: Record<string, unknown>, @Req() req: Request) { const actor = this.principal(req); const token = this.token(req); if (!token) throw new UnauthorizedException('Authentication required'); const valid = await (this.mfa ?? new MfaService(this.db)).verifyTotp(actor.tenantId, actor.userId, requireString(body, 'code')); return this.auth.verifyMfa(token, valid); }
+  @Post('auth/step-up') async stepUp(@Body() body: Record<string, unknown>, @Req() req: Request) { const actor = this.principal(req); const token = this.token(req); if (!token) throw new UnauthorizedException('Authentication required'); const valid = await (this.mfa ?? new MfaService(this.db)).verifyTotp(actor.tenantId, actor.userId, requireString(body, 'code')); return this.auth.stepUp(token, valid); }
   @Get('settings/current') async settings(@Req() req: Request) { const tenantId = this.tenantId(req); const result = await this.db.query('SELECT s.*, t.slug AS tenant_slug FROM settings s JOIN tenants t ON t.id=s.tenant_id WHERE s.tenant_id=$1', [tenantId]); return result.rows[0]; }
 
   @Get('system/update')
@@ -534,7 +553,58 @@ export class AppController {
     return { deleted: true, id, affected };
   }
   @Get('one-time-audits/:id') async oneTimeAudit(@Param('id') id: string, @Req() req: Request) { const tenantId = this.tenantId(req); const result = await this.db.query('SELECT * FROM one_time_audits WHERE tenant_id=$1 AND id=$2', [tenantId, id]); if (!result.rows[0]) throw new BadRequestException('one-time audit not found'); return result.rows[0]; }
-  @Post('targets/:id/scan-jobs') async runTarget(@Param('id') id: string, @Body() body: Record<string, unknown>, @Req() req: Request) { await this.requirePermission(req, 'scan_jobs_live_progress', 'add'); return this.createJob('managed_target', id, null, body, req); }
+  @Get('engagements')
+  async listEngagements(@Req() req: Request) {
+    const tenantId = this.tenantId(req);
+    const result = await this.db.query('SELECT id, name, owner_team, scope, budget, expires_at, revoked_at, owner_authorized, created_by, created_at FROM engagements WHERE tenant_id=$1 ORDER BY created_at DESC', [tenantId]);
+    return result.rows;
+  }
+  @Get('identity/groups')
+  async listIdentityGroups(@Req() req: Request) { const actor = await this.requireAdmin(req); return (this.accessGovernance ?? new AccessGovernanceService(this.db)).listGroups(actor.tenant_id); }
+  @Post('identity/groups')
+  async createIdentityGroup(@Body() body: Record<string, unknown>, @Req() req: Request) { const actor = await this.requireAdmin(req); return (this.accessGovernance ?? new AccessGovernanceService(this.db)).createGroup(actor.tenant_id, requireString(body, 'name'), actor.id); }
+  @Post('identity/groups/:id/members')
+  async addIdentityGroupMember(@Param('id') id: string, @Body() body: Record<string, unknown>, @Req() req: Request) { const actor = await this.requireAdmin(req); return (this.accessGovernance ?? new AccessGovernanceService(this.db)).addMember(actor.tenant_id, id, requireString(body, 'user_id'), actor.id); }
+  @Get('identity/devices')
+  async listIdentityDevices(@Req() req: Request) { const actor = this.principal(req); return (this.accessGovernance ?? new AccessGovernanceService(this.db)).listDevices(actor.tenantId, actor.userId); }
+  @Post('identity/devices/:id/revoke')
+  async revokeIdentityDevice(@Param('id') id: string, @Req() req: Request) { const actor = this.principal(req); return (this.accessGovernance ?? new AccessGovernanceService(this.db)).revokeDevice(actor.tenantId, id, actor.userId); }
+  @Post('identity/break-glass')
+  async beginIdentityBreakGlass(@Body() body: Record<string, unknown>, @Req() req: Request) { const actor = await this.requireAdmin(req); return (this.accessGovernance ?? new AccessGovernanceService(this.db)).beginBreakGlass({ tenantId: actor.tenant_id, actorId: actor.id, reason: requireString(body, 'reason'), ticketReference: requireString(body, 'ticket_reference'), expiresAt: new Date(requireString(body, 'expires_at')) }); }
+  @Post('engagements')
+  async createEngagement(@Body() body: Record<string, unknown>, @Req() req: Request) {
+    const actor = await this.requireAdmin(req);
+    const service = this.authorization ?? new AuthorizationService(this.db);
+    return service.createEngagement({ tenantId: actor.tenant_id, name: requireString(body, 'name'), ownerTeam: requireString(body, 'owner_team'), scope: (body.scope && typeof body.scope === 'object' && !Array.isArray(body.scope) ? body.scope : {}) as Record<string, unknown>, budget: (body.budget && typeof body.budget === 'object' && !Array.isArray(body.budget) ? body.budget : {}) as Record<string, unknown>, expiresAt: new Date(requireString(body, 'expires_at')), createdBy: actor.id });
+  }
+  @Post('engagements/:id/approvals')
+  async approveEngagement(@Param('id') id: string, @Body() body: Record<string, unknown>, @Req() req: Request) {
+    const actor = await this.requireAdmin(req);
+    const role = body.role === 'owner' || body.role === 'reviewer' || body.role === 'security' ? body.role : null;
+    if (!role) throw new BadRequestException('approval role is required');
+    const service = this.authorization ?? new AuthorizationService(this.db);
+    return service.approveEngagement({ tenantId: actor.tenant_id, engagementId: id, approverId: actor.id, role });
+  }
+  @Post('engagements/:id/revoke')
+  async revokeEngagement(@Param('id') id: string, @Body() body: Record<string, unknown>, @Req() req: Request) {
+    const actor = await this.requireAdmin(req);
+    return (this.authorization ?? new AuthorizationService(this.db)).revokeEngagement(actor.tenant_id, id, actor.id, requireString(body, 'reason'));
+  }
+  @Post('policies/simulate')
+  async simulatePolicy(@Body() body: Record<string, unknown>, @Req() req: Request) {
+    const principal = this.principal(req);
+    const engagementId = requireUuid(body, 'engagement_id');
+    const policyBundleId = requireUuid(body, 'policy_bundle_id');
+    const requestedScope = (body.scope && typeof body.scope === 'object' && !Array.isArray(body.scope) ? body.scope : {}) as Record<string, unknown>;
+    const [engagement, policy] = await Promise.all([
+      this.db.query<{ id: string }>('SELECT id FROM engagements WHERE tenant_id=$1 AND id=$2', [principal.tenantId, engagementId]),
+      this.db.query<{ id: string }>('SELECT id FROM policy_bundles WHERE tenant_id=$1 AND id=$2', [principal.tenantId, policyBundleId]),
+    ]);
+    const decision = await (this.authorization ?? new AuthorizationService(this.db)).simulate({ tenantId: principal.tenantId, engagementId, policyBundleId, requestedScope });
+    await this.db.query('INSERT INTO policy_simulations (tenant_id,policy_bundle_id,engagement_id,requested_scope,allowed,reason,simulated_by) VALUES ($1,$2,$3,$4,$5,$6,$7)', [principal.tenantId, policy.rows[0]?.id ?? null, engagement.rows[0]?.id ?? null, requestedScope, decision.allowed, decision.reason ?? null, principal.userId]);
+    return decision;
+  }
+  @Post('targets/:id/scan-jobs') async runTarget(@Param('id') id: string, @Body() body: Record<string, unknown>, @Req() req: Request) { await this.requirePermission(req, 'scan_jobs_live_progress', 'add'); await this.requireExecutionAuthorization(req, body); return this.createJob('managed_target', id, null, body, req); }
   @Get('scan-jobs/:id') async job(@Param('id') id: string, @Req() req: Request) { const tenantId = this.tenantId(req); const result = await this.db.query('SELECT * FROM scan_jobs WHERE tenant_id=$1 AND id=$2', [tenantId, id]); if (!result.rows[0]) throw new BadRequestException('scan job not found'); return result.rows[0]; }
   @Get('scan-runs/:id') async run(@Param('id') id: string, @Req() req: Request) { const tenantId = this.tenantId(req); const result = await this.db.query('SELECT id, job_id, subject_type, target_id, one_time_audit_id, status, exit_code, started_at, completed_at, duration_seconds, created_at, updated_at, runtime_context FROM scan_runs WHERE tenant_id=$1 AND id=$2', [tenantId, id]); if (!result.rows[0]) throw new BadRequestException('scan run not found'); return this.publicRun(result.rows[0]); }
   @Post('scan-runs/:id/cancel')
@@ -1067,6 +1137,18 @@ export class AppController {
       throw new ForbiddenException('Authenticated request principal required');
     }
     return principal;
+  }
+
+  private async requireExecutionAuthorization(req: Request, body: Record<string, unknown>) {
+    if ((this.db as DatabaseService & { enforceEnterpriseAuthorization?: boolean }).enforceEnterpriseAuthorization !== true) return;
+    const principal = this.principal(req);
+    const engagementId = requireString(body, 'engagement_id');
+    const policyBundleId = requireString(body, 'policy_bundle_id');
+    const expectedPolicyHash = requireString(body, 'policy_hash');
+    const scope = (body.scope && typeof body.scope === 'object' && !Array.isArray(body.scope) ? body.scope : {}) as Record<string, unknown>;
+    const decision = await (this.authorization ?? new AuthorizationService(this.db)).authorize({ tenantId: principal.tenantId, engagementId, policyBundleId, expectedPolicyHash, requestedScope: scope });
+    if (!decision.allowed) throw new ForbiddenException(`Execution authorization denied: ${decision.reason ?? 'policy decision unavailable'}`);
+    return decision;
   }
 
   private tenantId(req: Request) {

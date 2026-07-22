@@ -12,7 +12,7 @@ class RemoveInAppOneTimeAuditTests(unittest.TestCase):
     def test_github_readme_remains_the_one_time_audit_channel(self):
         readme = read('README.md')
         self.assertIn('Option 1 — One-Time Audit', readme)
-        self.assertIn('scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py', readme)
+        self.assertIn('scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.0.py', readme)
         self.assertIn('Reports and artifacts stay on the client machine', readme)
 
     def test_app_surfaces_do_not_link_to_one_time_audit_runner(self):

@@ -1,0 +1,7 @@
+{
+  "contractVersion": "shore-sentinel.scanner-bundle/v1",
+  "bundle": { "name": "agent-security-selfcheck", "version": "3.5.0" },
+  "entrypoint": "bin/Agent_Security_Selfcheck_v3.5.0.py",
+  "outputSchema": "shore-sentinel.scanner-output/v1",
+  "requiredEnv": []
+}

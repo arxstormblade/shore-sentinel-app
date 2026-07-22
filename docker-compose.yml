@@ -1,181 +1,74 @@
 name: shore-sentinel
 
 services:
-  postgres:
-    image: postgres:16.4-alpine3.20
+  shore-sentinel:
+    build:
+      context: .
+      dockerfile: container/Dockerfile
+      # Keep the local Compose path single-platform so `docker compose up --build`
+      # can load the image into the local engine. CI uses the pinned Buildx
+      # invocation in quality-security.yml for the linux/amd64 + linux/arm64 OCI index.
+      args:
+        IMAGE_VERSION: "1.1.0"
+        SOURCE_DATE_EPOCH: ${SOURCE_DATE_EPOCH:-0}
+        VCS_REF: ${VCS_REF:-local}
+    image: shore-sentinel-single:1.1.0
+    labels:
+      org.opencontainers.image.title: Shore Sentinel single-container
+      org.opencontainers.image.version: "1.1.0"
+    user: root
     environment:
+      NODE_ENV: production
+      PORT: 4000
+      WEB_PORT: 3010
       POSTGRES_DB: ${POSTGRES_DB:-shore_sentinel}
       POSTGRES_USER: ${POSTGRES_USER:-shore_sentinel}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
-    volumes: [postgres-data:/var/lib/postgresql/data]
-    networks: [backend]
-
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  redis:
-    image: redis:7.4.1-alpine3.20
-    command: ['redis-server', '--appendonly', 'yes']
-    volumes: [redis-data:/data]
-    networks: [backend]
-
-    healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  minio:
-    image: minio/minio:RELEASE.2024-05-10T01-41-38Z
-    command: ['server', '/data', '--console-address', ':9001']
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:?MINIO_ACCESS_KEY must be set}
-      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:?MINIO_SECRET_KEY must be set}
-    volumes: [minio-data:/data]
-    networks: [backend]
-
-    healthcheck:
-      test: ['CMD', 'mc', 'ready', 'local']
-      interval: 15s
-      timeout: 10s
-      retries: 5
-
-  minio-init:
-    image: minio/mc:RELEASE.2024-10-02T08-27-28Z
-    depends_on:
-      minio:
-        condition: service_healthy
-    environment:
-      MC_HOST_MINIO: http://${MINIO_ACCESS_KEY:?MINIO_ACCESS_KEY must be set}:${MINIO_SECRET_KEY:?MINIO_SECRET_KEY must be set}@minio:9000
-    entrypoint: >
-      /bin/sh -c "
-      mc mb --ignore-existing minio/${MINIO_BUCKET:-shore-sentinel-artifacts} &&
-      mc anonymous set none minio/${MINIO_BUCKET:-shore-sentinel-artifacts} &&
-      echo 'private bucket ready'
-      "
-    restart: on-failure
-    networks: [backend]
-
-  api:
-    build:
-      context: .
-      dockerfile: api/Dockerfile
-    environment:
-      PORT: 4000
-      NODE_ENV: production
-      DATABASE_URL: postgresql://${POSTGRES_USER:-shore_sentinel}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}@postgres:5432/${POSTGRES_DB:-shore_sentinel}
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
-      MINIO_ENDPOINT: ${MINIO_ENDPOINT:-http://minio:9000}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-shore_sentinel}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}@127.0.0.1:5432/${POSTGRES_DB:-shore_sentinel}
+      REDIS_URL: ${REDIS_URL:-redis://127.0.0.1:6379/0}
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT:-http://127.0.0.1:9000}
       MINIO_BUCKET: ${MINIO_BUCKET:-shore-sentinel-artifacts}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
       MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:?MINIO_ACCESS_KEY must be set}
       MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:?MINIO_SECRET_KEY must be set}
       SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:?SEED_ADMIN_PASSWORD must be set}
       SHORE_SENTINEL_SECRET_KEY: ${SHORE_SENTINEL_SECRET_KEY:?SHORE_SENTINEL_SECRET_KEY must be set}
       INTERNAL_WORKER_TOKEN: ${INTERNAL_WORKER_TOKEN:?INTERNAL_WORKER_TOKEN must be set}
-      SHORE_SENTINEL_ENABLE_SELF_UPDATE: ${SHORE_SENTINEL_ENABLE_SELF_UPDATE:-false}
-      SHORE_SENTINEL_UPDATE_SCRIPT: ${SHORE_SENTINEL_UPDATE_SCRIPT:-/app/scripts/shore-sentinel-update.sh}
-      SHORE_SENTINEL_APP_DIR: ${SHORE_SENTINEL_APP_DIR:-/workspace/shore360-workspace/apps/shore-sentinel}
-      SHORE_SENTINEL_UPDATE_REMOTE: ${SHORE_SENTINEL_UPDATE_REMOTE:-origin}
-      SHORE_SENTINEL_UPDATE_BRANCH: ${SHORE_SENTINEL_UPDATE_BRANCH:-main}
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      minio:
-        condition: service_healthy
-    ports: ['${API_PORT:-4000}:4000']
-    healthcheck:
-      test: ['CMD', 'wget', '--spider', '-q', 'http://127.0.0.1:4000/health']
-      interval: 15s
-      timeout: 5s
-      retries: 5
-    security_opt: [no-new-privileges:true]
-    cap_drop: [ALL]
-    networks: [frontend, backend]
-
-  web:
-    build:
-      context: .
-      dockerfile: web/Dockerfile
-    environment:
-      NODE_ENV: production
-      INTERNAL_API_URL: ${INTERNAL_API_URL:-http://api:4000}
-      SHORE_SENTINEL_BASE_PATH: ${SHORE_SENTINEL_BASE_PATH:-/shore-sentinel}
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/shore-sentinel-api}
-      PORT: 3010
-    ports: ['${WEB_PORT:-3010}:3010']
-    depends_on:
-      api:
-        condition: service_healthy
-    healthcheck:
-      test: ['CMD', 'wget', '--spider', '-q', 'http://127.0.0.1:3010/shore-sentinel/dashboard']
-      interval: 15s
-      timeout: 5s
-      retries: 5
-    security_opt: [no-new-privileges:true]
-    cap_drop: [ALL]
-    networks: [frontend]
-
-  worker-python:
-    build:
-      context: ./workers/worker-python
-    environment:
+      API_URL: http://127.0.0.1:4000
+      PYTHON_WORKER_URL: http://127.0.0.1:4100
       PYTHON_WORKER_PORT: 4100
-      INTERNAL_WORKER_TOKEN: ${INTERNAL_WORKER_TOKEN:?INTERNAL_WORKER_TOKEN must be set}
-
-    healthcheck:
-      test: ['CMD', 'wget', '--spider', '-q', 'http://127.0.0.1:4100/health']
-      interval: 15s
-      timeout: 5s
-      retries: 5
-    security_opt: [no-new-privileges:true]
-    cap_drop: [ALL]
-    read_only: true
-    tmpfs: [/tmp]
-    networks: [worker-private]
-
-  worker-node:
-    build:
-      context: .
-      dockerfile: workers/worker-node/Dockerfile
-    environment:
-      NODE_ENV: production
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
-      API_URL: http://api:4000
-      PYTHON_WORKER_URL: http://worker-python:4100
-      INTERNAL_WORKER_TOKEN: ${INTERNAL_WORKER_TOKEN:?INTERNAL_WORKER_TOKEN must be set}
       WORKER_CONCURRENCY: 1
       WORKER_MAX_ATTEMPTS: ${WORKER_MAX_ATTEMPTS:-3}
       WORKER_BACKOFF_MS: ${WORKER_BACKOFF_MS:-5000}
-    depends_on:
-      redis:
-        condition: service_healthy
-      api:
-        condition: service_healthy
-      worker-python:
-        condition: service_healthy
-    security_opt: [no-new-privileges:true]
-    cap_drop: [ALL]
-    # The worker needs outbound transport for SSH. Destination authorization is
-    # enforced by the application against enrolled CIDRs before a connection.
-    networks: [backend, worker-private, worker-egress]
+    ports:
+      - "127.0.0.1:${WEB_PORT:-3010}:3010"
+      - "127.0.0.1:${API_PORT:-4000}:4000"
+    volumes:
+      - shore-sentinel-data:/var/lib/shore-sentinel
+    tmpfs:
+      - /run
+      - /tmp
+    read_only: true
+    pids_limit: 256
+    mem_limit: 4g
+    cpus: 4.0
+    restart: unless-stopped
+    stop_grace_period: 45s
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    # Bootstrap needs only ownership changes and su-exec's UID/GID transition.
+    # The runtime verifier asserts that CapEff contains no other capability.
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    healthcheck:
+      test: ["CMD", "/opt/shore-sentinel/bin/healthcheck.sh"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
 volumes:
-  postgres-data:
-  redis-data:
-  minio-data:
-
-networks:
-  frontend:
-  backend:
-    internal: true
-  worker-private:
-    internal: true
-  # Deliberately non-internal: attached only to worker-node for app-authorized
-  # managed SSH egress. The parser remains on worker-private only.
-  worker-egress:
+  shore-sentinel-data:

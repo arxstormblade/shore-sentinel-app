@@ -61,7 +61,13 @@ class Handler(BaseHTTPRequestHandler):
             return
         try:
             payload = json.loads(self.rfile.read(length) or b"{}")
-            result = parse_scanner_output(payload.get("runId"), payload.get("scannerOutput"))
+            result = parse_scanner_output(
+                payload.get("runId"),
+                payload.get("scannerOutput"),
+                expected_target_asset_id=payload.get("expectedTargetAssetId"),
+                expected_scanner=payload.get("expectedScanner"),
+                expected_subject_type=payload.get("expectedSubjectType"),
+            )
             self._send_json(200, result.to_dict())
         except Exception:
             self._send_json(400, {"error": "invalid parse request"})

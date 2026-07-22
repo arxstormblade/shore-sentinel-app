@@ -93,15 +93,19 @@ class V110ReleaseGateTests(unittest.TestCase):
             "CI Compose validation must not deploy services",
         )
 
-    def test_quality_security_workflow_builds_every_runtime_image_without_deploying(self):
+    def test_quality_security_workflow_builds_and_verifies_the_multiarch_runtime_without_deploying(self):
         workflow = WORKFLOW.read_text(encoding="utf-8")
-        image_build = 'docker compose --env-file "$COMPOSE_CI_ENV" build api web worker-node worker-python'
+        image_build = 'docker buildx build'
 
         self.assertIn(
             image_build,
             workflow,
-            "CI must build every deployable Compose application image without starting services",
+            "CI must build the single deployable image without starting services",
         )
+        self.assertIn("IMAGE_PLATFORMS: linux/amd64,linux/arm64", workflow)
+        self.assertIn("--sbom=true", workflow)
+        self.assertIn("--provenance=false", workflow)
+        self.assertIn("tests/single_container_runtime_smoke.sh", workflow)
         self.assertNotRegex(
             workflow,
             r"(?m)^\s*(?:run:\s*)?docker compose(?:\s+[^\n]*)?\s+up(?:\s|$)",

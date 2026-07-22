@@ -49,13 +49,14 @@ python3 --version
 
 ### Run the local audit
 
-Until v1.1.0 is promoted, clone the reviewed default branch (or an approved immutable commit SHA). The release tag is created only at promotion after CI, security review, QA evidence, and staged rollback validation are approved; do not use an uncreated tag in installation instructions.
+Until v3.5.0 is promoted, clone the reviewed default branch (or an approved immutable commit SHA). The release tag is created only at promotion after CI, security review, QA evidence, and staged rollback validation are approved; do not use an uncreated tag in installation instructions.
 
 ```bash
 git clone --depth 1 https://github.com/arxstormblade/shore-sentinel-app.git
 cd shore-sentinel-app
-python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py \
+python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.0.py \
   --target . \
+  --scope-mode exact \
   --out-dir ./shore-sentinel-local-audit-reports \
   --exit-zero
 ```
@@ -63,8 +64,9 @@ python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py \
 To audit a different local path, change `--target`:
 
 ```bash
-python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py \
+python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.0.py \
   --target /path/to/audit \
+  --scope-mode exact \
   --out-dir ./shore-sentinel-local-audit-reports \
   --exit-zero
 ```
@@ -99,15 +101,16 @@ Use this when you want the full Shore Sentinel application for managed-machine m
 
 ### What this does
 
-The Docker Compose app provides:
+The Docker Compose app provides exactly one `shore-sentinel` application container. A fixed supervisor runs the web UI, API, PostgreSQL, Redis, MinIO object storage, Node orchestration/managed-SSH worker, and Python parser/normalization worker as separate, least-privilege processes inside that container. One named `shore-sentinel-data` volume is mounted at `/var/lib/shore-sentinel` with internal `postgres`, `redis`, `object-storage`, and `evidence` directories. The container does not mount the Docker socket or host SSH keys.
 
-- Postgres for application state
-- Redis for queue/cache coordination
-- MinIO for managed scan artifacts and generated reports
-- Node.js API on `http://localhost:4000`
-- Next.js web app on `http://localhost:3010/shore-sentinel`
-- Node worker for scan orchestration jobs
-- Python worker for parsing, normalization, and report enrichment
+The deployment boundary publishes:
+
+- Node.js API health endpoint at `http://localhost:4000/health`
+- Next.js web app at `http://localhost:3010/shore-sentinel`
+
+Database, queue, object-storage, and worker control ports remain loopback-only inside the application container. Managed SSH and AI test execution retain host-key, target-scope, bounded-cancellation, approval, and independent egress controls; disposable AI tests use bounded unprivileged process/user/namespace sandboxes inside the application container.
+
+The runtime starts with `cap_drop: ALL` and the exact, live-probed allowlist `CHOWN`, `SETGID`, and `SETUID` only. Bootstrap uses those capabilities for top-level volume ownership and service-user transitions; `/opt/shore-sentinel/bin/capability-check.sh` parses PID 1's effective `CapEff` and fails health if any other capability is present. `SYS_ADMIN`, `NET_ADMIN`, privileged mode, and Docker-socket access are not permitted.
 
 ### Prerequisites
 
@@ -171,13 +174,12 @@ If Docker daemon access is available, the helper runs `docker compose config` an
 docker compose up -d --build
 ```
 
-### 5. Check service health
+### 5. Check application health
 
 ```bash
 docker compose ps
 curl -fsS http://localhost:4000/health
 curl -fsS http://localhost:3010/shore-sentinel
-curl -fsS http://localhost:4100/health
 ```
 
 Open the web app:
@@ -192,7 +194,7 @@ http://localhost:3010/shore-sentinel
 docker compose down
 ```
 
-Use `docker compose down -v` only when you intentionally want to delete the local Postgres, Redis, and MinIO volumes.
+Use `docker compose down -v` only when you intentionally want to delete the complete `shore-sentinel-data` volume. It is not a routine update or rollback command.
 
 ---
 
@@ -212,91 +214,45 @@ A one-time local audit is intentionally separate. It produces local evidence and
 
 ### Managed-machine scan directory
 
-For an enrolled managed machine using the SSH-push connection mode, the machine page offers **Directory to scan** before a new scan is launched. This is the managed equivalent of the one-time-audit `--target` option: it scopes the packaged scanner on the enrolled remote machine, not inside the Shore Sentinel control-plane containers. The selected directory is recorded with that scan’s evidence and cannot be changed after launch; stop the active scan and launch a new one to use a different directory.
+For an enrolled managed machine using the SSH-push connection mode, the machine page offers **Directory to scan** before a new scan is launched. This is the managed equivalent of the one-time-audit `--target` option: it scopes the packaged scanner on the enrolled remote machine, not inside the Shore Sentinel application container. The selected directory is recorded with that scan’s evidence and cannot be changed after launch; stop the active scan and launch a new one to use a different directory.
 
 ---
 
 ## Updating Shore Sentinel
 
-Shore Sentinel supports two update paths.
+The update path is currently **unavailable in this planning baseline**. Do not run `git pull origin main`, update from a mutable branch, or rebuild an unverified checkout over persistent data. An update becomes available only when the signed update integration and the backup/restore runbook have passed review.
 
-### Option A: Manual command-line update, recommended default
+The approved release sequence must, in this order, verify a signed immutable commit/tag and image/test-bundle signatures against pinned signer identities and trust roots, verify revocation, anti-rollback policy, and provenance-to-SBOM linkage, quiesce the application, create an encrypted access-separated off-volume backup, apply compatible migrations under an advisory lock, record image/config/volume/checkpoint identity, and verify every process plus the critical flow. Unsigned, tampered, wrong-signer, revoked, stale, or older-than-approved candidates must be rejected.
 
-From the Git checkout:
-
-```bash
-cd shore-sentinel-app
-git fetch origin main
-git status --short
-git pull --ff-only origin main
-docker compose up -d --build
-```
-
-Verify after updating:
+Routine stop/rollback must not delete the one application-data volume:
 
 ```bash
-docker compose ps
-curl -fsS http://localhost:4000/health
-curl -fsS http://localhost:3010/shore-sentinel
+docker compose down
 ```
 
-If `git pull --ff-only` fails, the local checkout has diverged or contains local changes. Resolve that manually before updating.
+The historical `docker-compose.update.example.yml` override is not part of the single-container release baseline and must never be enabled: it grants Docker-socket and host-workspace access that the approved architecture forbids. The admin-only **System Update** page at `/shore-sentinel/system/update` remains a disabled placeholder until it provides the same signed-artifact, backup, authorization, and rollback guarantees; it must fail closed rather than offer a mutable-main update.
 
-### Option B: In-app System Update feature
+### Data protection before an approved update
 
-The app includes an admin-only **System Update** page:
-
-```text
-/shore-sentinel/system/update
-```
-
-By default, self-update is disabled because enabling it gives the API container access to the Git checkout and Docker socket. Enable it only on trusted single-tenant installations.
-
-To enable in-app updates:
-
-```bash
-cd shore-sentinel-app
-cp docker-compose.update.example.yml docker-compose.update.yml
-docker compose -f docker-compose.yml -f docker-compose.update.example.yml up -d --build
-```
-
-Then sign in as an admin and open:
-
-```text
-http://localhost:3010/shore-sentinel/system/update
-```
-
-Available actions:
-
-- **Check for updates** — fetches `origin/main`, reports pending commits, and does not restart services.
-- **Apply update** — creates a backup branch, fast-forwards to `origin/main`, rebuilds containers, and restarts the Compose stack.
-
-The updater refuses to run if the checkout has uncommitted changes unless this environment variable is explicitly set:
-
-```text
-SHORE_SENTINEL_UPDATE_ALLOW_DIRTY=true
-```
-
-Use that override only if you understand that local changes may be overwritten or conflict with upstream updates.
+Backups must be encrypted, access-separated, and stored outside `/var/lib/shore-sentinel`. The backup procedure quiesces new work, checkpoints the signed evidence ledger, flushes Redis/outbox state, captures PostgreSQL and object-storage state, preserves Object Lock/legal holds, records RPO/RTO, and proves restore into a fresh empty volume with database/object/evidence reconciliation. KMS/key and configuration recovery must be recorded without copying raw target secrets into the backup. See `docs/runbooks/single-container-backup-restore.md` once the implementation task creates and verifies it.
 
 ---
 
-## Service wiring
+## Application process wiring
 
-Internal service names are the API contract for local Compose:
+Production Compose has one `shore-sentinel` service and one `shore-sentinel-data` volume. The supervisor starts the process graph in dependency order: PostgreSQL and Redis, MinIO and its private bucket bootstrap, ordered migrations, API, Python worker, Node worker, and web. Internal process endpoints are loopback-only and are not separate Compose services:
 
-| Service | Internal endpoint | Host endpoint | Notes |
+| Process | Internal endpoint/data path | Host endpoint | Notes |
 | --- | --- | --- | --- |
-| Postgres | `postgres:5432` | `localhost:5432` | Database from `POSTGRES_DB`; app DSN from `DATABASE_URL`. |
-| Redis | `redis:6379` | `localhost:6379` | Queue/cache URL from `REDIS_URL`. |
-| MinIO S3 API | `minio:9000` | `localhost:9000` | Artifact bucket from `MINIO_BUCKET`. |
-| MinIO console | `minio:9001` | `localhost:9001` | Local console only. |
-| API | `api:4000` | `localhost:4000` | Exposes `/health`; depends on Postgres, Redis, and MinIO health. |
-| Web | `web:3010` | `localhost:3010` | Next.js standalone app under `/shore-sentinel`; depends on healthy API. |
-| Python worker | `worker-python:4100` | `localhost:4100` | Exposes `/health` for parser service readiness. |
-| Node worker | n/a | n/a | Starts after Redis, API, and Python worker are ready. |
+| PostgreSQL | `127.0.0.1:5432` / `/var/lib/shore-sentinel/postgres` | not published | Authoritative application state. |
+| Redis | `127.0.0.1:6379` / `/var/lib/shore-sentinel/redis` | not published | Bounded queue/cache coordination. |
+| MinIO S3 API | `127.0.0.1:9000` / `/var/lib/shore-sentinel/object-storage` | not published | Private artifact bucket. |
+| API | `127.0.0.1:4000` | `localhost:4000` | Exposes `/health`; reports dependency and supervisor readiness. |
+| Web | `127.0.0.1:3010` | `localhost:3010` | Next.js app under `/shore-sentinel`. |
+| Python worker | `127.0.0.1:4100` | not published | Parser/normalization readiness is checked by the supervisor. |
+| Node worker | supervisor-managed | not published | Orchestration and managed-SSH adapter; sole managed-target SSH process path. |
 
-The `minio-init` one-shot service waits for MinIO, creates `${MINIO_BUCKET:-shore-sentinel-artifacts}`, and exits successfully. Artifact-writing services should not assume the bucket exists until this bootstrap job has completed.
+The one named volume is the persistence boundary. Back up PostgreSQL, Redis state, object-storage contents, and evidence hashes before upgrades; routine stop and rollback commands must not delete it.
 
 ---
 
@@ -307,11 +263,9 @@ Before handing a build to QA or release review:
 ```bash
 npm run compose:smoke
 npm --workspace @shore-sentinel/api test
-docker build --network=host -f api/Dockerfile -t shore-sentinel-api .
-docker build --network=host -f web/Dockerfile -t shore-sentinel-web .
+docker compose ps
 curl -fsS http://localhost:4000/health
 curl -fsS http://localhost:3010/shore-sentinel
-curl -fsS http://localhost:4100/health
 ```
 
-Expected result: Postgres, Redis, MinIO, API, web, node worker, and python worker are running; `minio-init` is exited with code 0; API and Python worker health endpoints return HTTP 200, and the web route returns HTTP 200.
+Expected result: exactly one `shore-sentinel` application container is running; its supervisor reports PostgreSQL, Redis, MinIO, API, web, Node worker, and Python worker healthy; API and web return HTTP 200; and the `shore-sentinel-data` volume remains attached.

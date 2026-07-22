@@ -1,0 +1,368 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shore360.example/schemas/shore-sentinel/enterprise-single-container-requirements.json",
+  "document": "2026-07-22-enterprise-single-container-requirements",
+  "product": "shore-sentinel",
+  "baseline_commit": "66f3126",
+  "approved_by": "Boss",
+  "approved_on": "2026-07-22",
+  "timezone": "Asia/Manila",
+  "status": "security-remediated-planning-baseline",
+  "architecture_spec": "docs/superpowers/specs/shore-sentinel-rearchitecture-a.md",
+  "implementation_plan": "docs/plans/2026-07-22-enterprise-single-container-completion.md",
+  "approval_scope": {
+    "authorized": [
+      "implementation phases",
+      "dependency installs",
+      "local container builds and runs",
+      "migrations on disposable or local data",
+      "repository commits and pushes",
+      "review and release actions needed to finish this repository"
+    ],
+    "excluded": [
+      "deployment to an unnamed external production host",
+      "destructive operations on non-disposable data"
+    ]
+  },
+  "delivery_contract": {
+    "application_container_count": 1,
+    "persistent_volume_count": 1,
+    "volume_mount": "/var/lib/shore-sentinel",
+    "volume_subdirectories": [
+      "/var/lib/shore-sentinel/postgres",
+      "/var/lib/shore-sentinel/redis",
+      "/var/lib/shore-sentinel/object-storage",
+      "/var/lib/shore-sentinel/evidence"
+    ],
+    "required_supervised_processes": [
+      "web",
+      "api",
+      "postgresql",
+      "redis",
+      "minio",
+      "node-orchestration-worker",
+      "python-parser-worker"
+    ],
+    "docker_socket_mount": false
+  },
+  "accepted_deviations": [
+    {
+      "id": "DEV-001",
+      "title": "Navigation grouping",
+      "decision": "Use Dashboard, AI Assets, Audit Reports, Knowledgebase, System, Users as the authenticated navigation group order.",
+      "approved_by": "Boss",
+      "approved_on": "2026-07-22",
+      "scope": "label and grouping only",
+      "compensating_controls": ["route authorization remains enforced", "approval and audit controls remain enforced", "contextual links preserve access to non-grouped workflows"],
+      "waiver": false
+    },
+    {
+      "id": "DEV-002",
+      "title": "Single-container co-location",
+      "decision": "Use one application container and one application-data volume as the release delivery boundary.",
+      "approved_by": "Boss",
+      "approved_on": "2026-07-22",
+      "scope": "deployment topology only",
+      "compensating_controls": ["service-local authentication and least-privilege roles", "per-run user/mount/network/IPC/UTS namespaces", "cgroup v2, seccomp, and AppArmor/SELinux verification", "masked kernel interfaces, no setuid/ptrace, fresh run directories, cleanup, and startup refusal"],
+      "waiver": false
+    }
+  ],
+  "security_remediation_records": [
+    {"finding": "H-01", "status": "resolved", "resolution": "Executable federation, durable session, MFA/step-up, immutable owner/dual approval, and fail-closed grant contracts are added.", "evidence": "Identity/session and engagement authorization negative-test records are retained in the API test evidence bundle.", "requirement_ids": ["SC-025"]},
+    {"finding": "H-02", "status": "resolved", "resolution": "Per-workload mTLS, envelope key lifecycle, ciphertext-only storage, one-use leases, and negative trust tests are added.", "evidence": "Workload identity, envelope-secret, and worker-client negative-test records are retained with redacted payload inspection.", "requirement_ids": ["SC-026"]},
+    {"finding": "H-03", "status": "resolved", "resolution": "Authenticated co-resident services, per-run namespaces, cgroup/LSM/seccomp controls, masked interfaces, cleanup, and startup refusal are required.", "evidence": "Container supervision and sandbox containment negative-test output records namespace, resource, masked-path, and startup-refusal checks.", "requirement_ids": ["SC-027"]},
+    {"finding": "H-04", "status": "resolved", "resolution": "Signed keyed checkpoints to separately administered external WORM/Object-Lock storage and legal-hold denial tests are required.", "evidence": "Evidence checkpoint, legal-hold, and infrastructure negative-test records cover mutation, truncation, replay, and admin-bypass denial.", "requirement_ids": ["SC-028"]},
+    {"finding": "H-05", "status": "resolved", "resolution": "Typed tool boundaries, DLP before persistence/egress, quarantine, and adversarial prompt-injection fixtures are required.", "evidence": "Typed-adapter, parser DLP, and API DLP negative-test records cover injection, redirect, smuggling, oversize, and detector-outage cases.", "requirement_ids": ["SC-029"]},
+    {"finding": "H-06", "status": "resolved", "resolution": "Fail-closed signer/trust-root/provenance/revocation/anti-rollback verification is required and mutable-main updates are unavailable.", "evidence": "Release artifact verification records reject unsigned, tampered, wrong-signer, revoked, stale, and older-version candidates.", "requirement_ids": ["SC-030"]},
+    {"finding": "H-07", "status": "resolved", "resolution": "Encrypted access-separated off-volume backups, consistency ordering, RPO/RTO, and fresh-volume recovery drills are required.", "evidence": "Backup/restore and evidence-checkpoint negative-test records cover total-volume-loss reconciliation, key/config recovery, legal holds, and checkpoint verification.", "requirement_ids": ["SC-031"]}
+  ],
+  "waivers": [],
+  "requirements": [
+    {
+      "id": "SC-001",
+      "statement": "Production Option 2 is one deployable application container containing web, API, PostgreSQL, Redis, MinIO/object storage, Node worker, and Python worker processes.",
+      "source": "architecture_spec:4; plan:Locked decisions; plan:Task 3",
+      "implementation_files": ["container/Dockerfile", "docker-compose.yml"],
+      "test_files": ["tests/test_single_container_release_gate.py", "tests/test_production_compose_release_gate.py"],
+      "verification_commands": ["npm run compose:smoke", "docker compose --env-file \"$RUNNER_TEMP/shore-sentinel-compose-ci.env\" config --quiet"],
+      "evidence": "production Compose config, image digest, service-count contract output"
+    },
+    {
+      "id": "SC-002",
+      "statement": "PID 1 is a fixed supervisor with declared process executables, users, readiness checks, restart behavior, and logs.",
+      "source": "architecture_spec:4; architecture_spec:4.2; plan:Task 2",
+      "implementation_files": ["container/supervisord.conf", "container/entrypoint.sh", "container/healthcheck.sh"],
+      "test_files": ["tests/test_container_supervision_contract.py"],
+      "verification_commands": ["docker build --file container/Dockerfile --tag shore-sentinel-single:test ."],
+      "evidence": "supervisor manifest, process health output, restart/failure-injection log"
+    },
+    {
+      "id": "SC-003",
+      "statement": "PostgreSQL, Redis, object storage, and evidence data persist in dedicated subdirectories of one named volume rooted at /var/lib/shore-sentinel, with backup and restore procedures.",
+      "source": "architecture_spec:4; plan:Migration and data-safety contract; plan:Task 3",
+      "implementation_files": ["docker-compose.yml", "docs/runbooks/single-container-backup-restore.md"],
+      "test_files": ["tests/test_single_container_persistence_contract.py"],
+      "verification_commands": ["docker compose --env-file \"$RUNNER_TEMP/shore-sentinel-compose-ci.env\" config --quiet"],
+      "evidence": "volume inventory, pg_dump/Redis/MinIO backup records, restore rehearsal"
+    },
+    {
+      "id": "SC-004",
+      "statement": "Processes have logical least-privilege boundaries through users, ownership, environment allowlists, loopback bindings, capability restrictions, and read-only paths.",
+      "source": "architecture_spec:4; architecture_spec:4.2; plan:Task 2; plan:Task 5",
+      "implementation_files": ["container/process-environment-contract.json", "container/Dockerfile", "docker-compose.yml"],
+      "test_files": ["tests/test_container_supervision_contract.py", "tests/test_deployment_hardening.py"],
+      "verification_commands": ["python3 -m unittest tests.test_container_supervision_contract tests.test_deployment_hardening"],
+      "evidence": "non-root/process-user inventory, environment diff, capability and mount inspection"
+    },
+    {
+      "id": "SC-005",
+      "statement": "Option 1 remains a local one-time audit with local evidence and no implicit enrollment or upload.",
+      "source": "README.md:17-92; architecture_spec:3.3; plan:Locked decisions",
+      "implementation_files": ["README.md", "scanner-bundle/README.md"],
+      "test_files": ["tests/test_v1_1_release_gates.py"],
+      "verification_commands": ["python3 -m unittest discover -s tests"],
+      "evidence": "reviewed local-audit command and redacted local output"
+    },
+    {
+      "id": "SC-006",
+      "statement": "Option 2 builds and runs the single-container application with one persistent application-data volume and documented health checks.",
+      "source": "README.md:96-195; architecture_spec:4; plan:Task 3",
+      "implementation_files": ["README.md", "docker-compose.yml", "scripts/compose_smoke.py"],
+      "test_files": ["tests/test_single_container_release_gate.py", "tests/test_production_compose_release_gate.py"],
+      "verification_commands": ["npm run compose:smoke", "docker compose --env-file \"$RUNNER_TEMP/shore-sentinel-compose-ci.env\" up -d"],
+      "evidence": "staging install log, health output, stop-without-volume-deletion record"
+    },
+    {
+      "id": "SC-007",
+      "statement": "Authenticated navigation uses the approved ordered groups Dashboard, AI Assets, Audit Reports, Knowledgebase, System, Users.",
+      "source": "architecture_spec:8.2; plan:Task 7",
+      "implementation_files": ["web/lib/data.js", "web/components/ui.jsx", "web/components/mobile-navigation.jsx"],
+      "test_files": ["tests/test_side_navigation_shell.py"],
+      "verification_commands": ["python3 -m unittest tests.test_side_navigation_shell"],
+      "evidence": "navigation contract test output and three-viewport browser captures"
+    },
+    {
+      "id": "SC-008",
+      "statement": "Versioned SQL migrations run once under an advisory lock before application processes; API startup does not mutate schema or recompute seed hashes.",
+      "source": "architecture_spec:7; plan:Task 4",
+      "implementation_files": ["api/migrations/0001_baseline.sql", "api/src/migration-runner.ts", "container/entrypoint.sh", "api/src/database.service.ts"],
+      "test_files": ["api/test/migration-runner.test.ts", "api/test/migration-and-production-secrets.test.ts"],
+      "verification_commands": ["npm --workspace @shore-sentinel/api test -- migration-runner"],
+      "evidence": "ordered migration log, advisory-lock contention output, startup DDL-negative test"
+    },
+    {
+      "id": "SC-009",
+      "statement": "Migration upgrade, fresh install, interruption, restart, and rollback compatibility are tested against existing data contracts.",
+      "source": "architecture_spec:7; plan:Task 4; plan:Migration and data-safety contract",
+      "implementation_files": ["api/migrations/0001_baseline.sql", "api/migrations/0002_enterprise_authorization.sql", "api/migrations/0003_evidence-findings-read-model.sql", "api/migrations/0004_single-container-runtime.sql"],
+      "test_files": ["api/test/migration-runner.test.ts", "api/test/validation.test.ts"],
+      "verification_commands": ["npm --workspace @shore-sentinel/api test -- migration-runner validation"],
+      "evidence": "fresh/upgrade/interruption/restart/rollback migration records"
+    },
+    {
+      "id": "SC-010",
+      "statement": "Production secrets are required and are not exposed to browser clients, queue payloads, logs, or unauthorized processes.",
+      "source": "architecture_spec:5.3; plan:Task 2; plan:Task 5",
+      "implementation_files": ["container/process-environment-contract.json", ".env.example", "api/src/config.ts", "api/src/database.service.ts"],
+      "test_files": ["tests/test_deployment_hardening.py", "api/test/migration-and-production-secrets.test.ts", "api/test/internal-worker-route.test.ts"],
+      "verification_commands": ["python3 -m unittest tests.test_deployment_hardening", "npm --workspace @shore-sentinel/api test"],
+      "evidence": "redacted secret scan, environment allowlist, payload inspection"
+    },
+    {
+      "id": "SC-011",
+      "statement": "Node and Python workers use separate authenticated workload paths, and Python cannot reach managed-target egress.",
+      "source": "architecture_spec:5.3; architecture_spec:6.2; plan:Task 5",
+      "implementation_files": ["api/src/internal-worker-route.ts", "workers/worker-node/src/apiClient.js", "workers/worker-python/src/server.py", "container/process-environment-contract.json"],
+      "test_files": ["api/test/internal-worker-route.test.ts", "api/test/worker-ssh-grant.test.ts", "workers/worker-python/test/test_server.py"],
+      "verification_commands": ["npm --workspace @shore-sentinel/api test", "PYTHONPATH=workers/worker-python python3 -m unittest discover -s workers/worker-python/test"],
+      "evidence": "positive/negative worker identity and parser egress test output"
+    },
+    {
+      "id": "SC-012",
+      "statement": "Independent host/network default-deny egress or authenticated gateway enforcement remains required; application validation is not firewall proof.",
+      "source": "architecture_spec:4.3; docs/security/worker-node-egress-acl-contract.md; plan:Task 6",
+      "implementation_files": ["infra/egress-acl/single-container-host-policy.example.nft", "docs/security/single-container-egress-deployment.md", "scripts/check_worker_node_egress_policy.py"],
+      "test_files": ["tests/test_single_container_egress_contract.py", "tests/test_infrastructure_release_evidence.py"],
+      "verification_commands": ["python3 -m unittest tests.test_single_container_egress_contract tests.test_infrastructure_release_evidence"],
+      "evidence": "check-only policy result plus approved external positive/negative fixture evidence"
+    },
+    {
+      "id": "SC-013",
+      "statement": "Disposable AI test bundles use bounded unprivileged OS process/user/namespace sandboxes inside the one application container; no second runner host/container or Docker socket is part of the release baseline.",
+      "source": "architecture_spec:4; architecture_spec:4.1; architecture_spec:6.1; plan:Task 5; plan:Task 6",
+      "implementation_files": ["container/run-sandbox.sh", "container/sandbox-policy.json", "container/supervisord.conf", "docs/security/single-container-egress-deployment.md"],
+      "test_files": ["tests/test_single_container_release_gate.py", "tests/test_single_container_egress_contract.py"],
+      "verification_commands": ["python3 -m unittest tests.test_single_container_release_gate tests.test_single_container_egress_contract"],
+      "evidence": "sandbox policy/process inspection, positive and negative sandbox matrix, no-socket mount inspection"
+    },
+    {
+      "id": "SC-014",
+      "statement": "Existing SSH host-key, root/path/CIDR, ForceCommand, bounded cancellation, and one-time grant controls remain mandatory.",
+      "source": "architecture_spec:3.3; architecture_spec:5.3; docs/security/disposable-ssh-fixture.md; plan:Task 5",
+      "implementation_files": ["api/src/ssh-security.ts", "workers/worker-node/src/sshExecutor.js", "infra/ssh-fixture/force-command-dispatch", "infra/ssh-fixture/shore-sentinel-scanner-runner.sudoers"],
+      "test_files": ["api/test/ssh-security.test.ts", "workers/worker-node/test/sshExecutor.test.js", "tests/test_infrastructure_release_evidence.py"],
+      "verification_commands": ["npm run worker:test", "npm --workspace @shore-sentinel/api test", "python3 -m unittest tests.test_infrastructure_release_evidence"],
+      "evidence": "approved disposable fixture protocol output and negative SSH matrix"
+    },
+    {
+      "id": "SC-015",
+      "statement": "Artifacts and audit events carry hashes, provenance, policy/bundle/image identity, parser version, retention, and append-only linkage.",
+      "source": "architecture_spec:5.4; architecture_spec:6.2; architecture_spec:7; plan:Task 4; plan:Task 5",
+      "implementation_files": ["api/migrations/0003_evidence-findings-read-model.sql", "api/src/artifact.service.ts", "api/src/schema.ts", "api/src/migration-runner.ts"],
+      "test_files": ["api/test/artifact-cleanup.test.ts", "api/test/artifact-cleanup-recovery.test.ts", "api/test/migration-runner.test.ts"],
+      "verification_commands": ["npm --workspace @shore-sentinel/api test"],
+      "evidence": "provenance manifest, hash-chain verification, retention/legal-hold output"
+    },
+    {
+      "id": "SC-016",
+      "statement": "Health reflects all required process/dependency readiness and reports degraded state instead of unconditional green.",
+      "source": "architecture_spec:4.2; architecture_spec:8.3; plan:Task 2",
+      "implementation_files": ["container/healthcheck.sh", "api/src/app.controller.ts", "workers/worker-python/src/server.py"],
+      "test_files": ["tests/test_single_container_release_gate.py", "workers/worker-python/test/test_server.py"],
+      "verification_commands": ["python3 -m unittest tests.test_single_container_release_gate", "curl -fsS http://127.0.0.1:4000/health"],
+      "evidence": "healthy and dependency-failure health outputs with timestamps"
+    },
+    {
+      "id": "SC-017",
+      "statement": "Updates validate source/config, backup persistent state, migrate once, record identity, and support rollback.",
+      "source": "architecture_spec:7; architecture_spec:11; plan:Task 7; plan:Migration and data-safety contract",
+      "implementation_files": ["docs/runbooks/single-container-update-and-rollback.md", "api/src/migration-runner.ts", "docker-compose.yml", "README.md"],
+      "test_files": ["tests/test_single_container_persistence_contract.py", "api/test/migration-runner.test.ts"],
+      "verification_commands": ["python3 -m unittest tests.test_single_container_persistence_contract", "npm --workspace @shore-sentinel/api test -- migration-runner"],
+      "evidence": "staged update and rollback rehearsal, backup IDs, prior-image health check"
+    },
+    {
+      "id": "SC-018",
+      "statement": "The image uses pinned runtime/package inputs, the root lockfile, SBOM generation, and retained image digest.",
+      "source": "architecture_spec:4.2; architecture_spec:9; plan:Task 2; plan:Task 8",
+      "implementation_files": ["container/Dockerfile", "package-lock.json", ".github/workflows/quality-security.yml"],
+      "test_files": ["tests/test_deployment_hardening.py", "tests/test_single_container_release_gate.py"],
+      "verification_commands": ["docker build --file container/Dockerfile --tag shore-sentinel-single:test .", "npm audit --omit=dev --audit-level=high"],
+      "evidence": "Dockerfile contract, SBOM, dependency audit, image digest"
+    },
+    {
+      "id": "SC-019",
+      "statement": "Navigation remains accessible and responsive with the approved labels and required interaction states.",
+      "source": "architecture_spec:8.2; architecture_spec:8.4; plan:Task 7",
+      "implementation_files": ["web/components/ui.jsx", "web/components/mobile-navigation.jsx", "web/app/globals.css"],
+      "test_files": ["tests/test_side_navigation_shell.py", "tests/test_rearchitecture_navigation_compliance.py"],
+      "verification_commands": ["python3 -m unittest tests.test_side_navigation_shell tests.test_rearchitecture_navigation_compliance"],
+      "evidence": "browser viewport captures, accessibility report, console/page/overflow record"
+    },
+    {
+      "id": "SC-020",
+      "statement": "The release has executable unit, contract, structural, Compose, migration, security-negative, browser, backup/restore, and rollback coverage.",
+      "source": "architecture_spec:11; plan:Task 1; plan:Task 8",
+      "implementation_files": [".github/workflows/quality-security.yml", "docs/qa/2026-07-22-enterprise-single-container-evidence-index.json"],
+      "test_files": ["tests/test_single_container_release_gate.py", "api/test/migration-runner.test.ts", "tests/test_infrastructure_release_evidence.py"],
+      "verification_commands": ["python3 -m unittest discover -s tests", "npm run test", "npm run check"],
+      "evidence": "CI run URL/ID, command logs, browser evidence, restore/rollback records"
+    },
+    {
+      "id": "SC-021",
+      "statement": "Supervisor, API, worker, migration, and storage events are structured, redacted, timestamped, and reviewable.",
+      "source": "architecture_spec:5.4; architecture_spec:8.3; plan:Task 2; plan:Task 8",
+      "implementation_files": ["container/supervisord.conf", "container/healthcheck.sh", "api/src/migration-runner.ts", "docs/runbooks/single-container-update-and-rollback.md"],
+      "test_files": ["tests/test_container_supervision_contract.py", "api/test/migration-runner.test.ts"],
+      "verification_commands": ["python3 -m unittest tests.test_container_supervision_contract", "npm --workspace @shore-sentinel/api test -- migration-runner"],
+      "evidence": "redacted structured log bundle and observability review"
+    },
+    {
+      "id": "SC-022",
+      "statement": "No unmet control is silently waived; any exception records scope, expiry, compensating control, and approver.",
+      "source": "architecture_spec:11; docs/qa/2026-07-20-v1.1.0-release-scorecard.md; plan:Task 8",
+      "implementation_files": ["docs/qa/2026-07-22-enterprise-single-container-requirements.json", "docs/qa/2026-07-22-enterprise-single-container-scorecard.md"],
+      "test_files": ["tests/test_single_container_release_gate.py"],
+      "verification_commands": ["python3 -m unittest tests.test_single_container_release_gate"],
+      "evidence": "complete evidence index and signed waiver records, or explicit no-waiver result"
+    },
+    {
+      "id": "SC-023",
+      "statement": "Candidate-specific evidence scores at least 95/100 and meets every category threshold and mandatory release gate.",
+      "source": "architecture_spec:11; plan:95+ evidence matrix; plan:Task 8",
+      "implementation_files": ["docs/qa/2026-07-22-enterprise-single-container-scorecard.md", "docs/qa/2026-07-22-enterprise-single-container-evidence-index.json"],
+      "test_files": ["tests/test_single_container_release_gate.py"],
+      "verification_commands": ["python3 -m unittest tests.test_single_container_release_gate"],
+      "evidence": "reviewed scorecard with category points, threshold result, candidate commit, and image digest"
+    },
+    {
+      "id": "SC-024",
+      "statement": "Prior delivery/configuration and persistent-data backups remain usable until staged rollback passes.",
+      "source": "architecture_spec:11; plan:Migration and data-safety contract; plan:Rollback and review boundary",
+      "implementation_files": ["docker-compose.previous.yml", "docs/runbooks/single-container-update-and-rollback.md", "docs/runbooks/single-container-backup-restore.md"],
+      "test_files": ["tests/test_single_container_persistence_contract.py"],
+      "verification_commands": ["python3 -m unittest tests.test_single_container_persistence_contract"],
+      "evidence": "prior image/config identity, volume backup references, staged rollback health and critical-flow result"
+    },
+    {
+      "id": "SC-025",
+      "statement": "Human federation, durable sessions, MFA/step-up, immutable owner authorization, dual approval, and execution grants are validated and fail closed.",
+      "source": "architecture_spec:5.1; architecture_spec:5.2; plan:SC-025; plan:Task 5",
+      "implementation_files": ["api/src/identity/oidc-validator.ts", "api/src/session/session.service.ts", "api/src/engagement/authorization.service.ts", "api/src/policy/execution-grant.service.ts", "api/migrations/0002-enterprise-authorization.sql"],
+      "test_files": ["api/test/identity-session.test.ts", "api/test/engagement-authorization.test.ts", "tests/test_architecture_document_invariants.py"],
+      "verification_commands": ["npm --workspace @shore-sentinel/api test -- identity-session engagement-authorization", "python3 -m unittest tests.test_architecture_document_invariants"],
+      "evidence": "issuer/JWKS/audience/nonce/state/PKCE negatives, session TTL/rotation/revocation, ACR/AMR step-up, owner/dual-approval, scope/expiry/revocation/policy-hash grant records",
+      "negative_test_artifacts": ["api/test/identity-session.test.ts: rejects wrong issuer, JWKS, audience, nonce, state, PKCE, and stale step-up claims", "api/test/engagement-authorization.test.ts: rejects missing dual approval, expired/revoked grants, scope escape, and policy-hash drift"]
+    },
+    {
+      "id": "SC-026",
+      "statement": "Workload mTLS trust and envelope-encrypted target-secret delivery enforce certificate/key lifecycle, audience, rotation, and one-use attempt-bound leases.",
+      "source": "architecture_spec:5.3; plan:SC-026; plan:Task 5",
+      "implementation_files": ["api/src/workload/workload-identity.service.ts", "api/src/secrets/envelope.service.ts", "api/src/internal-worker-route.ts", "container/process-environment-contract.json"],
+      "test_files": ["api/test/workload-identity.test.ts", "api/test/envelope-secret.test.ts", "workers/worker-node/test/apiClient.test.js", "tests/test_architecture_document_invariants.py"],
+      "verification_commands": ["npm --workspace @shore-sentinel/api test -- workload-identity envelope-secret", "npm run worker:test", "python3 -m unittest tests.test_architecture_document_invariants"],
+      "evidence": "trust-store/SAN/audience/expiry/revocation negatives, key-version rotation, ciphertext-only persistence, replay/cross-workload/KMS-outage denial, redacted payload scan",
+      "negative_test_artifacts": ["api/test/workload-identity.test.ts: rejects invalid SAN, audience, expiry, revocation, and cross-workload certificates", "api/test/envelope-secret.test.ts: rejects plaintext persistence, replay, wrong key version, and KMS outage", "workers/worker-node/test/apiClient.test.js: rejects missing, reused, and cross-workload attempt-bound leases"]
+    },
+    {
+      "id": "SC-027",
+      "statement": "Co-resident services and disposable runs have authenticated least-privilege boundaries, mandatory namespace/resource/LSM controls, and readiness refusal when containment primitives are unavailable.",
+      "source": "architecture_spec:4.2; plan:SC-027; plan:Task 5",
+      "implementation_files": ["container/run-sandbox.sh", "container/sandbox-policy.json", "container/healthcheck.sh", "api/src/database.service.ts", "workers/worker-node/src/managedSshProcessor.js"],
+      "test_files": ["tests/test_container_supervision_contract.py", "tests/test_sandbox_containment.py", "workers/worker-node/test/sandbox.test.js", "tests/test_architecture_document_invariants.py"],
+      "verification_commands": ["python3 -m unittest tests.test_container_supervision_contract tests.test_sandbox_containment", "npm run worker:test", "python3 -m unittest tests.test_architecture_document_invariants"],
+      "evidence": "DB/Redis/MinIO role inspection, namespace/cgroup/seccomp/LSM/masked-path checks, cross-process/signal/ptrace/symlink/resource negatives, startup refusal output",
+      "negative_test_artifacts": ["tests/test_container_supervision_contract.py: rejects missing process users, leaked environment values, writable paths, and unavailable readiness dependencies", "tests/test_sandbox_containment.py: rejects missing namespaces, cgroup/LSM/seccomp controls, ptrace, symlink escape, and resource limits", "workers/worker-node/test/sandbox.test.js: rejects cross-process access and reports startup refusal when containment primitives are unavailable"]
+    },
+    {
+      "id": "SC-028",
+      "statement": "Evidence hash chains emit signed keyed monotonic checkpoints to separately administered external WORM/Object-Lock storage, and legal holds cannot be bypassed.",
+      "source": "architecture_spec:5.4; plan:SC-028; plan:Task 6; plan:Task 7",
+      "implementation_files": ["api/src/evidence/checkpoint.service.ts", "api/src/evidence/legal-hold.service.ts", "docs/security/single-container-egress-deployment.md", "docs/runbooks/single-container-backup-restore.md"],
+      "test_files": ["api/test/evidence-checkpoint.test.ts", "api/test/legal-hold.test.ts", "tests/test_infrastructure_release_evidence.py", "tests/test_architecture_document_invariants.py"],
+      "verification_commands": ["npm --workspace @shore-sentinel/api test -- evidence-checkpoint legal-hold", "python3 -m unittest tests.test_infrastructure_release_evidence tests.test_architecture_document_invariants"],
+      "evidence": "external checkpoint receipt, signer/key custody record, mutation/truncation/replay/clock-skew/restore mismatch and hold-delete/admin-bypass negatives",
+      "negative_test_artifacts": ["api/test/evidence-checkpoint.test.ts: rejects mutation, truncation, replay, clock skew, restore mismatch, and non-monotonic checkpoints", "api/test/legal-hold.test.ts: rejects hold-protected deletion and administrator bypass", "tests/test_infrastructure_release_evidence.py: rejects missing external WORM receipt, external key custody, and signed checkpoint evidence"]
+    },
+    {
+      "id": "SC-029",
+      "statement": "Untrusted model, retrieval, tool, and external content cannot become supervisor/policy instructions; typed adapters enforce DLP and quarantine before persistence or egress.",
+      "source": "architecture_spec:6.2; plan:SC-029; plan:Task 5; plan:Task 6",
+      "implementation_files": ["workers/worker-python/src/parser.py", "workers/worker-node/src/toolAdapter.js", "api/src/dlp/dlp-gate.service.ts", "container/sandbox-policy.json"],
+      "test_files": ["workers/worker-python/test/test_dlp_and_injection.py", "workers/worker-node/test/toolAdapter.test.js", "api/test/dlp-gate.test.ts", "tests/test_architecture_document_invariants.py"],
+      "verification_commands": ["PYTHONPATH=workers/worker-python python3 -m unittest discover -s workers/worker-python/test", "npm run worker:test", "npm --workspace @shore-sentinel/api test -- dlp-gate", "python3 -m unittest tests.test_architecture_document_invariants"],
+      "evidence": "typed-schema and fixed-adapter output, DLP/quarantine records, indirect/encoded/redirect/argument-smuggling/oversize/detector-outage negatives",
+      "negative_test_artifacts": ["workers/worker-python/test/test_dlp_and_injection.py: rejects indirect and encoded injection, oversized payloads, and detector outage without quarantine", "workers/worker-node/test/toolAdapter.test.js: rejects malicious redirects, argument smuggling, and unallowlisted destinations or secret references", "api/test/dlp-gate.test.ts: rejects persistence or egress before DLP and requires quarantine on detector failure"]
+    },
+    {
+      "id": "SC-030",
+      "statement": "Supply-chain and update admission fails closed on missing or invalid signatures, trust roots, provenance, revocation, or anti-rollback policy; mutable-main updates are unavailable until verified.",
+      "source": "architecture_spec:9.1; plan:SC-030; plan:Task 7; README.md:217-253",
+      "implementation_files": ["scripts/verify_release_artifact.py", "docs/runbooks/single-container-update-and-rollback.md", ".github/workflows/quality-security.yml", "README.md"],
+      "test_files": ["tests/test_release_artifact_verification.py", "tests/test_architecture_document_invariants.py"],
+      "verification_commands": ["python3 -m unittest tests.test_release_artifact_verification tests.test_architecture_document_invariants", "npm run check"],
+      "evidence": "pinned signer/trust-root and provenance/SBOM records, tampered/unsigned/wrong-signer/revoked/stale/old-version denials, explicit unavailable-path review",
+      "negative_test_artifacts": ["tests/test_release_artifact_verification.py: rejects unsigned, tampered, wrong-signer, revoked, stale, and older-than-approved release candidates"]
+    },
+    {
+      "id": "SC-031",
+      "statement": "Independent encrypted off-volume recovery preserves consistency, keys/config recovery, RPO/RTO, retention/legal holds, and signed evidence checkpoints after total volume loss.",
+      "source": "architecture_spec:5.4; architecture_spec:10; plan:SC-031; plan:Migration and data-safety contract",
+      "implementation_files": ["docs/runbooks/single-container-backup-restore.md", "scripts/backup_restore_manifest.py", "api/src/evidence/checkpoint.service.ts", "docker-compose.yml"],
+      "test_files": ["tests/test_backup_restore_contract.py", "api/test/evidence-checkpoint.test.ts", "tests/test_architecture_document_invariants.py"],
+      "verification_commands": ["python3 -m unittest tests.test_backup_restore_contract tests.test_architecture_document_invariants", "npm --workspace @shore-sentinel/api test -- evidence-checkpoint"],
+      "evidence": "encrypted off-volume backup ID, quiesce/checkpoint manifest, recoverable KMS/config identity, RPO/RTO, fresh-empty-volume restore reconciliation, legal-hold and checkpoint verification",
+      "negative_test_artifacts": ["tests/test_backup_restore_contract.py: rejects in-volume or unencrypted backups, missing key/config identity, inconsistent quiesce ordering, and unreconciled fresh-volume restores", "api/test/evidence-checkpoint.test.ts: rejects recovery when signed evidence checkpoints, retention, or legal holds do not reconcile"]
+    }
+  ]
+}

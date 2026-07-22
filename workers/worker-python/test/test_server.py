@@ -161,7 +161,7 @@ class ParserServerTests(unittest.TestCase):
         self.assertEqual(len(body), 1024 * 1024)
         self.assertEqual(response.status, 200)
         self.assertEqual(payload, {"ok": True})
-        parse.assert_called_once_with("run-1", mock.ANY)
+        parse.assert_called_once_with("run-1", mock.ANY, expected_target_asset_id=None, expected_scanner=None, expected_subject_type=None)
 
     def test_parse_payload_ceiling_matches_node_payload_contract(self):
         node_limits = (SRC.parents[1] / "worker-node" / "src" / "payloadLimits.js").read_text()

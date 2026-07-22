@@ -105,7 +105,7 @@ export function Shell({ children, authenticated = false, user = null }) {
       <header className="top">
         <Brand />
         <aside className="user-strip">
-          <Link className="btn alt" href={routePath('/auth/login')}>Sign in</Link>
+          <a className="btn alt" href={appPath('/auth/login')}>Sign in</a>
         </aside>
       </header>
       <main id="main-content" tabIndex="-1">{children}</main>

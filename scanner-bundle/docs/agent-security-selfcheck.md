@@ -2,7 +2,7 @@
 
 ## What this script does
 
-`Agent_Security_Selfcheck_v3.4.0.py` is a **portable, read-only security auditor** for AI agent meshes that can use tools, schedule work, delegate to subagents, and influence application delivery.
+`Agent_Security_Selfcheck_v3.5.0.py` is a **portable, read-only security auditor** for AI agent meshes that can use tools, schedule work, delegate to subagents, and influence application delivery. v3.4.0 remains available as the rollback/reference baseline.
 
 From the live source, the script:
 
@@ -63,6 +63,8 @@ At a high level, the script:
 6. Correlates compound risks across findings.
 7. Scores categories, assigns an overall grade, and writes reports.
 
+`--scope-mode exact` is the fail-closed default and scans only the authoritative `--target` tree; it does not make host-runtime claims. Use `--scope-mode runtime` or `full` when host/runtime evidence is explicitly in scope. Use repeatable `--compose-file path/to/file.yml` to mark a development, override, or profile-controlled Compose file as explicitly selected and active for exposure classification.
+
 ## Frameworks and control lenses used
 
 The live `FRAMEWORKS_USED` list in the script includes:
@@ -117,21 +119,22 @@ In practice, that means each finding is already tied to a control lens that can 
 From this directory or by absolute path:
 
 ```bash
-python3 Agent_Security_Selfcheck_v3.4.0.py --target /path/to/target-repo
+python3 Agent_Security_Selfcheck_v3.5.0.py --target /path/to/target-repo --scope-mode exact
 ```
 
 Optional output directory:
 
 ```bash
-python3 Agent_Security_Selfcheck_v3.4.0.py \
+python3 Agent_Security_Selfcheck_v3.5.0.py \
   --target /path/to/target-repo \
+  --scope-mode exact \
   --out-dir ./reports
 ```
 
 If you want report generation without a non-zero exit code:
 
 ```bash
-python3 Agent_Security_Selfcheck_v3.3.0.py \
+python3 Agent_Security_Selfcheck_v3.5.0.py \
   --target /path/to/target-repo \
   --out-dir ./reports \
   --exit-zero
@@ -173,4 +176,7 @@ The current script help output exposes these flags:
 
 - `--target`
 - `--out-dir`
+- `--scope-mode {exact,discover,runtime,full}`
+- `--runtime-root`
+- `--compose-file` (repeatable)
 - `--exit-zero`

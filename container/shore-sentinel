@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+
+case "${1:-}" in
+  migrate)
+    shift
+    exec node /opt/shore-sentinel/api/dist/migration-runner.js migrate "$@"
+    ;;
+  bootstrap-admin)
+    shift
+    exec node /opt/shore-sentinel/api/dist/bootstrap-admin.js bootstrap-admin "$@"
+    ;;
+  *)
+    echo "usage: shore-sentinel migrate|bootstrap-admin" >&2
+    exit 64
+    ;;
+esac
