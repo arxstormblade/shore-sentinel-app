@@ -32,6 +32,7 @@ export function validateProductionSecrets(environment: NodeJS.ProcessEnv = proce
 @Injectable()
 export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   public readonly pool: pg.Pool;
+  public readonly enforceEnterpriseAuthorization = true;
   private ready = false;
   constructor() {
     validateProductionSecrets();
@@ -39,7 +40,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   }
   async onModuleInit() {
     const result = await this.pool.query<{ version: string }>('SELECT version FROM schema_migrations ORDER BY version');
-    if (!result.rows.some(({ version }) => version === '0004')) {
+    if (!result.rows.some(({ version }) => version === '0005')) {
       throw new Error('Database migrations are incomplete');
     }
     this.ready = true;

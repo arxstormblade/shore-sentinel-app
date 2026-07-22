@@ -70,6 +70,10 @@ class CompactCoreOperationsPageTests(unittest.TestCase):
         self.assertNotIn("CompactPageHeader", page)
         self.assertNotIn('className="operations-page scan-start-page"', page)
 
+    def test_production_dependencies_pin_non_vulnerable_sharp(self):
+        package = read("package.json")
+        self.assertIn('"sharp": "0.35.3"', package)
+
     def test_web_production_build_uses_architecture_independent_webpack(self):
         package = read("web/package.json")
         self.assertIn('"build": "next build --webpack"', package)

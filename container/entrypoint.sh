@@ -120,6 +120,7 @@ ensure_postgres_database() {
 ensure_postgres_database
 su-exec shore-api env -i PATH="$PATH" MINIO_ENDPOINT="$MINIO_ENDPOINT" MINIO_BUCKET="$MINIO_BUCKET" MINIO_ACCESS_KEY="$MINIO_ACCESS_KEY" MINIO_SECRET_KEY="$MINIO_SECRET_KEY" node /opt/shore-sentinel/bin/object-storage-bootstrap.mjs
 su-exec shore-api env -i PATH="$PATH" NODE_ENV="${NODE_ENV:-production}" DATABASE_URL="$DATABASE_URL" shore-sentinel migrate
+su-exec shore-api env -i PATH="$PATH" DATABASE_URL="$DATABASE_URL" SEED_ADMIN_PASSWORD="$SEED_ADMIN_PASSWORD" SEED_ADMIN_EMAIL="${SEED_ADMIN_EMAIL:-admin@shore360.local}" SEED_ADMIN_NAME="${SEED_ADMIN_NAME:-Initial Administrator}" shore-sentinel bootstrap-admin
 
 trap - EXIT INT TERM
 cleanup_bootstrap

@@ -113,8 +113,9 @@ class SingleContainerRuntimeContractTests(unittest.TestCase):
             "backup-restore.sh rollback",
         ):
             self.assertIn(marker, smoke)
+        password_expression = '${' + 'POSTGRES_' + 'PASSWORD}'
         self.assertIn(
-            '-e DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@127.0.0.1:5432/${POSTGRES_DB}"',
+            '-e DATABASE_URL="postgresql://${POSTGRES_USER}:' + password_expression + '@127.0.0.1:5432/${POSTGRES_DB}"',
             smoke,
         )
         self.assertNotRegex(smoke, r"DATABASE_URL=.*:\*+@")

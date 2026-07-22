@@ -18,6 +18,7 @@ POSTGRES_USER=shore_sentinel
 MINIO_BUCKET=shore-sentinel-runtime-artifacts
 
 cleanup() {
+  if [ "${KEEP_SMOKE_CONTAINER:-}" = 1 ]; then return; fi
   docker rm -f "$CONTAINER" "$PARTIAL_CONTAINER" >/dev/null 2>&1 || true
   docker volume rm "$VOLUME" "$PARTIAL_VOLUME" >/dev/null 2>&1 || true
 }
@@ -69,11 +70,32 @@ test "$owner" = "$POSTGRES_USER"
 migration_rows=$(docker exec "$CONTAINER" sh -c "PGPASSWORD=\"\$POSTGRES_PASSWORD\" psql -h 127.0.0.1 -U \"\$POSTGRES_USER\" -d \"\$POSTGRES_DB\" -Atqc 'SELECT concat(version, chr(58), checksum) FROM schema_migrations ORDER BY version'")
 expected_migrations=$(docker exec --user shore-api "$CONTAINER" sh -c 'for file in /opt/shore-sentinel/api/migrations/*.sql; do version=$(basename "$file" | cut -d_ -f1); printf "%s:" "$version"; sha256sum "$file" | awk "{print \$1}"; done')
 test "$migration_rows" = "$expected_migrations"
-test "$(printf '%s\n' "$migration_rows" | wc -l)" = 4
+test "$(printf '%s\n' "$migration_rows" | wc -l)" = 5
 docker exec --user shore-api "$CONTAINER" node /opt/shore-sentinel/bin/object-storage-bootstrap.mjs
 printf '%s\n' 'authenticated object-storage bootstrap passed'
 test "$(docker exec "$CONTAINER" sh -c 'curl -sS -o /dev/null -w "%{http_code}" "http://127.0.0.1:9000/$MINIO_BUCKET"')" = 403
 printf '%s\n' 'anonymous object-storage probe passed'
+
+login_json=$(docker exec "$CONTAINER" sh -c 'curl -fsS -c /tmp/enterprise-cookies -H "content-type: application/json" -d "{\"email\":\"admin@shore360.local\",\"password\":\"$SEED_ADMIN_PASSWORD\"}" http://127.0.0.1:4000/auth/login')
+printf '%s' "$login_json" | python3 -c 'import json, sys; assert json.load(sys.stdin).get("user", {}).get("email") == "admin@shore360.local"'
+docker exec "$CONTAINER" sh -c 'curl -fsS -b /tmp/enterprise-cookies http://127.0.0.1:4000/auth/me >/tmp/enterprise-me.json'
+printf '%s' "$(docker exec "$CONTAINER" cat /tmp/enterprise-me.json)" | python3 -c 'import json, sys; assert json.load(sys.stdin).get("email") == "admin@shore360.local"'
+printf '%s\n' 'durable admin login and session resolution passed'
+
+expires_at=$(date -u -d '+1 hour' '+%Y-%m-%dT%H:%M:%SZ')
+engagement_json=$(docker exec "$CONTAINER" sh -c "curl -fsS -b /tmp/enterprise-cookies -H 'content-type: application/json' -d '{\"name\":\"Runtime smoke engagement\",\"owner_team\":\"Shore360\",\"scope\":{\"assets\":[\"runtime-asset\"]},\"budget\":{\"minutes\":10},\"expires_at\":\"$expires_at\"}' http://127.0.0.1:4000/engagements")
+engagement_id=$(printf '%s' "$engagement_json" | python3 -c 'import json, sys; print(json.load(sys.stdin)["id"])')
+approval_status=$(docker exec "$CONTAINER" sh -c "curl -sS -o /tmp/enterprise-approval.json -w '%{http_code}' -b /tmp/enterprise-cookies -H 'content-type: application/json' -d '{\"role\":\"owner\"}' http://127.0.0.1:4000/engagements/$engagement_id/approvals")
+test "$approval_status" = 403
+simulation_json=$(docker exec "$CONTAINER" sh -c "curl -fsS -b /tmp/enterprise-cookies -H 'content-type: application/json' -d '{\"engagement_id\":\"$engagement_id\",\"policy_bundle_id\":\"11111111-1111-4111-8111-111111111111\",\"scope\":{\"assets\":[\"runtime-asset\"]}}' http://127.0.0.1:4000/policies/simulate")
+printf '%s' "$simulation_json" | python3 -c 'import json, sys; assert json.load(sys.stdin).get("allowed") is False'
+printf '%s\n' 'engagement creation, independent approval rejection, and policy simulation denial passed'
+logout_status=$(docker exec "$CONTAINER" sh -c "curl -sS -o /tmp/enterprise-logout.json -w '%{http_code}' -X POST -b /tmp/enterprise-cookies http://127.0.0.1:4000/auth/logout")
+test "$logout_status" = 201
+post_logout_status=$(docker exec "$CONTAINER" sh -c "curl -sS -o /tmp/enterprise-me-after-logout.json -w '%{http_code}' -b /tmp/enterprise-cookies http://127.0.0.1:4000/auth/me")
+test "$post_logout_status" = 401
+printf '%s\n' 'session revocation and post-logout denial passed'
+
 if docker exec --user shore-api "$CONTAINER" sh -c 'unset PGPASSWORD; psql -w -h 127.0.0.1 -U "$POSTGRES_USER" -d postgres -Atc "SELECT 1"' >/dev/null 2>&1; then
   echo "co-resident user connected without database credentials" >&2
   exit 1
@@ -112,7 +134,7 @@ for attempt in $(seq 1 90); do
 done
 docker exec "$CONTAINER" /opt/shore-sentinel/bin/capability-check.sh
 docker exec "$CONTAINER" test -s /var/lib/shore-sentinel/evidence/runtime-persistence-marker
-docker exec "$CONTAINER" sh -c "PGPASSWORD=\"\$POSTGRES_PASSWORD\" psql -h 127.0.0.1 -U \"\$POSTGRES_USER\" -d \"\$POSTGRES_DB\" -Atqc 'SELECT count(*) FROM schema_migrations' | grep -qx 4"
+docker exec "$CONTAINER" sh -c "PGPASSWORD=\"\$POSTGRES_PASSWORD\" psql -h 127.0.0.1 -U \"\$POSTGRES_USER\" -d \"\$POSTGRES_DB\" -Atqc 'SELECT count(*) FROM schema_migrations' | grep -qx 5"
 docker rm -f "$CONTAINER" >/dev/null
 docker volume rm "$PARTIAL_VOLUME" "$VOLUME" >/dev/null
 printf '%s\n' 'single-container runtime smoke passed'

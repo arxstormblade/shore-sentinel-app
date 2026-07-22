@@ -52,6 +52,7 @@ class SingleContainerPersistenceContractTests(unittest.TestCase):
             "0002_enterprise_authorization.sql",
             "0003_evidence-findings-read-model.sql",
             "0004_single-container-runtime.sql",
+            "0005_enterprise_identity_policy.sql",
         ])
         for migration in migrations:
             content = migration.read_text(encoding="utf-8")

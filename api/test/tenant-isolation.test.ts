@@ -13,6 +13,10 @@ test('auth.me binds the session user and tenant and rejects a disabled or moved 
       if (sql.includes('password_hash')) {
         return { rows: [{ id: 'user-a', tenant_id: 'tenant-a', email: 'a@example.test', display_name: 'A', password_hash: passwordHash }] };
       }
+      if (sql.includes('FROM auth_sessions')) {
+        const expiry = new Date(Date.now() + 60 * 60 * 1000);
+        return { rows: [{ user_id: 'user-a', tenant_id: 'tenant-a', idle_expires_at: expiry, absolute_expires_at: expiry, revoked_at: null }] };
+      }
       return { rows: [{ id: 'user-a', tenant_id: 'tenant-a', email: 'a@example.test', display_name: 'A', roles: ['operator'] }] };
     },
   };

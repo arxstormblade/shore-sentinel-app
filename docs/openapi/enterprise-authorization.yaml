@@ -1,0 +1,76 @@
+openapi: 3.1.0
+info:
+  title: Shore Sentinel Enterprise Authorization API
+  version: 1.1.0
+  description: Authorization-gated identity, engagement, policy simulation, and execution grant contracts.
+paths:
+  /auth/login:
+    post:
+      summary: Establish a durable revocable session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: {type: string, format: email}
+                password: {type: string, format: password, writeOnly: true}
+                remember_me: {type: boolean}
+      responses:
+        '200': {description: Session cookie issued}
+        '401': {description: Redacted authentication failure}
+        '429': {description: Throttled authentication attempt}
+  /auth/me:
+    get:
+      summary: Resolve the authenticated durable session
+      responses:
+        '200': {description: Tenant-bound principal}
+        '401': {description: Unauthenticated or revoked session}
+  /engagements:
+    get:
+      summary: List tenant-scoped engagements
+      responses:
+        '200': {description: Engagement records}
+    post:
+      summary: Create an expiring scoped engagement
+      responses:
+        '201': {description: Engagement created}
+        '403': {description: Permission denied}
+  /engagements/{id}/approvals:
+    post:
+      summary: Add an immutable owner or reviewer approval
+      parameters: [{name: id, in: path, required: true, schema: {type: string, format: uuid}}]
+      responses:
+        '201': {description: Approval created}
+        '409': {description: Approval already exists}
+  /engagements/{id}/revoke:
+    post:
+      summary: Revoke an engagement and its future grants
+      parameters: [{name: id, in: path, required: true, schema: {type: string, format: uuid}}]
+      responses:
+        '200': {description: Engagement revoked}
+  /policies/simulate:
+    post:
+      summary: Simulate a policy decision without launching execution
+      responses:
+        '200': {description: Allow/deny decision with safe reason}
+  /targets/{id}/scan-jobs:
+    post:
+      summary: Launch only when engagement, owner/dual approval, scope, expiry, and policy hash authorize execution
+      parameters: [{name: id, in: path, required: true, schema: {type: string, format: uuid}}]
+      responses:
+        '202': {description: Authorized opaque job dispatch}
+        '403': {description: Fail-closed authorization denial}
+components:
+  schemas:
+    AuthorizationDecision:
+      type: object
+      required: [allowed]
+      properties:
+        allowed: {type: boolean}
+        reason: {type: string}
+        engagementId: {type: string}
+        policyBundleId: {type: string}
+        policyHash: {type: string, pattern: '^[a-f0-9]{64}$'}
