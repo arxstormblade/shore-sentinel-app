@@ -450,7 +450,7 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller",
-      "community": 174,
+      "community": 176,
       "norm_label": "appcontroller"
     },
     {
@@ -460,7 +460,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "controller",
-      "community": 174,
+      "community": 176,
       "norm_label": "controller"
     },
     {
@@ -500,7 +500,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "res",
-      "community": 176,
+      "community": 174,
       "norm_label": "res"
     },
     {
@@ -560,7 +560,7 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_constructor",
-      "community": 36,
+      "community": 20,
       "norm_label": ".constructor()"
     },
     {
@@ -570,7 +570,7 @@
       "source_location": "L165",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_health",
-      "community": 174,
+      "community": 176,
       "norm_label": ".health()"
     },
     {
@@ -630,7 +630,7 @@
       "source_location": "L171",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_enrollmfa",
-      "community": 174,
+      "community": 176,
       "norm_label": ".enrollmfa()"
     },
     {
@@ -640,7 +640,7 @@
       "source_location": "L172",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_verifymfa",
-      "community": 174,
+      "community": 176,
       "norm_label": ".verifymfa()"
     },
     {
@@ -650,7 +650,7 @@
       "source_location": "L173",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_stepup",
-      "community": 174,
+      "community": 176,
       "norm_label": ".stepup()"
     },
     {
@@ -890,7 +890,7 @@
       "source_location": "L569",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_listidentitydevices",
-      "community": 174,
+      "community": 176,
       "norm_label": ".listidentitydevices()"
     },
     {
@@ -900,7 +900,7 @@
       "source_location": "L571",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_revokeidentitydevice",
-      "community": 174,
+      "community": 176,
       "norm_label": ".revokeidentitydevice()"
     },
     {
@@ -950,7 +950,7 @@
       "source_location": "L594",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_simulatepolicy",
-      "community": 174,
+      "community": 176,
       "norm_label": ".simulatepolicy()"
     },
     {
@@ -960,7 +960,7 @@
       "source_location": "L607",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_runtarget",
-      "community": 174,
+      "community": 176,
       "norm_label": ".runtarget()"
     },
     {
@@ -990,7 +990,7 @@
       "source_location": "L611",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_cancelrun",
-      "community": 174,
+      "community": 176,
       "norm_label": ".cancelrun()"
     },
     {
@@ -1060,7 +1060,7 @@
       "source_location": "L912",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_workerartifact",
-      "community": 176,
+      "community": 7,
       "norm_label": ".workerartifact()"
     },
     {
@@ -1070,7 +1070,7 @@
       "source_location": "L974",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_enqueueartifactcleanup",
-      "community": 174,
+      "community": 176,
       "norm_label": ".enqueueartifactcleanup()"
     },
     {
@@ -1080,7 +1080,7 @@
       "source_location": "L978",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_discardreservedartifact",
-      "community": 174,
+      "community": 176,
       "norm_label": ".discardreservedartifact()"
     },
     {
@@ -1120,7 +1120,7 @@
       "source_location": "L1056",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_scanneroutput",
-      "community": 80,
+      "community": 124,
       "norm_label": ".scanneroutput()"
     },
     {
@@ -1130,7 +1130,7 @@
       "source_location": "L1068",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_workereventtransition",
-      "community": 174,
+      "community": 176,
       "norm_label": ".workereventtransition()"
     },
     {
@@ -1150,7 +1150,7 @@
       "source_location": "L1086",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_requireinternalworker",
-      "community": 176,
+      "community": 7,
       "norm_label": ".requireinternalworker()"
     },
     {
@@ -1160,7 +1160,7 @@
       "source_location": "L1094",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_workercapability",
-      "community": 174,
+      "community": 7,
       "norm_label": ".workercapability()"
     },
     {
@@ -1170,7 +1170,7 @@
       "source_location": "L1100",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_requireworkercapability",
-      "community": 174,
+      "community": 7,
       "norm_label": ".requireworkercapability()"
     },
     {
@@ -1180,7 +1180,7 @@
       "source_location": "L1134",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_principal",
-      "community": 174,
+      "community": 176,
       "norm_label": ".principal()"
     },
     {
@@ -1190,7 +1190,7 @@
       "source_location": "L1142",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_requireexecutionauthorization",
-      "community": 174,
+      "community": 176,
       "norm_label": ".requireexecutionauthorization()"
     },
     {
@@ -1230,7 +1230,7 @@
       "source_location": "L1169",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_requirepermission",
-      "community": 174,
+      "community": 176,
       "norm_label": ".requirepermission()"
     },
     {
@@ -1240,7 +1240,7 @@
       "source_location": "L1177",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_machinehardwaresummary",
-      "community": 174,
+      "community": 176,
       "norm_label": ".machinehardwaresummary()"
     },
     {
@@ -1250,7 +1250,7 @@
       "source_location": "L1200",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_publicrunevent",
-      "community": 174,
+      "community": 176,
       "norm_label": ".publicrunevent()"
     },
     {
@@ -1370,7 +1370,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_src_app_module",
-      "community": 19,
+      "community": 39,
       "norm_label": "app.module.ts"
     },
     {
@@ -1580,7 +1580,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_src_auth_service",
-      "community": 14,
+      "community": 39,
       "norm_label": "auth.service.ts"
     },
     {
@@ -1590,7 +1590,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "api_src_auth_service_authservice",
-      "community": 14,
+      "community": 39,
       "norm_label": "authservice"
     },
     {
@@ -1600,7 +1600,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "api_src_auth_service_ts_injectable",
-      "community": 14,
+      "community": 39,
       "norm_label": "injectable"
     },
     {
@@ -1610,7 +1610,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "api_src_auth_service_authservice_constructor",
-      "community": 14,
+      "community": 19,
       "norm_label": ".constructor()"
     },
     {
@@ -2370,7 +2370,7 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "api_src_identity_oidc_validator_validatesamlboundary",
-      "community": 19,
+      "community": 179,
       "norm_label": "validatesamlboundary()"
     },
     {
@@ -2380,7 +2380,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_src_identity_provider_service",
-      "community": 19,
+      "community": 179,
       "norm_label": "provider.service.ts"
     },
     {
@@ -2390,7 +2390,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "api_src_identity_provider_service_identityproviderboundary",
-      "community": 19,
+      "community": 179,
       "norm_label": "identityproviderboundary"
     },
     {
@@ -2400,7 +2400,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "api_src_identity_provider_service_identityproviderservice",
-      "community": 19,
+      "community": 179,
       "norm_label": "identityproviderservice"
     },
     {
@@ -2410,7 +2410,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "api_src_identity_provider_service_ts_injectable",
-      "community": 19,
+      "community": 179,
       "norm_label": "injectable"
     },
     {
@@ -2420,7 +2420,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "api_src_identity_provider_service_identityproviderservice_constructor",
-      "community": 19,
+      "community": 179,
       "norm_label": ".constructor()"
     },
     {
@@ -2430,7 +2430,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "api_src_identity_provider_service_identityproviderservice_save",
-      "community": 19,
+      "community": 179,
       "norm_label": ".save()"
     },
     {
@@ -2440,7 +2440,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "api_src_identity_provider_service_identityproviderservice_validatesaml",
-      "community": 19,
+      "community": 179,
       "norm_label": ".validatesaml()"
     },
     {
@@ -3090,7 +3090,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "api_src_session_session_service_sessionservice_resolve",
-      "community": 21,
+      "community": 14,
       "norm_label": ".resolve()"
     },
     {
@@ -3430,7 +3430,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "api_src_validation_requireworkerattempt",
-      "community": 176,
+      "community": 7,
       "norm_label": "requireworkerattempt()"
     },
     {
@@ -3810,7 +3810,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_test_policy_simulation_test",
-      "community": 174,
+      "community": 7,
       "norm_label": "policy-simulation.test.ts"
     },
     {
@@ -3820,7 +3820,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "api_test_policy_simulation_test_request",
-      "community": 174,
+      "community": 7,
       "norm_label": "request"
     },
     {
@@ -4030,7 +4030,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_test_tenant_isolation_test",
-      "community": 14,
+      "community": 39,
       "norm_label": "tenant-isolation.test.ts"
     },
     {
@@ -5460,7 +5460,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "packages_shared_src_index",
-      "community": 15,
+      "community": 124,
       "norm_label": "index.js"
     },
     {
@@ -5480,7 +5480,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "packages_shared_src_index_job_status",
-      "community": 15,
+      "community": 124,
       "norm_label": "job_status"
     },
     {
@@ -5490,7 +5490,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "packages_shared_src_index_run_event_type",
-      "community": 15,
+      "community": 124,
       "norm_label": "run_event_type"
     },
     {
@@ -5510,7 +5510,7 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "packages_shared_src_index_buildrunevent",
-      "community": 15,
+      "community": 124,
       "norm_label": "buildrunevent()"
     },
     {
@@ -5520,7 +5520,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "packages_shared_src_index_validateartifactupload",
-      "community": 15,
+      "community": 124,
       "norm_label": "validateartifactupload()"
     },
     {
@@ -5530,7 +5530,7 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "packages_shared_src_index_scannerbundlecontractversion",
-      "community": 80,
+      "community": 124,
       "norm_label": "scannerbundlecontractversion()"
     },
     {
@@ -10498,7 +10498,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy",
-      "community": 2,
+      "community": 188,
       "norm_label": "tailnet_path_proxy.py"
     },
     {
@@ -10508,7 +10508,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_upstream_path",
-      "community": 2,
+      "community": 188,
       "norm_label": "upstream_path()"
     },
     {
@@ -10518,7 +10518,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_proxyhandler",
-      "community": 2,
+      "community": 188,
       "norm_label": "proxyhandler"
     },
     {
@@ -10538,7 +10538,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_proxyhandler_proxy",
-      "community": 2,
+      "community": 188,
       "norm_label": "._proxy()"
     },
     {
@@ -10548,7 +10548,7 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_proxyhandler_do_get",
-      "community": 2,
+      "community": 188,
       "norm_label": ".do_get()"
     },
     {
@@ -10558,7 +10558,7 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_proxyhandler_do_head",
-      "community": 2,
+      "community": 188,
       "norm_label": ".do_head()"
     },
     {
@@ -10568,7 +10568,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_proxyhandler_do_post",
-      "community": 2,
+      "community": 188,
       "norm_label": ".do_post()"
     },
     {
@@ -10578,7 +10578,7 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_proxyhandler_do_put",
-      "community": 2,
+      "community": 188,
       "norm_label": ".do_put()"
     },
     {
@@ -10588,7 +10588,7 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_proxyhandler_do_patch",
-      "community": 2,
+      "community": 188,
       "norm_label": ".do_patch()"
     },
     {
@@ -10598,7 +10598,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_proxyhandler_do_delete",
-      "community": 2,
+      "community": 188,
       "norm_label": ".do_delete()"
     },
     {
@@ -10608,7 +10608,7 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "scripts_tailnet_path_proxy_proxyhandler_log_message",
-      "community": 2,
+      "community": 188,
       "norm_label": ".log_message()"
     },
     {
@@ -13134,7 +13134,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_app_api_auth_login_route",
-      "community": 5,
+      "community": 189,
       "norm_label": "route.js"
     },
     {
@@ -13144,7 +13144,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "web_app_api_auth_login_route_serverapibase",
-      "community": 5,
+      "community": 189,
       "norm_label": "serverapibase()"
     },
     {
@@ -13154,7 +13154,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "web_app_api_auth_login_route_forwardauth",
-      "community": 5,
+      "community": 189,
       "norm_label": "forwardauth()"
     },
     {
@@ -13164,7 +13164,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "web_app_api_auth_login_route_normalizeauthcookie",
-      "community": 5,
+      "community": 189,
       "norm_label": "normalizeauthcookie()"
     },
     {
@@ -13174,7 +13174,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "web_app_api_auth_login_route_redirectto",
-      "community": 5,
+      "community": 189,
       "norm_label": "redirectto()"
     },
     {
@@ -13184,7 +13184,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "web_app_api_auth_login_route_post",
-      "community": 5,
+      "community": 189,
       "norm_label": "post()"
     },
     {
@@ -13224,7 +13224,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_app_api_auth_register_route",
-      "community": 5,
+      "community": 190,
       "norm_label": "route.js"
     },
     {
@@ -13234,7 +13234,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "web_app_api_auth_register_route_serverapibase",
-      "community": 5,
+      "community": 190,
       "norm_label": "serverapibase()"
     },
     {
@@ -13244,7 +13244,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "web_app_api_auth_register_route_forwardauth",
-      "community": 5,
+      "community": 190,
       "norm_label": "forwardauth()"
     },
     {
@@ -13254,7 +13254,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "web_app_api_auth_register_route_normalizeauthcookie",
-      "community": 5,
+      "community": 190,
       "norm_label": "normalizeauthcookie()"
     },
     {
@@ -13264,7 +13264,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "web_app_api_auth_register_route_redirectto",
-      "community": 5,
+      "community": 190,
       "norm_label": "redirectto()"
     },
     {
@@ -13274,7 +13274,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "web_app_api_auth_register_route_post",
-      "community": 5,
+      "community": 190,
       "norm_label": "post()"
     },
     {
@@ -13464,7 +13464,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_app_api_targets_path_route",
-      "community": 5,
+      "community": 185,
       "norm_label": "route.js"
     },
     {
@@ -13474,7 +13474,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_app_api_targets_path_route_serverapibase",
-      "community": 5,
+      "community": 185,
       "norm_label": "serverapibase()"
     },
     {
@@ -13484,7 +13484,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "web_app_api_targets_path_route_authenticated_roles",
-      "community": 5,
+      "community": 185,
       "norm_label": "authenticated_roles"
     },
     {
@@ -13494,7 +13494,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "web_app_api_targets_path_route_pathsegments",
-      "community": 5,
+      "community": 185,
       "norm_label": "pathsegments()"
     },
     {
@@ -13504,7 +13504,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "web_app_api_targets_path_route_encodedpath",
-      "community": 5,
+      "community": 185,
       "norm_label": "encodedpath()"
     },
     {
@@ -13514,7 +13514,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "web_app_api_targets_path_route_allowedroles",
-      "community": 5,
+      "community": 185,
       "norm_label": "allowedroles()"
     },
     {
@@ -13524,7 +13524,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "web_app_api_targets_path_route_authorize",
-      "community": 5,
+      "community": 185,
       "norm_label": "authorize()"
     },
     {
@@ -13534,7 +13534,7 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "web_app_api_targets_path_route_proxytargetrequest",
-      "community": 5,
+      "community": 185,
       "norm_label": "proxytargetrequest()"
     },
     {
@@ -13544,7 +13544,7 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "web_app_api_targets_path_route_get",
-      "community": 5,
+      "community": 185,
       "norm_label": "get()"
     },
     {
@@ -13554,7 +13554,7 @@
       "source_location": "L103",
       "_origin": "ast",
       "id": "web_app_api_targets_path_route_post",
-      "community": 5,
+      "community": 185,
       "norm_label": "post()"
     },
     {
@@ -13564,7 +13564,7 @@
       "source_location": "L107",
       "_origin": "ast",
       "id": "web_app_api_targets_path_route_patch",
-      "community": 5,
+      "community": 185,
       "norm_label": "patch()"
     },
     {
@@ -13574,7 +13574,7 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "web_app_api_targets_path_route_delete",
-      "community": 5,
+      "community": 185,
       "norm_label": "delete()"
     },
     {
@@ -13834,7 +13834,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_app_auth_register_page",
-      "community": 12,
+      "community": 5,
       "norm_label": "page.jsx"
     },
     {
@@ -13844,7 +13844,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "web_app_auth_register_page_register",
-      "community": 12,
+      "community": 5,
       "norm_label": "register()"
     },
     {
@@ -13954,7 +13954,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_app_inventory_machines_id_page",
-      "community": 48,
+      "community": 8,
       "norm_label": "page.jsx"
     },
     {
@@ -13964,7 +13964,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "web_app_inventory_machines_id_page_enrichremediations",
-      "community": 48,
+      "community": 8,
       "norm_label": "enrichremediations()"
     },
     {
@@ -13974,7 +13974,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "web_app_inventory_machines_id_page_machine",
-      "community": 48,
+      "community": 8,
       "norm_label": "machine()"
     },
     {
@@ -14024,7 +14024,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_app_knowledgebase_page",
-      "community": 12,
+      "community": 32,
       "norm_label": "page.jsx"
     },
     {
@@ -14034,7 +14034,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "web_app_knowledgebase_page_kb",
-      "community": 12,
+      "community": 32,
       "norm_label": "kb()"
     },
     {
@@ -14244,7 +14244,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "web_app_saved_views_slug_page_savedviewslugpage",
-      "community": 135,
+      "community": 32,
       "norm_label": "savedviewslugpage()"
     },
     {
@@ -14254,7 +14254,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_app_saved_views_page",
-      "community": 12,
+      "community": 32,
       "norm_label": "page.jsx"
     },
     {
@@ -14264,7 +14264,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "web_app_saved_views_page_savedviewspage",
-      "community": 12,
+      "community": 32,
       "norm_label": "savedviewspage()"
     },
     {
@@ -14294,7 +14294,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_app_scans_reports_reports_id_page",
-      "community": 124,
+      "community": 48,
       "norm_label": "page.jsx"
     },
     {
@@ -14304,7 +14304,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "web_app_scans_reports_reports_id_page_renderfinding",
-      "community": 124,
+      "community": 48,
       "norm_label": "renderfinding()"
     },
     {
@@ -14314,7 +14314,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "web_app_scans_reports_reports_id_page_artifactlabel",
-      "community": 124,
+      "community": 48,
       "norm_label": "artifactlabel()"
     },
     {
@@ -14324,7 +14324,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "web_app_scans_reports_reports_id_page_artifactdescription",
-      "community": 124,
+      "community": 48,
       "norm_label": "artifactdescription()"
     },
     {
@@ -14334,7 +14334,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "web_app_scans_reports_reports_id_page_report",
-      "community": 124,
+      "community": 48,
       "norm_label": "report()"
     },
     {
@@ -14344,7 +14344,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_app_scans_start_page",
-      "community": 12,
+      "community": 32,
       "norm_label": "page.jsx"
     },
     {
@@ -14354,7 +14354,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "web_app_scans_start_page_startscanredirect",
-      "community": 12,
+      "community": 32,
       "norm_label": "startscanredirect()"
     },
     {
@@ -14744,7 +14744,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_components_mobile_navigation",
-      "community": 12,
+      "community": 32,
       "norm_label": "mobile-navigation.jsx"
     },
     {
@@ -14754,7 +14754,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "web_components_mobile_navigation_mobilenavigation",
-      "community": 12,
+      "community": 32,
       "norm_label": "mobilenavigation()"
     },
     {
@@ -14764,7 +14764,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "web_components_new_machine_form",
-      "community": 12,
+      "community": 5,
       "norm_label": "new-machine-form.jsx"
     },
     {
@@ -14774,7 +14774,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "web_components_new_machine_form_newmachineform",
-      "community": 12,
+      "community": 5,
       "norm_label": "newmachineform()"
     },
     {
@@ -15174,7 +15174,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "web_components_ui_shell",
-      "community": 12,
+      "community": 5,
       "norm_label": "shell()"
     },
     {
@@ -15884,7 +15884,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_lib_paths_routepath",
-      "community": 12,
+      "community": 32,
       "norm_label": "routepath()"
     },
     {
@@ -16994,7 +16994,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_apiclient",
-      "community": 185,
+      "community": 26,
       "norm_label": "apiclient.js"
     },
     {
@@ -17004,7 +17004,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_apiclient_postjson",
-      "community": 185,
+      "community": 26,
       "norm_label": "postjson()"
     },
     {
@@ -17014,7 +17014,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "workers_worker_node_src_apiclient_getjson",
-      "community": 185,
+      "community": 26,
       "norm_label": "getjson()"
     },
     {
@@ -17024,7 +17024,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "workers_worker_node_src_apiclient_createapiclient",
-      "community": 185,
+      "community": 26,
       "norm_label": "createapiclient()"
     },
     {
@@ -17074,7 +17074,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_failurehandling",
-      "community": 26,
+      "community": 15,
       "norm_label": "failurehandling.js"
     },
     {
@@ -17084,7 +17084,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "workers_worker_node_src_failurehandling_delay",
-      "community": 21,
+      "community": 14,
       "norm_label": "delay()"
     },
     {
@@ -17094,7 +17094,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "workers_worker_node_src_failurehandling_handlemanagedsshfailure",
-      "community": 26,
+      "community": 15,
       "norm_label": "handlemanagedsshfailure()"
     },
     {
@@ -17214,7 +17214,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_lifecycle",
-      "community": 15,
+      "community": 124,
       "norm_label": "lifecycle.js"
     },
     {
@@ -17234,7 +17234,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "workers_worker_node_src_lifecycle_lifecycleevent",
-      "community": 15,
+      "community": 124,
       "norm_label": "lifecycleevent()"
     },
     {
@@ -17244,7 +17244,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "workers_worker_node_src_lifecycle_artifactuploadpayload",
-      "community": 15,
+      "community": 124,
       "norm_label": "artifactuploadpayload()"
     },
     {
@@ -17294,7 +17294,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "workers_worker_node_src_managedsshprocessor_emitmanagedsshfailure",
-      "community": 26,
+      "community": 15,
       "norm_label": "emitmanagedsshfailure()"
     },
     {
@@ -17324,7 +17324,7 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "workers_worker_node_src_managedsshprocessor_processmanagedsshjob",
-      "community": 26,
+      "community": 15,
       "norm_label": "processmanagedsshjob()"
     },
     {
@@ -17364,7 +17364,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_payload",
-      "community": 80,
+      "community": 124,
       "norm_label": "payload.js"
     },
     {
@@ -17374,7 +17374,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "workers_worker_node_src_payload_normalizejobdata",
-      "community": 80,
+      "community": 124,
       "norm_label": "normalizejobdata()"
     },
     {
@@ -17508,10 +17508,20 @@
       "norm_label": "valid_decision_status"
     },
     {
+      "label": "VALID_SCOPE_MODE",
+      "file_type": "code",
+      "source_file": "workers/worker-node/src/scannerRunner.js",
+      "source_location": "L20",
+      "_origin": "ast",
+      "id": "workers_worker_node_src_scannerrunner_valid_scope_mode",
+      "community": 69,
+      "norm_label": "valid_scope_mode"
+    },
+    {
       "label": "COVERAGE_BOOLEAN_FIELDS",
       "file_type": "code",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L21",
+      "source_location": "L22",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_coverage_boolean_fields",
       "community": 69,
@@ -17521,7 +17531,7 @@
       "label": "COVERAGE_INTEGER_FIELDS",
       "file_type": "code",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L24",
+      "source_location": "L25",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_coverage_integer_fields",
       "community": 69,
@@ -17531,7 +17541,7 @@
       "label": "COVERAGE_STRING_FIELDS",
       "file_type": "code",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L25",
+      "source_location": "L26",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_coverage_string_fields",
       "community": 69,
@@ -17541,7 +17551,7 @@
       "label": "COVERAGE_STRING_ARRAY_FIELDS",
       "file_type": "code",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L26",
+      "source_location": "L27",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_coverage_string_array_fields",
       "community": 69,
@@ -17551,7 +17561,7 @@
       "label": "COVERAGE_RECORD_ARRAY_FIELDS",
       "file_type": "code",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L27",
+      "source_location": "L28",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_coverage_record_array_fields",
       "community": 69,
@@ -17561,7 +17571,7 @@
       "label": "COVERAGE_FIELDS",
       "file_type": "code",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L28",
+      "source_location": "L29",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_coverage_fields",
       "community": 69,
@@ -17571,7 +17581,7 @@
       "label": "isDateTime()",
       "file_type": "code",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L33",
+      "source_location": "L34",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_isdatetime",
       "community": 69,
@@ -17581,7 +17591,7 @@
       "label": "assertString()",
       "file_type": "code",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L43",
+      "source_location": "L44",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_assertstring",
       "community": 69,
@@ -17591,7 +17601,7 @@
       "label": "validateCoverage()",
       "file_type": "code",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L47",
+      "source_location": "L48",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_validatecoverage",
       "community": 69,
@@ -17601,7 +17611,7 @@
       "label": "severityFromRisk()",
       "file_type": "code",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L70",
+      "source_location": "L72",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_severityfromrisk",
       "community": 69,
@@ -17611,7 +17621,7 @@
       "label": "validateEvidence()",
       "file_type": "code",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L75",
+      "source_location": "L77",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_validateevidence",
       "community": 69,
@@ -17621,7 +17631,7 @@
       "label": "toContract()",
       "file_type": "code",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L88",
+      "source_location": "L90",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_tocontract",
       "community": 69,
@@ -17631,7 +17641,7 @@
       "label": "artifactTypeFor()",
       "file_type": "code",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L166",
+      "source_location": "L173",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_artifacttypefor",
       "community": 69,
@@ -17641,7 +17651,7 @@
       "label": "contentTypeFor()",
       "file_type": "code",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L175",
+      "source_location": "L182",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_contenttypefor",
       "community": 69,
@@ -17651,7 +17661,7 @@
       "label": "resolveContainedPath()",
       "file_type": "code",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L184",
+      "source_location": "L191",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_resolvecontainedpath",
       "community": 69,
@@ -17661,7 +17671,7 @@
       "label": "runBundledScanner()",
       "file_type": "code",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L196",
+      "source_location": "L203",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_runbundledscanner",
       "community": 69,
@@ -17804,7 +17814,7 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "workers_worker_node_src_sshexecutor_normalizesshjob",
-      "community": 35,
+      "community": 15,
       "norm_label": "normalizesshjob()"
     },
     {
@@ -17904,7 +17914,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_test_apiclient_test",
-      "community": 185,
+      "community": 26,
       "norm_label": "apiclient.test.js"
     },
     {
@@ -17934,7 +17944,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_test_lifecycle_test",
-      "community": 15,
+      "community": 124,
       "norm_label": "lifecycle.test.js"
     },
     {
@@ -17944,7 +17954,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_test_managedsshprocessor_test",
-      "community": 26,
+      "community": 15,
       "norm_label": "managedsshprocessor.test.js"
     },
     {
@@ -17954,7 +17964,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "workers_worker_node_test_managedsshprocessor_test_job",
-      "community": 26,
+      "community": 15,
       "norm_label": "job"
     },
     {
@@ -17964,7 +17974,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "workers_worker_node_test_managedsshprocessor_test_grant",
-      "community": 26,
+      "community": 15,
       "norm_label": "grant"
     },
     {
@@ -17974,7 +17984,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_test_payload_test",
-      "community": 80,
+      "community": 124,
       "norm_label": "payload.test.js"
     },
     {
@@ -18251,7 +18261,7 @@
       "label": "ParseResult",
       "file_type": "code",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L29",
+      "source_location": "L30",
       "_origin": "ast",
       "id": "workers_worker_python_src_parser_parseresult",
       "community": 2,
@@ -18261,7 +18271,7 @@
       "label": ".to_dict()",
       "file_type": "code",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L35",
+      "source_location": "L36",
       "_origin": "ast",
       "id": "workers_worker_python_src_parser_parseresult_to_dict",
       "community": 2,
@@ -18281,7 +18291,7 @@
       "label": "_now()",
       "file_type": "code",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L39",
+      "source_location": "L40",
       "_origin": "ast",
       "id": "workers_worker_python_src_parser_now",
       "community": 2,
@@ -18291,7 +18301,7 @@
       "label": "_valid_datetime()",
       "file_type": "code",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L43",
+      "source_location": "L44",
       "_origin": "ast",
       "id": "workers_worker_python_src_parser_valid_datetime",
       "community": 2,
@@ -18301,7 +18311,7 @@
       "label": "_validate_coverage()",
       "file_type": "code",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L56",
+      "source_location": "L57",
       "_origin": "ast",
       "id": "workers_worker_python_src_parser_validate_coverage",
       "community": 2,
@@ -18311,7 +18321,7 @@
       "label": "normalize_severity()",
       "file_type": "code",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L81",
+      "source_location": "L84",
       "_origin": "ast",
       "id": "workers_worker_python_src_parser_normalize_severity",
       "community": 2,
@@ -18321,7 +18331,7 @@
       "label": "_reference_texts()",
       "file_type": "code",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L89",
+      "source_location": "L92",
       "_origin": "ast",
       "id": "workers_worker_python_src_parser_reference_texts",
       "community": 2,
@@ -18331,7 +18341,7 @@
       "label": "extract_cve_info()",
       "file_type": "code",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L110",
+      "source_location": "L104",
       "_origin": "ast",
       "id": "workers_worker_python_src_parser_extract_cve_info",
       "community": 2,
@@ -18341,7 +18351,7 @@
       "label": "_validate_evidence()",
       "file_type": "code",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L129",
+      "source_location": "L123",
       "_origin": "ast",
       "id": "workers_worker_python_src_parser_validate_evidence",
       "community": 2,
@@ -18351,7 +18361,7 @@
       "label": "normalize_finding()",
       "file_type": "code",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L147",
+      "source_location": "L141",
       "_origin": "ast",
       "id": "workers_worker_python_src_parser_normalize_finding",
       "community": 2,
@@ -18361,7 +18371,7 @@
       "label": "parse_scanner_output()",
       "file_type": "code",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L210",
+      "source_location": "L204",
       "_origin": "ast",
       "id": "workers_worker_python_src_parser_parse_scanner_output",
       "community": 2,
@@ -18431,7 +18441,7 @@
       "label": ".log_message()",
       "file_type": "code",
       "source_file": "workers/worker-python/src/server.py",
-      "source_location": "L74",
+      "source_location": "L75",
       "_origin": "ast",
       "id": "workers_worker_python_src_server_handler_log_message",
       "community": 2,
@@ -18441,7 +18451,7 @@
       "label": "main()",
       "file_type": "code",
       "source_file": "workers/worker-python/src/server.py",
-      "source_location": "L78",
+      "source_location": "L79",
       "_origin": "ast",
       "id": "workers_worker_python_src_server_main",
       "community": 2,
@@ -18656,6 +18666,36 @@
       "id": "workers_worker_python_test_test_parser_parsertests_test_rejects_scanner_identity_mismatch_when_expected",
       "community": 2,
       "norm_label": ".test_rejects_scanner_identity_mismatch_when_expected()"
+    },
+    {
+      "label": ".test_rejects_invalid_scope_mode()",
+      "file_type": "code",
+      "source_file": "workers/worker-python/test/test_parser.py",
+      "source_location": "L136",
+      "_origin": "ast",
+      "id": "workers_worker_python_test_test_parser_parsertests_test_rejects_invalid_scope_mode",
+      "community": 2,
+      "norm_label": ".test_rejects_invalid_scope_mode()"
+    },
+    {
+      "label": ".test_rejects_object_valued_references()",
+      "file_type": "code",
+      "source_file": "workers/worker-python/test/test_parser.py",
+      "source_location": "L141",
+      "_origin": "ast",
+      "id": "workers_worker_python_test_test_parser_parsertests_test_rejects_object_valued_references",
+      "community": 2,
+      "norm_label": ".test_rejects_object_valued_references()"
+    },
+    {
+      "label": ".test_rejects_expected_subject_type_mismatch()",
+      "file_type": "code",
+      "source_file": "workers/worker-python/test/test_parser.py",
+      "source_location": "L145",
+      "_origin": "ast",
+      "id": "workers_worker_python_test_test_parser_parsertests_test_rejects_expected_subject_type_mismatch",
+      "community": 2,
+      "norm_label": ".test_rejects_expected_subject_type_mismatch()"
     },
     {
       "label": "test_server.py",
@@ -33501,7 +33541,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L50",
+      "source_location": "L51",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_validatecoverage",
       "target": "api_src_identity_mfa_service_key"
@@ -35169,7 +35209,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L185",
+      "source_location": "L192",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_resolvecontainedpath",
       "target": "api_src_session_session_service_sessionservice_resolve"
@@ -37814,7 +37854,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L90",
+      "source_location": "L92",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_tocontract",
       "target": "packages_shared_src_index_scannerbundlecontractversion"
@@ -58024,7 +58064,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L166",
+      "source_location": "L173",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner",
       "target": "workers_worker_node_src_scannerrunner_artifacttypefor",
@@ -58034,7 +58074,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L43",
+      "source_location": "L44",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner",
       "target": "workers_worker_node_src_scannerrunner_assertstring",
@@ -58044,7 +58084,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L175",
+      "source_location": "L182",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner",
       "target": "workers_worker_node_src_scannerrunner_contenttypefor",
@@ -58054,7 +58094,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner",
       "target": "workers_worker_node_src_scannerrunner_coverage_boolean_fields",
@@ -58064,7 +58104,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L28",
+      "source_location": "L29",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner",
       "target": "workers_worker_node_src_scannerrunner_coverage_fields",
@@ -58074,7 +58114,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L24",
+      "source_location": "L25",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner",
       "target": "workers_worker_node_src_scannerrunner_coverage_integer_fields",
@@ -58084,7 +58124,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L27",
+      "source_location": "L28",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner",
       "target": "workers_worker_node_src_scannerrunner_coverage_record_array_fields",
@@ -58094,7 +58134,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L26",
+      "source_location": "L27",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner",
       "target": "workers_worker_node_src_scannerrunner_coverage_string_array_fields",
@@ -58104,7 +58144,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L25",
+      "source_location": "L26",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner",
       "target": "workers_worker_node_src_scannerrunner_coverage_string_fields",
@@ -58124,7 +58164,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L33",
+      "source_location": "L34",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner",
       "target": "workers_worker_node_src_scannerrunner_isdatetime",
@@ -58134,7 +58174,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L184",
+      "source_location": "L191",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner",
       "target": "workers_worker_node_src_scannerrunner_resolvecontainedpath",
@@ -58144,7 +58184,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L196",
+      "source_location": "L203",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner",
       "target": "workers_worker_node_src_scannerrunner_runbundledscanner",
@@ -58154,7 +58194,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L70",
+      "source_location": "L72",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner",
       "target": "workers_worker_node_src_scannerrunner_severityfromrisk",
@@ -58164,7 +58204,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L88",
+      "source_location": "L90",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner",
       "target": "workers_worker_node_src_scannerrunner_tocontract",
@@ -58234,6 +58274,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "workers_worker_node_src_scannerrunner",
+      "target": "workers_worker_node_src_scannerrunner_valid_scope_mode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "workers/worker-node/src/scannerRunner.js",
       "source_location": "L18",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner",
@@ -58254,7 +58304,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L47",
+      "source_location": "L48",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner",
       "target": "workers_worker_node_src_scannerrunner_validatecoverage",
@@ -58264,7 +58314,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L75",
+      "source_location": "L77",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner",
       "target": "workers_worker_node_src_scannerrunner_validateevidence",
@@ -58275,7 +58325,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L200",
+      "source_location": "L207",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_runbundledscanner",
       "target": "workers_worker_node_src_scannerrunner_execfileasync",
@@ -58287,7 +58337,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L121",
+      "source_location": "L128",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_tocontract",
       "target": "workers_worker_node_src_scannerrunner_valid_confidence"
@@ -58298,7 +58348,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L82",
+      "source_location": "L84",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_validateevidence",
       "target": "workers_worker_node_src_scannerrunner_valid_confidence"
@@ -58309,7 +58359,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L120",
+      "source_location": "L127",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_tocontract",
       "target": "workers_worker_node_src_scannerrunner_valid_scope"
@@ -58320,7 +58370,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L81",
+      "source_location": "L83",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_validateevidence",
       "target": "workers_worker_node_src_scannerrunner_valid_scope"
@@ -58331,7 +58381,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L122",
+      "source_location": "L129",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_tocontract",
       "target": "workers_worker_node_src_scannerrunner_valid_reachability"
@@ -58342,7 +58392,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L123",
+      "source_location": "L130",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_tocontract",
       "target": "workers_worker_node_src_scannerrunner_valid_evidence_kind"
@@ -58353,7 +58403,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L80",
+      "source_location": "L82",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_validateevidence",
       "target": "workers_worker_node_src_scannerrunner_valid_evidence_kind"
@@ -58364,7 +58414,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L124",
+      "source_location": "L131",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_tocontract",
       "target": "workers_worker_node_src_scannerrunner_valid_status"
@@ -58375,7 +58425,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L71",
+      "source_location": "L73",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_severityfromrisk",
       "target": "workers_worker_node_src_scannerrunner_valid_risk"
@@ -58386,7 +58436,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L125",
+      "source_location": "L132",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_tocontract",
       "target": "workers_worker_node_src_scannerrunner_valid_risk"
@@ -58397,7 +58447,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L126",
+      "source_location": "L133",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_tocontract",
       "target": "workers_worker_node_src_scannerrunner_valid_severity"
@@ -58408,7 +58458,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L92",
+      "source_location": "L94",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_tocontract",
       "target": "workers_worker_node_src_scannerrunner_valid_decision_status"
@@ -58419,7 +58469,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L50",
+      "source_location": "L62",
+      "weight": 1.0,
+      "source": "workers_worker_node_src_scannerrunner_validatecoverage",
+      "target": "workers_worker_node_src_scannerrunner_valid_scope_mode"
+    },
+    {
+      "relation": "references",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "workers/worker-node/src/scannerRunner.js",
+      "source_location": "L51",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_validatecoverage",
       "target": "workers_worker_node_src_scannerrunner_coverage_fields"
@@ -58429,7 +58490,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L105",
+      "source_location": "L112",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_tocontract",
       "target": "workers_worker_node_src_scannerrunner_isdatetime",
@@ -58440,7 +58501,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L95",
+      "source_location": "L97",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_tocontract",
       "target": "workers_worker_node_src_scannerrunner_assertstring",
@@ -58451,7 +58512,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L59",
+      "source_location": "L60",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_validatecoverage",
       "target": "workers_worker_node_src_scannerrunner_assertstring",
@@ -58462,7 +58523,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L79",
+      "source_location": "L81",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_validateevidence",
       "target": "workers_worker_node_src_scannerrunner_assertstring",
@@ -58473,7 +58534,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L91",
+      "source_location": "L93",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_tocontract",
       "target": "workers_worker_node_src_scannerrunner_validatecoverage",
@@ -58484,7 +58545,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L130",
+      "source_location": "L137",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_tocontract",
       "target": "workers_worker_node_src_scannerrunner_validateevidence",
@@ -58495,7 +58556,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L215",
+      "source_location": "L222",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_runbundledscanner",
       "target": "workers_worker_node_src_scannerrunner_tocontract",
@@ -58507,7 +58568,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L118",
+      "source_location": "L125",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_tocontract",
       "target": "workers_worker_python_test_test_parser_finding"
@@ -58517,7 +58578,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L213",
+      "source_location": "L220",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_runbundledscanner",
       "target": "workers_worker_node_src_scannerrunner_artifacttypefor",
@@ -58528,7 +58589,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L213",
+      "source_location": "L220",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_runbundledscanner",
       "target": "workers_worker_node_src_scannerrunner_contenttypefor",
@@ -58539,7 +58600,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-node/src/scannerRunner.js",
-      "source_location": "L208",
+      "source_location": "L215",
       "weight": 1.0,
       "source": "workers_worker_node_src_scannerrunner_runbundledscanner",
       "target": "workers_worker_node_src_scannerrunner_resolvecontainedpath",
@@ -59283,7 +59344,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L110",
+      "source_location": "L104",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser",
       "target": "workers_worker_python_src_parser_extract_cve_info",
@@ -59293,7 +59354,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L147",
+      "source_location": "L141",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser",
       "target": "workers_worker_python_src_parser_normalize_finding",
@@ -59303,7 +59364,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L81",
+      "source_location": "L84",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser",
       "target": "workers_worker_python_src_parser_normalize_severity",
@@ -59313,7 +59374,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L39",
+      "source_location": "L40",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser",
       "target": "workers_worker_python_src_parser_now",
@@ -59323,7 +59384,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L210",
+      "source_location": "L204",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser",
       "target": "workers_worker_python_src_parser_parse_scanner_output",
@@ -59333,7 +59394,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L29",
+      "source_location": "L30",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser",
       "target": "workers_worker_python_src_parser_parseresult",
@@ -59343,7 +59404,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L89",
+      "source_location": "L92",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser",
       "target": "workers_worker_python_src_parser_reference_texts",
@@ -59353,7 +59414,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L43",
+      "source_location": "L44",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser",
       "target": "workers_worker_python_src_parser_valid_datetime",
@@ -59363,7 +59424,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L56",
+      "source_location": "L57",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser",
       "target": "workers_worker_python_src_parser_validate_coverage",
@@ -59373,7 +59434,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L129",
+      "source_location": "L123",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser",
       "target": "workers_worker_python_src_parser_validate_evidence",
@@ -59406,7 +59467,7 @@
       "context": "return_type",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L210",
+      "source_location": "L204",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser_parse_scanner_output",
       "target": "workers_worker_python_src_parser_parseresult",
@@ -59416,7 +59477,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L35",
+      "source_location": "L36",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser_parseresult",
       "target": "workers_worker_python_src_parser_parseresult_to_dict",
@@ -59427,7 +59488,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L35",
+      "source_location": "L36",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser_parseresult_to_dict",
       "target": "workers_worker_python_src_parser_py_any",
@@ -59438,7 +59499,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L110",
+      "source_location": "L104",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser_extract_cve_info",
       "target": "workers_worker_python_src_parser_py_any",
@@ -59449,7 +59510,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L147",
+      "source_location": "L141",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser_normalize_finding",
       "target": "workers_worker_python_src_parser_py_any",
@@ -59460,7 +59521,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L81",
+      "source_location": "L84",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser_normalize_severity",
       "target": "workers_worker_python_src_parser_py_any",
@@ -59471,7 +59532,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L210",
+      "source_location": "L204",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser_parse_scanner_output",
       "target": "workers_worker_python_src_parser_py_any",
@@ -59482,7 +59543,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L89",
+      "source_location": "L92",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser_reference_texts",
       "target": "workers_worker_python_src_parser_py_any",
@@ -59493,7 +59554,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L43",
+      "source_location": "L44",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser_valid_datetime",
       "target": "workers_worker_python_src_parser_py_any",
@@ -59504,7 +59565,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L56",
+      "source_location": "L57",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser_validate_coverage",
       "target": "workers_worker_python_src_parser_py_any",
@@ -59515,7 +59576,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L129",
+      "source_location": "L123",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser_validate_evidence",
       "target": "workers_worker_python_src_parser_py_any",
@@ -59526,7 +59587,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L271",
+      "source_location": "L267",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser_parse_scanner_output",
       "target": "workers_worker_python_src_parser_now",
@@ -59537,7 +59598,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L234",
+      "source_location": "L230",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser_parse_scanner_output",
       "target": "workers_worker_python_src_parser_valid_datetime",
@@ -59548,7 +59609,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L247",
+      "source_location": "L243",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser_parse_scanner_output",
       "target": "workers_worker_python_src_parser_validate_coverage",
@@ -59559,7 +59620,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L190",
+      "source_location": "L184",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser_normalize_finding",
       "target": "workers_worker_python_src_parser_normalize_severity",
@@ -59581,7 +59642,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L112",
+      "source_location": "L106",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser_extract_cve_info",
       "target": "workers_worker_python_src_parser_reference_texts",
@@ -59592,7 +59653,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L185",
+      "source_location": "L179",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser_normalize_finding",
       "target": "workers_worker_python_src_parser_extract_cve_info",
@@ -59603,7 +59664,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L173",
+      "source_location": "L167",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser_normalize_finding",
       "target": "workers_worker_python_src_parser_validate_evidence",
@@ -59614,7 +59675,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/parser.py",
-      "source_location": "L259",
+      "source_location": "L255",
       "weight": 1.0,
       "source": "workers_worker_python_src_parser_parse_scanner_output",
       "target": "workers_worker_python_src_parser_normalize_finding",
@@ -59725,6 +59786,17 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "workers/worker-python/test/test_parser.py",
+      "source_location": "L147",
+      "weight": 1.0,
+      "source": "workers_worker_python_test_test_parser_parsertests_test_rejects_expected_subject_type_mismatch",
+      "target": "workers_worker_python_src_parser_parse_scanner_output"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "workers/worker-python/test/test_parser.py",
       "source_location": "L122",
       "weight": 1.0,
       "source": "workers_worker_python_test_test_parser_parsertests_test_rejects_invalid_finding_status_and_risk",
@@ -59747,6 +59819,17 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "workers/worker-python/test/test_parser.py",
+      "source_location": "L139",
+      "weight": 1.0,
+      "source": "workers_worker_python_test_test_parser_parsertests_test_rejects_invalid_scope_mode",
+      "target": "workers_worker_python_src_parser_parse_scanner_output"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "workers/worker-python/test/test_parser.py",
       "source_location": "L110",
       "weight": 1.0,
       "source": "workers_worker_python_test_test_parser_parsertests_test_rejects_negative_exit_code",
@@ -59761,6 +59844,17 @@
       "source_location": "L106",
       "weight": 1.0,
       "source": "workers_worker_python_test_test_parser_parsertests_test_rejects_non_rfc3339_timestamp",
+      "target": "workers_worker_python_src_parser_parse_scanner_output"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "workers/worker-python/test/test_parser.py",
+      "source_location": "L143",
+      "weight": 1.0,
+      "source": "workers_worker_python_test_test_parser_parsertests_test_rejects_object_valued_references",
       "target": "workers_worker_python_src_parser_parse_scanner_output"
     },
     {
@@ -59810,7 +59904,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/server.py",
-      "source_location": "L78",
+      "source_location": "L79",
       "weight": 1.0,
       "source": "workers_worker_python_src_server",
       "target": "workers_worker_python_src_server_main",
@@ -59861,7 +59955,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/src/server.py",
-      "source_location": "L74",
+      "source_location": "L75",
       "weight": 1.0,
       "source": "workers_worker_python_src_server_handler",
       "target": "workers_worker_python_src_server_handler_log_message",
@@ -59882,7 +59976,7 @@
       "context": "argument",
       "confidence": "INFERRED",
       "source_file": "workers/worker-python/src/server.py",
-      "source_location": "L80",
+      "source_location": "L81",
       "weight": 1.0,
       "source": "workers_worker_python_src_server_main",
       "target": "workers_worker_python_src_server_handler",
@@ -60054,6 +60148,17 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/test/test_parser.py",
+      "source_location": "L143",
+      "weight": 1.0,
+      "source": "workers_worker_python_test_test_parser_parsertests_test_rejects_object_valued_references",
+      "target": "workers_worker_python_test_test_parser_finding",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "workers/worker-python/test/test_parser.py",
       "source_location": "L126",
       "weight": 1.0,
       "source": "workers_worker_python_test_test_parser_parsertests_test_rejects_scalar_evidence",
@@ -60142,6 +60247,17 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/test/test_parser.py",
+      "source_location": "L147",
+      "weight": 1.0,
+      "source": "workers_worker_python_test_test_parser_parsertests_test_rejects_expected_subject_type_mismatch",
+      "target": "workers_worker_python_test_test_parser_output",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "workers/worker-python/test/test_parser.py",
       "source_location": "L122",
       "weight": 1.0,
       "source": "workers_worker_python_test_test_parser_parsertests_test_rejects_invalid_finding_status_and_risk",
@@ -60164,6 +60280,17 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/test/test_parser.py",
+      "source_location": "L139",
+      "weight": 1.0,
+      "source": "workers_worker_python_test_test_parser_parsertests_test_rejects_invalid_scope_mode",
+      "target": "workers_worker_python_test_test_parser_output",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "workers/worker-python/test/test_parser.py",
       "source_location": "L110",
       "weight": 1.0,
       "source": "workers_worker_python_test_test_parser_parsertests_test_rejects_negative_exit_code",
@@ -60178,6 +60305,17 @@
       "source_location": "L106",
       "weight": 1.0,
       "source": "workers_worker_python_test_test_parser_parsertests_test_rejects_non_rfc3339_timestamp",
+      "target": "workers_worker_python_test_test_parser_output",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "workers/worker-python/test/test_parser.py",
+      "source_location": "L143",
+      "weight": 1.0,
+      "source": "workers_worker_python_test_test_parser_parsertests_test_rejects_object_valued_references",
       "target": "workers_worker_python_test_test_parser_output",
       "confidence_score": 1.0
     },
@@ -60308,6 +60446,16 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/test/test_parser.py",
+      "source_location": "L145",
+      "weight": 1.0,
+      "source": "workers_worker_python_test_test_parser_parsertests",
+      "target": "workers_worker_python_test_test_parser_parsertests_test_rejects_expected_subject_type_mismatch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "workers/worker-python/test/test_parser.py",
       "source_location": "L120",
       "weight": 1.0,
       "source": "workers_worker_python_test_test_parser_parsertests",
@@ -60328,6 +60476,16 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "workers/worker-python/test/test_parser.py",
+      "source_location": "L136",
+      "weight": 1.0,
+      "source": "workers_worker_python_test_test_parser_parsertests",
+      "target": "workers_worker_python_test_test_parser_parsertests_test_rejects_invalid_scope_mode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "workers/worker-python/test/test_parser.py",
       "source_location": "L108",
       "weight": 1.0,
       "source": "workers_worker_python_test_test_parser_parsertests",
@@ -60342,6 +60500,16 @@
       "weight": 1.0,
       "source": "workers_worker_python_test_test_parser_parsertests",
       "target": "workers_worker_python_test_test_parser_parsertests_test_rejects_non_rfc3339_timestamp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "workers/worker-python/test/test_parser.py",
+      "source_location": "L141",
+      "weight": 1.0,
+      "source": "workers_worker_python_test_test_parser_parsertests",
+      "target": "workers_worker_python_test_test_parser_parsertests_test_rejects_object_valued_references",
       "confidence_score": 1.0
     },
     {
@@ -66371,5 +66539,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "c0854c03456712c9707827e54acb474efe58268c"
+  "built_at_commit": "7a5eedc72dfab0af03a5006f748e6527db92d070"
 }

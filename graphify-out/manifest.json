@@ -125,8 +125,8 @@
     "semantic_hash": ""
   },
   "scanner-bundle/schemas/scanner-output.schema.json": {
-    "mtime": 1784735345.1845417,
-    "ast_hash": "7deef4c7035bfa9d51acd69df9a31ebe",
+    "mtime": 1784759434.4316704,
+    "ast_hash": "489ef8a281c5ee51cb916e96d20f6a79",
     "semantic_hash": ""
   },
   "scanner-bundle/tools/ARX_Agent_Security_Remediation.py": {
@@ -425,8 +425,8 @@
     "semantic_hash": ""
   },
   "workers/worker-node/src/scannerRunner.js": {
-    "mtime": 1784735345.2363665,
-    "ast_hash": "9da8ec7ea00d4edbefecef9cbc1b7e31",
+    "mtime": 1784759314.7098823,
+    "ast_hash": "06ddadfa3e59a89d0bd253f3822efeff",
     "semantic_hash": ""
   },
   "workers/worker-node/test/lifecycle.test.js": {
@@ -440,18 +440,18 @@
     "semantic_hash": ""
   },
   "workers/worker-python/src/parser.py": {
-    "mtime": 1784735345.302066,
-    "ast_hash": "e37fe8096f4fd43528f396e0b8f89750",
+    "mtime": 1784759326.5009274,
+    "ast_hash": "8840731b5becbcf8290994d8284637ae",
     "semantic_hash": ""
   },
   "workers/worker-python/src/server.py": {
-    "mtime": 1784730381.5208154,
-    "ast_hash": "552ae9c5b3a44ed4bc0614b833a947cd",
+    "mtime": 1784759330.393279,
+    "ast_hash": "64759ee20da17cefc82c72c83bbfd3a8",
     "semantic_hash": ""
   },
   "workers/worker-python/test/test_parser.py": {
-    "mtime": 1784733013.6497488,
-    "ast_hash": "26707d7f2524d6aefcc6b9ce36254cf6",
+    "mtime": 1784759572.1042147,
+    "ast_hash": "b8e02fd50aac5e12b5d507a979b97c8a",
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
@@ -950,8 +950,8 @@
     "semantic_hash": ""
   },
   "workers/worker-python/test/test_server.py": {
-    "mtime": 1784730576.1373367,
-    "ast_hash": "9ffc4aede1bf2c6b6c3c000772e5314e",
+    "mtime": 1784759493.5181673,
+    "ast_hash": "22a4a8276a28b7b30631575db9b15153",
     "semantic_hash": ""
   },
   ".github/workflows/quality-security.yml": {
@@ -1445,8 +1445,8 @@
     "semantic_hash": ""
   },
   "workers/worker-node/test/scannerV35Contract.test.js": {
-    "mtime": 1784734654.6565883,
-    "ast_hash": "dcd8200d562ff37c4c90630fe924e6bb",
+    "mtime": 1784759517.7804396,
+    "ast_hash": "0b4c2016d0196919a8f1b3803d603bf3",
     "semantic_hash": ""
   },
   "docs/plans/agent-security-selfcheck-v3.5.0.md": {
