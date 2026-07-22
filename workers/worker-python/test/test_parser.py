@@ -45,6 +45,8 @@ def output(**overrides):
             "coverage": {"scan_complete": True},
         },
         "findings": [finding()],
+        "score": {"overall_score": 100, "grade": "Low Risk", "categories": {}},
+        "executive_summary": ["summary"],
     }
     value.update(overrides)
     return value
@@ -145,6 +147,26 @@ class ParserTests(unittest.TestCase):
     def test_rejects_expected_subject_type_mismatch(self):
         with self.assertRaisesRegex(ValueError, "subject type mismatch"):
             parse_scanner_output("run-v35", output(target={"assetId": "asset-1", "subjectType": "other"}), expected_subject_type="managed_target")
+
+    def test_rejects_null_optional_target_fields(self):
+        with self.assertRaisesRegex(ValueError, "target hostname must be a string"):
+            parse_scanner_output("run-v35", output(target={"assetId": "asset-1", "hostname": None}))
+
+    def test_rejects_missing_score_contract(self):
+        value = output()
+        value.pop("score")
+        with self.assertRaisesRegex(ValueError, "score contract"):
+            parse_scanner_output("run-v35", value)
+
+    def test_rejects_missing_executive_summary_contract(self):
+        value = output()
+        value.pop("executive_summary")
+        with self.assertRaisesRegex(ValueError, "executive_summary"):
+            parse_scanner_output("run-v35", value)
+
+    def test_rejects_unexpected_scanner_name_without_expected_metadata(self):
+        with self.assertRaisesRegex(ValueError, "producer name mismatch"):
+            parse_scanner_output("run-v35", output(scanner={"name": "Other Scanner", "version": "3.5.0", "scriptSha256": "a" * 64}))
 
 
 if __name__ == "__main__":

@@ -3,7 +3,7 @@
   "$id": "https://shore360.example/schemas/shore-sentinel/scanner-output.schema.json",
   "title": "Shore Sentinel scanner output",
   "type": "object",
-  "required": ["contractVersion", "scanner", "target", "coverage", "decision", "findings", "collectedAt", "metadata"],
+  "required": ["contractVersion", "scanner", "target", "coverage", "decision", "findings", "collectedAt", "metadata", "score", "executive_summary"],
   "$defs": {
     "rfc3339": {
       "type": "string",

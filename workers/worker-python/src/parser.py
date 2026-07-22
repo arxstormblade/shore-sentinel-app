@@ -17,6 +17,7 @@ VALID_EVIDENCE_KIND = {"observation", "secret_classification", "compose_socket_m
 VALID_STATUS = {"PASS", "WARN", "FAIL", "SKIP"}
 VALID_RISK = {"Critical", "High", "Medium", "Low", "Info"}
 VALID_SEVERITY = {"informational", "low", "moderate", "high", "critical"}
+EXPECTED_SCANNER_NAME = "Agent Security Selfcheck"
 VALID_SCOPE_MODE = {"exact", "discover", "runtime", "full"}
 COVERAGE_BOOLEAN_FIELDS = {"scan_complete", "security_relevant_incomplete", "truncated_file_list", "host_runtime_not_collected", "host_runtime_incomplete"}
 COVERAGE_INTEGER_FIELDS = {"files_discovered"}
@@ -219,12 +220,14 @@ def parse_scanner_output(run_id: str, scanner_output: dict[str, Any], *, expecte
     if not isinstance(target.get("assetId"), str) or not target["assetId"]:
         raise ValueError("target assetId is required")
     for field in ("hostname", "ip", "subjectType"):
-        if field in target and target[field] is not None and not isinstance(target[field], str):
+        if field in target and not isinstance(target[field], str):
             raise ValueError(f"target {field} must be a string")
     if expected_target_asset_id is not None and target["assetId"] != expected_target_asset_id:
         raise ValueError("scanner target asset identity mismatch")
     if expected_subject_type is not None and target.get("subjectType") != expected_subject_type:
         raise ValueError("scanner target subject type mismatch")
+    if scanner["name"] != EXPECTED_SCANNER_NAME:
+        raise ValueError("scanner producer name mismatch")
     if expected_scanner is not None and (scanner.get("name") != expected_scanner.get("name") or scanner.get("version") != expected_scanner.get("version")):
         raise ValueError("scanner producer identity mismatch")
     if not _valid_datetime(scanner_output.get("collectedAt")):
@@ -252,6 +255,12 @@ def parse_scanner_output(run_id: str, scanner_output: dict[str, Any], *, expecte
         raise ValueError("scanner output coverage and decision contracts are invalid")
     if coverage.get("security_relevant_incomplete") or coverage.get("scan_complete") is False or decision["exit_code"] != 0 or decision["status"] != "PASS":
         raise ValueError("scanner output has incomplete security-relevant coverage")
+    score = scanner_output.get("score")
+    if not isinstance(score, dict) or isinstance(score, list) or type(score.get("overall_score")) not in {int, float} or isinstance(score.get("overall_score"), bool) or not isinstance(score.get("grade"), str) or not isinstance(score.get("categories"), dict):
+        raise ValueError("scanner score contract is invalid")
+    executive_summary = scanner_output.get("executive_summary")
+    if not isinstance(executive_summary, list) or not all(isinstance(item, str) for item in executive_summary):
+        raise ValueError("scanner executive_summary must be a string array")
     normalized = [normalize_finding(item, index=i, target=target) for i, item in enumerate(scanner_output["findings"])]
     severity_counts: dict[str, int] = {}
     all_cves: list[str] = []
