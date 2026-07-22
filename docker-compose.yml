@@ -40,8 +40,8 @@ services:
       WORKER_MAX_ATTEMPTS: ${WORKER_MAX_ATTEMPTS:-3}
       WORKER_BACKOFF_MS: ${WORKER_BACKOFF_MS:-5000}
     ports:
-      - "${WEB_PORT:-3010}:3010"
-      - "${API_PORT:-4000}:4000"
+      - "127.0.0.1:${WEB_PORT:-3010}:3010"
+      - "127.0.0.1:${API_PORT:-4000}:4000"
     volumes:
       - shore-sentinel-data:/var/lib/shore-sentinel
     tmpfs:

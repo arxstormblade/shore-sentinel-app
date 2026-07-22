@@ -54,6 +54,12 @@ class SingleContainerRuntimeContractTests(unittest.TestCase):
         for path in ("postgres", "redis", "object-storage", "evidence"):
             self.assertIn(f"/var/lib/shore-sentinel/{path}", self.dockerfile)
 
+    def test_published_ports_are_loopback_only(self):
+        self.assertIn('- "127.0.0.1:${WEB_PORT:-3010}:3010"', self.compose)
+        self.assertIn('- "127.0.0.1:${API_PORT:-4000}:4000"', self.compose)
+        self.assertNotIn('- "${WEB_PORT:-3010}:3010"', self.compose)
+        self.assertNotIn('- "${API_PORT:-4000}:4000"', self.compose)
+
     def test_image_and_supervisor_define_seven_distinct_processes(self):
         self.assertRegex(self.dockerfile, r"(?m)^FROM [^\s]+@sha256:[0-9a-f]{64} AS runtime$")
         self.assertRegex(self.dockerfile, r"(?m)^FROM --platform=\$BUILDPLATFORM [^\s]+@sha256:[0-9a-f]{64} AS dependencies$")
