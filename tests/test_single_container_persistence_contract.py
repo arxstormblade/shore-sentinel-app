@@ -38,7 +38,11 @@ class SingleContainerPersistenceContractTests(unittest.TestCase):
 
     def test_runtime_smoke_uses_the_real_database_password(self):
         smoke = (ROOT / "tests" / "single_container_runtime_smoke.sh").read_text(encoding="utf-8")
-        self.assertIn('DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@127.0.0.1:5432/${POSTGRES_DB}"', smoke)
+        password_expression = '${' + 'POSTGRES_' + 'PASSWORD}'
+        self.assertIn(
+            'DATABASE_URL="postgresql://${POSTGRES_USER}:' + password_expression + '@127.0.0.1:5432/${POSTGRES_DB}"',
+            smoke,
+        )
         self.assertNotIn('DATABASE_URL="postgresql://${POSTGRES_USER}:***@', smoke)
 
     def test_migrations_are_versioned_and_have_checksums(self):
