@@ -10,13 +10,14 @@ Workers must treat the bundle as an untrusted producer: validate the manifest, p
 
 Use this mode when a client needs a standalone evidence package without enrolling the machine into Shore Sentinel managed monitoring.
 
-Until v1.1.0 is promoted, clone the reviewed default branch (or an approved immutable commit SHA). The release tag is created only at promotion after CI, security review, QA evidence, and staged rollback validation are approved; do not use an uncreated tag in installation instructions.
+Until v3.5.0 is promoted, clone the reviewed default branch (or an approved immutable commit SHA). The release tag is created only at promotion after CI, security review, QA evidence, and staged rollback validation are approved; do not use an uncreated tag in installation instructions.
 
 ```bash
 git clone --depth 1 https://github.com/arxstormblade/shore-sentinel-app.git
 cd shore-sentinel-app
-python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py \
+python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.0.py \
   --target . \
+  --scope-mode exact \
   --out-dir ./shore-sentinel-local-audit-reports \
   --exit-zero
 ```
@@ -38,8 +39,8 @@ Each bundle includes `scanner-manifest.json` matching `schemas/scanner-manifest.
 ```json
 {
   "contractVersion": "shore-sentinel.scanner-bundle/v1",
-  "bundle": { "name": "shore-baseline", "version": "0.1.0" },
-  "entrypoint": "bin/scan",
+  "bundle": { "name": "agent-security-selfcheck", "version": "3.5.0" },
+  "entrypoint": "bin/Agent_Security_Selfcheck_v3.5.0.py",
   "outputSchema": "shore-sentinel.scanner-output/v1",
   "requiredEnv": []
 }
@@ -53,7 +54,9 @@ The Node orchestrator creates a BullMQ job on `shore-sentinel.scan.jobs`. A job 
 - `scannerOutput`: JSON emitted by the scanner bundle.
 - optional `target` and `metadata` fields for scheduling context.
 
-The bundle output must match `schemas/scanner-output.schema.json` and use `contractVersion: shore-sentinel.scanner-output/v1`. See `examples/sample-output.json`.
+The bundle output must match `schemas/scanner-output.schema.json` and use `contractVersion: shore-sentinel.scanner-output/v1`. v3.5 adds compatible `coverage`, `decision`, scope, confidence, reachability, evidence-kind, and stable finding-ID fields. See `examples/sample-output.json`.
+
+`--target` is exact and authoritative by default. Use `--scope-mode discover` only when parent Git-root discovery is explicitly approved. Host/runtime evidence requires `--scope-mode runtime|full` or an explicit `--runtime-root`.
 
 ## Canonical managed-machine artifact flow
 

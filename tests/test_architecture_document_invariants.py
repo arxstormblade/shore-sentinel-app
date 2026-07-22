@@ -70,7 +70,7 @@ class ArchitectureDocumentInvariantTests(unittest.TestCase):
 
         option_one = self.readme.split(option_one_heading, 1)[1].split("\n---", 1)[0]
         option_two = self.readme.split(option_two_heading, 1)[1].split("\n---", 1)[0]
-        self.assertIn("scanner-bundle/bin/Agent_Security_Selfcheck_v3.4.0.py", option_one)
+        self.assertIn("scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.0.py", option_one)
         self.assertIn("Reports and artifacts stay on the client machine", option_one)
         for phrase in (
             "exactly one `shore-sentinel` application container",

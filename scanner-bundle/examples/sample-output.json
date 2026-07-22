@@ -1,17 +1,40 @@
 {
   "contractVersion": "shore-sentinel.scanner-output/v1",
-  "scanner": { "name": "shore-baseline", "version": "0.1.0" },
+  "scanner": { "name": "Agent Security Selfcheck", "version": "3.5.0", "scriptSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" },
   "target": { "assetId": "asset-1", "hostname": "demo-host", "ip": "10.0.0.5" },
+  "coverage": { "scan_complete": true, "security_relevant_incomplete": false, "files_discovered": 1 },
+  "decision": { "status": "PASS", "exit_code": 0, "reason": "coverage complete" },
   "findings": [
     {
       "id": "patch-001",
       "title": "Missing operating system patch",
       "severity": "high",
+      "severityScore": 4,
       "category": "patching",
+      "scope": "target_source",
+      "confidence": "high",
+      "reachability": "unknown",
+      "evidenceKind": "observation",
       "description": "The target reports at least one missing critical update.",
-      "evidence": ["KB example missing"],
-      "remediation": "Apply approved OS patch baseline."
+      "evidence": [{ "text": "KB example missing", "kind": "observation", "scope": "target_source", "confidence": "high" }],
+      "remediation": "Apply approved OS patch baseline.",
+      "references": [],
+      "status": "WARN",
+      "risk": "High",
+      "check": "Missing operating system patch",
+      "derived": false,
+      "derivedFrom": [],
+      "source": null
     }
   ],
-  "collectedAt": "2026-06-19T00:00:00Z"
+  "collectedAt": "2026-06-19T00:00:00Z",
+  "metadata": {
+    "generated_utc": "2026-06-19T00:00:00Z",
+    "script_version": "3.5.0",
+    "script_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "target_asset_id": "asset-1",
+    "coverage": { "scan_complete": true, "security_relevant_incomplete": false, "files_discovered": 1 }
+  },
+  "score": { "overall_score": 81, "grade": "Elevated Risk", "categories": {} },
+  "executive_summary": ["Sample contract-complete scanner output."]
 }

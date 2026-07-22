@@ -1,6 +1,6 @@
 # Agent Security Self-Check Version History
 
-Merged changelog preserving the full lineage from v1 through the current v3.4.0 release.
+Merged changelog preserving the full lineage from v1 through the v3.5.0 candidate and v3.4.0 reference release.
 
 Last updated: 2026-06-15 08:26:22 UTC
 
@@ -8,7 +8,8 @@ Last updated: 2026-06-15 08:26:22 UTC
 
 | Version | Status | Summary |
 |---|---|---|
-| v3.4.0 | Current release | Hardware Summary section above category score cards, capturing environment, CPU, memory, disk, and network adapters in the approved PDF report. |
+| v3.5.0 | Candidate | Fail-closed exact scope, structured evidence, host-versus-target separation, stable IDs, contract validation, and false-positive regression coverage. |
+| v3.4.0 | Reference release | Hardware Summary section above category score cards, with minimized host telemetry in the approved PDF report. |
 | v3.3.0 | Prior release | Inline remediation tasks appear directly under finding evidence, remediation paths are more precise, and PDF spacing has been tightened. |
 | v3.0.1-rc1 | Prior release | Portable read-only auditor for Hermes/ARX and OpenClaw agent meshes, with consumer-ready PDF evidence refinement. |
 | v3.0.0-rc1 | Prior release | Portable read-only auditor for Hermes/ARX and OpenClaw agent meshes, with executive reporting, severity-sorted findings, methodology/tools, frameworks, Hermes security best practices, JSON, Markdown, SARIF, and presentation-grade PDF outputs. |
@@ -19,7 +20,24 @@ Last updated: 2026-06-15 08:26:22 UTC
 | v1.1 | Historical baseline | DOCX-aligned expanded draft that grew the self-check from 7 to 12 domains. |
 | v1 | Original baseline | First read-only ARX/Hermes operational security scorecard covering 7 core domains. |
 
-## v3.4.0 — hardware summary release
+## v3.5.0 — correctness and contract-hardening candidate
+
+### Release status
+
+Candidate pending implementation validation, independent review, Athena QA, and release approval.
+
+### What's New?
+
+- Adds exact target scope with explicit runtime scope modes.
+- Reports incomplete coverage, unreadable paths, truncation, and symlink decisions instead of silently passing.
+- Separates host Docker state from target Compose declarations and active/example variants.
+- Classifies secret references, placeholders, fixtures, documentation examples, and confirmed literals without emitting values.
+- Adds stable finding IDs, scope, confidence, reachability, evidence kind, and derived relationships.
+- Prevents low-confidence lexical matches from creating Critical correlations.
+- Emits and validates the canonical `shore-sentinel.scanner-output/v1` envelope directly.
+- Preserves v3.4.0 unchanged as a rollback/reference baseline.
+
+## v3.4.0 — hardware summary reference release
 
 ### Release date
 

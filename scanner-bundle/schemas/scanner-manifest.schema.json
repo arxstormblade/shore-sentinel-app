@@ -14,7 +14,7 @@
         "version": { "type": "string" }
       }
     },
-    "entrypoint": { "type": "string", "description": "Executable path inside the bundle." },
+    "entrypoint": { "const": "bin/Agent_Security_Selfcheck_v3.5.0.py", "description": "Executable path inside the bundle." },
     "outputSchema": { "const": "shore-sentinel.scanner-output/v1" },
     "requiredEnv": { "type": "array", "items": { "type": "string" } }
   },

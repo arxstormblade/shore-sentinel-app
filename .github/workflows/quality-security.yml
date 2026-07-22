@@ -161,6 +161,9 @@ jobs:
       - name: Validate release metadata and documentation
         run: python3 -m unittest discover -s tests
 
+      - name: Run v3.5 scanner fixture tests
+        run: npm run scanner:test
+
       - name: Run quality checks
         run: npm run check
 

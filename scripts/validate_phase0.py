@@ -27,6 +27,7 @@ scanner_files = sorted(
 allowed_scanner_files = {
     'README.md',
     'bin/Agent_Security_Selfcheck_v3.4.0.py',
+    'bin/Agent_Security_Selfcheck_v3.5.0.py',
     'bin/envdetect.py',
     'bin/hardware_collection.py',
     'docs/AGENT_SECURITY_SELFCHECK_VERSION_HISTORY.md',
@@ -34,6 +35,7 @@ allowed_scanner_files = {
     'examples/sample-output.json',
     'schemas/scanner-manifest.schema.json',
     'schemas/scanner-output.schema.json',
+    'scanner-manifest.json',
     'tools/ARX_Agent_Security_Remediation.py',
 }
 unexpected_scanner_files = [p for p in scanner_files if p not in allowed_scanner_files]
