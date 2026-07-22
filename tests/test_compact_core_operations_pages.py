@@ -70,6 +70,10 @@ class CompactCoreOperationsPageTests(unittest.TestCase):
         self.assertNotIn("CompactPageHeader", page)
         self.assertNotIn('className="operations-page scan-start-page"', page)
 
+    def test_web_production_build_uses_architecture_independent_webpack(self):
+        package = read("web/package.json")
+        self.assertIn('"build": "next build --webpack"', package)
+
     def test_public_shell_sign_in_uses_the_mounted_application_path(self):
         shell = read("web/components/ui.jsx")
         self.assertIn("href={appPath('/auth/login')}", shell)
