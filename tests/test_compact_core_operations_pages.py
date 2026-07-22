@@ -70,6 +70,11 @@ class CompactCoreOperationsPageTests(unittest.TestCase):
         self.assertNotIn("CompactPageHeader", page)
         self.assertNotIn('className="operations-page scan-start-page"', page)
 
+    def test_public_shell_sign_in_uses_the_mounted_application_path(self):
+        shell = read("web/components/ui.jsx")
+        self.assertIn("href={appPath('/auth/login')}", shell)
+        self.assertNotIn("href={routePath('/auth/login')}", shell)
+
     def test_authenticated_root_continues_to_redirect_to_dashboard(self):
         landing = read("web/app/page.jsx")
         self.assertIn("getAuthenticatedUser", landing)

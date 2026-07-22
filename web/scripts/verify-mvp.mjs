@@ -58,7 +58,10 @@ if (!/basePath/.test(nextConfig) || !/shore-sentinel/.test(nextConfig)) failures
 if (!/action=\{appPath\(['"]\/api\/auth\/login['"]\)\}/.test(source)) failures.push('login forms must post through mounted appPath(/api/auth/login)');
 if (!/action=\{appPath\(['"]\/api\/auth\/register['"]\)\}/.test(source)) failures.push('register form must post through mounted appPath(/api/auth/register)');
 if (/href=['"]\/shore-sentinel/.test(source) || /action=['"]\/shore-sentinel/.test(source)) failures.push('source must not hard-code mounted /shore-sentinel href/action strings');
-if (/href=\{appPath\(/.test(source)) failures.push('Next Link hrefs must use routePath, not mounted appPath, when next.config basePath is active');
+const invalidMountedLinks = source.split('\n').filter((line) => (
+  line.includes('href={appPath(') && !line.includes("href={appPath('/auth/login')")
+));
+if (invalidMountedLinks.length) failures.push('Next Link hrefs must use routePath, not mounted appPath, when next.config basePath is active, except the public auth entry link');
 if (/tenant selector/i.test(source)) failures.push('tenant selector text must not appear');
 if (/localhost:4000|127\.0\.0\.1:4000/.test(source)) failures.push('browser-rendered source must not expose localhost API URLs');
 const navigationData = readFileSync(join(root, 'lib/data.js'), 'utf8');
