@@ -5,8 +5,8 @@
     "semantic_hash": ""
   },
   "api/src/app.controller.ts": {
-    "mtime": 1784692385.0042987,
-    "ast_hash": "3c5b38d5b69a9e9243e6ae6c1e5f5609",
+    "mtime": 1784694310.8796413,
+    "ast_hash": "fc9f4a8d36325575a1abae3a27d59e71",
     "semantic_hash": ""
   },
   "api/src/app.module.ts": {
@@ -325,8 +325,8 @@
     "semantic_hash": ""
   },
   "web/components/ui.jsx": {
-    "mtime": 1784691633.0215552,
-    "ast_hash": "a5c885805c700d09db59e7f9eb33bafe",
+    "mtime": 1784694464.941407,
+    "ast_hash": "489e1beca12931d4d85328e473f58f88",
     "semantic_hash": ""
   },
   "web/jsconfig.json": {
@@ -710,8 +710,8 @@
     "semantic_hash": ""
   },
   "tests/test_compact_core_operations_pages.py": {
-    "mtime": 1784692346.0666616,
-    "ast_hash": "4960448a6903d3142f1da532ebfd47c0",
+    "mtime": 1784694450.1488774,
+    "ast_hash": "67ac583098ccad6a13acfff3b5c8d7b2",
     "semantic_hash": ""
   },
   "tests/test_compact_evidence_workflow_pages.py": {
@@ -1330,7 +1330,7 @@
     "semantic_hash": ""
   },
   "tests/single_container_runtime_smoke.sh": {
-    "mtime": 1784693208.7694407,
+    "mtime": 1784693339.136443,
     "ast_hash": "1880d0c2fa5fbfc5f68dbd15ad0b2b6e",
     "semantic_hash": ""
   },
@@ -1365,7 +1365,7 @@
     "semantic_hash": ""
   },
   "api/src/identity/access-governance.service.ts": {
-    "mtime": 1784692385.0058537,
+    "mtime": 1784694266.085491,
     "ast_hash": "bb17ea7749366e84ce81e9954001434b",
     "semantic_hash": ""
   },
@@ -1390,8 +1390,8 @@
     "semantic_hash": ""
   },
   "api/src/session/session.service.ts": {
-    "mtime": 1784692841.5392985,
-    "ast_hash": "3b4149b73684aa0185cbc25db89d1b52",
+    "mtime": 1784694310.3874664,
+    "ast_hash": "20bec59a2814bacd94a575632c068ee2",
     "semantic_hash": ""
   },
   "api/src/session/totp.ts": {
@@ -1405,8 +1405,8 @@
     "semantic_hash": ""
   },
   "api/test/identity-session.test.ts": {
-    "mtime": 1784692842.061745,
-    "ast_hash": "caf6ed5c496c24503a238f0dfe174979",
+    "mtime": 1784694350.7577682,
+    "ast_hash": "66dfcd221f492f8d59cea483a8e4caf9",
     "semantic_hash": ""
   },
   "api/test/policy-simulation.test.ts": {

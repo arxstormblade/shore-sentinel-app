@@ -48,7 +48,7 @@ export class SessionService {
        WHERE s.session_token_hash=$1`, [tokenHash(token)],
     );
     const session = result.rows[0];
-    const userId = String(session?.user_id ?? session?.id ?? '');
+    const userId = String(session?.user_id ?? '');
     const tenantId = String(session?.tenant_id ?? '');
     const now = this.clock();
     const idle = asDate(session?.idle_expires_at);

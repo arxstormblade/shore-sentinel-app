@@ -78,9 +78,10 @@ class CompactCoreOperationsPageTests(unittest.TestCase):
         package = read("web/package.json")
         self.assertIn('"build": "next build --webpack"', package)
 
-    def test_public_shell_sign_in_uses_the_mounted_application_path(self):
+    def test_public_shell_sign_in_uses_a_plain_mounted_application_anchor(self):
         shell = read("web/components/ui.jsx")
-        self.assertIn("href={appPath('/auth/login')}", shell)
+        self.assertIn("<a className=\"btn alt\" href={appPath('/auth/login')}>Sign in</a>", shell)
+        self.assertNotIn("<Link className=\"btn alt\" href={appPath('/auth/login')}>", shell)
         self.assertNotIn("href={routePath('/auth/login')}", shell)
 
     def test_authenticated_root_continues_to_redirect_to_dashboard(self):

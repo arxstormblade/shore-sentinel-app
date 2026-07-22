@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { OidcValidator, buildPkceChallenge } from '../src/identity/oidc-validator.js';
 import { SessionService } from '../src/session/session.service.js';
 import { generateTotpSecret, verifyTotp } from '../src/session/totp.js';
+import { AppController } from '../src/app.controller.js';
 
 const now = new Date('2026-07-22T00:00:00.000Z');
 
@@ -47,6 +48,19 @@ test('durable sessions persist only a hash and fail closed after revocation or a
   assert.ok(calls.some(({ sql }) => sql.includes('UPDATE auth_sessions SET revoked_at')));
 });
 
+test('session resolution fails closed when persistence omits the user foreign key', async () => {
+  const calls: string[] = [];
+  const db = { query: async (sql: string) => {
+    calls.push(sql);
+    if (sql.includes('FROM auth_sessions')) return { rows: [{ id: 'session-id', tenant_id: 'tenant-1', idle_expires_at: new Date(now.getTime() + 60_000), absolute_expires_at: new Date(now.getTime() + 60_000), revoked_at: null }] };
+    return { rows: [] };
+  } };
+  const sessions = new SessionService(db as never, { clock: () => now });
+
+  await assert.rejects(() => sessions.resolve('a'.repeat(64)), /Session expired or revoked/);
+  assert.equal(calls.some((sql) => sql.includes('json_agg')), false);
+});
+
 test('session idle refresh never extends beyond the absolute expiry bound', async () => {
   const calls: Array<{ sql: string; params: unknown[] }> = [];
   const absoluteExpiresAt = new Date(now.getTime() + 2_000);
@@ -71,4 +85,17 @@ test('TOTP accepts the current code and rejects malformed or unrelated codes', (
   assert.match(secret, /^[A-Z2-7]{16,}$/);
   assert.equal(verifyTotp(secret, '000000', now), false);
   assert.equal(verifyTotp(secret, 'not-a-code', now), false);
+});
+
+test('step-up route requires a verified enrolled TOTP code before marking the session', async () => {
+  let verifyCalls = 0;
+  let stepUpCalls = 0;
+  const mfa = { verifyTotp: async () => { verifyCalls += 1; return false; } };
+  const auth = { stepUp: async (_token: string, valid: boolean) => { if (!valid) throw new Error('Step-up authentication failed'); stepUpCalls += 1; return { ok: true }; } };
+  const request = { cookies: { shore_session: 'session-token' }, principal: { userId: 'user-1', tenantId: 'tenant-1', roles: ['operator'] }, header: () => undefined };
+  const app = new AppController({} as never, auth as never, {} as never, {} as never, {} as never, undefined, undefined, undefined, mfa as never);
+
+  await assert.rejects(() => app.stepUp({ code: '000000' }, request as never), /Step-up authentication failed/);
+  assert.equal(verifyCalls, 1);
+  assert.equal(stepUpCalls, 0);
 });

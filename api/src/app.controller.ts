@@ -170,6 +170,7 @@ export class AppController {
   @Get('auth/me') async me(@Req() req: Request) { return this.auth.me(this.token(req)); }
   @Post('auth/mfa/enroll') async enrollMfa(@Req() req: Request) { const actor = this.principal(req); return (this.mfa ?? new MfaService(this.db)).enrollTotp(actor.tenantId, actor.userId); }
   @Post('auth/mfa/verify') async verifyMfa(@Body() body: Record<string, unknown>, @Req() req: Request) { const actor = this.principal(req); const token = this.token(req); if (!token) throw new UnauthorizedException('Authentication required'); const valid = await (this.mfa ?? new MfaService(this.db)).verifyTotp(actor.tenantId, actor.userId, requireString(body, 'code')); return this.auth.verifyMfa(token, valid); }
+  @Post('auth/step-up') async stepUp(@Body() body: Record<string, unknown>, @Req() req: Request) { const actor = this.principal(req); const token = this.token(req); if (!token) throw new UnauthorizedException('Authentication required'); const valid = await (this.mfa ?? new MfaService(this.db)).verifyTotp(actor.tenantId, actor.userId, requireString(body, 'code')); return this.auth.stepUp(token, valid); }
   @Get('settings/current') async settings(@Req() req: Request) { const tenantId = this.tenantId(req); const result = await this.db.query('SELECT s.*, t.slug AS tenant_slug FROM settings s JOIN tenants t ON t.id=s.tenant_id WHERE s.tenant_id=$1', [tenantId]); return result.rows[0]; }
 
   @Get('system/update')
