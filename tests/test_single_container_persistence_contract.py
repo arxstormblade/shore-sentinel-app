@@ -26,13 +26,20 @@ class SingleContainerPersistenceContractTests(unittest.TestCase):
         self.assertIn("dump.rdb", script)
         self.assertIn("appendonly no", script)
         self.assertIn("appendonly yes", script)
+        self.assertIn("su-exec shore-minio kill -TERM", script)
         self.assertIn("supervisorctl start shore-sentinel:redis", script)
+        self.assertIn("supervisorctl start shore-sentinel:minio", script)
         self.assertNotIn("POSTGRES_PASSWORD=", script)
 
     def test_runtime_backup_script_matches_documented_mode_first_interface(self):
         script = (ROOT / "container" / "backup-restore.sh").read_text(encoding="utf-8")
         self.assertRegex(script, r"(?m)^MODE=\$\{1:-\}$")
         self.assertRegex(script, r"(?m)^BACKUP_DIR=\$\{2:\?usage: backup-restore\.sh backup\|restore\|rollback <directory>\}$")
+
+    def test_runtime_smoke_uses_the_real_database_password(self):
+        smoke = (ROOT / "tests" / "single_container_runtime_smoke.sh").read_text(encoding="utf-8")
+        self.assertIn('DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@127.0.0.1:5432/${POSTGRES_DB}"', smoke)
+        self.assertNotIn('DATABASE_URL="postgresql://${POSTGRES_USER}:***@', smoke)
 
     def test_migrations_are_versioned_and_have_checksums(self):
         migrations = sorted((ROOT / "api/migrations").glob("*.sql"))

@@ -42,9 +42,29 @@ case "$MODE" in
     pg_restore --clean --if-exists --dbname="$DATABASE_URL" "$BACKUP_DIR/postgres.dump"
     # CAP_DAC_OVERRIDE is intentionally absent. Restore each private tree as
     # its owning service user so tar can replace service-owned files without
-    # requiring a broader capability or recursive root chown.
+    # requiring a broader capability or recursive root chown. MinIO must be
+    # stopped before replacing its live metadata tree; supervisorctl cannot
+    # signal a different service user without CAP_KILL, so ask MinIO's own
+    # identity to terminate its process and wait for it to exit.
+    minio_pid=$(supervisorctl pid shore-sentinel:minio 2>/dev/null || true)
+    if [ -n "$minio_pid" ]; then
+      su-exec shore-minio kill -TERM "$minio_pid" 2>/dev/null || true
+      i=0
+      while ps -o pid= | tr -d ' ' | grep -qx "$minio_pid"; do
+        i=$((i + 1))
+        [ "$i" -lt 30 ] || { echo "object storage did not stop before restore" >&2; exit 1; }
+        sleep 1
+      done
+    fi
     su-exec shore-minio tar -C "$DATA_ROOT" -xzf - object-storage < "$BACKUP_DIR/object-and-evidence.tgz"
     su-exec shore-parser tar -C "$DATA_ROOT" -xzf - evidence < "$BACKUP_DIR/object-and-evidence.tgz"
+    supervisorctl start shore-sentinel:minio >/dev/null
+    i=0
+    while ! curl -fsS http://127.0.0.1:9000/minio/health/live >/dev/null 2>&1; do
+      i=$((i + 1))
+      [ "$i" -lt 60 ] || { echo "object storage did not become ready after restore" >&2; exit 1; }
+      sleep 1
+    done
     # Redis must be stopped before replacing its RDB/AOF state. The service
     # user owns the private tree, so no extra DAC capability is needed.
     # supervisor cannot signal a service user without CAP_KILL; ask Redis to

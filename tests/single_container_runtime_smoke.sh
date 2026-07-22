@@ -24,6 +24,8 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 run_args() {
+  # Keep the real password inside the disposable container environment; do
+  # not log this command or substitute a redaction marker into the URL.
   docker run \
     --read-only --tmpfs /run --tmpfs /tmp \
     --cap-drop ALL --cap-add CHOWN --cap-add SETGID --cap-add SETUID \
