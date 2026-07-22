@@ -4,11 +4,11 @@
 
 - Removed the in-app one-time audit runner entry points. Standalone local evidence collection remains documented as the GitHub scanner option.
 
-## v3.5.0 - Scanner release candidate (unreleased)
+## v3.5.0 - Approved scanner release (2026-07-22)
 
 - Added the isolated Agent Security Selfcheck v3.5.0 scanner bundle with authoritative target scoping, explicit coverage accounting, fail-closed incomplete-scan decisions, provenance-aware evidence, stable finding IDs, conservative correlation, and normalized JSON/Markdown/SARIF/PDF output.
 - Added scanner bundle manifest/schema validation, semantic fixtures, Node runner integration coverage, Python parser contract checks, and release documentation. The v3.4.0 scanner remains unchanged as the rollback/reference baseline.
-- Kept release promotion, tagging, deployment, and rollback execution separately approval-gated.
+- Completed independent Aegis security and Athena QA approval for the immutable scanner candidate; tagging, deployment, runtime promotion, and rollback execution remain separately approval-gated.
 
 ## v1.1.0 - Release candidate (unreleased)
 

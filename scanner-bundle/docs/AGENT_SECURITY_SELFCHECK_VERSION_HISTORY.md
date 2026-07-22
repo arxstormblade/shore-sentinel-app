@@ -1,14 +1,14 @@
 # Agent Security Self-Check Version History
 
-Merged changelog preserving the full lineage from v1 through the v3.5.0 candidate and v3.4.0 reference release.
+Merged changelog preserving the full lineage from v1 through the approved v3.5.0 release and v3.4.0 reference release.
 
-Last updated: 2026-06-15 08:26:22 UTC
+Last updated: 2026-07-22 00:00:00 UTC
 
 ## Current status
 
 | Version | Status | Summary |
 |---|---|---|
-| v3.5.0 | Candidate | Fail-closed exact scope, structured evidence, host-versus-target separation, stable IDs, contract validation, and false-positive regression coverage. |
+| v3.5.0 | Approved release | Fail-closed exact scope, structured evidence, host-versus-target separation, stable IDs, contract validation, and false-positive regression coverage. |
 | v3.4.0 | Reference release | Hardware Summary section above category score cards, with minimized host telemetry in the approved PDF report. |
 | v3.3.0 | Prior release | Inline remediation tasks appear directly under finding evidence, remediation paths are more precise, and PDF spacing has been tightened. |
 | v3.0.1-rc1 | Prior release | Portable read-only auditor for Hermes/ARX and OpenClaw agent meshes, with consumer-ready PDF evidence refinement. |
@@ -20,11 +20,11 @@ Last updated: 2026-06-15 08:26:22 UTC
 | v1.1 | Historical baseline | DOCX-aligned expanded draft that grew the self-check from 7 to 12 domains. |
 | v1 | Original baseline | First read-only ARX/Hermes operational security scorecard covering 7 core domains. |
 
-## v3.5.0 — correctness and contract-hardening candidate
+## v3.5.0 — correctness and contract-hardening release
 
 ### Release status
 
-Candidate pending implementation validation, independent review, Athena QA, and release approval.
+Approved after implementation validation, independent Aegis security review, Athena QA, and immutable-candidate verification on 2026-07-22.
 
 ### What's New?
 
