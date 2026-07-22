@@ -65,7 +65,7 @@ case "$process" in
     ;;
   web)
     wait_for_url http://127.0.0.1:4000/health
-    exec su-exec shore-web env -i PATH="$PATH" NODE_ENV="$NODE_ENV" PORT="$WEB_PORT" HOSTNAME=127.0.0.1 NEXT_TELEMETRY_DISABLED=1 node /opt/shore-sentinel/web/web/server.js
+    exec su-exec shore-web env -i PATH="$PATH" NODE_ENV="$NODE_ENV" PORT="$WEB_PORT" HOSTNAME=0.0.0.0 NEXT_TELEMETRY_DISABLED=1 node /opt/shore-sentinel/web/web/server.js
     ;;
   *)
     echo "unknown supervised process" >&2

@@ -129,6 +129,11 @@ class SingleContainerRuntimeContractTests(unittest.TestCase):
         self.assertIn("wait_for_url http://127.0.0.1:4000/health", run_process)
         self.assertIn("wait_for_url http://127.0.0.1:4100/health", run_process)
 
+    def test_published_web_process_binds_all_container_interfaces(self):
+        run_process = (ROOT / "container" / "run-process.sh").read_text(encoding="utf-8")
+        self.assertIn('HOSTNAME=0.0.0.0', run_process)
+        self.assertNotIn('HOSTNAME=127.0.0.1', run_process)
+
     def test_capability_check_decodes_cap_eff_and_rejects_extra_capabilities(self):
         self.assertIn("CapEff", self.capability_check)
         self.assertIn("CAP_CHOWN", self.capability_check)
