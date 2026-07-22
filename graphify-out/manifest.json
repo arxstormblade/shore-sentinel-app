@@ -125,8 +125,8 @@
     "semantic_hash": ""
   },
   "scanner-bundle/schemas/scanner-output.schema.json": {
-    "mtime": 1784759434.4316704,
-    "ast_hash": "489ef8a281c5ee51cb916e96d20f6a79",
+    "mtime": 1784760549.8623424,
+    "ast_hash": "14df8a20b4f137a18638571f371f16c0",
     "semantic_hash": ""
   },
   "scanner-bundle/tools/ARX_Agent_Security_Remediation.py": {
@@ -385,8 +385,8 @@
     "semantic_hash": ""
   },
   "web/package.json": {
-    "mtime": 1784701414.0409298,
-    "ast_hash": "5e65f590fd6690428eeee724bac264c4",
+    "mtime": 1784760609.9889064,
+    "ast_hash": "75f63c36e4fc969299dc8c0c2bd8e742",
     "semantic_hash": ""
   },
   "web/scripts/verify-mvp.mjs": {
@@ -440,8 +440,8 @@
     "semantic_hash": ""
   },
   "workers/worker-python/src/parser.py": {
-    "mtime": 1784759326.5009274,
-    "ast_hash": "8840731b5becbcf8290994d8284637ae",
+    "mtime": 1784760549.8043666,
+    "ast_hash": "9dd359353a1dfce634c808af6c1f0efb",
     "semantic_hash": ""
   },
   "workers/worker-python/src/server.py": {
@@ -450,8 +450,8 @@
     "semantic_hash": ""
   },
   "workers/worker-python/test/test_parser.py": {
-    "mtime": 1784759572.1042147,
-    "ast_hash": "b8e02fd50aac5e12b5d507a979b97c8a",
+    "mtime": 1784760570.8246157,
+    "ast_hash": "3dd24b1d0d7554604857b97dafadbe6b",
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
