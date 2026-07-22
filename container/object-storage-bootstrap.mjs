@@ -1,6 +1,6 @@
 import {
   CreateBucketCommand,
-  GetBucketPolicyCommand,
+  DeleteBucketPolicyCommand,
   HeadBucketCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
@@ -30,24 +30,12 @@ try {
 
 await client.send(new HeadBucketCommand({ Bucket: bucket }));
 
-let policy = null;
 try {
-  const result = await client.send(new GetBucketPolicyCommand({ Bucket: bucket }));
-  policy = result.Policy ? JSON.parse(result.Policy) : null;
+  await client.send(new DeleteBucketPolicyCommand({ Bucket: bucket }));
 } catch (error) {
   const code = error?.Code ?? error?.name;
   const status = error?.$metadata?.httpStatusCode;
   if (code !== 'NoSuchBucketPolicy' && status !== 404) throw error;
-}
-
-for (const statement of policy?.Statement ?? []) {
-  if (statement.Effect !== 'Allow') continue;
-  const principal = statement.Principal;
-  const anonymous = principal === '*'
-    || principal?.AWS === '*'
-    || (Array.isArray(principal?.AWS) && principal.AWS.includes('*'))
-    || principal?.AWS === 'arn:aws:iam:::user/anonymous';
-  if (anonymous) throw new Error(`bucket ${bucket} has an anonymous allow policy`);
 }
 
 const anonymousProbe = await fetch(`${endpoint.replace(/\/$/, '')}/${encodeURIComponent(bucket)}`);

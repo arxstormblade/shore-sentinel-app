@@ -5,7 +5,17 @@ services:
     build:
       context: .
       dockerfile: container/Dockerfile
+      # Keep the local Compose path single-platform so `docker compose up --build`
+      # can load the image into the local engine. CI uses the pinned Buildx
+      # invocation in quality-security.yml for the linux/amd64 + linux/arm64 OCI index.
+      args:
+        IMAGE_VERSION: "1.1.0"
+        SOURCE_DATE_EPOCH: ${SOURCE_DATE_EPOCH:-0}
+        VCS_REF: ${VCS_REF:-local}
     image: shore-sentinel-single:1.1.0
+    labels:
+      org.opencontainers.image.title: Shore Sentinel single-container
+      org.opencontainers.image.version: "1.1.0"
     user: root
     environment:
       NODE_ENV: production

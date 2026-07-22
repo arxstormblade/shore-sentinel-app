@@ -15,6 +15,8 @@ class SingleContainerRuntimeContractTests(unittest.TestCase):
         self.supervisor = (ROOT / "container" / "supervisord.conf").read_text(encoding="utf-8")
         self.entrypoint = (ROOT / "container" / "entrypoint.sh").read_text(encoding="utf-8")
         self.healthcheck = (ROOT / "container/healthcheck.sh").read_text(encoding="utf-8")
+        self.capability_check = (ROOT / "container/capability-check.sh").read_text(encoding="utf-8")
+        self.object_storage_bootstrap = (ROOT / "container/object-storage-bootstrap.mjs").read_text(encoding="utf-8")
 
     def parsed_compose(self):
         environment = os.environ.copy()
@@ -40,6 +42,8 @@ class SingleContainerRuntimeContractTests(unittest.TestCase):
         model = self.parsed_compose()
         self.assertEqual(set(model["services"]), {"shore-sentinel"})
         service = model["services"]["shore-sentinel"]
+        self.assertNotIn("platforms", service["build"])
+        self.assertEqual(service["labels"]["org.opencontainers.image.version"], "1.1.0")
         self.assertEqual(service["volumes"], [{
             "type": "volume",
             "source": "shore-sentinel-data",
@@ -91,6 +95,25 @@ class SingleContainerRuntimeContractTests(unittest.TestCase):
         self.assertIn("PGPASSWORD=\"$POSTGRES_PASSWORD\"", self.entrypoint)
         self.assertIn("--owner=\"$POSTGRES_USER\"", self.entrypoint)
 
+    def test_runtime_smoke_covers_persistence_integrity_shutdown_and_backup_primitives(self):
+        smoke = (ROOT / "tests" / "single_container_runtime_smoke.sh").read_text(encoding="utf-8")
+        for marker in (
+            "pg_get_userbyid(datdba)",
+            "schema_migrations",
+            "sha256sum",
+            "runtime-persistence-marker",
+            "docker stop -t",
+            "backup-restore.sh backup",
+            "backup-restore.sh rollback",
+        ):
+            self.assertIn(marker, smoke)
+        self.assertIn(
+            '-e DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@127.0.0.1:5432/${POSTGRES_DB}"',
+            smoke,
+        )
+        self.assertNotRegex(smoke, r"DATABASE_URL=.*:\*+@")
+        self.assertIn("backup-restore.sh restore", smoke)
+
     def test_no_docker_socket_or_privileged_runtime(self):
         service = self.parsed_compose()["services"]["shore-sentinel"]
         self.assertNotIn("docker.sock", json.dumps(service))
@@ -105,6 +128,33 @@ class SingleContainerRuntimeContractTests(unittest.TestCase):
         self.assertIn("wait_for_url http://127.0.0.1:9000/minio/health/live", run_process)
         self.assertIn("wait_for_url http://127.0.0.1:4000/health", run_process)
         self.assertIn("wait_for_url http://127.0.0.1:4100/health", run_process)
+
+    def test_capability_check_decodes_cap_eff_and_rejects_extra_capabilities(self):
+        self.assertIn("CapEff", self.capability_check)
+        self.assertIn("CAP_CHOWN", self.capability_check)
+        self.assertIn("CAP_SETUID", self.capability_check)
+        self.assertIn("CAP_SETGID", self.capability_check)
+        self.assertIn("unexpected effective capabilities", self.capability_check)
+        self.assertNotIn("SYS_ADMIN", self.capability_check)
+        self.assertNotIn("NET_ADMIN", self.capability_check)
+
+    def test_healthcheck_parses_supervisor_state_and_rejects_duplicate_services(self):
+        self.assertIn("supervisorctl status", self.healthcheck)
+        self.assertIn("RUNNING", self.healthcheck)
+        self.assertIn("ps -o args", self.healthcheck)
+        self.assertIn("count", self.healthcheck)
+        self.assertIn("= 1", self.healthcheck)
+
+    def test_object_storage_bootstrap_removes_anonymous_policy_idempotently(self):
+        self.assertIn("DeleteBucketPolicyCommand", self.object_storage_bootstrap)
+        self.assertIn("NoSuchBucketPolicy", self.object_storage_bootstrap)
+        self.assertIn("HeadBucketCommand", self.object_storage_bootstrap)
+        self.assertIn("anonymous access probe returned", self.object_storage_bootstrap)
+
+    def test_entrypoint_cleans_bootstrap_password_file_on_failure(self):
+        self.assertIn("trap cleanup_bootstrap_password EXIT INT TERM", self.entrypoint)
+        self.assertIn('rm -f "${password_file:-}"', self.entrypoint)
+        self.assertIn("trap - EXIT INT TERM", self.entrypoint)
 
     def test_process_environment_contract_is_allowlisted(self):
         contract = json.loads((ROOT / "container" / "process-environment-contract.json").read_text(encoding="utf-8"))

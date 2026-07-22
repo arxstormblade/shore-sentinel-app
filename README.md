@@ -108,6 +108,8 @@ The deployment boundary publishes:
 
 Database, queue, object-storage, and worker control ports remain loopback-only inside the application container. Managed SSH and AI test execution retain host-key, target-scope, bounded-cancellation, approval, and independent egress controls; disposable AI tests use bounded unprivileged process/user/namespace sandboxes inside the application container.
 
+The runtime starts with `cap_drop: ALL` and the exact, live-probed allowlist `CHOWN`, `SETGID`, and `SETUID` only. Bootstrap uses those capabilities for top-level volume ownership and service-user transitions; `/opt/shore-sentinel/bin/capability-check.sh` parses PID 1's effective `CapEff` and fails health if any other capability is present. `SYS_ADMIN`, `NET_ADMIN`, privileged mode, and Docker-socket access are not permitted.
+
 ### Prerequisites
 
 Install these on the host:

@@ -22,6 +22,11 @@ class SingleContainerPersistenceContractTests(unittest.TestCase):
         self.assertIn("restore", script)
         self.assertIn("pg_dump", script)
         self.assertIn("sha256sum", script)
+        self.assertIn("redis-cli -h 127.0.0.1 shutdown nosave", script)
+        self.assertIn("dump.rdb", script)
+        self.assertIn("appendonly no", script)
+        self.assertIn("appendonly yes", script)
+        self.assertIn("supervisorctl start shore-sentinel:redis", script)
         self.assertNotIn("POSTGRES_PASSWORD=", script)
 
     def test_runtime_backup_script_matches_documented_mode_first_interface(self):

@@ -3,12 +3,25 @@ set -eu
 umask 077
 
 DATA_ROOT=${SHORE_SENTINEL_DATA_ROOT:-/var/lib/shore-sentinel}
+REDIS_CONFIG=${REDIS_CONFIG:-/run/shore-sentinel-redis.conf}
 MODE=${1:-}
 BACKUP_DIR=${2:?usage: backup-restore.sh backup|restore|rollback <directory>}
 
 usage() {
   echo "usage: backup-restore.sh backup|restore|rollback <directory>" >&2
   exit 64
+}
+
+set_redis_appendonly() {
+  value=$1
+  from=yes
+  [ "$value" = yes ] && from=no
+  temporary=/run/shore-sentinel-redis.restore.conf
+  : > "$temporary"
+  chmod 0644 "$temporary"
+  chown shore-redis:shore-redis "$temporary"
+  su-exec shore-redis sh -c 'sed "s/^appendonly $1$/appendonly $2/" "$3" > "$4"' sh "$from" "$value" "$REDIS_CONFIG" "$temporary"
+  mv "$temporary" "$REDIS_CONFIG"
 }
 
 [ -n "$MODE" ] || usage
@@ -27,7 +40,33 @@ case "$MODE" in
     : "${DATABASE_URL:?DATABASE_URL must be set}"
     (cd "$BACKUP_DIR" && sha256sum -c manifest.sha256)
     pg_restore --clean --if-exists --dbname="$DATABASE_URL" "$BACKUP_DIR/postgres.dump"
-    tar -C "$DATA_ROOT" -xzf "$BACKUP_DIR/object-and-evidence.tgz"
+    # CAP_DAC_OVERRIDE is intentionally absent. Restore each private tree as
+    # its owning service user so tar can replace service-owned files without
+    # requiring a broader capability or recursive root chown.
+    su-exec shore-minio tar -C "$DATA_ROOT" -xzf - object-storage < "$BACKUP_DIR/object-and-evidence.tgz"
+    su-exec shore-parser tar -C "$DATA_ROOT" -xzf - evidence < "$BACKUP_DIR/object-and-evidence.tgz"
+    # Redis must be stopped before replacing its RDB/AOF state. The service
+    # user owns the private tree, so no extra DAC capability is needed.
+    # supervisor cannot signal a service user without CAP_KILL; ask Redis to
+    # shut itself down through its authenticated local control interface.
+    redis-cli -h 127.0.0.1 shutdown nosave >/dev/null
+    su-exec shore-redis sh -c 'rm -rf "$1"/* "$1"/.[!.]* "$1"/..?*' sh "$DATA_ROOT/redis"
+    su-exec shore-redis sh -c 'cat > "$1/dump.rdb"' sh "$DATA_ROOT/redis" < "$BACKUP_DIR/redis.rdb"
+    # Redis 7 prefers an append-only manifest over dump.rdb. Temporarily
+    # disable AOF for the first start so the restored RDB is loaded, then
+    # enable it in-place after the restored keys are available.
+    set_redis_appendonly no
+    supervisorctl start shore-sentinel:redis >/dev/null
+    i=0
+    while ! redis-cli -h 127.0.0.1 ping 2>/dev/null | grep -qx PONG; do
+      i=$((i + 1))
+      [ "$i" -lt 30 ] || { echo "redis did not become ready after restore" >&2; exit 1; }
+      sleep 1
+    done
+    # Enable AOF in-place after the RDB is loaded so Redis snapshots the
+    # restored keys instead of starting a second time from a fresh manifest.
+    redis-cli -h 127.0.0.1 config set appendonly yes >/dev/null
+    set_redis_appendonly yes
     ;;
   rollback)
     [ -f "$BACKUP_DIR/manifest.sha256" ] || { echo "backup manifest required for rollback" >&2; exit 65; }

@@ -41,9 +41,16 @@ class ProductionSecurityPostureTests(unittest.TestCase):
 
 
 class ContinuousIntegrationReleaseGateTests(unittest.TestCase):
-    def test_ci_builds_the_single_application_image_without_starting_services(self):
-        expected_build = "docker compose --env-file \"$COMPOSE_CI_ENV\" build shore-sentinel"
-        self.assertIn(expected_build, WORKFLOW)
+    def test_ci_builds_and_loads_the_single_application_image_without_starting_services(self):
+        self.assertIn("docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392", WORKFLOW)
+        self.assertIn("docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435", WORKFLOW)
+        self.assertIn("--platform \"$IMAGE_PLATFORMS\"", WORKFLOW)
+        self.assertIn("IMAGE_PLATFORMS: linux/amd64,linux/arm64", WORKFLOW)
+        self.assertIn("--output \"type=oci,dest=$RUNNER_TEMP/shore-sentinel-single-multiarch.oci.tar\"", WORKFLOW)
+        self.assertIn("--platform linux/amd64", WORKFLOW)
+        self.assertIn("--load", WORKFLOW)
+        self.assertIn("tests/single_container_runtime_smoke.sh", WORKFLOW)
+        self.assertNotIn("docker compose --env-file \"$COMPOSE_CI_ENV\" build", WORKFLOW)
         self.assertNotIn("docker compose --env-file \"$COMPOSE_CI_ENV\" up", WORKFLOW)
 
     def test_ci_never_starts_or_deploys_compose_services(self):

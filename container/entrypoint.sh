@@ -42,19 +42,25 @@ chown shore-redis:shore-redis "$DATA_ROOT/redis"
 chown shore-minio:shore-minio "$DATA_ROOT/object-storage"
 chown shore-parser:shore-parser "$DATA_ROOT/evidence"
 
+password_file=/run/shore-sentinel-postgres-password
+cleanup_bootstrap_password() {
+  rm -f "${password_file:-}"
+}
+trap cleanup_bootstrap_password EXIT INT TERM
+
 if ! su-exec shore-postgres test -s "$PGDATA/PG_VERSION"; then
   if su-exec shore-postgres find "$PGDATA" -mindepth 1 -maxdepth 1 -print -quit | grep -q .; then
     # An interrupted initdb may leave an owned, partial cluster. Remove only
     # that incomplete cluster as the database user; never touch a valid one.
     su-exec shore-postgres sh -c 'find "$1" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +' sh "$PGDATA"
   fi
-  password_file=/run/shore-sentinel-postgres-password
   umask 077
   printf '%s' "$POSTGRES_PASSWORD" > "$password_file"
   chown shore-postgres:shore-postgres "$password_file"
   su-exec shore-postgres initdb --auth-local=scram-sha-256 --auth-host=scram-sha-256 --username="${POSTGRES_USER:-shore_sentinel}" --pwfile="$password_file" -D "$PGDATA" >/dev/null
-  rm -f "$password_file"
 fi
+cleanup_bootstrap_password
+password_file=
 cat > "$REDIS_CONFIG" <<EOF
 bind 127.0.0.1
 port 6379
