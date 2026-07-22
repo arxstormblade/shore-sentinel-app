@@ -1,16 +1,16 @@
 # Graph Report - github-shore-sentinel-app  (2026-07-22)
 
 ## Corpus Check
-- 232 files · ~285,297 words
+- 232 files · ~285,308 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2146 nodes · 3198 edges · 184 communities (131 shown, 53 thin omitted)
+- 2147 nodes · 3200 edges · 189 communities (136 shown, 53 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 95 edges (avg confidence: 0.77)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d42ea466`
+- Built from commit: `4a873dd9`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -181,11 +181,16 @@
 - ProxyHandler
 - run-scan-supervisor
 - index.js
+- managedSshProcessor.js
 - Body
+- sshExecutor.test.js
 - force-command-dispatch
+- scannerBundleContractVersion
 - required
 - scanner
 - target
+- payloadContract.test.js
+- Offline Resilience Best Practice
 - bcryptjs
 - bullmq
 - cookie-parser
@@ -221,15 +226,15 @@
 ## Import Cycles
 - None detected.
 
-## Communities (184 total, 53 thin omitted)
+## Communities (189 total, 53 thin omitted)
 
 ### Community 0 - "AppController"
 Cohesion: 0.24
 Nodes (4): Get, Param, Patch, Req
 
 ### Community 1 - "index.js"
-Cohesion: 0.05
-Nodes (54): adminRequest, analystRequest, controller(), operatorRequest, viewerRequest, ARTIFACT_KIND, buildRunEvent(), JOB_STATUS (+46 more)
+Cohesion: 0.14
+Nodes (15): createApiClient(), getJson(), postJson(), positiveInteger(), readConfig(), sshWorkerConcurrency(), api, artifactCleanupWorker (+7 more)
 
 ### Community 2 - "Agent_Security_Selfcheck_v3.4.0.py"
 Cohesion: 0.11
@@ -248,8 +253,8 @@ Cohesion: 0.05
 Nodes (43): Agent Security Self-Check Version History, Current status, Fixed Issues, Fixed Issues, Fixed Issues, Fixed Issues, Fixed Issues, Fixed Issues (+35 more)
 
 ### Community 6 - "sshExecutor.js"
-Cohesion: 0.08
-Nodes (23): boundedRemoteCancellation(), createPinnedSshTransport(), executePinnedScan(), fixedRemoteCancellationCommand(), fixedRemoteRequestCommand(), fixedRemoteStageCommand(), FORBIDDEN_QUEUE_FIELDS, ipv4ToUint32() (+15 more)
+Cohesion: 0.18
+Nodes (20): boundedRemoteCancellation(), createPinnedSshTransport(), executePinnedScan(), fixedRemoteCancellationCommand(), fixedRemoteRequestCommand(), fixedRemoteStageCommand(), FORBIDDEN_QUEUE_FIELDS, ipv4ToUint32() (+12 more)
 
 ### Community 7 - "ProxyHandler"
 Cohesion: 0.09
@@ -357,7 +362,7 @@ Nodes (16): 1) Copy/paste Hermes prompt, 2) QA checklist, 3) Issue log template,
 
 ### Community 36 - "Shore Sentinel Control Plane Architecture Proposal"
 Cohesion: 0.12
-Nodes (15): 1. Web UI — Next.js, Component Breakdown, Conclusion, Decisions Captured, Executive Summary, Full Dockerized System Diagram, MVP Definition, MVP excludes (+7 more)
+Nodes (15): 1. Web UI — Next.js, Component Breakdown, Conclusion, Decisions Captured, Executive Summary, Flow, Full Dockerized System Diagram, Intent (+7 more)
 
 ### Community 37 - "Shore Sentinel Release Checklist"
 Cohesion: 0.12
@@ -416,7 +421,7 @@ Cohesion: 0.12
 Nodes (16): ssh2, dependencies, bullmq, ioredis, @shore-sentinel/shared, ssh2, bullmq, ioredis (+8 more)
 
 ### Community 52 - "DatabaseService"
-Cohesion: 0.16
+Cohesion: 0.18
 Nodes (6): DatabaseService, isWeakSecret(), REQUIRED_PRODUCTION_SECRETS, Injectable, validateProductionSecrets(), productionSecrets
 
 ### Community 53 - "check_worker_node_egress_policy.py"
@@ -436,7 +441,7 @@ Cohesion: 0.15
 Nodes (11): failures, invalidMountedLinks, landing, loginPage, navigationData, navigationGroups, navigationPositions, nextConfig (+3 more)
 
 ### Community 58 - "AuthService"
-Cohesion: 0.29
+Cohesion: 0.26
 Nodes (3): AuthService, Session, Injectable
 
 ### Community 59 - "migration-runner.ts"
@@ -680,8 +685,8 @@ Cohesion: 0.67
 Nodes (3): Canonical job, run, and artifact path, Chosen Technology Stack, Important stack decision
 
 ### Community 137 - "Pull-Agent / Check-in Flow"
-Cohesion: 0.67
-Nodes (3): Flow, Intent, Pull-Agent / Check-in Flow
+Cohesion: 0.18
+Nodes (12): adminRequest, analystRequest, controller(), operatorRequest, viewerRequest, ARTIFACT_KIND, buildRunEvent(), JOB_STATUS (+4 more)
 
 ### Community 163 - "sshExecutor.test.js"
 Cohesion: 0.17
@@ -689,7 +694,7 @@ Nodes (6): CleanupSummary, CleanupWork, CleanupSummary, RecoverableArtifactServi
 
 ### Community 165 - "dependencies"
 Cohesion: 0.13
-Nodes (15): dependencies, @aws-sdk/client-s3, @nestjs/common, @nestjs/core, @nestjs/platform-express, pg, rxjs, @shore-sentinel/shared (+7 more)
+Nodes (15): dependencies, @aws-sdk/s3-request-presigner, @nestjs/common, @nestjs/core, @nestjs/platform-express, pg, rxjs, @shore-sentinel/shared (+7 more)
 
 ### Community 166 - "devDependencies"
 Cohesion: 0.13
@@ -707,9 +712,21 @@ Nodes (3): ProxyHandler, BaseHTTPRequestHandler, upstream_path()
 Cohesion: 0.25
 Nodes (9): run-scan-supervisor script, has_group_member_other_than_self(), is_uuid(), MAX_STARTUP_WAIT_SECONDS, reject(), REQUEST_ROOT, SCAN_IMPLEMENTATION, state_authorizes_self() (+1 more)
 
+### Community 172 - "managedSshProcessor.js"
+Cohesion: 0.24
+Nodes (15): handleManagedSshFailure(), retryDecision(), assertActive(), emit(), emitManagedSshFailure(), monitorCancellation(), processManagedSshJob(), processManagedSshJobSteps() (+7 more)
+
+### Community 174 - "sshExecutor.test.js"
+Cohesion: 0.11
+Nodes (3): CommandClient, ReadyClient, StageClient
+
 ### Community 175 - "force-command-dispatch"
 Cohesion: 0.29
 Nodes (7): force-command-dispatch script, CANCEL_REGEX, reject(), REQUEST_REGEX, RUNNER, STAGE_REGEX, UUID_REGEX
+
+### Community 176 - "scannerBundleContractVersion"
+Cohesion: 0.30
+Nodes (8): scannerBundleContractVersion(), normalizeJobData(), artifactTypeFor(), contentTypeFor(), execFileAsync, runBundledScanner(), severityFromRisk(), toContract()
 
 ### Community 177 - "required"
 Cohesion: 0.33
@@ -723,6 +740,14 @@ Nodes (6): name, version, scanner, additionalProperties, required, type
 Cohesion: 0.40
 Nodes (5): assetId, target, additionalProperties, required, type
 
+### Community 180 - "payloadContract.test.js"
+Cohesion: 0.33
+Nodes (4): createParserClient(), serializeParserRequest(), grant, job
+
+### Community 181 - "Offline Resilience Best Practice"
+Cohesion: 0.67
+Nodes (3): Offline Resilience Best Practice, Pull-agent behavior, SSH push behavior
+
 ## Knowledge Gaps
 - **786 isolated node(s):** `name`, `version`, `private`, `type`, `build` (+781 more)
   These have ≤1 connection - possible missing edges or undocumented components.
@@ -731,17 +756,17 @@ Nodes (5): assetId, target, additionalProperties, required, type
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `AppController` connect `ParserServerTests` to `AppController`, `index.js`, `sshExecutor.test.js`, `index.js`, `app.module.ts`, `scannerBundleContractVersion`, `UpdateService`, `queue.service.ts`, `index.js`, `Body`, `app.controller.ts`, `worker-ssh-grant.test.ts`?**
+- **Why does `AppController` connect `ParserServerTests` to `AppController`, `sshExecutor.test.js`, `index.js`, `app.module.ts`, `scannerBundleContractVersion`, `Pull-Agent / Check-in Flow`, `UpdateService`, `queue.service.ts`, `index.js`, `Body`, `app.controller.ts`, `worker-ssh-grant.test.ts`, `scannerBundleContractVersion`?**
   _High betweenness centrality (0.046) - this node is a cross-community bridge._
 - **Why does `Header()` connect `routePath` to `Body`?**
   _High betweenness centrality (0.038) - this node is a cross-community bridge._
 - **Why does `routePath()` connect `routePath` to `appPath`, `InventoryRegistry`, `getAuthenticatedUser`, `MachineDetailClient`, `page.jsx`, `RemediationQueue`, `display-preferences.js`, `ReportsLedger`, `apiGet`, `saved-views.jsx`?**
-  _High betweenness centrality (0.033) - this node is a cross-community bridge._
+  _High betweenness centrality (0.035) - this node is a cross-community bridge._
 - **Are the 33 inferred relationships involving `routePath()` (e.g. with `Audit()` and `Audits()`) actually correct?**
   _`routePath()` has 33 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `name`, `version`, `private` to the rest of the system?**
   _786 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `index.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.053164556962025315 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.14285714285714285 - nodes in this community are weakly interconnected._
 - **Should `Agent_Security_Selfcheck_v3.4.0.py` be split into smaller, more focused modules?**
   _Cohesion score 0.10752688172043011 - nodes in this community are weakly interconnected._

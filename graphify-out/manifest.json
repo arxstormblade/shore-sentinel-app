@@ -385,8 +385,8 @@
     "semantic_hash": ""
   },
   "web/package.json": {
-    "mtime": 1784563282.9966676,
-    "ast_hash": "8835658c3be5496b6eeffe973fa6d0a9",
+    "mtime": 1784691854.0515032,
+    "ast_hash": "5cb7eb7354e09a7dd9ad01dfdea421a1",
     "semantic_hash": ""
   },
   "web/scripts/verify-mvp.mjs": {
@@ -710,8 +710,8 @@
     "semantic_hash": ""
   },
   "tests/test_compact_core_operations_pages.py": {
-    "mtime": 1784691620.689437,
-    "ast_hash": "c920595e08ee4136f3e12fe5ae951a3d",
+    "mtime": 1784691840.7894738,
+    "ast_hash": "7a74905e34f76a75633bf0b5595f4728",
     "semantic_hash": ""
   },
   "tests/test_compact_evidence_workflow_pages.py": {

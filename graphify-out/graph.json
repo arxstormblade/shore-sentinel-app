@@ -131,8 +131,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_package_dependencies_aws_sdk_client_s3",
-      "community": 165,
-      "community_name": "dependencies",
+      "community": 188,
+      "community_name": "@aws-sdk/s3-request-presigner",
       "norm_label": "@aws-sdk/client-s3"
     },
     {
@@ -142,8 +142,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "aws_sdk_client_s3",
-      "community": 165,
-      "community_name": "dependencies",
+      "community": 188,
+      "community_name": "@aws-sdk/s3-request-presigner",
       "norm_label": "@aws-sdk/client-s3"
     },
     {
@@ -153,8 +153,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_package_dependencies_aws_sdk_s3_request_presigner",
-      "community": 188,
-      "community_name": "@aws-sdk/s3-request-presigner",
+      "community": 165,
+      "community_name": "dependencies",
       "norm_label": "@aws-sdk/s3-request-presigner"
     },
     {
@@ -164,8 +164,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "aws_sdk_s3_request_presigner",
-      "community": 188,
-      "community_name": "@aws-sdk/s3-request-presigner",
+      "community": 165,
+      "community_name": "dependencies",
       "norm_label": "@aws-sdk/s3-request-presigner"
     },
     {
@@ -1275,8 +1275,8 @@
       "source_location": "L986",
       "_origin": "ast",
       "id": "api_src_app_controller_appcontroller_scanneroutput",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 176,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": ".scanneroutput()"
     },
     {
@@ -1814,8 +1814,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "api_src_auth_service_authservice_constructor",
-      "community": 52,
-      "community_name": "DatabaseService",
+      "community": 58,
+      "community_name": "AuthService",
       "norm_label": ".constructor()"
     },
     {
@@ -3002,8 +3002,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 137,
+      "community_name": "Pull-Agent / Check-in Flow",
       "norm_label": "controller-shapes.test.ts"
     },
     {
@@ -3013,8 +3013,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_workercapability",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 137,
+      "community_name": "Pull-Agent / Check-in Flow",
       "norm_label": "workercapability()"
     },
     {
@@ -3024,8 +3024,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_workerrequest",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 137,
+      "community_name": "Pull-Agent / Check-in Flow",
       "norm_label": "workerrequest()"
     },
     {
@@ -3035,8 +3035,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_operatorrequest",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 137,
+      "community_name": "Pull-Agent / Check-in Flow",
       "norm_label": "operatorrequest"
     },
     {
@@ -3046,8 +3046,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_adminrequest",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 137,
+      "community_name": "Pull-Agent / Check-in Flow",
       "norm_label": "adminrequest"
     },
     {
@@ -3057,8 +3057,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_analystrequest",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 137,
+      "community_name": "Pull-Agent / Check-in Flow",
       "norm_label": "analystrequest"
     },
     {
@@ -3068,8 +3068,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_viewerrequest",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 137,
+      "community_name": "Pull-Agent / Check-in Flow",
       "norm_label": "viewerrequest"
     },
     {
@@ -3079,8 +3079,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "api_test_controller_shapes_test_controller",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 137,
+      "community_name": "Pull-Agent / Check-in Flow",
       "norm_label": "controller()"
     },
     {
@@ -5788,8 +5788,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "packages_shared_src_index",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 137,
+      "community_name": "Pull-Agent / Check-in Flow",
       "norm_label": "index.js"
     },
     {
@@ -5799,8 +5799,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "packages_shared_src_index_queues",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 137,
+      "community_name": "Pull-Agent / Check-in Flow",
       "norm_label": "queues"
     },
     {
@@ -5810,8 +5810,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "packages_shared_src_index_job_status",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 137,
+      "community_name": "Pull-Agent / Check-in Flow",
       "norm_label": "job_status"
     },
     {
@@ -5821,8 +5821,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "packages_shared_src_index_run_event_type",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 137,
+      "community_name": "Pull-Agent / Check-in Flow",
       "norm_label": "run_event_type"
     },
     {
@@ -5832,8 +5832,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "packages_shared_src_index_artifact_kind",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 137,
+      "community_name": "Pull-Agent / Check-in Flow",
       "norm_label": "artifact_kind"
     },
     {
@@ -5843,8 +5843,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "packages_shared_src_index_buildrunevent",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 137,
+      "community_name": "Pull-Agent / Check-in Flow",
       "norm_label": "buildrunevent()"
     },
     {
@@ -5854,8 +5854,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "packages_shared_src_index_validateartifactupload",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 137,
+      "community_name": "Pull-Agent / Check-in Flow",
       "norm_label": "validateartifactupload()"
     },
     {
@@ -5865,8 +5865,8 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "packages_shared_src_index_scannerbundlecontractversion",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 176,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "scannerbundlecontractversion()"
     },
     {
@@ -9566,10 +9566,21 @@
       "norm_label": ".test_scan_start_redirects_to_machine_selection()"
     },
     {
-      "label": ".test_public_shell_sign_in_uses_the_mounted_application_path()",
+      "label": ".test_web_production_build_uses_architecture_independent_webpack()",
       "file_type": "code",
       "source_file": "tests/test_compact_core_operations_pages.py",
       "source_location": "L73",
+      "_origin": "ast",
+      "id": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_web_production_build_uses_architecture_independent_webpack",
+      "community": 86,
+      "community_name": "CompactCoreOperationsPageTests",
+      "norm_label": ".test_web_production_build_uses_architecture_independent_webpack()"
+    },
+    {
+      "label": ".test_public_shell_sign_in_uses_the_mounted_application_path()",
+      "file_type": "code",
+      "source_file": "tests/test_compact_core_operations_pages.py",
+      "source_location": "L77",
       "_origin": "ast",
       "id": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_public_shell_sign_in_uses_the_mounted_application_path",
       "community": 86,
@@ -9580,7 +9591,7 @@
       "label": ".test_authenticated_root_continues_to_redirect_to_dashboard()",
       "file_type": "code",
       "source_file": "tests/test_compact_core_operations_pages.py",
-      "source_location": "L78",
+      "source_location": "L82",
       "_origin": "ast",
       "id": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_authenticated_root_continues_to_redirect_to_dashboard",
       "community": 86,
@@ -15974,8 +15985,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_failurehandling",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "managedSshProcessor.js",
       "norm_label": "failurehandling.js"
     },
     {
@@ -15985,8 +15996,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "workers_worker_node_src_failurehandling_delay",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "managedSshProcessor.js",
       "norm_label": "delay()"
     },
     {
@@ -15996,8 +16007,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "workers_worker_node_src_failurehandling_handlemanagedsshfailure",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "managedSshProcessor.js",
       "norm_label": "handlemanagedsshfailure()"
     },
     {
@@ -16128,8 +16139,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_lifecycle",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 137,
+      "community_name": "Pull-Agent / Check-in Flow",
       "norm_label": "lifecycle.js"
     },
     {
@@ -16139,8 +16150,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "workers_worker_node_src_lifecycle_retrydecision",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "managedSshProcessor.js",
       "norm_label": "retrydecision()"
     },
     {
@@ -16150,8 +16161,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "workers_worker_node_src_lifecycle_lifecycleevent",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 137,
+      "community_name": "Pull-Agent / Check-in Flow",
       "norm_label": "lifecycleevent()"
     },
     {
@@ -16161,8 +16172,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "workers_worker_node_src_lifecycle_artifactuploadpayload",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 137,
+      "community_name": "Pull-Agent / Check-in Flow",
       "norm_label": "artifactuploadpayload()"
     },
     {
@@ -16172,8 +16183,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_managedsshprocessor",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "managedSshProcessor.js",
       "norm_label": "managedsshprocessor.js"
     },
     {
@@ -16183,8 +16194,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "workers_worker_node_src_managedsshprocessor_withtimeout",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "managedSshProcessor.js",
       "norm_label": "withtimeout()"
     },
     {
@@ -16194,8 +16205,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "workers_worker_node_src_managedsshprocessor_assertactive",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "managedSshProcessor.js",
       "norm_label": "assertactive()"
     },
     {
@@ -16205,8 +16216,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "workers_worker_node_src_managedsshprocessor_emit",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "managedSshProcessor.js",
       "norm_label": "emit()"
     },
     {
@@ -16216,8 +16227,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "workers_worker_node_src_managedsshprocessor_emitmanagedsshfailure",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "managedSshProcessor.js",
       "norm_label": "emitmanagedsshfailure()"
     },
     {
@@ -16227,8 +16238,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "workers_worker_node_src_managedsshprocessor_monitorcancellation",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "managedSshProcessor.js",
       "norm_label": "monitorcancellation()"
     },
     {
@@ -16238,8 +16249,8 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "workers_worker_node_src_managedsshprocessor_scanneroutputfromssh",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "managedSshProcessor.js",
       "norm_label": "scanneroutputfromssh()"
     },
     {
@@ -16249,8 +16260,8 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "workers_worker_node_src_managedsshprocessor_processmanagedsshjob",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "managedSshProcessor.js",
       "norm_label": "processmanagedsshjob()"
     },
     {
@@ -16260,8 +16271,8 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "workers_worker_node_src_managedsshprocessor_processmanagedsshjobsteps",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "managedSshProcessor.js",
       "norm_label": "processmanagedsshjobsteps()"
     },
     {
@@ -16271,8 +16282,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_parserclient",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 180,
+      "community_name": "payloadContract.test.js",
       "norm_label": "parserclient.js"
     },
     {
@@ -16282,8 +16293,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "workers_worker_node_src_parserclient_createparserclient",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 180,
+      "community_name": "payloadContract.test.js",
       "norm_label": "createparserclient()"
     },
     {
@@ -16293,8 +16304,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_payload",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 176,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "payload.js"
     },
     {
@@ -16304,8 +16315,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "workers_worker_node_src_payload_normalizejobdata",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 176,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "normalizejobdata()"
     },
     {
@@ -16315,8 +16326,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_payloadlimits",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 180,
+      "community_name": "payloadContract.test.js",
       "norm_label": "payloadlimits.js"
     },
     {
@@ -16326,8 +16337,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "workers_worker_node_src_payloadlimits_assertscanneroutputbytes",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "managedSshProcessor.js",
       "norm_label": "assertscanneroutputbytes()"
     },
     {
@@ -16337,8 +16348,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "workers_worker_node_src_payloadlimits_serializeparserrequest",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 180,
+      "community_name": "payloadContract.test.js",
       "norm_label": "serializeparserrequest()"
     },
     {
@@ -16348,8 +16359,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 176,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "scannerrunner.js"
     },
     {
@@ -16359,8 +16370,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_execfileasync",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 176,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "execfileasync"
     },
     {
@@ -16370,8 +16381,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_severityfromrisk",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 176,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "severityfromrisk()"
     },
     {
@@ -16381,8 +16392,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_tocontract",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 176,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "tocontract()"
     },
     {
@@ -16392,8 +16403,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_artifacttypefor",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 176,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "artifacttypefor()"
     },
     {
@@ -16403,8 +16414,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_contenttypefor",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 176,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "contenttypefor()"
     },
     {
@@ -16414,8 +16425,8 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "workers_worker_node_src_scannerrunner_runbundledscanner",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 176,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "runbundledscanner()"
     },
     {
@@ -16568,8 +16579,8 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "workers_worker_node_src_sshexecutor_normalizesshjob",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "managedSshProcessor.js",
       "norm_label": "normalizesshjob()"
     },
     {
@@ -16711,8 +16722,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_test_lifecycle_test",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 137,
+      "community_name": "Pull-Agent / Check-in Flow",
       "norm_label": "lifecycle.test.js"
     },
     {
@@ -16722,8 +16733,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_test_managedsshprocessor_test",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "managedSshProcessor.js",
       "norm_label": "managedsshprocessor.test.js"
     },
     {
@@ -16733,8 +16744,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "workers_worker_node_test_managedsshprocessor_test_job",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "managedSshProcessor.js",
       "norm_label": "job"
     },
     {
@@ -16744,8 +16755,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "workers_worker_node_test_managedsshprocessor_test_grant",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "managedSshProcessor.js",
       "norm_label": "grant"
     },
     {
@@ -16755,8 +16766,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_test_payload_test",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 176,
+      "community_name": "scannerBundleContractVersion",
       "norm_label": "payload.test.js"
     },
     {
@@ -16766,8 +16777,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_test_payloadcontract_test",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 180,
+      "community_name": "payloadContract.test.js",
       "norm_label": "payloadcontract.test.js"
     },
     {
@@ -16777,8 +16788,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "workers_worker_node_test_payloadcontract_test_job",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 180,
+      "community_name": "payloadContract.test.js",
       "norm_label": "job"
     },
     {
@@ -16788,8 +16799,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "workers_worker_node_test_payloadcontract_test_grant",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 180,
+      "community_name": "payloadContract.test.js",
       "norm_label": "grant"
     },
     {
@@ -16799,8 +16810,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "workers_worker_node_test_payloadcontract_test_scannerjsonwithexactbytes",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 180,
+      "community_name": "payloadContract.test.js",
       "norm_label": "scannerjsonwithexactbytes()"
     },
     {
@@ -16810,8 +16821,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "workers_worker_node_test_payloadcontract_test_apirecorder",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 180,
+      "community_name": "payloadContract.test.js",
       "norm_label": "apirecorder()"
     },
     {
@@ -16821,8 +16832,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test",
-      "community": 6,
-      "community_name": "sshExecutor.js",
+      "community": 174,
+      "community_name": "sshExecutor.test.js",
       "norm_label": "sshexecutor.test.js"
     },
     {
@@ -16832,8 +16843,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_readyclient",
-      "community": 6,
-      "community_name": "sshExecutor.js",
+      "community": 174,
+      "community_name": "sshExecutor.test.js",
       "norm_label": "readyclient"
     },
     {
@@ -16843,8 +16854,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_readyclient_constructor",
-      "community": 6,
-      "community_name": "sshExecutor.js",
+      "community": 174,
+      "community_name": "sshExecutor.test.js",
       "norm_label": ".constructor()"
     },
     {
@@ -16854,8 +16865,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_readyclient_connect",
-      "community": 6,
-      "community_name": "sshExecutor.js",
+      "community": 174,
+      "community_name": "sshExecutor.test.js",
       "norm_label": ".connect()"
     },
     {
@@ -16865,8 +16876,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_readyclient_end",
-      "community": 6,
-      "community_name": "sshExecutor.js",
+      "community": 174,
+      "community_name": "sshExecutor.test.js",
       "norm_label": ".end()"
     },
     {
@@ -16876,8 +16887,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_sshcontext",
-      "community": 6,
-      "community_name": "sshExecutor.js",
+      "community": 174,
+      "community_name": "sshExecutor.test.js",
       "norm_label": "sshcontext()"
     },
     {
@@ -16887,8 +16898,8 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_commandclient",
-      "community": 6,
-      "community_name": "sshExecutor.js",
+      "community": 174,
+      "community_name": "sshExecutor.test.js",
       "norm_label": "commandclient"
     },
     {
@@ -16898,8 +16909,8 @@
       "source_location": "L156",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_commandclient_constructor",
-      "community": 6,
-      "community_name": "sshExecutor.js",
+      "community": 174,
+      "community_name": "sshExecutor.test.js",
       "norm_label": ".constructor()"
     },
     {
@@ -16909,8 +16920,8 @@
       "source_location": "L162",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_commandclient_connect",
-      "community": 6,
-      "community_name": "sshExecutor.js",
+      "community": 174,
+      "community_name": "sshExecutor.test.js",
       "norm_label": ".connect()"
     },
     {
@@ -16920,8 +16931,8 @@
       "source_location": "L163",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_commandclient_end",
-      "community": 6,
-      "community_name": "sshExecutor.js",
+      "community": 174,
+      "community_name": "sshExecutor.test.js",
       "norm_label": ".end()"
     },
     {
@@ -16931,8 +16942,8 @@
       "source_location": "L164",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_commandclient_exec",
-      "community": 6,
-      "community_name": "sshExecutor.js",
+      "community": 174,
+      "community_name": "sshExecutor.test.js",
       "norm_label": ".exec()"
     },
     {
@@ -16942,8 +16953,8 @@
       "source_location": "L171",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_stageclient",
-      "community": 6,
-      "community_name": "sshExecutor.js",
+      "community": 174,
+      "community_name": "sshExecutor.test.js",
       "norm_label": "stageclient"
     },
     {
@@ -16953,8 +16964,8 @@
       "source_location": "L174",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_stageclient_constructor",
-      "community": 6,
-      "community_name": "sshExecutor.js",
+      "community": 174,
+      "community_name": "sshExecutor.test.js",
       "norm_label": ".constructor()"
     },
     {
@@ -16964,8 +16975,8 @@
       "source_location": "L182",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_stageclient_connect",
-      "community": 6,
-      "community_name": "sshExecutor.js",
+      "community": 174,
+      "community_name": "sshExecutor.test.js",
       "norm_label": ".connect()"
     },
     {
@@ -16975,8 +16986,8 @@
       "source_location": "L183",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_stageclient_end",
-      "community": 6,
-      "community_name": "sshExecutor.js",
+      "community": 174,
+      "community_name": "sshExecutor.test.js",
       "norm_label": ".end()"
     },
     {
@@ -16986,8 +16997,8 @@
       "source_location": "L184",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_stageclient_sftp",
-      "community": 6,
-      "community_name": "sshExecutor.js",
+      "community": 174,
+      "community_name": "sshExecutor.test.js",
       "norm_label": ".sftp()"
     },
     {
@@ -16997,8 +17008,8 @@
       "source_location": "L185",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_stageclient_exec",
-      "community": 6,
-      "community_name": "sshExecutor.js",
+      "community": 174,
+      "community_name": "sshExecutor.test.js",
       "norm_label": ".exec()"
     },
     {
@@ -17008,8 +17019,8 @@
       "source_location": "L232",
       "_origin": "ast",
       "id": "workers_worker_node_test_sshexecutor_test_scannerjsonwithexactbytes",
-      "community": 6,
-      "community_name": "sshExecutor.js",
+      "community": 174,
+      "community_name": "sshExecutor.test.js",
       "norm_label": "scannerjsonwithexactbytes()"
     },
     {
@@ -21276,8 +21287,8 @@
       "source_location": "L665",
       "_origin": "ast",
       "id": "documents_shore_sentinel_architecture_pull_agent_check_in_flow",
-      "community": 137,
-      "community_name": "Pull-Agent / Check-in Flow",
+      "community": 36,
+      "community_name": "Shore Sentinel Control Plane Architecture Proposal",
       "norm_label": "pull-agent / check-in flow"
     },
     {
@@ -21287,8 +21298,8 @@
       "source_location": "L667",
       "_origin": "ast",
       "id": "documents_shore_sentinel_architecture_intent_667",
-      "community": 137,
-      "community_name": "Pull-Agent / Check-in Flow",
+      "community": 36,
+      "community_name": "Shore Sentinel Control Plane Architecture Proposal",
       "norm_label": "intent"
     },
     {
@@ -21298,8 +21309,8 @@
       "source_location": "L671",
       "_origin": "ast",
       "id": "documents_shore_sentinel_architecture_flow_671",
-      "community": 137,
-      "community_name": "Pull-Agent / Check-in Flow",
+      "community": 36,
+      "community_name": "Shore Sentinel Control Plane Architecture Proposal",
       "norm_label": "flow"
     },
     {
@@ -21309,8 +21320,8 @@
       "source_location": "L689",
       "_origin": "ast",
       "id": "documents_shore_sentinel_architecture_offline_resilience_best_practice",
-      "community": 36,
-      "community_name": "Shore Sentinel Control Plane Architecture Proposal",
+      "community": 181,
+      "community_name": "Offline Resilience Best Practice",
       "norm_label": "offline resilience best practice"
     },
     {
@@ -21320,8 +21331,8 @@
       "source_location": "L704",
       "_origin": "ast",
       "id": "documents_shore_sentinel_architecture_pull_agent_behavior",
-      "community": 36,
-      "community_name": "Shore Sentinel Control Plane Architecture Proposal",
+      "community": 181,
+      "community_name": "Offline Resilience Best Practice",
       "norm_label": "pull-agent behavior"
     },
     {
@@ -21331,8 +21342,8 @@
       "source_location": "L712",
       "_origin": "ast",
       "id": "documents_shore_sentinel_architecture_ssh_push_behavior",
-      "community": 36,
-      "community_name": "Shore Sentinel Control Plane Architecture Proposal",
+      "community": 181,
+      "community_name": "Offline Resilience Best Practice",
       "norm_label": "ssh push behavior"
     },
     {
@@ -23927,8 +23938,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "workers_worker_node_src_payloadlimits_raw_scanner_artifact_max_bytes",
-      "community": 1,
-      "community_name": "index.js",
+      "community": 172,
+      "community_name": "managedSshProcessor.js",
       "norm_label": "raw_scanner_artifact_max_bytes"
     },
     {
@@ -42485,7 +42496,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_compact_core_operations_pages.py",
-      "source_location": "L79",
+      "source_location": "L83",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_authenticated_root_continues_to_redirect_to_dashboard",
@@ -42533,7 +42544,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_compact_core_operations_pages.py",
-      "source_location": "L74",
+      "source_location": "L78",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_public_shell_sign_in_uses_the_mounted_application_path",
@@ -42553,10 +42564,22 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_compact_core_operations_pages.py",
+      "source_location": "L74",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_web_production_build_uses_architecture_independent_webpack",
+      "target": "tests_test_compact_core_operations_pages_read",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_compact_core_operations_pages.py",
-      "source_location": "L78",
+      "source_location": "L82",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests",
@@ -42600,7 +42623,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_compact_core_operations_pages.py",
-      "source_location": "L73",
+      "source_location": "L77",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests",
@@ -42616,6 +42639,17 @@
       "_origin": "ast",
       "source": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests",
       "target": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_scan_start_redirects_to_machine_selection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_compact_core_operations_pages.py",
+      "source_location": "L73",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests",
+      "target": "tests_test_compact_core_operations_pages_compactcoreoperationspagetests_test_web_production_build_uses_architecture_independent_webpack",
       "confidence_score": 1.0
     },
     {
@@ -60452,5 +60486,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "d42ea46607178023e0ac1f35eddd967c8722e60d"
+  "built_at_commit": "4a873dd965ce37602a32d14c0fdb5136f3e8a0b5"
 }
