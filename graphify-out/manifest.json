@@ -455,8 +455,8 @@
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1784702007.2040696,
-    "ast_hash": "22f2753e54606fd36e4c8db195edef38",
+    "mtime": 1784762509.376312,
+    "ast_hash": "ebc3805d32e26e3dbe559f08481e8212",
     "semantic_hash": ""
   },
   "README.md": {
@@ -525,8 +525,8 @@
     "semantic_hash": ""
   },
   "scanner-bundle/docs/AGENT_SECURITY_SELFCHECK_VERSION_HISTORY.md": {
-    "mtime": 1784701414.2699392,
-    "ast_hash": "76c557b46b898628f2a2ea8e55968de4",
+    "mtime": 1784762509.4503832,
+    "ast_hash": "6c56a7b2c0872eeaa916c4bab1113959",
     "semantic_hash": ""
   },
   "scanner-bundle/docs/agent-security-selfcheck.md": {
@@ -1430,8 +1430,8 @@
     "semantic_hash": ""
   },
   "scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.0.py": {
-    "mtime": 1784735345.1123242,
-    "ast_hash": "6d2706a38133b112942ba6f966a0de10",
+    "mtime": 1784768145.5472522,
+    "ast_hash": "2ebcba3ebfe6e27acffed9307279bcd9",
     "semantic_hash": ""
   },
   "scanner-bundle/scanner-manifest.json": {
@@ -1440,8 +1440,8 @@
     "semantic_hash": ""
   },
   "tests/test_scanner_bundle_v35.py": {
-    "mtime": 1784704075.065599,
-    "ast_hash": "9203c00179ca7fc0a3623af85ba4654e",
+    "mtime": 1784768257.9954007,
+    "ast_hash": "a5e1be0408d6269c7b640148ba499312",
     "semantic_hash": ""
   },
   "workers/worker-node/test/scannerV35Contract.test.js": {
