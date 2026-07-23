@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -22,6 +23,86 @@ def load_scanner():
         sys.path.pop(0)
         sys.modules.pop(spec.name, None)
     return module
+
+
+def test_sanitize_hardware_preserves_summary_values_and_adapter_names_without_identity():
+    scanner = load_scanner()
+    raw = {
+        "cpu_logical_cores": 8,
+        "memory_used": "1.2 GB",
+        "memory_total": "3.8 GB",
+        "memory_percent": 31.6,
+        "disk_used": "12.4 GB",
+        "disk_total": "76.4 GB",
+        "disk_percent": 16.2,
+        "network_adapters": [
+            {"name": "eth0", "ip": "192.0.2.10", "mac": "00:11:22:33:44:55"},
+            {"name": "wlan0", "ip": "198.51.100.7", "mac": "aa:bb:cc:dd:ee:ff"},
+        ],
+        "errors": [],
+    }
+
+    sanitized = scanner.sanitize_hardware(raw)
+
+    assert sanitized["memory_used"] == "1.2 GB"
+    assert sanitized["memory_total"] == "3.8 GB"
+    assert sanitized["memory_percent"] == 31.6
+    assert sanitized["disk_used"] == "12.4 GB"
+    assert sanitized["disk_total"] == "76.4 GB"
+    assert sanitized["disk_percent"] == 16.2
+    assert sanitized["network_adapter_count"] == 2
+    assert sanitized["network_adapters"] == [{"name": "eth0"}, {"name": "wlan0"}]
+    assert "192.0.2.10" not in json.dumps(sanitized)
+    assert "00:11:22:33:44:55" not in json.dumps(sanitized)
+    assert all(set(adapter) == {"name"} for adapter in sanitized["network_adapters"])
+
+
+def test_generated_pdf_wraps_long_hardware_error_without_horizontal_overflow(tmp_path):
+    scanner = load_scanner()
+    pdf_path = tmp_path / "hardware-summary.pdf"
+    long_error = "hardware collection failed " + " ".join(f"detail-{index}" for index in range(80)) + " " + ("unbroken-evidence-token" * 12)
+    meta = {
+        "target_root": "/tmp/target",
+        "generated_utc": "2026-07-23T00:00:00+00:00",
+        "script_sha256": "0" * 64,
+        "environment_label": "bare-metal",
+        "hardware_summary": {
+            "cpu_logical_cores": 8,
+            "memory_used": "1.2 GB",
+            "memory_total": "3.8 GB",
+            "disk_used": "12.4 GB",
+            "disk_total": "76.4 GB",
+            "network_adapters": [{"name": "eth0"}],
+            "errors": [long_error],
+        },
+        "methodology_tools_used": [],
+        "frameworks_used": [],
+        "runtime_security_best_practices": [],
+    }
+    result = {
+        "score": {"overall_score": 100, "grade": "A", "categories": {}},
+        "findings": [],
+        "executive_summary": [],
+    }
+
+    scanner.write_simple_pdf(pdf_path, meta, result)
+    pdf = pdf_path.read_bytes().decode("latin-1")
+
+    assert pdf.startswith("%PDF-1.4")
+    value_ops = re.findall(r"BT /F1 8 Tf 170\.0 ([0-9.-]+) Td \((.*?)\) Tj ET", pdf)
+    error_value_ops = [
+        (float(y), text)
+        for y, text in value_ops
+        if "hardware" in text or "detail-" in text or "unbroken" in text
+    ]
+    assert len(error_value_ops) > 2
+    assert max(len(text) for _, text in error_value_ops) <= 52
+    assert "detail-79" in pdf
+    assert "unbroken-evidence-token" in pdf
+
+    category_line = next(line for line in pdf.splitlines() if "(Category Scorecards)" in line)
+    category_y = float(category_line.split()[5])
+    assert category_y == min(y for y, _ in error_value_ops) - 26
 
 
 def run_report(target: Path, output: Path, scope_mode: str = "exact", compose_files: list[str] | None = None, expect_clean: bool = True) -> dict:

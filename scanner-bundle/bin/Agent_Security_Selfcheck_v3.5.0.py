@@ -1749,7 +1749,11 @@ class PdfCanvas:
 
     def wrapped_text(self, x: float, y: float, text: str, width_chars: int, size: int = 10, font: str = "Helvetica", color: str = "black", leading: float | None = None, max_lines: int | None = None) -> float:
         leading = leading if leading is not None else size + 4
-        lines = textwrap.wrap(str(text), width=width_chars, break_long_words=False, replace_whitespace=True) or [""]
+        # Break long tokens as well as whitespace-delimited prose.  Audit evidence
+        # routinely contains hashes, paths, URLs, and identifiers that have no
+        # safe break point; allowing those tokens to remain unbroken can overflow
+        # the PDF content area even when ordinary prose wraps correctly.
+        lines = textwrap.wrap(str(text), width=width_chars, break_long_words=True, replace_whitespace=True) or [""]
         if max_lines is not None and len(lines) > max_lines:
             lines = lines[:max_lines]
             lines[-1] = lines[-1][: max(0, width_chars - 3)] + "..."
@@ -1784,8 +1788,7 @@ def pdf_add_bullet_section(c: PdfCanvas, title: str, items: list[str], start_y: 
 def _hw_row(c: PdfCanvas, label: str, value: str, y: float, label_color: str = "slate") -> float:
     """Render a single hardware summary label/value row. Returns new y."""
     c.text(52, y, label, 8, "Helvetica-Bold", label_color)
-    c.text(170, y, value, 8, "Helvetica", "black")
-    return y - 14
+    return c.wrapped_text(170, y, value, 52, 8, "Helvetica", "black", 12)
 
 
 def _add_pdf_section_inline(c: PdfCanvas, title: str, y: float) -> float:
@@ -1823,10 +1826,7 @@ def draw_hardware_summary(c: PdfCanvas, env_label: str, hw: dict[str, Any], y: f
     if adapters:
         adapter_parts = []
         for a in adapters[:8]:
-            name = a.get("name", "?")
-            ip = a.get("ip") or "no-ip"
-            mac = a.get("mac") or "no-mac"
-            adapter_parts.append(f"{name}: {ip} ({mac})")
+            adapter_parts.append(str(a.get("name", "?")))
         adapter_text = "; ".join(adapter_parts)
     else:
         adapter_text = "none detected"
@@ -2107,12 +2107,22 @@ def target_asset_id(root: Path) -> str:
 
 def sanitize_hardware(data: dict[str, Any]) -> dict[str, Any]:
     """Keep host telemetry out of target evidence and remove network identity."""
+    adapter_names = [
+        {"name": str(adapter.get("name") or "?")}
+        for adapter in data.get("network_adapters", []) or []
+        if isinstance(adapter, dict)
+    ]
     return {
         "scope": "host_runtime",
         "cpu_logical_cores": data.get("cpu_logical_cores"),
+        "memory_used": data.get("memory_used"),
         "memory_total": data.get("memory_total"),
+        "memory_percent": data.get("memory_percent"),
+        "disk_used": data.get("disk_used"),
         "disk_total": data.get("disk_total"),
-        "network_adapter_count": len(data.get("network_adapters", []) or []),
+        "disk_percent": data.get("disk_percent"),
+        "network_adapters": adapter_names,
+        "network_adapter_count": len(adapter_names),
         "errors": [redact(error) for error in data.get("errors", []) or []],
     }
 
