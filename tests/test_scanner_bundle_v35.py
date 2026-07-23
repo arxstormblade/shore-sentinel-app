@@ -5,6 +5,7 @@ import json
 import re
 import subprocess
 import sys
+import textwrap
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -103,6 +104,43 @@ def test_generated_pdf_wraps_long_hardware_error_without_horizontal_overflow(tmp
     category_line = next(line for line in pdf.splitlines() if "(Category Scorecards)" in line)
     category_y = float(category_line.split()[5])
     assert category_y == min(y for y, _ in error_value_ops) - 26
+
+
+def test_generated_pdf_accounts_for_unbroken_finding_wrapping_in_card_height(tmp_path):
+    scanner = load_scanner()
+    pdf_path = tmp_path / "finding-wrap.pdf"
+    evidence = "unbroken-evidence-token" * 12
+    meta = {
+        "target_root": "/tmp/target",
+        "generated_utc": "2026-07-23T00:00:00+00:00",
+        "script_sha256": "0" * 64,
+        "environment_label": "bare-metal",
+        "hardware_summary": {},
+        "methodology_tools_used": [],
+        "frameworks_used": [],
+        "runtime_security_best_practices": [],
+    }
+    finding = {
+        "category": "Secrets",
+        "check": "Evidence review",
+        "status": "WARN",
+        "risk": "High",
+        "evidence": evidence,
+        "recommendation": "Review the evidence and rotate affected material.",
+        "remediation_task": {"file_path": "config.toml", "instruction": "Remove the exposed value."},
+    }
+    result = {
+        "score": {"overall_score": 80, "grade": "B", "categories": {}},
+        "findings": [finding],
+        "executive_summary": [],
+    }
+
+    scanner.write_simple_pdf(pdf_path, meta, result)
+    pdf = pdf_path.read_bytes().decode("latin-1")
+    evidence_lines = min(4, max(1, len(textwrap.wrap(evidence, width=86, break_long_words=True, replace_whitespace=True))))
+    expected_card_height = 86 + 12 + evidence_lines * 10 + 10 + 10
+    assert f"528.0 {expected_card_height:.1f} re B" in pdf
+    assert pdf.count("unbroken-evidence-token") >= 8
 
 
 def run_report(target: Path, output: Path, scope_mode: str = "exact", compose_files: list[str] | None = None, expect_clean: bool = True) -> dict:

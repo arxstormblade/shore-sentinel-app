@@ -1900,7 +1900,7 @@ def write_simple_pdf(path: Path, meta: dict[str, Any], res: dict[str, Any]) -> N
     c.new_page("Executive Summary & Category Scorecards")
     y = 705
     summary_items = executive_summary(res)
-    line_count = 1 + sum(max(1, len(textwrap.wrap(str(item), width=82, break_long_words=False, replace_whitespace=True))) for item in summary_items)
+    line_count = 1 + sum(max(1, len(textwrap.wrap(str(item), width=82, break_long_words=True, replace_whitespace=True))) for item in summary_items)
     panel_h = max(112, 36 + line_count * 13)
     panel_y = y - panel_h
     c.rect(42, panel_y, 528, panel_h, "panel", "line")
@@ -1943,10 +1943,10 @@ def write_simple_pdf(path: Path, meta: dict[str, Any], res: dict[str, Any]) -> N
         evidence_text = str(f.get("evidence", "No evidence recorded."))
         recommendation_text = str(f["recommendation"])
         task = f.get("remediation_task") or remediation_task_for_finding(f, meta)
-        title_lines = min(2, max(1, len(textwrap.wrap(str(title_text), width=62, break_long_words=False, replace_whitespace=True))))
-        evidence_lines = min(4, max(1, len(textwrap.wrap(evidence_text, width=86, break_long_words=False, replace_whitespace=True))))
-        task_lines = min(4, max(1, len(textwrap.wrap(f"{task['file_path']} — {task['instruction']}", width=86, break_long_words=False, replace_whitespace=True))))
-        recommendation_lines = min(3, max(1, len(textwrap.wrap(recommendation_text, width=86, break_long_words=False, replace_whitespace=True))))
+        title_lines = min(2, max(1, len(textwrap.wrap(str(title_text), width=62, break_long_words=True, replace_whitespace=True))))
+        evidence_lines = min(4, max(1, len(textwrap.wrap(evidence_text, width=86, break_long_words=True, replace_whitespace=True))))
+        task_lines = min(4, max(1, len(textwrap.wrap(f"{task['file_path']} — {task['instruction']}", width=86, break_long_words=True, replace_whitespace=True))))
+        recommendation_lines = min(3, max(1, len(textwrap.wrap(recommendation_text, width=86, break_long_words=True, replace_whitespace=True))))
         # Leave extra room for the recommendation block so the next card does not collide with it.
         card_h = 86 + title_lines * 12 + evidence_lines * 10 + task_lines * 10 + recommendation_lines * 10
         if y < card_h + 58:
