@@ -1430,8 +1430,8 @@
     "semantic_hash": ""
   },
   "scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.0.py": {
-    "mtime": 1784768145.5472522,
-    "ast_hash": "2ebcba3ebfe6e27acffed9307279bcd9",
+    "mtime": 1784768982.5493155,
+    "ast_hash": "a3697f5ed93c3a1f8acd88cb7e8affb3",
     "semantic_hash": ""
   },
   "scanner-bundle/scanner-manifest.json": {
@@ -1440,8 +1440,8 @@
     "semantic_hash": ""
   },
   "tests/test_scanner_bundle_v35.py": {
-    "mtime": 1784768257.9954007,
-    "ast_hash": "a5e1be0408d6269c7b640148ba499312",
+    "mtime": 1784769013.3847675,
+    "ast_hash": "8e4ade234fa024fdf0482c6486a6ded6",
     "semantic_hash": ""
   },
   "workers/worker-node/test/scannerV35Contract.test.js": {
