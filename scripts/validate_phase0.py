@@ -28,6 +28,7 @@ allowed_scanner_files = {
     'README.md',
     'bin/Agent_Security_Selfcheck_v3.4.0.py',
     'bin/Agent_Security_Selfcheck_v3.5.0.py',
+    'bin/Agent_Security_Selfcheck_v3.5.1.py',
     'bin/envdetect.py',
     'bin/hardware_collection.py',
     'docs/AGENT_SECURITY_SELFCHECK_VERSION_HISTORY.md',

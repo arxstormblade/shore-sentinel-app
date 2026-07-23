@@ -10,12 +10,12 @@ Workers must treat the bundle as an untrusted producer: validate the manifest, p
 
 Use this mode when a client needs a standalone evidence package without enrolling the machine into Shore Sentinel managed monitoring.
 
-Until v3.5.0 is promoted, clone the reviewed default branch (or an approved immutable commit SHA). The release tag is created only at promotion after CI, security review, QA evidence, and staged rollback validation are approved; do not use an uncreated tag in installation instructions.
+Until v3.5.1 is promoted, clone the reviewed default branch (or an approved immutable commit SHA). The release tag is created only at promotion after CI, security review, QA evidence, and staged rollback validation are approved; do not use an uncreated tag in installation instructions.
 
 ```bash
 git clone --depth 1 https://github.com/arxstormblade/shore-sentinel-app.git
 cd shore-sentinel-app
-python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.0.py \
+python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.1.py \
   --target . \
   --scope-mode exact \
   --out-dir ./shore-sentinel-local-audit-reports \
@@ -39,8 +39,8 @@ Each bundle includes `scanner-manifest.json` matching `schemas/scanner-manifest.
 ```json
 {
   "contractVersion": "shore-sentinel.scanner-bundle/v1",
-  "bundle": { "name": "agent-security-selfcheck", "version": "3.5.0" },
-  "entrypoint": "bin/Agent_Security_Selfcheck_v3.5.0.py",
+  "bundle": { "name": "agent-security-selfcheck", "version": "3.5.1" },
+  "entrypoint": "bin/Agent_Security_Selfcheck_v3.5.1.py",
   "outputSchema": "shore-sentinel.scanner-output/v1",
   "requiredEnv": []
 }

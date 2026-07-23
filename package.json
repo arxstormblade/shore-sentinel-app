@@ -23,7 +23,7 @@
     "worker:test": "npm --workspace @shore-sentinel/worker-node test && PYTHONPATH=workers/worker-python python3 -m unittest discover -s workers/worker-python/test",
     "scanner:validate": "python3 scripts/validate_scanner_bundle.py",
     "scanner:test": "python3 -m pytest -q tests/test_scanner_bundle_v35.py",
-    "scanner:run": "python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.0.py --target . --scope-mode exact --out-dir scanner-bundle/reports --exit-zero",
+    "scanner:run": "python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.1.py --target . --scope-mode exact --out-dir scanner-bundle/reports --exit-zero",
     "test": "npm run worker:test && npm run api:test && npm run web:test",
     "check": "python3 scripts/validate_phase0.py && npm run scanner:test && npm run scanner:validate && npm run compose:smoke && npm run worker:test && npm --workspace @shore-sentinel/api run check && npm run web:test",
     "compose:smoke": "python3 scripts/compose_smoke.py",

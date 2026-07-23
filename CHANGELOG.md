@@ -4,6 +4,11 @@
 
 - Removed the in-app one-time audit runner entry points. Standalone local evidence collection remains documented as the GitHub scanner option.
 
+## v3.5.1 - Scanner patch release (2026-07-23)
+
+- Reissued the verified corrected v3.5.0 scanner as `Agent_Security_Selfcheck_v3.5.1.py` without changing scanner behavior.
+- Updated the scanner bundle manifest, validation schema, runner defaults, contract fixtures, tests, and documentation to use the v3.5.1 identity while retaining v3.5.0 and v3.4.0 as prior/reference releases.
+
 ## v3.5.0 - Approved scanner release (2026-07-22)
 
 - Added the isolated Agent Security Selfcheck v3.5.0 scanner bundle with authoritative target scoping, explicit coverage accounting, fail-closed incomplete-scan decisions, provenance-aware evidence, stable finding IDs, conservative correlation, and normalized JSON/Markdown/SARIF/PDF output.

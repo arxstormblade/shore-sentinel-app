@@ -1,14 +1,15 @@
 # Agent Security Self-Check Version History
 
-Merged changelog preserving the full lineage from v1 through the approved v3.5.0 release and v3.4.0 reference release.
+Merged changelog preserving the full lineage from v1 through the v3.5.1 patch release, the prior v3.5.0 release, and the v3.4.0 reference release.
 
-Last updated: 2026-07-22 00:00:00 UTC
+Last updated: 2026-07-23 00:00:00 UTC
 
 ## Current status
 
 | Version | Status | Summary |
 |---|---|---|
-| v3.5.0 | Approved release | Fail-closed exact scope, structured evidence, host-versus-target separation, stable IDs, contract validation, and false-positive regression coverage. |
+| v3.5.1 | Patch release | Reissues the verified corrected v3.5.0 scanner under a new versioned entrypoint and refreshed bundle identity, with behavior preserved. |
+| v3.5.0 | Prior release | Fail-closed exact scope, structured evidence, host-versus-target separation, stable IDs, contract validation, and false-positive regression coverage. |
 | v3.4.0 | Reference release | Hardware Summary section above category score cards, with minimized host telemetry in the approved PDF report. |
 | v3.3.0 | Prior release | Inline remediation tasks appear directly under finding evidence, remediation paths are more precise, and PDF spacing has been tightened. |
 | v3.0.1-rc1 | Prior release | Portable read-only auditor for Hermes/ARX and OpenClaw agent meshes, with consumer-ready PDF evidence refinement. |
@@ -19,6 +20,18 @@ Last updated: 2026-07-22 00:00:00 UTC
 | v2.0.0 | Prior release | Hardened candidate with 12 security domains, SARIF, JSON, Markdown, SVG, JPG, and traceability metadata. |
 | v1.1 | Historical baseline | DOCX-aligned expanded draft that grew the self-check from 7 to 12 domains. |
 | v1 | Original baseline | First read-only ARX/Hermes operational security scorecard covering 7 core domains. |
+
+## v3.5.1 — scanner identity patch release
+
+### Release date
+
+2026-07-23
+
+### What's New?
+
+- Reissues the verified corrected v3.5.0 scanner as `Agent_Security_Selfcheck_v3.5.1.py`.
+- Refreshes the bundle manifest, schema-bound entrypoint, runner defaults, fixtures, tests, and operator documentation to the v3.5.1 scanner identity.
+- Preserves the corrected v3.5.0 behavior and keeps v3.5.0 as a prior release and v3.4.0 as the rollback/reference baseline.
 
 ## v3.5.0 — correctness and contract-hardening release
 

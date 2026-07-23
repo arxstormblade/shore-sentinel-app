@@ -9,7 +9,7 @@ import textwrap
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SCANNER = ROOT / "scanner-bundle" / "bin" / "Agent_Security_Selfcheck_v3.5.0.py"
+SCANNER = ROOT / "scanner-bundle" / "bin" / "Agent_Security_Selfcheck_v3.5.1.py"
 
 
 def load_scanner():
@@ -158,18 +158,24 @@ def run_report(target: Path, output: Path, scope_mode: str = "exact", compose_fi
     return json.loads(report.read_text(encoding="utf-8"))
 
 
-def test_v35_entrypoint_exists_and_emits_contract_valid_output(tmp_path):
+def test_v351_entrypoint_exists_and_emits_contract_valid_output(tmp_path):
     target = tmp_path / "target"
     target.mkdir()
     (target / "README.md").write_text("terminal is a business POS term\n", encoding="utf-8")
     data = run_report(target, tmp_path / "reports")
     assert data["contractVersion"] == "shore-sentinel.scanner-output/v1"
-    assert data["scanner"]["version"] == "3.5.0"
+    assert data["scanner"]["version"] == "3.5.1"
     assert data["target"]["assetId"]
     assert data["target"]["hostname"] == "unknown"
     assert "coverage" in data
     assert "decision" in data
     assert all(isinstance(item["id"], str) and item["id"] for item in data["findings"])
+
+
+def test_v351_manifest_declares_v351_entrypoint_and_version():
+    manifest = json.loads((ROOT / "scanner-bundle" / "scanner-manifest.json").read_text(encoding="utf-8"))
+    assert manifest["bundle"]["version"] == "3.5.1"
+    assert manifest["entrypoint"] == "bin/Agent_Security_Selfcheck_v3.5.1.py"
 
 
 def test_host_collectors_are_not_labeled_as_target_source(tmp_path):

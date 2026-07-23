@@ -13,7 +13,7 @@ class ManagedMonitoringDirectionTests(unittest.TestCase):
         readme = read('README.md')
         self.assertIn('Option 1 — One-Time Audit', readme)
         self.assertIn('Option 2 — App Deployment', readme)
-        self.assertIn('scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.0.py', readme)
+        self.assertIn('scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.1.py', readme)
         self.assertIn('docker compose up -d --build', readme)
         self.assertIn('Reports and artifacts stay on the client machine', readme)
 

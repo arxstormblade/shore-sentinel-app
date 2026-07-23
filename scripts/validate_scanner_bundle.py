@@ -10,7 +10,7 @@ from jsonschema import Draft202012Validator, FormatChecker
 
 root = Path(__file__).resolve().parents[1]
 bundle = root / "scanner-bundle"
-scanner = bundle / "bin" / "Agent_Security_Selfcheck_v3.5.0.py"
+scanner = bundle / "bin" / "Agent_Security_Selfcheck_v3.5.1.py"
 output_schema_path = bundle / "schemas" / "scanner-output.schema.json"
 manifest_schema_path = bundle / "schemas" / "scanner-manifest.schema.json"
 manifest_path = bundle / "scanner-manifest.json"
@@ -85,8 +85,8 @@ invalid_evidence = json.loads(json.dumps(sample))
 invalid_evidence["findings"][0]["evidence"] = ["scalar evidence"]
 assert_schema_rejects(invalid_evidence, "scalar evidence")
 
-if manifest.get("entrypoint") != "bin/Agent_Security_Selfcheck_v3.5.0.py":
-    print("Scanner bundle validation failed: manifest entrypoint is not v3.5.0")
+if manifest.get("entrypoint") != "bin/Agent_Security_Selfcheck_v3.5.1.py":
+    print("Scanner bundle validation failed: manifest entrypoint is not v3.5.1")
     raise SystemExit(1)
 if manifest.get("outputSchema") != "shore-sentinel.scanner-output/v1":
     print("Scanner bundle validation failed: manifest output schema mismatch")
@@ -141,7 +141,7 @@ with tempfile.TemporaryDirectory(prefix="shore-scanner-validate-") as tmp:
     except Exception as exc:
         print(f"Scanner bundle validation failed: generated JSON does not match schema: {exc}")
         raise SystemExit(1)
-    if raw.get("scanner", {}).get("version") != "3.5.0":
+    if raw.get("scanner", {}).get("version") != "3.5.1":
         print("Scanner bundle validation failed: generated report version mismatch")
         raise SystemExit(1)
     if raw.get("coverage", {}).get("scan_complete") is not True:
@@ -155,7 +155,7 @@ with tempfile.TemporaryDirectory(prefix="shore-scanner-validate-") as tmp:
             print("Scanner bundle validation failed: finding missing deterministic ID")
             raise SystemExit(1)
     serialized_findings = json.dumps(raw.get("findings", []), sort_keys=True)
-    if "Agent_Security_Selfcheck_v3.5.0.py" in serialized_findings:
+    if "Agent_Security_Selfcheck_v3.5.1.py" in serialized_findings:
         print("Scanner bundle validation failed: scanner self-reference found in findings")
         raise SystemExit(1)
     reports = sorted(out_dir.glob("*"))

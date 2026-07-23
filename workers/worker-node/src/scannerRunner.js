@@ -7,7 +7,7 @@ import { scannerBundleContractVersion } from '@shore-sentinel/shared';
 
 const execFileAsync = promisify(execFile);
 
-const scannerPath = process.env.SCANNER_SCRIPT || '/app/scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.0.py';
+const scannerPath = process.env.SCANNER_SCRIPT || '/app/scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.1.py';
 const scannerTarget = process.env.SCANNER_TARGET || '/app';
 const VALID_CONFIDENCE = new Set(['confirmed', 'high', 'medium', 'low']);
 const VALID_SCOPE = new Set(['target_source', 'host_runtime', 'external/unknown']);

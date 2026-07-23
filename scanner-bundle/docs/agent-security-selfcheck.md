@@ -2,7 +2,7 @@
 
 ## What this script does
 
-`Agent_Security_Selfcheck_v3.5.0.py` is a **portable, read-only security auditor** for AI agent meshes that can use tools, schedule work, delegate to subagents, and influence application delivery. v3.4.0 remains available as the rollback/reference baseline.
+`Agent_Security_Selfcheck_v3.5.1.py` is a **portable, read-only security auditor** for AI agent meshes that can use tools, schedule work, delegate to subagents, and influence application delivery. v3.4.0 remains available as the rollback/reference baseline, and v3.5.0 remains available as the prior corrected release.
 
 From the live source, the script:
 
@@ -119,13 +119,13 @@ In practice, that means each finding is already tied to a control lens that can 
 From this directory or by absolute path:
 
 ```bash
-python3 Agent_Security_Selfcheck_v3.5.0.py --target /path/to/target-repo --scope-mode exact
+python3 Agent_Security_Selfcheck_v3.5.1.py --target /path/to/target-repo --scope-mode exact
 ```
 
 Optional output directory:
 
 ```bash
-python3 Agent_Security_Selfcheck_v3.5.0.py \
+python3 Agent_Security_Selfcheck_v3.5.1.py \
   --target /path/to/target-repo \
   --scope-mode exact \
   --out-dir ./reports
@@ -134,7 +134,7 @@ python3 Agent_Security_Selfcheck_v3.5.0.py \
 If you want report generation without a non-zero exit code:
 
 ```bash
-python3 Agent_Security_Selfcheck_v3.5.0.py \
+python3 Agent_Security_Selfcheck_v3.5.1.py \
   --target /path/to/target-repo \
   --out-dir ./reports \
   --exit-zero

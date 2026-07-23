@@ -49,12 +49,12 @@ python3 --version
 
 ### Run the local audit
 
-Until v3.5.0 is promoted, clone the reviewed default branch (or an approved immutable commit SHA). The release tag is created only at promotion after CI, security review, QA evidence, and staged rollback validation are approved; do not use an uncreated tag in installation instructions.
+Until v3.5.1 is promoted, clone the reviewed default branch (or an approved immutable commit SHA). The release tag is created only at promotion after CI, security review, QA evidence, and staged rollback validation are approved; do not use an uncreated tag in installation instructions.
 
 ```bash
 git clone --depth 1 https://github.com/arxstormblade/shore-sentinel-app.git
 cd shore-sentinel-app
-python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.0.py \
+python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.1.py \
   --target . \
   --scope-mode exact \
   --out-dir ./shore-sentinel-local-audit-reports \
@@ -64,7 +64,7 @@ python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.0.py \
 To audit a different local path, change `--target`:
 
 ```bash
-python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.0.py \
+python3 scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.1.py \
   --target /path/to/audit \
   --scope-mode exact \
   --out-dir ./shore-sentinel-local-audit-reports \

@@ -290,7 +290,7 @@ The app should consume a packaged scanner bundle with a stable contract.
 
 Minimum MVP contract:
 
-- Entrypoint command: `python3 Agent_Security_Selfcheck_v3.5.0.py --target <dir> --scope-mode exact --out-dir <dir>` or a wrapper that preserves equivalent behavior.
+- Entrypoint command: `python3 Agent_Security_Selfcheck_v3.5.1.py --target <dir> --scope-mode exact --out-dir <dir>` or a wrapper that preserves equivalent behavior.
 - Supported target runtime: Linux hosts with `python3`; Windows/macOS support can be added later only after validation.
 - Required arguments: output directory, non-interactive mode, and optional metadata such as run ID or hostname.
 - Output directory must contain JSON, Markdown, SARIF, and PDF artifacts when the scanner succeeds.

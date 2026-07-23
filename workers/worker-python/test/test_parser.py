@@ -33,13 +33,13 @@ def output(**overrides):
     value = {
         "contractVersion": CONTRACT_VERSION,
         "collectedAt": "2026-07-22T00:00:00Z",
-        "scanner": {"name": "Agent Security Selfcheck", "version": "3.5.0", "scriptSha256": "a" * 64},
+        "scanner": {"name": "Agent Security Selfcheck", "version": "3.5.1", "scriptSha256": "a" * 64},
         "target": {"assetId": "asset-1", "hostname": "host1", "ip": "10.0.0.5"},
         "coverage": {"scan_complete": True},
         "decision": {"status": "PASS", "exit_code": 0},
         "metadata": {
             "generated_utc": "2026-07-22T00:00:00Z",
-            "script_version": "3.5.0",
+            "script_version": "3.5.1",
             "script_sha256": "a" * 64,
             "target_asset_id": "asset-1",
             "coverage": {"scan_complete": True},
@@ -133,7 +133,7 @@ class ParserTests(unittest.TestCase):
 
     def test_rejects_scanner_identity_mismatch_when_expected(self):
         with self.assertRaisesRegex(ValueError, "producer identity mismatch"):
-            parse_scanner_output("run-v35", output(), expected_scanner={"name": "Other Scanner", "version": "3.5.0"})
+            parse_scanner_output("run-v35", output(), expected_scanner={"name": "Other Scanner", "version": "3.5.1"})
 
     def test_rejects_invalid_scope_mode(self):
         invalid_coverage = {"scan_complete": True, "scope_mode": "invalid"}
@@ -166,7 +166,7 @@ class ParserTests(unittest.TestCase):
 
     def test_rejects_unexpected_scanner_name_without_expected_metadata(self):
         with self.assertRaisesRegex(ValueError, "producer name mismatch"):
-            parse_scanner_output("run-v35", output(scanner={"name": "Other Scanner", "version": "3.5.0", "scriptSha256": "a" * 64}))
+            parse_scanner_output("run-v35", output(scanner={"name": "Other Scanner", "version": "3.5.1", "scriptSha256": "a" * 64}))
 
 
 if __name__ == "__main__":

@@ -10,13 +10,13 @@ function validRaw(overrides = {}) {
   const metadata = {
     generated_utc: '2026-07-22T00:00:00Z',
     script_sha256: 'a'.repeat(64),
-    script_version: '3.5.0',
+    script_version: '3.5.1',
     target_asset_id: 'asset-v35',
     coverage: { scan_complete: true },
   };
   const base = {
     contractVersion: 'shore-sentinel.scanner-output/v1',
-    scanner: { name: 'Agent Security Selfcheck', version: '3.5.0', scriptSha256: 'a'.repeat(64) },
+    scanner: { name: 'Agent Security Selfcheck', version: '3.5.1', scriptSha256: 'a'.repeat(64) },
     target: { assetId: 'asset-v35', hostname: 'unknown' },
     coverage: { scan_complete: true },
     decision: { status: 'PASS', exit_code: 0 },
@@ -36,7 +36,7 @@ function validRaw(overrides = {}) {
 
 test('managed scanner runner uses the v3.5 bundle entrypoint and preserves canonical IDs', async () => {
   const source = await readFile(runnerPath, 'utf8');
-  assert.match(source, /Agent_Security_Selfcheck_v3\.5\.0\.py/);
+  assert.match(source, /Agent_Security_Selfcheck_v3\.5\.1\.py/);
   assert.doesNotMatch(source, /Agent_Security_Selfcheck_v3\.4\.0\.py/);
   assert.doesNotMatch(source, /`finding-\$\{index \+ 1\}`/);
 });
@@ -59,7 +59,7 @@ test('managed scanner runner rejects report paths outside its output directory',
 });
 
 test('managed scanner runner executes v3.5 and hands off contract-complete artifacts', async () => {
-  const scanner = new URL('../../../scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.0.py', import.meta.url);
+  const scanner = new URL('../../../scanner-bundle/bin/Agent_Security_Selfcheck_v3.5.1.py', import.meta.url);
   const target = await mkdtemp(join(tmpdir(), 'shore-v35-node-target-'));
   process.env.SCANNER_SCRIPT = scanner.pathname;
   process.env.SCANNER_TARGET = target;

@@ -1,6 +1,6 @@
 {
   "contractVersion": "shore-sentinel.scanner-output/v1",
-  "scanner": { "name": "Agent Security Selfcheck", "version": "3.5.0", "scriptSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" },
+  "scanner": { "name": "Agent Security Selfcheck", "version": "3.5.1", "scriptSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" },
   "target": { "assetId": "asset-1", "hostname": "demo-host", "ip": "10.0.0.5" },
   "coverage": { "scan_complete": true, "security_relevant_incomplete": false, "files_discovered": 1 },
   "decision": { "status": "PASS", "exit_code": 0, "reason": "coverage complete" },
@@ -30,7 +30,7 @@
   "collectedAt": "2026-06-19T00:00:00Z",
   "metadata": {
     "generated_utc": "2026-06-19T00:00:00Z",
-    "script_version": "3.5.0",
+    "script_version": "3.5.1",
     "script_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
     "target_asset_id": "asset-1",
     "coverage": { "scan_complete": true, "security_relevant_incomplete": false, "files_discovered": 1 }
